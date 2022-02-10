@@ -109,7 +109,7 @@ return new class extends Migration
         });
         $this->comment("{$this->prefix}_type_additional", 'Таблица, определяющая цены добавочных условий при определенном типе изделия');
 
-        Schema::create("{$this->prefix}_ttp_additional", function (Blueprint $table) {
+        Schema::create("{$this->prefix}_product_additional", function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')
                 ->constrained("{$this->prefix}_products");
@@ -117,7 +117,7 @@ return new class extends Migration
                 ->constrained("{$this->prefix}_type_additional");
             $table->timestamps();
         });
-        $this->comment("{$this->prefix}_ttp_additional", 'Таблица, определяющая, есть ли у товара добавочная опция');
+        $this->comment("{$this->prefix}_product_additional", 'Таблица, определяющая, есть ли у товара добавочная опция');
     }
 
     /**

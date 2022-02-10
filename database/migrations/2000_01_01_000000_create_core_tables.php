@@ -25,7 +25,8 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->unsignedBigInteger('parent_id')
-                ->comment('Ссылка из подкатегории на супер-категорию');
+                ->comment('Ссылка из подкатегории на супер-категорию')
+                ->nullable();
             $table->timestamps();
         });
 
@@ -45,5 +46,7 @@ return new class extends Migration {
      */
     public function down() {
         Schema::dropIfExists('categories');
+        Schema::dropIfExists('services');
+        Schema::dropIfExists('types_windows');
     }
 };
