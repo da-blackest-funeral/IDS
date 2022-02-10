@@ -38,7 +38,21 @@ class Additional extends Model
         'group_id',
     ];
 
-    protected function products() {
-//        return $this->belongsToMany(Product::class);
+    public function products() {
+        return $this->belongsToMany(
+            Product::class,
+            'mosquito_systems_product_additional',
+            'additional_id',
+            'product_id'
+        );
+    }
+
+    public function additional() {
+        return $this->belongsToMany(
+            Type::class,
+            'mosquito_systems_type_additional',
+            'additional_id',
+            'type_id',
+        );
     }
 }

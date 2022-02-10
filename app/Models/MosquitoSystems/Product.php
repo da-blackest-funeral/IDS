@@ -52,4 +52,13 @@ class Product extends Model
     public function profile() {
         return $this->hasOne(Profile::class, 'id', 'profile_id');
     }
+
+    public function additional() {
+        return $this->belongsToMany(
+            Additional::class,
+            'mosquito_systems_product_additional',
+            'product_id',
+            'additional_id'
+        );
+    }
 }

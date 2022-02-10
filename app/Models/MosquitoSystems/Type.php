@@ -51,4 +51,22 @@ class Type extends Model
     public function products() {
         return $this->hasMany(Product::class);
     }
+
+    public function additional() {
+        return $this->belongsToMany(
+            Additional::class,
+            'mosquito_systems_type_additional',
+            'type_id',
+            'additional_id'
+        );
+    }
+
+    public function groups() {
+        return $this->belongsToMany(
+            Group::class,
+            'mosquito_systems_type_group',
+            'type_id',
+            'group_id'
+        );
+    }
 }

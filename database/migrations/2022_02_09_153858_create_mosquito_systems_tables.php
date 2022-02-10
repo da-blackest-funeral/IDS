@@ -113,8 +113,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('product_id')
                 ->constrained("{$this->prefix}_products");
-            $table->foreignId('type_additional_id')
-                ->constrained("{$this->prefix}_type_additional");
+            $table->foreignId('additional_id')
+                ->constrained("{$this->prefix}_additional");
             $table->timestamps();
         });
         $this->comment("{$this->prefix}_product_additional", 'Таблица, определяющая, есть ли у товара добавочная опция');

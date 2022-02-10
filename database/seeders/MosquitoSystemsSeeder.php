@@ -24,5 +24,40 @@ class MosquitoSystemsSeeder extends Seeder
         Profile::factory()->count(50)->create();
         Type::factory()->count(20)->create();
         Product::factory()->count(20)->create();
+        $this->seedProductAdditional(150);
+        $this->seedTypeAdditional(150);
+        $this->seedTypeGroup(30);
+    }
+
+    protected function seedProductAdditional(int $times) {
+        for ($i = 0; $i < $times; $i++) {
+            \DB::table('mosquito_systems_product_additional')
+                ->insert([
+                    'product_id' => random_int(1, Product::count()),
+                    'additional_id' => random_int(1, Additional::count()),
+                ]);
+        }
+    }
+
+    protected function seedTypeAdditional(int $times) {
+        for ($i = 0; $i < $times; $i++) {
+            \DB::table('mosquito_systems_type_additional')
+                ->insert([
+                    'type_id' => random_int(1, Type::count()),
+                    'additional_id' => random_int(1, Additional::count()),
+                    'price' => random_int(500, 1000),
+                ]);
+        }
+    }
+
+    protected function seedTypeGroup(int $times) {
+        for ($i = 0; $i < $times; $i++) {
+            \DB::table('mosquito_systems_type_group')
+                ->insert([
+                    'type_id' => random_int(1, Type::count()),
+                    'group_id' => random_int(1, Group::count()),
+                    'sort' => random_int(1, 100),
+                ]);
+        }
     }
 }

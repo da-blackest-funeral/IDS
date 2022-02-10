@@ -31,4 +31,13 @@ class Group extends Model
     protected $fillable = [
         'name',
     ];
+
+    public function types() {
+        return $this->belongsToMany(
+            Type::class,
+            'mosquito_systems_type_group',
+            'group_id',
+            'type_id'
+        );
+    }
 }
