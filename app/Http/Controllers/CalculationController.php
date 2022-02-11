@@ -9,7 +9,8 @@ class CalculationController extends Controller
     public function index() {
 
 //        dd(
-//            Category::find(1)->with('type')->getRelation('type')->get()
+//            Category::has('type')->with('type')->get()
+//                ->pluck('type')
 //        );
 //        dd(
 //            Category::with('type')

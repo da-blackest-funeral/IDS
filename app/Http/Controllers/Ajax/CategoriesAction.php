@@ -4,12 +4,18 @@ namespace App\Http\Controllers\Ajax;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
-use App\Models\MosquitoSystems\Product;
-use App\Models\MosquitoSystems\Tissue;
-use Illuminate\Http\Request;
 
 class CategoriesAction extends Controller
 {
+
+    /**
+     * @var int
+     */
+    private $categoryId;
+
+    public function __construct() {
+        $this->categoryId = (int) \request()->post('categoryId');
+    }
 
     protected $relations = [
         Category::class => [
@@ -19,67 +25,46 @@ class CategoriesAction extends Controller
         ],
     ];
 
-    public function __invoke(Request $request) {
+    public function __invoke() {
 
-        $method = \DB::table('category_has_model')
-            ->select('method')
-            ->where('category_id', (int)$request->post('categoryId'))
-            ->first()
-            ->method;
-
-        $data = call_user_func($method, (int)$request->post('categoryId'))->get();
-        if (isset($data[0]))
-            $result = clone $data[0];
-        else
-            $result = clone $data;
-        $end = [];
-//        \Debugbar::info(Product::find(1)->tissue()->get());
-//        \Debugbar::info($result);
-        for ($i = 0; $i < count($this->relations[strtok($method, '::')]); $i++) {
+        $method = $this->getMethod();
+        $relationsCount = count($this->relations[strtok($method, '::')]);
+        $data = $this->execute($method);
+        for ($i = 0; $i < $relationsCount; $i++) {
             $relation = $this->relations[strtok($method, '::')][$i];
-            if (is_iterable($result)) {
-                \Debugbar::info('is iterable ' . $i);
-                \Debugbar::info($result);
-                // Надо избавиться от N+1 query.
-                // Имеем: коллекцию результатов, в каждом из них
-                // можно вытащить айдишник, и сделать запрос whereIn
-                foreach ($result as $item) {
-                    if ($item->$relation() !== null) {
-//                        \Debugbar::info($item->$relation()->get());
-                        if ($i == count($this->relations[strtok($method, '::')]) - 1) {
-                            $end[] = $item->with($relation)->get()[0];
-                        } else {
-                            $data[] = $item->with($relation)->get();
-                        }
-//                        \Debugbar::info('here');
-                    }
-                }
-            } else {
-                if ($result->$relation() !== null) {
-                    $data = $result->getRelation($relation);
-                }
+            $data = $data->pluck($relation);
+            if ($this->uselessCollection($data)) {
+                $data = $data[0];
             }
-            $result = $data;
-//            \Debugbar::info($result);
         }
-        \Debugbar::info($end);
-        $data = $end;
-
-//        \Debugbar::info($data->pluck('type'));
-
-//        foreach ($data as $item) {
-//            foreach ($this->relations[strtok($method, '::')] as $relation) {
-//                if ($item->$relation()->exists()) {
-//                    $data = $item->getRelation($relation);
-//                }
-//            }
-//        }
-//        \Debugbar::info($data);
 
         return view('ajax.mosquito-systems.tissue')
             ->with(compact('data'));
-//        return dump(
-//            call_user_func($model . '::all')
-//        );
+    }
+
+    protected function execute($method) {
+        return
+            call_user_func(
+                $method,
+                $this->categoryId
+            )->get();
+    }
+
+    protected function uselessCollection($data) {
+        return
+            isset($data[0]) &&
+            is_iterable($data[0]);
+    }
+
+    protected function getMethod() {
+        $query = \DB::table('category_has_model')
+            ->select('method')
+            ->where('category_id', $this->categoryId)
+            ->first();
+        if ($query !== null) {
+            return $query->method;
+        }
+
+        return false;
     }
 }
