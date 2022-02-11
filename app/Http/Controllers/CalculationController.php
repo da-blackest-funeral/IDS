@@ -7,6 +7,16 @@ use App\Models\Category;
 class CalculationController extends Controller
 {
     public function index() {
+
+//        dd(
+//            Category::find(1)->with('type')->getRelation('type')->get()
+//        );
+//        dd(
+//            Category::with('type')
+//                ->getRelation('type')
+//                ->get())
+//        ;
+
         return view('welcome')->with([
             'data' => Category::all(),
             'superCategories' => Category::whereIn(
@@ -17,6 +27,7 @@ class CalculationController extends Controller
                     ->toArray()
             )->get(),
         ]);
+
 //        $product = Product::first();
 //        dump($product->load(['tissue', 'type']));
 

@@ -41,7 +41,7 @@ return new class extends Migration {
         Schema::create('category_has_model', function (Blueprint $table) {
             $table->id();
             $table->foreignId('category_id');
-            $table->string('model')->nullable();
+            $table->string('method')->nullable();
             $table->timestamps();
         });
     }

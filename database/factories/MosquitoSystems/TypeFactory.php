@@ -2,6 +2,7 @@
 
 namespace Database\Factories\MosquitoSystems;
 
+use App\Models\Category;
 use App\Models\MosquitoSystems\Type;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -17,6 +18,10 @@ class TypeFactory extends Factory
     {
         return [
             'name' => $this->faker->word() . 'Type',
+            'category_id' => $this->faker->numberBetween(
+                Category::whereNotNull('parent_id')->min('id'),
+                Category::whereNotNull('parent_id')->max('id')
+            ),
             'yandex' => 'https://yandex-market/' . $this->faker->word(),
             'page_link' => $this->faker->domainName(),
             'measure_link' => $this->faker->domainName(),

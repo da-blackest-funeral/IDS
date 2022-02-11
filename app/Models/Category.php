@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\MosquitoSystems\Type;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -34,4 +35,14 @@ class Category extends Model
       'name',
       'parent_id'
     ];
+
+    public function type() {
+        return $this->hasOne(Type::class, 'category_id');
+    }
+
+    public function scopeTissues($query, $id) {
+        $query->whereId($id)
+            ->has('type.products.tissue')
+            ->with('type.products.tissue');
+    }
 }

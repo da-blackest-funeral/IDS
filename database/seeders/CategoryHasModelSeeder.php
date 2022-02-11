@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\MosquitoSystems\Slope;
-use App\Models\MosquitoSystems\Tissue;
-use App\Models\MosquitoSystems\Wrap;
+use App\Models\Category;
+use App\Models\Other\Slope;
+use App\Models\Other\Wrap;
 use App\Models\TypesWindows;
 use Illuminate\Database\Seeder;
 
@@ -19,22 +19,22 @@ class CategoryHasModelSeeder extends Seeder
         $relations = [
             [
                 'category_ids' => range(5, 13),
-                'model' => Tissue::class,
+                'method' => Category::class . '::tissues',
             ],
             [
                 'category_ids' => range(14, 18) + [19, 21, 23],
-                'model' => TypesWindows::class,
+                'method' => TypesWindows::class,
             ],
             [
                 'category_ids' => [24],
-                'model' => Slope::class,
+                'method' => Slope::class,
             ],
             [
                 'category_ids' => [20, 25],
             ],
             [
                 'category_ids' => [22],
-                'model' => Wrap::class,
+                'method' => Wrap::class,
             ],
         ];
         foreach ($relations as $relation) {
@@ -42,7 +42,7 @@ class CategoryHasModelSeeder extends Seeder
                 \DB::table('category_has_model')
                     ->insert([
                         'category_id' => $id,
-                        'model' => $relation['model'] ?? '',
+                        'method' => $relation['method'] ?? '',
                     ]);
             }
         }

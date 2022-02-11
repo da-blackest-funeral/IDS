@@ -42,7 +42,7 @@ class Product extends Model
     protected $hidden = ['id'];
 
     public function tissue() {
-        return $this->hasOne(Tissue::class, 'id', 'tissue_id');
+        return $this->belongsTo(Tissue::class,'tissue_id','id');
     }
 
     public function type() {

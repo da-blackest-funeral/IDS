@@ -21,6 +21,7 @@ return new class extends Migration
     {
         Schema::create("{$this->prefix}_types", function (Blueprint $table) {
             $table->id();
+            $table->foreignId('category_id');
             $table->string('name');
             $table->string('yandex');
             $table->string('page_link');

@@ -9,6 +9,6 @@ use Illuminate\Http\Request;
 class MosquitoSystemsController extends Controller
 {
     public function profile(Request $request) {
-        Profile::
+//        Profile::
     }
 }
