@@ -17,7 +17,8 @@ class DatabaseSeeder extends Seeder
             ServiceSeeder::class,
             TypesWindowsSeeder::class,
             MosquitoSystemsSeeder::class,
-
+            CategoryHasModelSeeder::class,
+            OtherCategoriesSeeder::class,
         ]);
     }
 }

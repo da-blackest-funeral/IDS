@@ -37,6 +37,13 @@ return new class extends Migration {
             $table->timestamps();
         });
         $this->comment('types_windows', 'Типы окон - Алюминиевые, окна из ПВХ и т.д.');
+
+        Schema::create('category_has_model', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('category_id');
+            $table->string('model')->nullable();
+            $table->timestamps();
+        });
     }
 
     /**

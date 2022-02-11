@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use \App\Http\Controllers\Ajax\CategoriesAction;
+use \App\Http\Controllers\Ajax\MosquitoSystemsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,7 +15,18 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [\App\Http\Controllers\ProductController::class, 'index']);
+Route::get('/', [\App\Http\Controllers\CalculationController::class, 'index']);
+
+Route::prefix('ajax')->group(function () {
+    Route::get('/get-items', CategoriesAction::class);
+
+    Route::prefix('mosquito-systems')->group(function () {
+        Route::get('/profile', [MosquitoSystemsController::class]);
+    });
+});
+
+
+//Route::post('/get-')
 
 Route::get('/dashboard', function () {
     return view('dashboard');
