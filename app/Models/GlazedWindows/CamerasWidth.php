@@ -1,15 +1,11 @@
 <?php
 
-namespace App\Models\Other;
+namespace App\Models\GlazedWindows;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Slope extends Model
+class CamerasWidth extends Model
 {
     use HasFactory;
-
-    protected $table = 'slopes';
-
-    protected $guarded = ['id'];
 }

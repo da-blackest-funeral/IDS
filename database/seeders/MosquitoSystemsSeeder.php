@@ -23,7 +23,7 @@ class MosquitoSystemsSeeder extends Seeder
         Tissue::factory()->count(50)->create();
         Profile::factory()->count(50)->create();
         Type::factory()->count(20)->create();
-        Product::factory()->count(20)->create();
+        Product::factory()->count(100)->create();
         $this->seedProductAdditional(150);
         $this->seedTypeAdditional(150);
         $this->seedTypeGroup(30);
