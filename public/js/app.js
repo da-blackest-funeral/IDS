@@ -1,5 +1,15 @@
 (self["webpackChunk"] = self["webpackChunk"] || []).push([["/js/app"],{
 
+/***/ "./resources/js/MosquitoSystems/getProfile.js":
+/*!****************************************************!*\
+  !*** ./resources/js/MosquitoSystems/getProfile.js ***!
+  \****************************************************/
+/***/ (() => {
+
+
+
+/***/ }),
+
 /***/ "./resources/js/app.js":
 /*!*****************************!*\
   !*** ./resources/js/app.js ***!
@@ -14,6 +24,8 @@ __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 window.$ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 
 __webpack_require__(/*! ./categoryIsChosen */ "./resources/js/categoryIsChosen.js");
+
+__webpack_require__(/*! ./MosquitoSystems/getProfile */ "./resources/js/MosquitoSystems/getProfile.js");
 
 
 window.Alpine = alpinejs__WEBPACK_IMPORTED_MODULE_0__["default"];

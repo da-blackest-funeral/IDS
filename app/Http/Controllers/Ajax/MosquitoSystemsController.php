@@ -9,6 +9,14 @@ use Illuminate\Http\Request;
 class MosquitoSystemsController extends Controller
 {
     public function profile(Request $request) {
-//        Profile::
+        $data = Profile::query()
+            ->select('name')
+            ->whereHas('products.type', function ($query) use ($request) {
+                return $query->where('category_id', $request->get('categoryId'));
+            })
+            ->get();
+        \Debugbar::info($data);
+        return view('ajax.mosquito-systems.profiles')
+            ->with(compact('data'));
     }
 }

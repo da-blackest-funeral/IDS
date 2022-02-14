@@ -21,7 +21,7 @@ Route::prefix('ajax')->group(function () {
     Route::get('/get-items', CategoriesAction::class);
 
     Route::prefix('mosquito-systems')->group(function () {
-        Route::get('/profile', [MosquitoSystemsController::class]);
+        Route::get('/profile', [MosquitoSystemsController::class, 'profile']);
     });
 });
 
