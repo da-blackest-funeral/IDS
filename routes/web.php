@@ -23,10 +23,11 @@ Route::prefix('ajax')->group(function () {
     Route::prefix('mosquito-systems')->group(function () {
         Route::get('/profile', [MosquitoSystemsController::class, 'profile']);
     });
+
+    Route::prefix('glazed-windows')->group(function () {
+        Route::get('/last', [\App\Http\Controllers\Ajax\GlazedWindowsController::class, 'getLast']);
+    });
 });
-
-
-//Route::post('/get-')
 
 Route::get('/dashboard', function () {
     return view('dashboard');

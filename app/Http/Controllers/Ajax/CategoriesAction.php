@@ -13,9 +13,7 @@ class CategoriesAction extends Controller
      */
     private $categoryId;
 
-    public function __construct() {
-        $this->categoryId = (int) \request()->post('categoryId');
-    }
+    protected $categoriesNames;
 
     protected $relations = [
         Category::class => [
@@ -24,6 +22,14 @@ class CategoriesAction extends Controller
             'tissue',
         ],
     ];
+
+    public function __construct() {
+        $this->categoryId = (int)\request()->post('categoryId');
+        $this->categoriesNames = [
+            'profile' => range(5, 13),
+            'glazed_windows_last' => range(14, 18),
+        ];
+    }
 
     public function __invoke() {
 
@@ -53,7 +59,10 @@ class CategoriesAction extends Controller
          */
 
         return view('ajax.mosquito-systems.tissue')
-            ->with(compact('data'));
+            ->with([
+                'data' => $data,
+                'name' => $this->name()
+            ]);
     }
 
     protected function execute($method) {
@@ -91,5 +100,15 @@ class CategoriesAction extends Controller
         return isset(
             $this->relations[strtok($method, '::')]
         );
+    }
+
+    protected function name() {
+        foreach ($this->categoriesNames as $name => $ids) {
+            if (in_array((int)request()->post('categoryId'), $ids)) {
+                return $name;
+            }
+        }
+
+        return false;
     }
 }
