@@ -108,6 +108,7 @@ return new class extends Migration {
             $table->string('name');
             $table->float('price');
             $table->integer('sort');
+            $table->string('thickness')->comment('Толщина');
             $table->foreignId('category_id')
                 ->constrained('categories');
             $table->timestamps();

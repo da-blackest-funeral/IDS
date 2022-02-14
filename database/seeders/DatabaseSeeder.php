@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             MosquitoSystemsSeeder::class,
             CategoryHasModelSeeder::class,
             OtherCategoriesSeeder::class,
+            GlassSeeder::class,
         ]);
     }
 }

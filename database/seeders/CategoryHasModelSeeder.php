@@ -42,7 +42,7 @@ class CategoryHasModelSeeder extends Seeder
         ];
         foreach ($relations as $relation) {
             foreach ($relation['category_ids'] as $id) {
-                \DB::table('category_has_model')
+                \DB::table('category_has_method')
                     ->insert([
                         'category_id' => $id,
                         'method' => $relation['method'] ?? '',

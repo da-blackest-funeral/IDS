@@ -85,7 +85,7 @@ class CategoriesAction extends Controller
     }
 
     protected function getMethod() {
-        $query = \DB::table('category_has_model')
+        $query = \DB::table('category_has_method')
             ->select('method')
             ->where('category_id', $this->categoryId)
             ->first();
