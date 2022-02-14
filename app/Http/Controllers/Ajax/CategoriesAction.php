@@ -13,8 +13,6 @@ class CategoriesAction extends Controller
      */
     private $categoryId;
 
-    protected $categoriesNames;
-
     protected $relations = [
         Category::class => [
             'type',
@@ -22,13 +20,27 @@ class CategoriesAction extends Controller
             'tissue',
         ],
     ];
+    /**
+     * @var array
+     */
+    protected $categoriesLinks;
+
+    protected $names;
 
     public function __construct() {
         $this->categoryId = (int)\request()->post('categoryId');
-        $this->categoriesNames = [
-            'profile' => range(5, 13),
-            'glazed_windows_last' => range(14, 18),
+        // todo исправить дублирование - возможно, сделать profile = [ids = [...], link = [...]]
+        $this->categoriesLinks = [
+            '/ajax/mosquito-systems/profile' => range(5, 13),
+            '/ajax/glazed-windows/last' => range(14, 18),
+            '/ajax/windowsill/type' => [19],
         ];
+        $this->names = [
+            'profile' => range(5, 13),
+            'types_window' => range(14, 18),
+            'windowsills' => [19],
+        ];
+
     }
 
     public function __invoke() {
@@ -61,6 +73,7 @@ class CategoriesAction extends Controller
         return view('ajax.mosquito-systems.tissue')
             ->with([
                 'data' => $data,
+                'link' => $this->link(),
                 'name' => $this->name()
             ]);
     }
@@ -102,8 +115,18 @@ class CategoriesAction extends Controller
         );
     }
 
+    protected function link() {
+        foreach ($this->categoriesLinks as $link => $ids) {
+            if (in_array((int)request()->post('categoryId'), $ids)) {
+                return $link;
+            }
+        }
+
+        return false;
+    }
+
     protected function name() {
-        foreach ($this->categoriesNames as $name => $ids) {
+        foreach ($this->names as $name => $ids) {
             if (in_array((int)request()->post('categoryId'), $ids)) {
                 return $name;
             }

@@ -1,4 +1,4 @@
-<select name="{{ $name }}" id="{{ $name }}" onchange="{{ Str::camel('get_' . $name) }}()">
+<select name="{{ $name }}" id="{{ $name }}" onchange="getConfiguration('{{ $link }}')">
     @forelse($data as $item)
         <option value="{{ $item->id }}">{{ $item->name }}</option>
     @empty

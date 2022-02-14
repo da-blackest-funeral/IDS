@@ -30,30 +30,13 @@
 <script src="{{ asset('js/manifest.js') }}"></script>
 <script src="{{ asset('js/app.js') }}"></script>
 <script>
-    function getProfile() {
+    function getConfiguration(url) {
         $.ajax({
             type: 'GET',
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            url: '/ajax/mosquito-systems/profile',
-            data: {
-                categoryId: $('#categories').find('option:selected').val()
-            },
-            success: function (data) {
-                console.log(data)
-                $('#load').html(data)
-            }
-        });
-    }
-
-    function getGlazedWindowsLast() {
-        $.ajax({
-            type: 'GET',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            url: '/ajax/glazed-windows/last',
+            url: url,
             data: {
                 categoryId: $('#categories').find('option:selected').val()
             },

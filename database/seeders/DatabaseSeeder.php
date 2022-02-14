@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             CategoryHasModelSeeder::class,
             OtherCategoriesSeeder::class,
             GlassSeeder::class,
+            WindowsillSeeder::class,
         ]);
     }
 }

@@ -27,6 +27,10 @@ Route::prefix('ajax')->group(function () {
     Route::prefix('glazed-windows')->group(function () {
         Route::get('/last', [\App\Http\Controllers\Ajax\GlazedWindowsController::class, 'getLast']);
     });
+
+    Route::prefix('windowsill')->group(function () {
+        Route::get('/type', [\App\Http\Controllers\Ajax\WindowsillController::class, 'type']);
+    });
 });
 
 Route::get('/dashboard', function () {
