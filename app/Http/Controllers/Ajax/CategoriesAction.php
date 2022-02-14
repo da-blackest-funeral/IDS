@@ -28,26 +28,45 @@ class CategoriesAction extends Controller
     public function __invoke() {
 
         $method = $this->getMethod();
-        $relationsCount = count($this->relations[strtok($method, '::')]);
-        $data = $this->execute($method);
-        for ($i = 0; $i < $relationsCount; $i++) {
-            $relation = $this->relations[strtok($method, '::')][$i];
-            $data = $data->pluck($relation);
-            if ($this->uselessCollection($data)) {
-                $data = $data[0];
+        $data = [];
+        if ($method) {
+            $data = $this->execute($method);
+        }
+
+        if ($this->hasRelations($method)) {
+            $relationsCount = count($this->relations[strtok($method, '::')]);
+            for ($i = 0; $i < $relationsCount; $i++) {
+                $relation = $this->relations[strtok($method, '::')][$i];
+                $data = $data->pluck($relation);
+                if ($this->uselessCollection($data)) {
+                    $data = $data[0];
+                }
             }
         }
+
+        /*
+         * todo продумать такой момент: если массив data пустой, то нужно возвращать сразу view
+         * todo чтобы сделать это универсально, можно называть их как additional.category<id>, например category10
+         * todo то, какой селект будет выводиться после выбора во втором селекте, зависит от категории (кроме пленки,
+         *  там зависит и от второго селекта). У стеклопакетов вывод дополнительного зависит от количества камер из
+         * третьего селекта
+         */
 
         return view('ajax.mosquito-systems.tissue')
             ->with(compact('data'));
     }
 
     protected function execute($method) {
-        return
-            call_user_func(
-                $method,
-                $this->categoryId
-            )->get();
+        if ($this->methodName($method) != 'all') {
+            return call_user_func($method, $this->categoryId)
+                ->get();
+        } else {
+            return call_user_func($method);
+        }
+    }
+
+    protected function methodName($method) {
+        return substr($method, -3);
     }
 
     protected function uselessCollection($data) {
@@ -66,5 +85,11 @@ class CategoriesAction extends Controller
         }
 
         return false;
+    }
+
+    protected function hasRelations($method) {
+        return isset(
+            $this->relations[strtok($method, '::')]
+        );
     }
 }
