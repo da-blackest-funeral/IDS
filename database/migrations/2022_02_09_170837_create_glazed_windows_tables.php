@@ -28,6 +28,8 @@ return new class extends Migration {
         Schema::create("{$this->prefix}_with_heating", function (Blueprint $table) {
             $table->id();
             $table->float('price');
+            $table->foreignId('group_id')
+                ->constrained("{$this->prefix}_groups");
             $table->string('name');
             $table->integer('cameras');
             $table->foreignId('category_id')
@@ -116,6 +118,16 @@ return new class extends Migration {
             $table->timestamps();
         });
         $this->comment('glass', 'Стекло');
+
+        Schema::create("temperature-controllers", function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->text('description');
+            $table->string('amperage');
+            $table->string('temperature-range');
+            $table->float('price');
+            $table->timestamps();
+        });
     }
 
     /**

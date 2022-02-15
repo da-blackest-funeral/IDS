@@ -16,4 +16,6 @@ use Illuminate\Database\Eloquent\Model;
 class Group extends Model
 {
     use HasFactory;
+
+    protected $table = 'glazed_windows_groups';
 }

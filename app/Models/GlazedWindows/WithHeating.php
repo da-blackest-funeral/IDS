@@ -19,4 +19,8 @@ class WithHeating extends Model
     use HasFactory;
 
     protected $table = 'glazed_windows_with_heating';
+
+    public function group() {
+        return $this->belongsTo(Group::class, 'group_id', 'id');
+    }
 }

@@ -17,9 +17,11 @@ class GlazedWindowsSeeder extends Seeder
      */
     public function run() {
         $this->seedLayers();
+        $this->seedGroups();
         CamerasWidth::factory()->count(15)->create();
         GlazedWindows::factory()->count(15)->create();
         WithHeating::factory()->count(15)->create();
+        $this->seedTemperatureControllers();
     }
 
     protected function seedLayers() {
@@ -32,5 +34,33 @@ class GlazedWindowsSeeder extends Seeder
                     'name' => 'Стекло'
                 ],
             ]);
+    }
+
+    protected function seedTemperatureControllers() {
+        \DB::table('temperature-controllers')
+            ->insert([
+               'name' => 'RTR-E 6163 (белый)',
+               'description' => 'Электромеханический терморегулятор с выключателем',
+                'amperage' => '16A',
+                'temperature-range' => '+5...+30C',
+                'price' => 2600
+            ]);
+        \DB::table('temperature-controllers')
+            ->insert([
+                'name' => 'TH-0343SA (белый)',
+                'description' => 'Терморегулятор электронный со встроенным датчиком',
+                'amperage' => '16A',
+                'temperature-range' => '+5...+30C',
+                'price' => 6500
+            ]);
+    }
+
+    protected function seedGroups() {
+        foreach (['Нагреваемые СПО', 'Нагреваемые СПД', 'Нагреваемый триплекс', 'Нагреваемое стекло'] as $group) {
+            \DB::table('glazed_windows_groups')
+                ->insert([
+                    'name' => $group
+                ]);
+        }
     }
 }

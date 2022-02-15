@@ -5,6 +5,7 @@ namespace Database\Factories\GlazedWindows;
 use App\Models\Category;
 use App\Models\GlazedWindows\CamerasWidth;
 use App\Models\GlazedWindows\GlazedWindows;
+use App\Models\GlazedWindows\Group;
 use App\Models\GlazedWindows\Layer;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -19,6 +20,7 @@ class GlazedWindowsFactory extends Factory
     public function definition()
     {
         return [
+            'group_id' => $this->faker->numberBetween(1, Group::count()),
             'name' => $this->faker->randomFloat(2, 2, 8) . 'мм.',
             'layer_id' => $this->faker->numberBetween(1, Layer::count()),
             'width_id' => $this->faker->numberBetween(1, CamerasWidth::count()),
