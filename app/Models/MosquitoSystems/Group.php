@@ -42,4 +42,8 @@ class Group extends Model
             'type_id'
         );
     }
+
+    public function additional() {
+        return $this->hasMany(Additional::class, 'group_id', 'id');
+    }
 }

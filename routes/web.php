@@ -26,7 +26,7 @@ Route::prefix('ajax')->group(function () {
 
     Route::prefix('mosquito-systems')->group(function () {
         Route::get('/profile', [MosquitoSystemsController::class, 'profile']);
-        Route::get('/additional', AdditionalController::class);
+        Route::get('/additional', [MosquitoSystemsController::class, 'additional']);
     });
 
     Route::prefix('glazed-windows')->group(function () {

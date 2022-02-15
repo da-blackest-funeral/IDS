@@ -51,12 +51,16 @@ class Additional extends Model
         );
     }
 
-    public function additional() {
+    public function types() {
         return $this->belongsToMany(
             Type::class,
             'mosquito_systems_type_additional',
             'additional_id',
             'type_id',
         );
+    }
+
+    public function group() {
+        return $this->belongsTo(Group::class);
     }
 }
