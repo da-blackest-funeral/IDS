@@ -21,6 +21,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Group whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Group whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MosquitoSystems\Type[] $types
+ * @property-read int|null $types_count
  */
 class Group extends Model
 {

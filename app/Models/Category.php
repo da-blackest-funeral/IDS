@@ -24,6 +24,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Category whereUpdatedAt($value)
  * @mixin \Eloquent
  * @method static \Database\Factories\CategoryFactory factory(...$parameters)
+ * @property-read Type|null $type
+ * @method static \Illuminate\Database\Eloquent\Builder|Category tissues($id)
  */
 class Category extends Model
 {

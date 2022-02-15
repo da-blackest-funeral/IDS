@@ -28,6 +28,7 @@ return new class extends Migration {
         Schema::create("{$this->prefix}_with_heating", function (Blueprint $table) {
             $table->id();
             $table->float('price');
+            $table->string('name');
             $table->integer('cameras');
             $table->foreignId('category_id')
                 ->constrained('categories');
@@ -70,7 +71,7 @@ return new class extends Migration {
 
         Schema::create("{$this->prefix}_cameras_width", function (Blueprint $table) {
             $table->id();
-            $table->integer('width');
+            $table->float('width');
             $table->timestamps();
         });
         $this->comment("{$this->prefix}_cameras_width", 'Все значения ширины камеры');

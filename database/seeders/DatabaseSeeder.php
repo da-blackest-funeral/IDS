@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             OtherCategoriesSeeder::class,
             GlassSeeder::class,
             WindowsillSeeder::class,
+            GlazedWindowsSeeder::class,
         ]);
     }
 }

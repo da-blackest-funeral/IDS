@@ -37,6 +37,14 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Type whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Type whereYandex($value)
  * @mixin \Eloquent
+ * @property int $category_id
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MosquitoSystems\Additional[] $additional
+ * @property-read int|null $additional_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MosquitoSystems\Group[] $groups
+ * @property-read int|null $groups_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MosquitoSystems\Product[] $products
+ * @property-read int|null $products_count
+ * @method static \Illuminate\Database\Eloquent\Builder|Type whereCategoryId($value)
  */
 class Type extends Model
 {

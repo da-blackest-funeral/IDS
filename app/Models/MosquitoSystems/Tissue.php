@@ -27,6 +27,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Tissue whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Tissue whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MosquitoSystems\Product[] $products
+ * @property-read int|null $products_count
  */
 class Tissue extends Model
 {
