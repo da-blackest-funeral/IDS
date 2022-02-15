@@ -37,7 +37,7 @@ class MosquitoSystemsController extends Controller
         $additional = $this->makeCollectionNotNested($additionalCollections);
         $groups = $additional->pluck('group')->unique();
 
-        return view('ajax.additional.1')->with(
+        return view('ajax.mosquito-systems.additional')->with(
             compact('additional', 'groups')
         );
     }

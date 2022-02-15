@@ -1,4 +1,6 @@
-<select name="last" id="last" onchange="getConfiguration('/ajax/glazed-windows/additional', 'load-additional')">
+<select name="cameras-count" id="cameras-count"
+        onchange="getConfiguration('/ajax/glazed-windows/additional', 'load-additional', 'cameras-count')"
+>
     @if(empty($data))
         <option value="1">Однокамерный</option>
         <option value="2">Двухкамерный</option>

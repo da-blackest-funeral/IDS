@@ -30,17 +30,20 @@
 <script src="{{ asset('js/manifest.js') }}"></script>
 <script src="{{ asset('js/app.js') }}"></script>
 <script>
-    function getConfiguration(url, id) {
+    function getConfiguration(url, id, selectorId = false) {
+        let data = {
+            categoryId: $('#categories').find('option:selected').val(),
+        }
+        if (selectorId) {
+            data.additional = $('#' + selectorId).find('option:selected').val();
+        }
         $.ajax({
             type: 'GET',
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             url: url,
-            data: {
-                categoryId: $('#categories').find('option:selected').val(),
-                additional: $('#tissues').find('option:selected').val()
-            },
+            data: data,
             success: function (data) {
                 console.log(data)
                 $('#' + id).html(data)

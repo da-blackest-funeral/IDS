@@ -33,4 +33,8 @@ use Illuminate\Database\Eloquent\Model;
 class GlazedWindows extends Model
 {
     use HasFactory;
+
+    public function camerasWidth() {
+        return $this->belongsTo(CamerasWidth::class, 'width_id', 'id');
+    }
 }

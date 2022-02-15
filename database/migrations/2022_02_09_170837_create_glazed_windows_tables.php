@@ -92,6 +92,7 @@ return new class extends Migration {
 
         Schema::create("{$this->prefix}", function (Blueprint $table) {
             $table->id();
+            $table->string('name');
             $table->foreignId('layer_id')
                 ->constrained("{$this->prefix}_layers");
             $table->foreignId('width_id')

@@ -19,6 +19,7 @@ class GlazedWindowsFactory extends Factory
     public function definition()
     {
         return [
+            'name' => $this->faker->randomFloat(2, 2, 8) . 'мм.',
             'layer_id' => $this->faker->numberBetween(1, Layer::count()),
             'width_id' => $this->faker->numberBetween(1, CamerasWidth::count()),
             'category_id' => 14,
