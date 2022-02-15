@@ -1,4 +1,4 @@
-<select name="{{ $name }}" id="{{ $name }}" onchange="getConfiguration('{{ $link }}')">
+<select name="{{ $name }}" id="{{ $name }}" onchange="getConfiguration('{{ $link }}', 'load')">
     @forelse($data as $item)
         <option value="{{ $item->id }}">{{ $item->name }}</option>
     @empty

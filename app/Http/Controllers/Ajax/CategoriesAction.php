@@ -36,7 +36,7 @@ class CategoriesAction extends Controller
             '/ajax/windowsill/type' => [19],
         ];
         $this->names = [
-            'profile' => range(5, 13),
+            'tissues' => range(5, 13),
             'types_window' => range(14, 18),
             'windowsills' => [19],
         ];

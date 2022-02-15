@@ -1,8 +1,12 @@
 <?php
 
+use App\Http\Controllers\Ajax\GlazedWindowsController;
+use App\Http\Controllers\Ajax\WindowsillController;
+use App\Http\Controllers\CalculationController;
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\Ajax\CategoriesAction;
 use \App\Http\Controllers\Ajax\MosquitoSystemsController;
+use \App\Http\Controllers\Ajax\AdditionalController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,22 +19,22 @@ use \App\Http\Controllers\Ajax\MosquitoSystemsController;
 |
 */
 
-Route::get('/', [\App\Http\Controllers\CalculationController::class, 'index']);
+Route::get('/', [CalculationController::class, 'index']);
 
 Route::prefix('ajax')->group(function () {
     Route::get('/get-items', CategoriesAction::class);
 
     Route::prefix('mosquito-systems')->group(function () {
         Route::get('/profile', [MosquitoSystemsController::class, 'profile']);
-        Route::get('/additional', \App\Http\Controllers\Ajax\AdditionalController::class);
+        Route::get('/additional', AdditionalController::class);
     });
 
     Route::prefix('glazed-windows')->group(function () {
-        Route::get('/last', [\App\Http\Controllers\Ajax\GlazedWindowsController::class, 'getLast']);
+        Route::get('/last', [GlazedWindowsController::class, 'getLast']);
     });
 
     Route::prefix('windowsill')->group(function () {
-        Route::get('/type', [\App\Http\Controllers\Ajax\WindowsillController::class, 'type']);
+        Route::get('/type', [WindowsillController::class, 'type']);
     });
 });
 

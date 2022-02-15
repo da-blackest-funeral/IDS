@@ -30,7 +30,7 @@
 <script src="{{ asset('js/manifest.js') }}"></script>
 <script src="{{ asset('js/app.js') }}"></script>
 <script>
-    function getConfiguration(url) {
+    function getConfiguration(url, id) {
         $.ajax({
             type: 'GET',
             headers: {
@@ -38,11 +38,12 @@
             },
             url: url,
             data: {
-                categoryId: $('#categories').find('option:selected').val()
+                categoryId: $('#categories').find('option:selected').val(),
+                additional: $('#tissues').find('option:selected').val()
             },
             success: function (data) {
                 console.log(data)
-                $('#load').html(data)
+                $('#' + id).html(data)
             }
         });
     }
