@@ -77,7 +77,7 @@
 
                     {{--<!--                    --><?php //if (in_array($_SESSION['priority'], [0, 1, 2, 4, 6, 7])) { ?>--}}
                     <li class="nav-item dropdown my-auto">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button"
+                        <a class="nav-link dropdown-toggle" id="navbarDropdown1" role="button"
                            data-toggle="dropdown"
                            aria-haspopup="true" aria-expanded="false">Заказы</a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
@@ -112,17 +112,19 @@
 {{--                    <?php if (in_array($_SESSION['priority'], [0, 2, 4, 7])) { ?>--}}
 
 
-{{--                    <li class="nav-item dropdown my-auto">--}}
-{{--                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button"--}}
-{{--                           data-toggle="dropdown"--}}
-{{--                           aria-haspopup="true" aria-expanded="false">Управление</a>--}}
-{{--                        <div class="dropdown-menu" aria-labelledby="navbarDropdown1">--}}
-{{--                            <a class="dropdown-item" href="/load.php?route=admin/price/index">Цены на товары и--}}
-{{--                                услуги</a>--}}
+                    <li class="nav-item dropdown my-auto">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button"
+                           data-toggle="dropdown"
+                           aria-haspopup="true" aria-expanded="false">Управление</a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
+                            <a class="dropdown-item" href="/load.php?route=admin/price/index">Цены на товары и
+                                услуги</a>
 
-{{--                            <div class="dropdown-divider"></div>--}}
-{{--                            <a class="dropdown-item" href="/load.php?route=admin/phone/zadarma">Звонки</a>--}}
-{{--                            <div class="dropdown-divider"></div>--}}
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="/load.php?route=admin/phone/zadarma">Звонки</a>
+                            <div class="dropdown-divider"></div>
+                        </div>
+                    </li>
 {{--                            <?php if (in_array($_SESSION['priority'], [2, 7])) { ?><a class="dropdown-item"--}}
 {{--                                                                                      href="/load.php?route=admin/sborshik/graph">График--}}
 {{--                                работы сотрудников</a><?php } ?>--}}
@@ -138,16 +140,14 @@
 {{--                            <?php if (in_array($_SESSION['priority'], [2, 7])) { ?><a class="dropdown-item"--}}
 {{--                                                                                      href="/load.php?route=admin/stat/index&type=other">Прочее</a><?php } ?>--}}
 
-{{--                        </div>--}}
-{{--                    </li>--}}
 
 
 {{--                    <?php } ?>--}}
 
 {{--                    <?php if (in_array($_SESSION['priority'], [0, 2, 3, 4, 7])) { ?>--}}
-{{--                    <li class="nav-item my-auto">--}}
-{{--                        <a class="nav-link" href="/load.php?route=admin/document/list">Документы</a>--}}
-{{--                    </li>--}}
+                    <li class="nav-item my-auto">
+                        <a class="nav-link" href="#">Документы</a>
+                    </li>
 {{--                    <?php } ?>--}}
 
 {{--                    <?php--}}
@@ -170,9 +170,9 @@
 
 
 {{--                    <?php if ($_SESSION['priority'] == 3) { ?>--}}
-{{--                    <li class="nav-item my-auto">--}}
-{{--                        <a class="nav-link" href="/load.php?route=admin/setka/dataspec">Спецификации</a>--}}
-{{--                    </li>--}}
+                    <li class="nav-item my-auto">
+                        <a class="nav-link" href="#">Спецификации</a>
+                    </li>
 {{--                    <?php } ?>--}}
 
 
@@ -190,18 +190,18 @@
 
 
 {{--                    <?php if (in_array($_SESSION['priority'], [2, 7])) { ?>--}}
-{{--                    <li class="nav-item dropdown my-auto">--}}
-{{--                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button"--}}
-{{--                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">План<span--}}
-{{--                                id="plan_not_readed_hd"><?= $str_not_readed; ?></span></a>--}}
-{{--                        <div class="dropdown-menu" aria-labelledby="navbarDropdown1">--}}
-{{--                            <a class="dropdown-item" href="/load.php?route=admin/plan/my">Мой план</a>--}}
-{{--                            <a class="dropdown-item" href="/load.php?route=admin/plan/all">План всех сотрудников</a>--}}
-{{--                            <a class="dropdown-item" href="/load.php?route=admin/plan/dolgo">Долгосрочный план всех</a>--}}
-{{--                            <a class="dropdown-item" href="/load.php?route=admin/plan/add_plan">Добавить и ред.--}}
-{{--                                задания</a>--}}
-{{--                        </div>--}}
-{{--                    </li>--}}
+                    <li class="nav-item dropdown my-auto">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">План
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
+                            <a class="dropdown-item" href="/load.php?route=admin/plan/my">Мой план</a>
+                            <a class="dropdown-item" href="/load.php?route=admin/plan/all">План всех сотрудников</a>
+                            <a class="dropdown-item" href="/load.php?route=admin/plan/dolgo">Долгосрочный план всех</a>
+                            <a class="dropdown-item" href="/load.php?route=admin/plan/add_plan">Добавить и ред.
+                                задания</a>
+                        </div>
+                    </li>
 {{--                    <?php } ?>--}}
 
 
@@ -219,28 +219,22 @@
 {{--                    <?php if (in_array($_SESSION['priority'], [0, 2, 4, 7])) { ?>--}}
 
 
-{{--                    <li class="nav-item dropdown my-auto">--}}
-{{--                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button"--}}
-{{--                           data-toggle="dropdown"--}}
-{{--                           aria-haspopup="true" aria-expanded="false">Зарплаты</a>--}}
-{{--                        <div class="dropdown-menu" aria-labelledby="navbarDropdown1">--}}
-{{--                            <?php if (in_array($_SESSION['priority'], [0, 2, 7])) { ?><a class="dropdown-item"--}}
-{{--                                                                                         href="/load.php?route=admin/master/zp">Зарплаты--}}
-{{--                                монтажникам</a><?php } ?>--}}
-{{--                            <a class="dropdown-item" href="/load.php?route=admin/sborshik/graph">Зарплаты менеджерам</a>--}}
-{{--                            <?php if (in_array($_SESSION['priority'], [0, 2, 7])) { ?><a class="dropdown-item"--}}
-{{--                                                                                         href="/load.php?route=admin/master/history">Бонусы--}}
-{{--                                для монтажников</a><?php } ?>--}}
-{{--                        </div>--}}
-{{--                    </li>--}}
+                    <li class="nav-item dropdown my-auto">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button"
+                           data-toggle="dropdown"
+                           aria-haspopup="true" aria-expanded="false">Зарплаты</a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
+                            <a class="dropdown-item" href="/load.php?route=admin/master/zp">Зарплаты
+                                монтажникам</a>
+                            <a class="dropdown-item" href="/load.php?route=admin/sborshik/graph">Зарплаты менеджерам</a>
+                            <a class="dropdown-item" href="/load.php?route=admin/master/history">Бонусы
+                                для монтажников</a>
+                        </div>
+                    </li>
 
-{{--                    <?php } ?>--}}
-
-{{--                    <?php if (in_array($_SESSION['priority'], [0, 1, 2, 4, 6, 7])) { ?>--}}
-{{--                    <li class="nav-item dropdown my-auto">--}}
-{{--                        <a class="nav-link" href="/master.php?calc=do">Рассчитать</a>--}}
-{{--                    </li>--}}
-{{--                    <?php } ?>--}}
+                    <li class="nav-item dropdown my-auto">
+                        <a class="nav-link" href="#">Рассчитать</a>
+                    </li>
 
 
 {{--                    <?php if (in_array($_SESSION['priority'], [1, 6])) { ?>--}}
@@ -251,16 +245,16 @@
 
 {{--                    <?php if (in_array($_SESSION['priority'], [1])) { ?>--}}
 
-{{--                    <li class="nav-item dropdown my-auto">--}}
-{{--                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button"--}}
-{{--                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Склад</a>--}}
-{{--                        <div class="dropdown-menu" aria-labelledby="navbarDropdown1">--}}
-{{--                            <a class="dropdown-item" href="/nabor.php">Остатки на складе</a>--}}
-{{--                            <a class="dropdown-item"--}}
-{{--                               href="/load.php?route=admin/sklad/history&type=<?= $_SESSION['id_user']; ?>">История--}}
-{{--                                перемещений</a>--}}
-{{--                        </div>--}}
-{{--                    </li>--}}
+                    <li class="nav-item dropdown my-auto">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Склад</a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
+                            <a class="dropdown-item" href="#">Остатки на складе</a>
+                            <a class="dropdown-item"
+                               href="#">История
+                                перемещений</a>
+                        </div>
+                    </li>
 
 {{--                    <li class="nav-item my-auto">--}}
 {{--                        <a class="nav-link" href="/newsmont.php">Уведомления</a>--}}
