@@ -19,7 +19,7 @@ class CategoriesAction extends Controller
     /**
      * For getting only related collections, we need to specify all relations
      *
-     * @var \string[][]
+     * @var string[][]
      */
     protected $relations = [
         Category::class => [

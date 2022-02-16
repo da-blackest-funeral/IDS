@@ -9,6 +9,12 @@ use Illuminate\Http\Request;
 
 class MosquitoSystemsController extends Controller
 {
+    /**
+     * Returns profiles for mosquito systems
+     *
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\View
+     */
     public function profile(Request $request) {
         $data = Profile::query()
             ->select('name')
@@ -21,10 +27,12 @@ class MosquitoSystemsController extends Controller
             ->with(compact('data'));
     }
 
-    // todo у стеклопакетов дополнительное условие на количество камер из 3 столбца
-    // todo посмотреть на оригинальном сайте, как подгружаются селекты со значениями ширины и т.д.
-    // todo у москитных сеток группы - это селекты, выводящиеся в additional (цвет, крепление и тд),
-    // todo а additional - значения, которые там выводятся - например, z-крепления пластик, коричневый цвет и тд
+    /**
+     * Returns additional fields
+     *
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\View
+     */
     public function additional(Request $request) {
         // для москитных сеток в реквесте должны быть category_id, tissue_id, а для стеклопакетов количество камер
         // в остальных первые 3 селекта не влияют на вывод дополнительных полей
@@ -42,6 +50,12 @@ class MosquitoSystemsController extends Controller
         );
     }
 
+    /**
+     * Makes from nested collections one with all data
+     *
+     * @param $nestedCollection
+     * @return \Illuminate\Support\Collection
+     */
     protected function makeCollectionNotNested($nestedCollection) {
         foreach ($nestedCollection as $collection) {
             foreach ($collection as $additional) {

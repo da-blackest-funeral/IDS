@@ -3,9 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
-use App\Models\Other\Slope;
-use App\Models\Other\Wrap;
+use App\Models\Slopes\Slope;
 use App\Models\TypesWindows;
+use App\Models\Wraps\Wrap;
 use Illuminate\Database\Seeder;
 
 class CategoryHasModelSeeder extends Seeder
