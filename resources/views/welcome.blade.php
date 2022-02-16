@@ -11,6 +11,7 @@
 <body>
 <div class="container">
     <select name="test" id="categories">
+        <option>Категория</option>
         @foreach($superCategories as $category)
             <optgroup label="{{ $category->name }}">
                 @foreach($data as $item)

@@ -5,14 +5,22 @@ namespace App\Http\Controllers\Ajax;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 
+/**
+ * This class made for control displaying data
+ * when category is chosen in single point
+ */
 class CategoriesAction extends Controller
 {
 
     /**
      * @var int
      */
-    private $categoryId;
-
+    protected $categoryId;
+    /**
+     * For getting only related collections, we need to specify all relations
+     *
+     * @var \string[][]
+     */
     protected $relations = [
         Category::class => [
             'type',
@@ -21,34 +29,54 @@ class CategoriesAction extends Controller
         ],
     ];
     /**
+     * All concrete information about categories groups
+     *
      * @var array
      */
-    protected $categoriesLinks;
-
-    protected $names;
+    protected $categories;
 
     public function __construct() {
         $this->categoryId = (int)\request()->post('categoryId');
-        // todo исправить дублирование - возможно, сделать profile = [ids = [...], link = [...]]
-        $this->categoriesLinks = [
-            '/ajax/mosquito-systems/profile' => range(5, 13),
-            '/ajax/glazed-windows/last' => range(14, 18),
-            '/ajax/windowsill/type' => [19],
+        $this->categories = [
+            [
+                'link' => '/ajax/mosquito-systems/profile',
+                'name' => 'tissues',
+                'ids' => range(5, 13),
+            ],
+            [
+                'link' => '/ajax/glazed-windows/last',
+                'name' => 'types_window',
+                'ids' => range(14, 18),
+            ],
+            [
+                'link' => '/ajax/windowsill/type',
+                'name' => 'windowsills',
+                'ids' => [19]
+            ],
         ];
-        $this->names = [
-            'tissues' => range(5, 13),
-            'types_window' => range(14, 18),
-            'windowsills' => [19],
-        ];
-
     }
 
+
+    /*
+     * todo то, какой селект будет выводиться после выбора во втором селекте, зависит от категории (кроме пленки,
+     *  там зависит и от второго селекта). У стеклопакетов вывод дополнительного зависит от количества камер из
+     * третьего селекта
+     */
+
+    /**
+     * In this main method needed data selects universally from special database table,
+     * that specifies method's name to be executed.
+     * If method is not specified, returns view with additional data
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
     public function __invoke() {
 
         $method = $this->getMethod();
-        $data = [];
         if ($method) {
             $data = $this->execute($method);
+        } else {
+            return view("ajax.additional.category{$this->categoryId}-additional");
         }
 
         if ($this->hasRelations($method)) {
@@ -62,24 +90,22 @@ class CategoriesAction extends Controller
             }
         }
 
-        /*
-         * todo продумать такой момент: если массив data пустой, то нужно возвращать сразу view
-         * todo чтобы сделать это универсально, можно называть их как additional.category<id>, например category10
-         * todo то, какой селект будет выводиться после выбора во втором селекте, зависит от категории (кроме пленки,
-         *  там зависит и от второго селекта). У стеклопакетов вывод дополнительного зависит от количества камер из
-         * третьего селекта
-         */
-
         return view('ajax.mosquito-systems.tissue')
             ->with([
                 'data' => $data,
-                'link' => $this->link(),
-                'name' => $this->name()
+                'link' => $this->category('link'),
+                'name' => $this->category('name'),
             ]);
     }
 
+    /**
+     * Executes specified function and returns selected data
+     *
+     * @param $method
+     * @return false|mixed
+     */
     protected function execute($method) {
-        if ($this->methodName($method) != 'all') {
+        if (!$this->methodIsAll($method)) {
             return call_user_func($method, $this->categoryId)
                 ->get();
         } else {
@@ -87,16 +113,32 @@ class CategoriesAction extends Controller
         }
     }
 
-    protected function methodName($method) {
-        return substr($method, -3);
+    /**
+     * If method is 'all'
+     *
+     * @param $method
+     * @return bool
+     */
+    protected function methodIsAll($method) {
+        return substr($method, -3) == 'all';
     }
 
+    /**
+     * If collection has only one useless nested collection with needed data
+     *
+     * @param $data
+     * @return bool
+     */
     protected function uselessCollection($data) {
-        return
-            isset($data[0]) &&
+        return isset($data[0]) &&
             is_iterable($data[0]);
     }
 
+    /**
+     * Returns method's name for this category
+     *
+     * @return false|mixed
+     */
     protected function getMethod() {
         $query = \DB::table('category_has_method')
             ->select('method')
@@ -109,26 +151,28 @@ class CategoriesAction extends Controller
         return false;
     }
 
+    /**
+     * Checks if class of method has specified relations
+     *
+     * @param $method
+     * @return bool
+     */
     protected function hasRelations($method) {
         return isset(
             $this->relations[strtok($method, '::')]
         );
     }
 
-    protected function link() {
-        foreach ($this->categoriesLinks as $link => $ids) {
-            if (in_array((int)request()->post('categoryId'), $ids)) {
-                return $link;
-            }
-        }
-
-        return false;
-    }
-
-    protected function name() {
-        foreach ($this->names as $name => $ids) {
-            if (in_array((int)request()->post('categoryId'), $ids)) {
-                return $name;
+    /**
+     * Returns category's data for categories' id
+     *
+     * @param string $field
+     * @return array|false|mixed
+     */
+    protected function category(string $field = '') {
+        foreach ($this->categories as $category) {
+            if (in_array($this->categoryId, $category['ids'])) {
+                return $category[$field] ?? $category;
             }
         }
 
