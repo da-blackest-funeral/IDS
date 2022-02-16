@@ -20,13 +20,13 @@
     <script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
     <script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
 
-    <link rel="stylesheet" type="text/css" href={{ asset('css/app.css') }}/>
+    <link rel="stylesheet" type="text/css" href="css/app.css"/>
 
 </head>
 <body>
-@section('header')
+{{--@section('header')--}}
 
-@endsection
+{{--@endsection--}}
 <div class="container">
     @yield('content')
 </div>
