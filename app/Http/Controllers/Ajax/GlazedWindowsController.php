@@ -18,9 +18,10 @@ class GlazedWindowsController extends Controller
 
     public function getLast() {
         $data = [];
-        // todo создать таблицу thermo_regulator как в оригинальном сайте
+        $isWithHeating = false;
         if ($this->isWithHeating()) {
             $data = WithHeating::all(['id', 'name']);
+            $isWithHeating = true;
         } elseif ($this->isGlass()) {
             $data = Glass::query()
                 ->select('thickness')
@@ -29,7 +30,7 @@ class GlazedWindowsController extends Controller
         }
         \Debugbar::info($data);
         return view('ajax.glazed-windows.last')
-            ->with(compact('data'));
+            ->with(compact('data', 'isWithHeating'));
     }
 
     public function additional() {
@@ -58,6 +59,7 @@ class GlazedWindowsController extends Controller
     // todo вывод селекта определяется group_id, опшны в них всегда одинаковые
     protected function withHeating() {
         $widths = WithHeating::has('group')->with('group')->get();
+
         // если group_id = ..., то $count = 2, иначе если равно ... то $count = 1, иначе = 0.
         // вывод значений от этого не меняется
         // выбирать все терморегуляторы

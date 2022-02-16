@@ -56,13 +56,6 @@ class CategoriesAction extends Controller
         ];
     }
 
-
-    /*
-     * todo то, какой селект будет выводиться после выбора во втором селекте, зависит от категории (кроме пленки,
-     *  там зависит и от второго селекта). У стеклопакетов вывод дополнительного зависит от количества камер из
-     * третьего селекта
-     */
-
     /**
      * In this main method needed data selects universally from special database table,
      * that specifies method's name to be executed.

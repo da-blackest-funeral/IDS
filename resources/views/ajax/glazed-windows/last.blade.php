@@ -1,5 +1,14 @@
-<select name="cameras-count" id="cameras-count"
-        onchange="getConfiguration('/ajax/glazed-windows/additional', 'load-additional', 'cameras-count')"
+<select name="@if(!$isWithHeating) with-heating @else cameras-count @endif"
+        id="@if(!$isWithHeating) with-heating @else cameras-count @endif"
+        onchange="getConfiguration(
+            '/ajax/glazed-windows/additional',
+            'load-additional',
+            '@if(!$isWithHeating) with-heating @else cameras-count @endif'
+            )"
+
+    {{--getConfiguration('/ajax/glazed-windows/additional', 'load-additional', @if ($isWithHeating)--}}
+    {{--'cameras-count' @else  @endif--}}
+    {{--)"--}}
 >
     <option value="0">Количество камер</option>
     @if(empty($data))
