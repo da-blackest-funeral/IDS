@@ -6,4 +6,6 @@
         Нет профилей
     @endforelse
 </select>
-<div id="load-additional"></div>
+<div id="load-additional" class="form-row justify-content-between">
+
+</div>

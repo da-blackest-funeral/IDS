@@ -17,8 +17,6 @@
     {{--    <link rel="SHORTCUT ICON" href="https://03-okna.ru/images/1.ico" type="image/x-icon"/>--}}
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css"/>
-    <script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
-    <script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
 
     <link rel="stylesheet" type="text/css" href="css/app.css"/>
 

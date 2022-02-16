@@ -83,7 +83,7 @@ class CategoriesAction extends Controller
             }
         }
 
-        return view('ajax.mosquito-systems.tissue')
+        return view('ajax.second-select')
             ->with([
                 'data' => $data,
                 'link' => $this->category('link'),

@@ -8,3 +8,16 @@
 @import '~bootstrap';
 
 @import "node_modules/font-awesome/scss/font-awesome.scss";
+
+.form-add {
+    margin-top: 40px;
+    background-color: rgb(245,245,245);
+    padding: 20px;
+    font-size: 13px;
+    display: block;
+}
+
+.form-row {
+    display: flex;
+    flex-direction: row;
+}

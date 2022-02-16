@@ -4,4 +4,4 @@
         <option value="{{ $item->id }}">{{ $item->name }}</option>
     @endforeach
 </select>
-<div id="load-additional"></div>
+<div id="load-additional" class="form-row"></div>
