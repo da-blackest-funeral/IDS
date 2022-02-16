@@ -1,10 +1,10 @@
-<select name="@if(!$isWithHeating) with-heating @else cameras-count @endif"
-        id="@if(!$isWithHeating) with-heating @else cameras-count @endif"
+<select name="@if($isWithHeating) with-heating @else cameras-count @endif"
+        @if($isWithHeating) id="with-heating" @else id="cameras-count" @endif
         onchange="getConfiguration(
             '/ajax/glazed-windows/additional',
             'load-additional',
-            '@if(!$isWithHeating) with-heating @else cameras-count @endif'
-            )"
+            @if($isWithHeating) 'with-heating')" @else 'cameras-count')" @endif
+
 
     {{--getConfiguration('/ajax/glazed-windows/additional', 'load-additional', @if ($isWithHeating)--}}
     {{--'cameras-count' @else  @endif--}}

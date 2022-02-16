@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Ajax;
 use App\Http\Controllers\Controller;
 use App\Models\GlazedWindows\Glass;
 use App\Models\GlazedWindows\GlazedWindows;
+use App\Models\GlazedWindows\TemperatureController;
 use App\Models\GlazedWindows\WithHeating;
 use Illuminate\Http\Request;
 
@@ -16,6 +17,11 @@ class GlazedWindowsController extends Controller
         $this->request = $request;
     }
 
+    /**
+     * Defines, how to display last field to user
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
     public function getLast() {
         $data = [];
         $isWithHeating = false;
@@ -33,43 +39,78 @@ class GlazedWindowsController extends Controller
             ->with(compact('data', 'isWithHeating'));
     }
 
+    /**
+     * Defines, how to display additional fields to user
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
     public function additional() {
-        // select * from g_w with cameras_width where category_id
-        // притом, не забыть про layer - стекло или камера
-        // if'ами сделать проверку, является ли это стеклопакетом с подогревом или стеклом, тогда другая логика
         if ($this->isWithHeating()) {
             return $this->withHeating();
         } elseif ($this->isGlass()) {
             return $this->glass();
-        } else {
-            return $this->glazedWindows();
         }
 
+        return $this->glazedWindows();
     }
 
+    /**
+     * Checks, if this request made for glazed windows with heating
+     *
+     * @return bool
+     */
     protected function isWithHeating(): bool {
         return (int)$this->request->get('categoryId') == 17;
     }
 
+    /**
+     * @return bool
+     */
     protected function isGlass(): bool {
         return (int)$this->request->get('categoryId') == 18;
     }
 
-    // todo завершить этот метод
-    // todo вывод селекта определяется group_id, опшны в них всегда одинаковые
+    /**
+     * Returns view with data for glazed windows with heating
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
     protected function withHeating() {
-        $widths = WithHeating::has('group')->with('group')->get();
+        $camerasCount = WithHeating::with('group')
+            ->find((int)$this->request->get('additional'))
+            ->first()
+            ->cameras;
+        $widthArray = \DB::table('glazed_windows_with_heating_width')->get();
+        $temperatureControllers = TemperatureController::all();
 
-        // если group_id = ..., то $count = 2, иначе если равно ... то $count = 1, иначе = 0.
-        // вывод значений от этого не меняется
-        // выбирать все терморегуляторы
+        \Debugbar::info(compact('camerasCount', 'widthArray',
+            'temperatureControllers'
+        ));
+        return view('ajax.glazed-windows.with-heating-additional')
+            ->with(
+                compact(
+                    'camerasCount',
+                    'widthArray',
+                    'temperatureControllers'
+                )
+            );
+
     }
 
+    /**
+     * Returns view for glass
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
     protected function glass() {
-        return view('ajax.glazed-windows.glass-additional')
-            ->with(Glass::all(['id', 'name']));
+        return view('ajax.glazed-windows.glass-additional');
     }
 
+    /**
+     * Returns view with data for other categories of glazed windows
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
     protected function glazedWindows() {
         $camerasCount = (int)$this->request->get('additional');
         $glassWidth = GlazedWindows::select(['id', 'name'])

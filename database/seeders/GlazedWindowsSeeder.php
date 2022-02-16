@@ -22,6 +22,16 @@ class GlazedWindowsSeeder extends Seeder
         GlazedWindows::factory()->count(15)->create();
         WithHeating::factory()->count(15)->create();
         $this->seedTemperatureControllers();
+        $this->seedGlazedWindowsWithHeatingWidth();
+    }
+
+    protected function seedGlazedWindowsWithHeatingWidth() {
+        foreach ([9, 10, 12, 14, 16, 20, 24] as $item) {
+            \DB::table('glazed_windows_with_heating_width')
+                ->insert([
+                    'width' => $item
+                ]);
+        }
     }
 
     protected function seedLayers() {
@@ -37,7 +47,7 @@ class GlazedWindowsSeeder extends Seeder
     }
 
     protected function seedTemperatureControllers() {
-        \DB::table('temperature-controllers')
+        \DB::table('temperature_controllers')
             ->insert([
                'name' => 'RTR-E 6163 (белый)',
                'description' => 'Электромеханический терморегулятор с выключателем',
@@ -45,7 +55,7 @@ class GlazedWindowsSeeder extends Seeder
                 'temperature-range' => '+5...+30C',
                 'price' => 2600
             ]);
-        \DB::table('temperature-controllers')
+        \DB::table('temperature_controllers')
             ->insert([
                 'name' => 'TH-0343SA (белый)',
                 'description' => 'Терморегулятор электронный со встроенным датчиком',

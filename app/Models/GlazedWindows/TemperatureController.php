@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class TemperatureController extends Model
 {
     use HasFactory;
+
+    protected $table = 'temperature_controllers';
 }

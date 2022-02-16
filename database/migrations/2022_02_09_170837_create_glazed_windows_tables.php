@@ -119,13 +119,19 @@ return new class extends Migration {
         });
         $this->comment('glass', 'Стекло');
 
-        Schema::create("temperature-controllers", function (Blueprint $table) {
+        Schema::create("temperature_controllers", function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->text('description');
             $table->string('amperage');
             $table->string('temperature-range');
             $table->float('price');
+            $table->timestamps();
+        });
+
+        Schema::create("{$this->prefix}_with_heating_width", function (Blueprint $table) {
+            $table->id();
+            $table->integer('width');
             $table->timestamps();
         });
     }
