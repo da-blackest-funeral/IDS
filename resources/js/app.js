@@ -1,9 +1,13 @@
 require('./bootstrap');
-window.$ = require('jquery');
-require('./categoryIsChosen');
 
-import Alpine from 'alpinejs';
+// window.$ = window.jQuery = require('jquery');
+// window.Popper = require('@popperjs/core');
+// require('bootstrap');
 
-window.Alpine = Alpine;
+// require('./categoryIsChosen');
 
-Alpine.start();
+// import Alpine from 'alpinejs';
+//
+// window.Alpine = Alpine;
+//
+// Alpine.start();

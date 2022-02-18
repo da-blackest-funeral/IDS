@@ -21,4 +21,3 @@
         </div>
     </div>
 @endsection
-@include('layouts.scripts')

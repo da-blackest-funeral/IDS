@@ -16,8 +16,8 @@
           content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
     {{--    <link rel="SHORTCUT ICON" href="https://03-okna.ru/images/1.ico" type="image/x-icon"/>--}}
 
+{{--    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">--}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css"/>
-
     <link rel="stylesheet" type="text/css" href="css/app.css"/>
 
 </head>
@@ -75,9 +75,12 @@
 
                     {{--<!--                    --><?php //if (in_array($_SESSION['priority'], [0, 1, 2, 4, 6, 7])) { ?>--}}
                     <li class="nav-item dropdown my-auto">
-                        <a class="nav-link dropdown-toggle" id="navbarDropdown1" role="button"
-                           data-toggle="dropdown"
-                           aria-haspopup="true" aria-expanded="false">Заказы</a>
+                        <a class="nav-link dropdown-toggle"
+                                type="button"
+                                id="navbarDropdown1"
+                                data-toggle="dropdown"
+                                aria-haspopup="true"
+                                aria-expanded="false">Заказы</a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
                             {{-- Если пользователь не монтажник и не кто то еще, он может добавить заказ --}}
                             {{--                            <?php if ($_SESSION['priority'] != 1 and $_SESSION['priority'] != 3) { ?><a--}}
@@ -111,7 +114,7 @@
 
 
                     <li class="nav-item dropdown my-auto">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button"
+                        <a class="nav-link dropdown-toggle" id="navbarDropdown1" role="button"
                            data-toggle="dropdown"
                            aria-haspopup="true" aria-expanded="false">Управление</a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
@@ -566,5 +569,6 @@
         <div class="container">
             @yield('content')
         </div>
+        @include('layouts.scripts')
 </body>
 </html>
