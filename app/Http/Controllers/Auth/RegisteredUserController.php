@@ -46,6 +46,7 @@ class RegisteredUserController extends Controller
         ]);
 
         event(new Registered($user));
+        session()->flash('registered', 'Вы успешно зарегистрировались!');
 
         Auth::login($user);
 

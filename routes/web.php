@@ -18,29 +18,26 @@ use \App\Http\Controllers\Ajax\AdditionalController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::middleware('auth')->group(function () {
+    Route::get('/', [CalculationController::class, 'index']);
 
-Route::get('/', [CalculationController::class, 'index']);
+    Route::prefix('ajax')->group(function () {
+        Route::get('/get-items', CategoriesAction::class);
 
-Route::prefix('ajax')->group(function () {
-    Route::get('/get-items', CategoriesAction::class);
+        Route::prefix('mosquito-systems')->group(function () {
+            Route::get('/profile', [MosquitoSystemsController::class, 'profile']);
+            Route::get('/additional', [MosquitoSystemsController::class, 'additional']);
+        });
 
-    Route::prefix('mosquito-systems')->group(function () {
-        Route::get('/profile', [MosquitoSystemsController::class, 'profile']);
-        Route::get('/additional', [MosquitoSystemsController::class, 'additional']);
-    });
+        Route::prefix('glazed-windows')->group(function () {
+            Route::get('/last', [GlazedWindowsController::class, 'getLast']);
+            Route::get('/additional', [GlazedWindowsController::class, 'additional']);
+        });
 
-    Route::prefix('glazed-windows')->group(function () {
-        Route::get('/last', [GlazedWindowsController::class, 'getLast']);
-        Route::get('/additional', [GlazedWindowsController::class, 'additional']);
-    });
-
-    Route::prefix('windowsill')->group(function () {
-        Route::get('/type', [WindowsillController::class, 'type']);
+        Route::prefix('windowsill')->group(function () {
+            Route::get('/type', [WindowsillController::class, 'type']);
+        });
     });
 });
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
 
 require __DIR__.'/auth.php';
