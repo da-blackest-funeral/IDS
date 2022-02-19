@@ -59,11 +59,9 @@
                                aria-haspopup="true"
                                aria-expanded="false">Заказы</a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
-                                {{-- Если пользователь не монтажник и не кто то еще, он может добавить заказ --}}
-                                {{--                            <?php if ($_SESSION['priority'] != 1 and $_SESSION['priority'] != 3) { ?><a--}}
-                                {{--                                class="dropdown-item"--}}
-                                {{--                                href="/add_order.php">Добавить--}}
-                                {{--                                заказ</a><?php } ?>--}}
+                                <a class="dropdown-item"
+                                    href="/add_order.php">Добавить
+                                    заказ</a>
                                 <a class="dropdown-item" href="/load.php?route=admin/order/all">Предыдущие заказы</a>
                                 <a class="dropdown-item" href="/load.php?route=admin/order/calc">Предыдущие расчеты</a>
                                 <a
@@ -83,7 +81,7 @@
                     @endcan
 
                     @can('seeManagement')
-                        <li class="nav-item dropdown my-auto">
+                        <li class="nav-item dropdown my-auto"> {{-- nav-item dropdown my-auto --}}
                             <a class="nav-link dropdown-toggle" id="navbarDropdown1" role="button"
                                data-toggle="dropdown"
                                aria-haspopup="true" aria-expanded="false">Управление</a>
@@ -94,22 +92,25 @@
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="/load.php?route=admin/phone/zadarma">Звонки</a>
                                 <div class="dropdown-divider"></div>
+
+                                <a class="dropdown-item" href="/load.php?route=admin/sborshik/graph">График
+                                    работы сотрудников</a>
+
+                                <a class="dropdown-item"
+                                   href="/load.php?route=admin/stat/index&type=stat">Статистика</a>
+                                <a class="dropdown-item" href="/load.php?route=admin/stat/index&type=plan">План + стат.
+                                    менеджеров</a>
+                                <a class="dropdown-item"
+                                   href="/load.php?route=admin/stat/index&type=proisvodstvo">Производство</a>
+                                <a class="dropdown-item" href="/load.php?route=admin/stat/index&type=phone">Настройка
+                                    звонков</a>
+                                <a class="dropdown-item"
+                                   href="/load.php?route=admin/stat/index&type=user">Пользователи</a>
+                                <a class="dropdown-item" href="/load.php?route=admin/stat/index&type=money">Деньги</a>
+                                <a class="dropdown-item"
+                                   href="/load.php?route=admin/stat/index&type=other">Прочее</a>
                             </div>
                         </li>
-                        <a class="dropdown-item" href="/load.php?route=admin/sborshik/graph">График
-                            работы сотрудников</a>
-
-                        <a class="dropdown-item" href="/load.php?route=admin/stat/index&type=stat">Статистика</a>
-                        <a class="dropdown-item" href="/load.php?route=admin/stat/index&type=plan">План + стат.
-                            менеджеров</a>
-                        <a class="dropdown-item"
-                           href="/load.php?route=admin/stat/index&type=proisvodstvo">Производство</a>
-                        <a class="dropdown-item" href="/load.php?route=admin/stat/index&type=phone">Настройка
-                            звонков</a>
-                        <a class="dropdown-item" href="/load.php?route=admin/stat/index&type=user">Пользователи</a>
-                        <a class="dropdown-item" href="/load.php?route=admin/stat/index&type=money">Деньги</a>
-                        <a class="dropdown-item"
-                           href="/load.php?route=admin/stat/index&type=other">Прочее</a>
                     @endcan
                     @can('seeDocuments')
                         <li class="nav-item my-auto">
@@ -185,6 +186,24 @@
                         </li>
                     @endcan
 
+                    @can('seeGraphs')
+                        <li class="nav-item dropdown my-auto">
+                            <a class="nav-link" href="/load.php?route=admin/graph/all">Графики</a>
+                        </li>
+                    @endcan
+
+                    @can('seeMap')
+                        <li class="nav-item dropdown my-auto">
+                            <a class="nav-link" href="/maps.php">Карта</a>
+                        </li>
+                    @endcan
+
+                    @can('seeReceipts')
+                        <li class="nav-item dropdown my-auto">
+                            <a class="nav-link" href="/load.php?route=admin/prihod/prihod">Поступления</a>
+                        </li>
+                    @endcan
+
                     @can('seeWarehouse')
                         <li class="nav-item dropdown my-auto">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button"
@@ -198,32 +217,28 @@
                         </li>
                     @endcan
 
-                    <li class="nav-item my-auto">
-                        <a class="nav-link" href="/newsmont.php">Уведомления</a>
-                    </li>
+                    {{--                    <li class="nav-item dropdown my-auto">--}}
+                    {{--                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button"--}}
+                    {{--                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Информация</a>--}}
+                    {{--                        <div class="dropdown-menu" aria-labelledby="navbarDropdown1">--}}
+                    {{--                            <a class="dropdown-item" href="/maps.php">Карта</a>--}}
+                    {{--                            <a class="dropdown-item" href="/info.php">Информация</a>--}}
+                    {{--                            <?php--}}
+                    {{--                            $sql_type_header = $mysqli->query("SELECT * FROM `type` ORDER BY `id_type`");--}}
+                    {{--                            while ($res_type_hreader = $sql_type_header->fetch_assoc()) {--}}
+                    {{--                            ?>--}}
+                    {{--                            <a class="dropdown-item" target="_blank"--}}
+                    {{--                               href="<?= $res_type_hreader['link_zamer']; ?>"><?= $res_type_hreader['name']; ?>--}}
+                    {{--                                (замер)</a>--}}
+                    {{--                            <?php--}}
+                    {{--                            }--}}
+                    {{--                            ?>--}}
+                    {{--                            <a class="dropdown-item" target="_blank"--}}
+                    {{--                               href="https://03-okna.ru/moskitnye-setki-na-zacepax/">Москитная--}}
+                    {{--                                сетка на зацепах</a>--}}
 
-{{--                    <li class="nav-item dropdown my-auto">--}}
-{{--                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button"--}}
-{{--                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Информация</a>--}}
-{{--                        <div class="dropdown-menu" aria-labelledby="navbarDropdown1">--}}
-{{--                            <a class="dropdown-item" href="/maps.php">Карта</a>--}}
-{{--                            <a class="dropdown-item" href="/info.php">Информация</a>--}}
-{{--                            <?php--}}
-{{--                            $sql_type_header = $mysqli->query("SELECT * FROM `type` ORDER BY `id_type`");--}}
-{{--                            while ($res_type_hreader = $sql_type_header->fetch_assoc()) {--}}
-{{--                            ?>--}}
-{{--                            <a class="dropdown-item" target="_blank"--}}
-{{--                               href="<?= $res_type_hreader['link_zamer']; ?>"><?= $res_type_hreader['name']; ?>--}}
-{{--                                (замер)</a>--}}
-{{--                            <?php--}}
-{{--                            }--}}
-{{--                            ?>--}}
-{{--                            <a class="dropdown-item" target="_blank"--}}
-{{--                               href="https://03-okna.ru/moskitnye-setki-na-zacepax/">Москитная--}}
-{{--                                сетка на зацепах</a>--}}
-
-{{--                        </div>--}}
-{{--                    </li>--}}
+                    {{--                        </div>--}}
+                    {{--                    </li>--}}
 
 
                     {{--                    <?php--}}
@@ -275,21 +290,6 @@
 
 
                     {{--                    <?php } ?>--}}
-
-
-                    {{--                    <?php if (in_array($_SESSION['priority'], [0, 2, 4, 7])) { ?>--}}
-
-                    {{--                    <li class="nav-item dropdown my-auto">--}}
-                    {{--                        <a class="nav-link" href="/load.php?route=admin/graph/all">Графики</a>--}}
-                    {{--                    </li>--}}
-
-                    {{--                    <li class="nav-item dropdown my-auto">--}}
-                    {{--                        <a class="nav-link" href="/maps.php">Карта</a>--}}
-                    {{--                    </li>--}}
-
-                    {{--                    <li class="nav-item dropdown my-auto">--}}
-                    {{--                        <a class="nav-link" href="/load.php?route=admin/prihod/prihod">Поступления</a>--}}
-                    {{--                    </li>--}}
 
 
                     {{--                    <?php } ?>--}}
