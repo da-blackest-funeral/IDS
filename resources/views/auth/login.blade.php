@@ -21,7 +21,7 @@
                            id="password">
                 </div>
                 <div class="form-inline my-2 my-lg-0">
-                    <a class="btn btn-outline-info my-2 my-sm-0" href="/login">Войти</a>
+                    <input type="submit" class="btn btn-outline-info my-2 my-sm-0" value="Войти">
                 </div>
                 <div class="m-3 mx-auto">
                     <div class="p-1">

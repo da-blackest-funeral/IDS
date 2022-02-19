@@ -34,7 +34,7 @@
                 </div>
 {{--                todo изменить <a> на инпут изменить стиль кнопки и вставить такую же в логин--}}
                 <div class="form-inline my-2 my-lg-0">
-                    <a class="btn btn-outline-info my-2 my-sm-0" href="/login">Регистрация</a>
+                    <input name="submit" class="btn btn-outline-info my-2 my-sm-0" type="submit" value="Регистрация">
                 </div>
             </form>
         </div>

@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             GlassSeeder::class,
             WindowsillSeeder::class,
             GlazedWindowsSeeder::class,
+            RolesSeeder::class,
         ]);
     }
 }

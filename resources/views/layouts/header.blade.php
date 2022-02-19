@@ -206,6 +206,9 @@
                     <div class="form-inline my-2 my-lg-0">
                         <a class="btn btn-outline-info my-2 my-sm-0" href="/login">Войти</a>
                     </div>
+                    <div class="form-inline my-2 my-lg-0">
+                        <a class="btn btn-outline-info my-2 my-sm-0" href="/register">Зарегистрироваться</a>
+                    </div>
                 @endauth
 
             </div>
