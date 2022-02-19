@@ -164,19 +164,14 @@
                         </li>
                     @endcan
 
-                    @can('seeGraphs')
+                    @can('seeGraphsMaps')
                         <li class="nav-item dropdown my-auto">
                             <a class="nav-link" href="/load.php?route=admin/graph/all">Графики</a>
                         </li>
-                    @endcan
-
-                    @can('seeMap')
                         <li class="nav-item dropdown my-auto">
                             <a class="nav-link" href="/maps.php">Карта</a>
                         </li>
-                    @endcan
 
-                    @can('seeReceipts')
                         <li class="nav-item dropdown my-auto">
                             <a class="nav-link" href="/load.php?route=admin/prihod/prihod">Поступления</a>
                         </li>
@@ -185,15 +180,36 @@
                     @can('seeWarehouse')
                         <li class="nav-item dropdown my-auto">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button"
-                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Склад</a>
+                               data-toggle="dropdown"
+                               aria-haspopup="true" aria-expanded="false">Склад</a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
-                                <a class="dropdown-item" href="#">Остатки на складе</a>
-                                <a class="dropdown-item"
-                                   href="#">История
-                                    перемещений</a>
+                                <a class="dropdown-item" href="/load.php?route=admin/sklad/sklad">Склады</a>
+                                <a class="dropdown-item" href="/load.php?route=admin/sklad/plenka">Склад пленок</a>
+                                <a class="dropdown-item" href="/sklad.php">Шаблон склада</a>
+
+                                @can('seeInventory')
+                                    <a class="dropdown-item"
+                                       href="/load.php?route=admin/sklad/inventory">Инвенатризации</a>
+                                @endcan
+
+                                <a class="dropdown-item" href="/load.php?route=admin/sklad/vidat_now">Текущие выдачи</a>
                             </div>
                         </li>
                     @endcan
+
+                    {{-- Это для монтажников, не хватает некоторых элементов --}}
+                    {{--                    @can('seeInfoForInstallers')--}}
+                    {{--                        <li class="nav-item dropdown my-auto">--}}
+                    {{--                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button"--}}
+                    {{--                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Склад</a>--}}
+                    {{--                            <div class="dropdown-menu" aria-labelledby="navbarDropdown1">--}}
+                    {{--                                <a class="dropdown-item" href="#">Остатки на складе</a>--}}
+                    {{--                                <a class="dropdown-item"--}}
+                    {{--                                   href="#">История--}}
+                    {{--                                    перемещений</a>--}}
+                    {{--                            </div>--}}
+                    {{--                        </li>--}}
+                    {{--                    @endcan--}}
                 </ul>
 
                 @auth()

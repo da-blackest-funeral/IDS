@@ -60,7 +60,7 @@ class RolesSeeder extends Seeder
 9) seeNotificationsForInstallers
 10)	seeWages
 11)	canCalculate
-12)	seeWarehouse
+12)	seeWarehouse - Администраторская версия склада
 13)	seeInventory
 14)	seeHisMoney
 15)	seePhonePause
