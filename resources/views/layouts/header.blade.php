@@ -1,7 +1,7 @@
 @section('header')
     <div>
         {{-- Вывод сообщений об ошибках и об успехе --}}
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <nav class="px-3 navbar d-flex navbar-expand-lg navbar-dark bg-dark">
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-target="#navbar1"
                     aria-controls="navbar1" aria-expanded="false" aria-label="Toggle navigation">
@@ -9,7 +9,7 @@
             </button>
 
             <div class="collapse navbar-collapse" id="navbar1">
-                <ul class="navbar-nav mr-auto">
+                <ul class="navbar-nav">
                     {{-- Выбирается какую ссылку выводить разным пользователям на кнопку IDS --}}
                     {{--<!--                    --><?php--}}
                     {{--//                    if ($_SESSION['priority'] == 3) $url_main = "/load.php?route=admin/sborshik/list";--}}
@@ -373,7 +373,7 @@
                         </form>-->
 
                 @auth()
-                    <form method="POST" action="/logout" class="form-inline my-2 my-lg-0">
+                    <form method="POST" action="/logout" class="ms-auto form-inline">
                         @csrf
                         <button class="btn btn-outline-info my-2 my-sm-0" name="sb_out" type="submit">Выйти</button>
                     </form>
