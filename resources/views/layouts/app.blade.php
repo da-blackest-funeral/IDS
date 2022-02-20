@@ -17,31 +17,32 @@
     {{--    <link rel="SHORTCUT ICON" href="https://03-okna.ru/images/1.ico" type="image/x-icon"/>--}}
 
     {{--    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">--}}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css"/>
-    <link rel="stylesheet" type="text/css" href="css/app.css"/>
-    <link rel="stylesheet" type="text/css" href="css/bootstrap.css"/>
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/app.css') }}"/>
 
 </head>
 <body>
-@include('layouts.header')
+<header class="header">
+    @include('layouts.header')
+</header>
 
-@section('success')
-    <div class="alert-success h-25 w-25 bordered">
-        {{ session()->pull('registered') }}
-    </div>
-@show
+<main class="main">
+    @section('success')
+        <div class="alert-success h-25 w-25 bordered">
+            {{ session()->pull('registered') }}
+        </div>
+    @show
 
-@section('errors')
-    @if($errors->any())
-        @foreach($errors->all() as $error)
-            <div class="alert-danger h-25 w-25 bordered">
-                {{ $error }}
-            </div>
-        @endforeach
-    @endif
-@show
-
-@yield('content')
+    @section('errors')
+        @if($errors->any())
+            @foreach($errors->all() as $error)
+                <div class="alert-danger h-25 w-25 bordered">
+                    {{ $error }}
+                </div>
+            @endforeach
+        @endif
+    @show
+    @yield('content')
+</main>
 
 @include('layouts.scripts')
 </body>
