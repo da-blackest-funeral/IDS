@@ -14,7 +14,8 @@ function getConfiguration(url, id, selectorId = false) {
         data: data,
         success: function (data) {
             console.log(data)
-            $('#' + id).html(data)
+            $('#' + id).append(data)
         }
     });
 }
+
