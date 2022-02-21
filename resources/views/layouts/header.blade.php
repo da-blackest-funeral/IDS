@@ -135,13 +135,13 @@
 
                 @can('seeDocuments')
                     <li class="nav-item my-auto">
-                        <a class="btn nav-link" href="#">Документы</a>
+                        <a class="btn nav-link" href="{{ route('documents') }}">Документы</a>
                     </li>
                 @endcan
 
                 @can('seePlan')
                     <li class="nav-item my-auto">
-                        <a class="btn nav-link" href="/load.php?route=admin/plan/my">План<span
+                        <a class="btn nav-link" href="{{ route('my-plan') }}">План<span
                                 id="plan_not_readed_hd"></span></a>
                     </li>
                 @endcan
@@ -167,14 +167,14 @@
                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">План
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navBarPlan">
-                            <a class="dropdown-item" href="/load.php?route=admin/plan/my">Мой план</a>
-                            <a class="dropdown-item" href="/load.php?route=admin/plan/all">План всех
+                            <a class="dropdown-item" href="{{ route('my-plan') }}">Мой план</a>
+                            <a class="dropdown-item" href="{{ route('all-plan') }}">План всех
                                 сотрудников
                             </a>
-                            <a class="dropdown-item" href="/load.php?route=admin/plan/dolgo">Долгосрочный план
+                            <a class="dropdown-item" href="{{ route('long-plan') }}">Долгосрочный план
                                 всех
                             </a>
-                            <a class="dropdown-item" href="/load.php?route=admin/plan/add_plan">Добавить и ред.
+                            <a class="dropdown-item" href="{{ route('add-plan') }}">Добавить и ред.
                                 задания
                             </a>
                         </div>
@@ -183,7 +183,7 @@
 
                 @can('seeNotificationsForInstallers')
                     <li class="nav-item dropdown my-auto">
-                        <a class="btn nav-link" href="/news.php">Увед. для монт.</a>
+                        <a class="btn nav-link" href="{{ route('news') }}">Увед. для монт.</a>
                     </li>
                 @endcan
 
@@ -195,17 +195,17 @@
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
                             @if(auth()->user()->isEveningManager())
-                                <a class="dropdown-item" href="/load.php?route=admin/sborshik/graph">Зарплаты
+                                <a class="dropdown-item" href="{{ route('managers-wages') }}">Зарплаты
                                     менеджерам
                                 </a>
                             @else
-                                <a class="dropdown-item" href="/load.php?route=admin/master/zp">Зарплаты
+                                <a class="dropdown-item" href="{{ route('installers-wages') }}">Зарплаты
                                     монтажникам
                                 </a>
-                                <a class="dropdown-item" href="/load.php?route=admin/sborshik/graph">Зарплаты
+                                <a class="dropdown-item" href="{{ route('managers-wages') }}">Зарплаты
                                     менеджерам
                                 </a>
-                                <a class="dropdown-item" href="/load.php?route=admin/master/history">Бонусы
+                                <a class="dropdown-item" href="{{ route('bonuses') }}">Бонусы
                                     для монтажников
                                 </a>
                             @endif
@@ -215,25 +215,25 @@
 
                 @can('canCalculate')
                     <li class="nav-item dropdown my-auto">
-                        <a class="btn nav-link" href="#">Рассчитать</a>
+                        <a class="btn nav-link" href="{{ route('welcome') }}">Рассчитать</a>
                     </li>
                 @endcan
 
                 @can('seeHisGraph')
                     <li class="nav-item dropdown my-auto">
-                        <a class="btn nav-link" href="/load.php?route=admin/graph/mont">График</a>
+                        <a class="btn nav-link" href="{{ route('my-graph') }}">График</a>
                     </li>
                 @endcan
 
                 @can('seeGraphsMaps')
                     <li class="nav-item dropdown my-auto">
-                        <a class="btn nav-link" href="/load.php?route=admin/graph/all">Графики</a>
+                        <a class="btn nav-link" href="{{ route('installers-graphs') }}">Графики</a>
                     </li>
                     <li class="nav-item dropdown my-auto">
-                        <a class="btn nav-link" href="/maps.php">Карта</a>
+                        <a class="btn nav-link" href="{{ route('map') }}">Карта</a>
                     </li>
                     <li class="nav-item dropdown my-auto">
-                        <a class="btn nav-link" href="/load.php?route=admin/prihod/prihod">Поступления</a>
+                        <a class="btn nav-link" href="{{ route('entrances') }}">Поступления</a>
                     </li>
                 @endcan
 
@@ -244,21 +244,21 @@
                            aria-haspopup="true" aria-expanded="false">Склад</a>
                         @if(auth()->user()->isInstaller())
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
-                                <a class="dropdown-item" href="#">Остатки на складе</a>
-                                <a class="dropdown-item" href="#">История перемещений</a>
+                                <a class="dropdown-item" href="{{ route('remains') }}">Остатки на складе</a>
+                                <a class="dropdown-item" href="{{ route('movements-history') }}">История перемещений</a>
                             </div>
                         @else
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
-                                <a class="dropdown-item" href="/load.php?route=admin/sklad/sklad">Склады</a>
-                                <a class="dropdown-item" href="/load.php?route=admin/sklad/plenka">Склад пленок</a>
-                                <a class="dropdown-item" href="/sklad.php">Шаблон склада</a>
+                                <a class="dropdown-item" href="{{ route('warehouses') }}">Склады</a>
+                                <a class="dropdown-item" href="{{ route('warehouse-wraps') }}">Склад пленок</a>
+                                <a class="dropdown-item" href="{{ route('warehouse-template') }}">Шаблон склада</a>
 
                                 @can('seeInventory')
                                     <a class="dropdown-item"
-                                       href="/load.php?route=admin/sklad/inventory">Инвентаризации</a>
+                                       href="{{ route('inventory') }}">Инвентаризации</a>
                                 @endcan
 
-                                <a class="dropdown-item" href="/load.php?route=admin/sklad/vidat_now">Текущие выдачи</a>
+                                <a class="dropdown-item" href="{{ route('issuance') }}">Текущие выдачи</a>
                             </div>
                         @endif
                     </li>
@@ -266,13 +266,13 @@
 
                 @can('seeEarning')
                     <li class="nav-item dropdown my-auto">
-                        <a class="btn nav-link" href="#">Заработок</a>
+                        <a class="btn nav-link" href="{{ route('earning') }}">Заработок</a>
                     </li>
                 @endcan
 
                 @can('seeInfoForInstallers')
                     <li class="nav-item dropdown my-auto">
-                        <a class="btn nav-link" href="/load.php?route=admin/prihod/prihod">Уведомления</a>
+                        <a class="btn nav-link" href="{{ route('notifications') }}">Уведомления</a>
                     </li>
                     <li class="nav-item dropdown my-auto">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button"
@@ -280,27 +280,49 @@
                            aria-haspopup="true" aria-expanded="false">Информация
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown2">
-                            <a class="dropdown-item" href="#">Карта</a>
-                            <a class="dropdown-item" href="#">Информация</a>
-                            <a class="dropdown-item" href="#">Рамные москитные сетки (замер)</a>
-                            <a class="dropdown-item" href="#">Москитные двери (замер)</a>
-                            <a class="dropdown-item" href="#">Раздвижные сетки (замер)</a>
-                            <a class="dropdown-item" href="#">Рулонные сетки(замер)</a>
-                            <a class="dropdown-item" href="#">Сетки плиссе Италия (замер)</a>
-                            <a class="dropdown-item" href="#">Сетки крыло (замер)</a>
-                            <a class="dropdown-item" href="#">Сетка трапециевидная(замер)</a>
-                            <a class="dropdown-item" href="#">Вставные сетки VSN (замер)</a>
-                            <a class="dropdown-item" href="#">Сетки плиссе Россия (замер)</a>
-                            <a class="dropdown-item" href="#">Москитная сетка на зацепах</a>
+                            <a class="dropdown-item" href="{{ route('info-map') }}">Карта</a>
+                            <a class="dropdown-item" href="{{ route('info') }}">Информация</a>
+                            <a class="dropdown-item" href="{{ route('info-framed-mosquito-nets') }}">
+                                Рамные москитные сетки (замер)
+                            </a>
+                            <a class="dropdown-item" href="{{ route('info-mosquito-doors') }}">
+                                Москитные двери (замер)
+                            </a>
+                            <a class="dropdown-item" href="{{ route('info-sliding-nets') }}">
+                                Раздвижные сетки (замер)
+                            </a>
+                            <a class="dropdown-item" href="{{ route('info-rolled-nets') }}">
+                                Рулонные сетки(замер)
+                            </a>
+                            <a class="dropdown-item" href="{{ route('info-pleat-grids-italy') }}">
+                                Сетки плиссе Италия (замер)
+                            </a>
+                            <a class="dropdown-item" href="{{ route('info-grids-wing') }}">
+                                Сетки крыло (замер)
+                            </a>
+                            <a class="dropdown-item" href="{{ route('info-trapezoidal-grid') }}">
+                                Сетка трапециевидная(замер)
+                            </a>
+                            <a class="dropdown-item" href="{{ route('info-pluggable-grids-vsn') }}">
+                                Вставные сетки VSN (замер)
+                            </a>
+                            <a class="dropdown-item" href="{{ route('info-pleat-grids-rus') }}">
+                                Сетки плиссе Россия (замер)
+                            </a>
+                            <a class="dropdown-item" href="{{ route('info-hooked-grids') }}">
+                                Москитная сетка на зацепах
+                            </a>
                         </div>
                     </li>
                     <li class="nav-item dropdown my-auto">
-                        <a href="#" class="btn nav-link">Сумма к выплате: {{ '10.000 рублей' }}</a>
+                        <a href="{{ route('earning') }}" class="btn nav-link">
+                            Сумма к выплате: {{ $earning ?? '10.000 рублей' }}
+                        </a>
                     </li>
                     <li class="nav-item dropdown my-auto">
-                        <a href="#" class="btn nav-link">
+                        <a href="{{ route('ratings') }}" class="btn nav-link">
                             <span style="color: #ffc107">
-                                Ваш рейтинг: {{ '10' }}
+                                Ваш рейтинг: {{ $ratins ?? '10' }}
                             </span>
                         </a>
                     </li>
@@ -309,17 +331,23 @@
             </ul>
 
             @auth()
-                <form method="POST" action="/logout" class="ms-5 form-inline">
+                <form method="POST" action="{{ route('logout') }}" class="ms-5 form-inline">
                     @csrf
-                    <button class="btn btn-outline-info my-2 my-sm-0" name="sb_out" type="submit">Выйти</button>
+                    <button class="btn btn-outline-info my-2 my-sm-0" name="sb_out" type="submit">
+                        Выйти
+                    </button>
                 </form>
             @endauth
             @guest()
                 <div class="form-inline my-2 my-lg-0">
-                    <a class="btn btn-outline-info my-2 my-sm-0" href="/login">Войти</a>
+                    <a class="btn btn-outline-info my-2 my-sm-0" href="{{ route('login') }}">
+                        Войти
+                    </a>
                 </div>
                 <div class="form-inline my-2 my-lg-0">
-                    <a class="btn btn-outline-info my-2 my-sm-0" href="/register">Зарегистрироваться</a>
+                    <a class="btn btn-outline-info my-2 my-sm-0" href="{{ route('register') }}">
+                        Зарегистрироваться
+                    </a>
                 </div>
             @endauth
 

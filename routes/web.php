@@ -18,7 +18,75 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::middleware('auth')->group(function () {
-    Route::get('/', [CalculationController::class, 'index']);
+    Route::get('/', [CalculationController::class, 'index'])
+        ->name('welcome');
+
+    Route::view('/documents', 'pages.documents')
+        ->name('documents');
+
+    Route::view('/news', 'pages.news')
+        ->name('news');
+
+    Route::view('/my-graph', 'pages.my-graph')
+        ->name('my-graph'); // страница для монтажника чтобы он мог посмотреть свой график
+
+    Route::view('/installers-graphs', 'pages.installers-graphs')
+        ->name('installers-graphs'); // для менеджеров\админов, чтобы смотреть графики всех монтажников
+
+    Route::view('/map', 'pages.map')
+        ->name('map');
+
+    Route::view('/entrances', 'pages.entrances')
+        ->name('entrances');
+
+    Route::view('/earning', 'pages.earning')
+        ->name('earning');
+
+    Route::view('/ratings', 'pages.installers.ratings')
+        ->name('ratings');
+
+    Route::prefix('installers')->group(function () {
+        Route::view('/notifications', 'pages.installers.notifications')
+            ->name('notifications');
+
+        Route::prefix('info')->group(function () {
+            Route::view('/', 'pages.installers.info')
+                ->name('info');
+
+            Route::view('/map', 'pages.installers.info.map')
+                ->name('info-map');
+
+            Route::view('/framed-mosquito-nets', 'pages.installers.info.framed-mosquito-nets')
+                ->name('info-framed-mosquito-nets');
+
+            Route::view('/mosquito-doors', 'pages.installers.info.mosquito-doors')
+                ->name('info-mosquito-doors');
+
+            Route::view('/sliding-nets','pages.installers.info.sliding-nets')
+                ->name('info-sliding-nets');
+
+            Route::view('/rolled-nets', 'pages.installers.info.rolled-nets')
+                ->name('info-rolled-nets');
+
+            Route::view('/pleat-grids-italy', 'pages.installers.info.pleat-grids-italy')
+                ->name('info-pleat-grids-italy');
+
+            Route::view('/grids-wing', 'pages.installers.info.grids-wing')
+                ->name('info-grids-wing');
+
+            Route::view('/trapezoidal-grid', 'pages.installers.info.trapezoidal-grid')
+                ->name('info-trapezoidal-grid');
+
+            Route::view('/pluggable-grids-vsn', 'pages.installers.info.pluggable-grids-vsn')
+                ->name('info-pluggable-grids-vsn');
+
+            Route::view('/pleat-grids-rus', 'pages.installers.info.pleat-grids-rus')
+                ->name('info-pleat-grids-rus');
+
+            Route::view('/hooked-grids', 'pages.installers.info.hooked-grids')
+                ->name('info-hooked-grids');
+        });
+    });
 
     Route::prefix('ajax')->group(function () {
         Route::get('/get-items', CategoriesAction::class);
@@ -84,6 +152,9 @@ Route::middleware('auth')->group(function () {
         Route::view('/production', 'pages.management.production')
             ->name('production');
 
+        Route::view('/graph', 'pages.management.graph')
+            ->name('all-graph');
+
         Route::prefix('calls')->group(function () {
             Route::view('/', 'pages.management.calls.all')
                 ->name('calls');
@@ -91,11 +162,56 @@ Route::middleware('auth')->group(function () {
             Route::view('/settings', 'pages.management.calls.settings')
                 ->name('calls-settings');
         });
-
-        Route::view('/graph', 'pages.management.graph')
-            ->name('all-graph');
     });
 
+    Route::prefix('plan')->group(function () {
+        Route::view('/', 'pages.plan.my')
+            ->name('my-plan');
+
+        Route::view('/all', 'pages.plan.all')
+            ->name('all-plan');
+
+        Route::view('/long', 'pages.plan.long')
+            ->name('long-plan');
+
+        Route::view('/add', 'pages.plan.add')
+            ->name('add-plan');
+    });
+
+    Route::prefix('wages')->group(function () {
+        Route::view('/managers', 'pages.wages.managers')
+            ->name('managers-wages');
+
+        Route::view('/installers', 'pages.wages.installers')
+            ->name('installers-wages');
+
+        Route::view('/bonuses', 'pages.wages.bonuses')
+            ->name('bonuses');
+    });
+
+    Route::prefix('warehouse')->group(function () {
+        Route::view('/', 'pages.warehouse.all')
+            ->name('warehouses');
+
+        Route::view('/remains', 'pages.warehouse.remains')
+            ->name('remains');
+
+        Route::view('/movements-history', 'pages.warehouse.movements-history')
+            ->name('movements-history');
+
+        Route::view('/wraps', 'pages.warehouses.wraps')
+            ->name('warehouse-wraps');
+
+        Route::view('/template', 'pages.warehouse.template')
+            ->name('warehouse-template');
+
+        Route::view('/inventory', 'pages.warehouse.inventory')
+            ->name('inventory');
+
+        // выдачи
+        Route::view('/issuance', 'pages.warehouse.issuance')
+            ->name('issuance');
+    });
 });
 
 require __DIR__ . '/auth.php';
