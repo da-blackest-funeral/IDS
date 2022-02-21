@@ -13,7 +13,7 @@ class RolesSeeder extends Seeder
         'installer' => [11, 18, 23, 12, 24, ],
         'admin' => [1, 2, 3, 4, 8, 9, 10, 11, 12, 16, 13, 15, 18, 19, 20, ],
         'collector' => [12, 17, 4, 5, 6, 25, ],
-        'evening_manager' => [2, 3, 4, 5, 9, 24, 11, 16, 15, ],
+        'evening_manager' => [18, 10, 2, 3, 4, 5, 9, 11, 16, 15, 12],
         'courier' => [7, 25],
         'measurer' => [2, 11, 23, ],
         'director' => [1, 2, 3, 19, 4, 8, 9, 10, 11, 16, 25, 15, ],

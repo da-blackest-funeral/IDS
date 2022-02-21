@@ -195,15 +195,18 @@
                            aria-haspopup="true" aria-expanded="false">Зарплаты
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
-                            <a class="dropdown-item" href="/load.php?route=admin/master/zp">Зарплаты
-                                монтажникам
-                            </a>
-                            <a class="dropdown-item" href="/load.php?route=admin/sborshik/graph">Зарплаты
-                                менеджерам
-                            </a>
-                            <a class="dropdown-item" href="/load.php?route=admin/master/history">Бонусы
-                                для монтажников
-                            </a>
+                            @if(auth()->user()->isEveningManager())
+                                <a class="dropdown-item" href="/load.php?route=admin/sborshik/graph">Зарплаты
+                                    менеджерам
+                                </a>
+                            @else
+                                <a class="dropdown-item" href="/load.php?route=admin/master/zp">Зарплаты
+                                    монтажникам
+                                </a>
+                                <a class="dropdown-item" href="/load.php?route=admin/master/history">Бонусы
+                                    для монтажников
+                                </a>
+                            @endif
                         </div>
                     </li>
                 @endcan

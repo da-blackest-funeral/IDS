@@ -86,4 +86,8 @@ class User extends Authenticatable
     public function isCollector() {
         return $this->hasRole(Role::findByName('collector'));
     }
+
+    public function isEveningManager() {
+        return $this->hasRole(Role::findByName('evening_manager'));
+    }
 }
