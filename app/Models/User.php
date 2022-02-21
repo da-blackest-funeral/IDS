@@ -90,4 +90,8 @@ class User extends Authenticatable
     public function isEveningManager() {
         return $this->hasRole(Role::findByName('evening_manager'));
     }
+
+    public function isAdmin() {
+        return $this->hasAnyRole(Role::findByName('admin'), Role::findByName('director'));
+    }
 }

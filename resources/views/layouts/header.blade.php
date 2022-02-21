@@ -203,6 +203,9 @@
                                 <a class="dropdown-item" href="/load.php?route=admin/master/zp">Зарплаты
                                     монтажникам
                                 </a>
+                                <a class="dropdown-item" href="/load.php?route=admin/sborshik/graph">Зарплаты
+                                    менеджерам
+                                </a>
                                 <a class="dropdown-item" href="/load.php?route=admin/master/history">Бонусы
                                     для монтажников
                                 </a>
