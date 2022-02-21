@@ -82,4 +82,8 @@ class User extends Authenticatable
     public function isInstaller() {
         return $this->hasRole(Role::findByName('installer'));
     }
+
+    public function isCollector() {
+        return $this->hasRole(Role::findByName('collector'));
+    }
 }

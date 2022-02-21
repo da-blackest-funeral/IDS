@@ -126,6 +126,13 @@
                         </div>
                     </li>
                 @endcan
+                @auth
+                    @if(auth()->user()->isCollector())
+                        <li class="nav-item my-auto">
+                            <a class="btn nav-link" href="#">Список сеток на сборку</a>
+                        </li>
+                    @endif
+                @endauth
 
                 @can('seeDocuments')
                     <li class="nav-item my-auto">
@@ -249,6 +256,12 @@
                                 <a class="dropdown-item" href="/load.php?route=admin/sklad/vidat_now">Текущие выдачи</a>
                             </div>
                         @endif
+                    </li>
+                @endcan
+
+                @can('seeEarning')
+                    <li class="nav-item dropdown my-auto">
+                        <a class="btn nav-link" href="#">Заработок</a>
                     </li>
                 @endcan
 

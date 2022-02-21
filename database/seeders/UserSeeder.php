@@ -15,8 +15,8 @@ class UserSeeder extends Seeder
      * @return void
      */
     public function run() {
-        $names = ['Фёдор', 'Игорь', 'Анна'];
-        $emails = ['fyodor.kazaryan@bk.ru', 'igor2020@mail.ru', 'anna@mail.ru'];
+        $names = ['Фёдор', 'Игорь', 'Анна', 'Михаил'];
+        $emails = ['fyodor.kazaryan@bk.ru', 'igor2020@mail.ru', 'anna@mail.ru', 'mihail@mail.ru'];
         for ($i = 0; $i < count($names); $i++) {
             \DB::table('users')
                 ->insert([
@@ -26,8 +26,9 @@ class UserSeeder extends Seeder
                     'remember_token' => Str::random(10),
                 ]);
         }
-        User::find(1)->assignRole(Role::where('name', 'admin')->get());
-        User::find(2)->assignRole(Role::where('name', 'installer')->get());
-        User::find(3)->assignRole(Role::where('name', 'manager')->get());
+        User::find(1)->assignRole(Role::findByName('admin'));
+        User::find(2)->assignRole(Role::findByName('installer'));
+        User::find(3)->assignRole(Role::findByName('manager'));
+        User::find(4)->assignRole(Role::findByName('collector'));
     }
 }
