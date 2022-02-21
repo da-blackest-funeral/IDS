@@ -20,12 +20,11 @@
                         <br/>
                     </a>
                 </li>
-                @can('canLoginToIdsMsk')
+                @can('loginToIdsMsk')
                     <li class="nav-item my-auto">
                         <a class="btn nav-link" href="https://moskva.03-okna.ru/total_order.php">IDS&nbsp;msk</a>
                     </li>
                 @endcan
-
 
                 @can('seeOrders')
                     <li class="nav-item dropdown my-auto">
@@ -41,17 +40,17 @@
                             @can('addOrders')
                                 <li>
                                     <a class="dropdown-item"
-                                       href="/add_order.php">Добавить
+                                       href="{{ route('add-order') }}">Добавить
                                         заказ
                                     </a>
                                 </li>
                             @endcan
                             <li>
-                                <a class="dropdown-item" href="/load.php?route=admin/order/all">Предыдущие заказы
+                                <a class="dropdown-item" href="{{ route('all-orders') }}">Предыдущие заказы
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="/load.php?route=admin/order/calc">Предыдущие
+                                <a class="dropdown-item" href="{{ route('all-calculations') }}">Предыдущие
                                     расчеты
                                 </a>
                             </li>
@@ -59,21 +58,21 @@
                                 <li>
                                     <a
                                         class="dropdown-item"
-                                        href="/load.php?route=admin/plan/steklopaket">Заказы
+                                        href="{{ route('glazed-windows-orders') }}">Заказы
                                         по стеклопакетам
                                     </a>
                                 </li>
                                 <li>
                                     <a
                                         class="dropdown-item"
-                                        href="/load.php?route=admin/plan/podokonnik">Заказы
+                                        href="{{ route('windowsills-orders') }}">Заказы
                                         по подоконникам
                                     </a>
                                 </li>
                                 <li>
                                     <a
                                         class="dropdown-item"
-                                        href="/load.php?route=admin/stat/control">Контроль
+                                        href="{{ route('control') }}">Контроль
                                         качества на заказах
                                     </a>
                                 </li>
@@ -89,38 +88,38 @@
                            aria-haspopup="true" aria-expanded="false">Управление
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navBarManagement">
-                            <a class="dropdown-item" href="/load.php?route=admin/price/index">Цены на товары и
+                            <a class="dropdown-item" href="{{ route('prices') }}">Цены на товары и
                                 услуги
                             </a>
 
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="/load.php?route=admin/phone/zadarma">Звонки</a>
+                            <a class="dropdown-item" href="{{ route('calls') }}">Звонки</a>
                             <div class="dropdown-divider"></div>
                             @can('seeAllGraph')
-                                <a class="dropdown-item" href="/load.php?route=admin/sborshik/graph">График
+                                <a class="dropdown-item" href="{{ route('all-graph') }}">График
                                     работы сотрудников
                                 </a>
                             @endcan
 
                             <a class="dropdown-item"
-                               href="/load.php?route=admin/stat/index&type=stat">Статистика
+                               href="{{ route('statistics') }}">Статистика
                             </a>
-                            <a class="dropdown-item" href="/load.php?route=admin/stat/index&type=plan">План + стат.
+                            <a class="dropdown-item" href="{{ route('statistics-plan') }}">План + стат.
                                 менеджеров
                             </a>
                             <a class="dropdown-item"
-                               href="/load.php?route=admin/stat/index&type=proisvodstvo">Производство
+                               href="{{ route('production') }}">Производство
                             </a>
-                            <a class="dropdown-item" href="/load.php?route=admin/stat/index&type=phone">Настройка
+                            <a class="dropdown-item" href="{{ route('calls-settings') }}">Настройка
                                 звонков
                             </a>
                             <a class="dropdown-item"
-                               href="/load.php?route=admin/stat/index&type=user">Пользователи
+                               href="{{ route('users') }}">Пользователи
                             </a>
-                            <a class="dropdown-item" href="/load.php?route=admin/stat/index&type=money">Деньги</a>
+                            <a class="dropdown-item" href="{{ route('money') }}">Деньги</a>
                             @can('seeAdditional')
                                 <a class="dropdown-item"
-                                   href="/load.php?route=admin/stat/index&type=other">Прочее
+                                   href="{{ route('management-additional') }}">Прочее
                                 </a>
                             @endcan
                         </div>
