@@ -96,10 +96,11 @@
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="/load.php?route=admin/phone/zadarma">Звонки</a>
                             <div class="dropdown-divider"></div>
-
-                            <a class="dropdown-item" href="/load.php?route=admin/sborshik/graph">График
-                                работы сотрудников
-                            </a>
+                            @can('seeAllGraph')
+                                <a class="dropdown-item" href="/load.php?route=admin/sborshik/graph">График
+                                    работы сотрудников
+                                </a>
+                            @endcan
 
                             <a class="dropdown-item"
                                href="/load.php?route=admin/stat/index&type=stat">Статистика
@@ -117,9 +118,11 @@
                                href="/load.php?route=admin/stat/index&type=user">Пользователи
                             </a>
                             <a class="dropdown-item" href="/load.php?route=admin/stat/index&type=money">Деньги</a>
-                            <a class="dropdown-item"
-                               href="/load.php?route=admin/stat/index&type=other">Прочее
-                            </a>
+                            @can('seeAdditional')
+                                <a class="dropdown-item"
+                                   href="/load.php?route=admin/stat/index&type=other">Прочее
+                                </a>
+                            @endcan
                         </div>
                     </li>
                 @endcan

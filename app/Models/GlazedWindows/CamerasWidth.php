@@ -12,6 +12,15 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|CamerasWidth newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CamerasWidth query()
  * @mixin \Eloquent
+ * @property int $id
+ * @property float $width
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Database\Factories\GlazedWindows\CamerasWidthFactory factory(...$parameters)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamerasWidth whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamerasWidth whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamerasWidth whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamerasWidth whereWidth($value)
  */
 class CamerasWidth extends Model
 {

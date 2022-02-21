@@ -29,6 +29,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read int|null $additional_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MosquitoSystems\Product[] $products
  * @property-read int|null $products_count
+ * @property-read \App\Models\MosquitoSystems\Group $group
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MosquitoSystems\Type[] $types
+ * @property-read int|null $types_count
  */
 class Additional extends Model
 {

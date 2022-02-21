@@ -29,6 +29,9 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|GlazedWindows whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|GlazedWindows whereWidthId($value)
  * @mixin \Eloquent
+ * @property string $name
+ * @property-read \App\Models\GlazedWindows\CamerasWidth $camerasWidth
+ * @method static \Illuminate\Database\Eloquent\Builder|GlazedWindows whereName($value)
  */
 class GlazedWindows extends Model
 {

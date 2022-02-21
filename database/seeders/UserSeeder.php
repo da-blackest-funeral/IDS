@@ -15,9 +15,9 @@ class UserSeeder extends Seeder
      * @return void
      */
     public function run() {
-        $names = ['Фёдор', 'Игорь'];
-        $emails = ['fyodor.kazaryan@bk.ru', 'igor2020@mail.ru'];
-        for ($i = 0; $i < 2; $i++) {
+        $names = ['Фёдор', 'Игорь', 'Анна'];
+        $emails = ['fyodor.kazaryan@bk.ru', 'igor2020@mail.ru', 'anna@mail.ru'];
+        for ($i = 0; $i < count($names); $i++) {
             \DB::table('users')
                 ->insert([
                     'name' => $names[$i],
@@ -28,5 +28,6 @@ class UserSeeder extends Seeder
         }
         User::find(1)->assignRole(Role::where('name', 'admin')->get());
         User::find(2)->assignRole(Role::where('name', 'installer')->get());
+        User::find(3)->assignRole(Role::where('name', 'manager')->get());
     }
 }

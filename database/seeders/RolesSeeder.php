@@ -9,9 +9,9 @@ use Spatie\Permission\Models\Role;
 class RolesSeeder extends Seeder
 {
     protected $roles = [
-        'manager' => [2, 3, 4, 5, 9, 10, 11, 15, 16, ],
+        'manager' => [2, 3, 4, 5, 9, 10, 11, 12, 13, 15, 16, 18, ],
         'installer' => [11, 18, 23, 12, 24, ],
-        'admin' => [1, 2, 3, 4, 8, 9, 10, 11, 12, 16, 13, 15, 19, 20, ],
+        'admin' => [1, 2, 3, 4, 8, 9, 10, 11, 12, 16, 13, 15, 18, 19, 20, ],
         'collector' => [17, 4, 5, 6, 28, ],
         'evening_manager' => [2, 3, 4, 5, 9, 24, 11, 16, 15, ],
         'courier' => [7, 25],

@@ -23,6 +23,8 @@ use Illuminate\Database\Eloquent\Model;
  * @mixin \Eloquent
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MosquitoSystems\Type[] $types
  * @property-read int|null $types_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MosquitoSystems\Additional[] $additional
+ * @property-read int|null $additional_count
  */
 class Group extends Model
 {
