@@ -1,5 +1,4 @@
-<div>
-    <select name="@if($isWithHeating) with-heating @else cameras-count @endif"
+<select class="form-control" name="@if($isWithHeating) with-heating @else cameras-count @endif"
         @if($isWithHeating) id="with-heating" @else id="cameras-count" @endif
         onchange="getConfiguration(
     '/ajax/glazed-windows/additional',
@@ -13,9 +12,5 @@
     @foreach($data as $item)
         <option value="{{ $item->id }}">{{ $item->thickness ?? $item->name }}</option>
         @endforeach
-@endif
-</select>
-        <div id="load-additional" class="form-row justify-content-between">
-
-        </div>
-</div>
+        @endif
+        </select>
