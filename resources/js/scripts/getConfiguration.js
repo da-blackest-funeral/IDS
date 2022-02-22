@@ -5,6 +5,7 @@ function getConfiguration(url, id, selectorId = false) {
     if (selectorId) {
         data.additional = $('#' + selectorId).find('option:selected').val();
     }
+
     $.ajax({
         type: 'GET',
         headers: {
