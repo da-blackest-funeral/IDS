@@ -124,7 +124,7 @@
                         <input name="height" id="height" placeholder="Количество (шт)" type="text" class="form-control">
                     </div>
                 </div>
-                <div class="row mt-4">
+                <div class="row mt-4" id="selectId">
                     <div class="col-10 col-md-3 mt-2 mt-md-0" id="categories-container">
                         <label class="mb-1 mt-2 mt-md-0" for="categories">Тип изделия</label>
                         <select name="categories" id="categories" class="form-control">
@@ -142,6 +142,12 @@
                     </div>
                     <div class="col-10 col-md-3 mt-4" id="items">
                         {{-- Сюда грузится второй селект --}}
+                    </div>
+                    <div class="col-10 col-md-3 mt-4" id="configuration">
+                        {{-- Сюда грузится второй селект --}}
+                    </div>
+                    <div class="col-10 col-md-3 mt-4" id="additional">
+                        {{-- Сюда грузится третий селект --}}
                     </div>
                     <!--
                     можно делать append после #configurations пустой див с нужным id, и в него класть
