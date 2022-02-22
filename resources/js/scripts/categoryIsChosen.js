@@ -1,3 +1,5 @@
+import createSelectInput from './createSelectInput';
+
 $('#categories').change(function () {
     let id = $(this).find("option:selected").val();
     $.ajax({
@@ -10,8 +12,10 @@ $('#categories').change(function () {
             categoryId: id
         },
         success: function (data) {
-            console.log(data);
-            $('#items').html(data);
+            createSelectInput(data,'items');
         }
     })
 });
+
+
+

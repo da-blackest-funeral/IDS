@@ -1,4 +1,4 @@
-function getConfiguration(url, id, selectorId = false) {
+function getConfiguration(url, parentId, selectorId = false) {
     let data = {
         categoryId: $('#categories').find('option:selected').val(),
     }
@@ -14,8 +14,10 @@ function getConfiguration(url, id, selectorId = false) {
         url: url,
         data: data,
         success: function (data) {
-            console.log(data)
-            $('#' + id).append(data)
+            console.log(data);
+            $('#' + parentId).append(data);
         }
     });
 }
+
+export default getConfiguration;
