@@ -13,6 +13,10 @@ class GlazedWindowsController extends Controller
 {
     protected $request;
 
+    protected $link = '/ajax/glazed-windows/additional';
+
+    protected $name = 'cameras-count';
+
     public function __construct(Request $request) {
         $this->request = $request;
     }
@@ -20,14 +24,14 @@ class GlazedWindowsController extends Controller
     /**
      * Defines, how to display last field to user
      *
-     * @return \Illuminate\Contracts\View\View
+//     * @return \Illuminate\Contracts\View\View
      */
     public function getLast() {
         $data = [];
-        $isWithHeating = false;
+
         if ($this->isWithHeating()) {
             $data = WithHeating::all(['id', 'name']);
-            $isWithHeating = true;
+            $this->name = 'with-heating';
         } elseif ($this->isGlass()) {
             $data = Glass::query()
                 ->select('thickness')
@@ -35,8 +39,11 @@ class GlazedWindowsController extends Controller
                 ->get();
         }
         \Debugbar::info($data);
-        return view('ajax.glazed-windows.last')
-            ->with(compact('data', 'isWithHeating'));
+        return response()->json([
+            'data' => $data,
+            'link' => $this->link,
+            'name' => $this->name,
+        ]);
     }
 
     /**
