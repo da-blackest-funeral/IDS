@@ -9,11 +9,15 @@ use Illuminate\Http\Request;
 
 class MosquitoSystemsController extends Controller
 {
+    protected $link = '/ajax/mosquito-systems/additional';
+
+    protected $name = 'load-additional';
+
     /**
      * Returns profiles for mosquito systems
      *
      * @param Request $request
-     * @return \Illuminate\Contracts\View\View
+//     * @return \Illuminate\Contracts\View\View
      */
     public function profile(Request $request) {
         $data = Profile::query()
@@ -23,8 +27,14 @@ class MosquitoSystemsController extends Controller
             })
             ->get();
         \Debugbar::info($data);
-        return view('ajax.mosquito-systems.profiles')
-            ->with(compact('data'));
+
+        return response()->json([
+            'data' => $data,
+            'name' => $this->name,
+            'link' => $this->link,
+        ]);
+//        return view('ajax.mosquito-systems.profiles')
+//            ->with(compact('data'));
     }
 
     /**
