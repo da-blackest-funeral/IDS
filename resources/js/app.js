@@ -1,3 +1,3 @@
 require('./bootstrap');
 require('./scripts/categoryIsChosen');
-require('./scripts/getConfiguration');
+// require('./scripts/getConfiguration');

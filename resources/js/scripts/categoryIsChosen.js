@@ -11,6 +11,9 @@ $('#categories').change(function () {
         },
         success: function (data) {
             console.log(data);
+            $('#third').hide();
+            $('#fourth').hide();
+            $('#additional').hide();
             $('#items').html(data);
         }
     })

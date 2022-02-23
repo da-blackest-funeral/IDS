@@ -42,16 +42,19 @@ class CategoriesAction extends Controller
                 'link' => '/ajax/mosquito-systems/profile',
                 'name' => 'tissues',
                 'ids' => range(5, 13),
+                'label' => 'Ткань'
             ],
             [
                 'link' => '/ajax/glazed-windows/last',
                 'name' => 'types_window',
                 'ids' => range(14, 18),
+                'label' => 'Тип окна'
             ],
             [
                 'link' => '/ajax/windowsill/type',
                 'name' => 'windowsills',
-                'ids' => [19]
+                'ids' => [19],
+                'label' => 'Тип стеклопакета',
             ],
         ];
     }
@@ -88,6 +91,7 @@ class CategoriesAction extends Controller
                 'data' => $data,
                 'link' => $this->category('link'),
                 'name' => $this->category('name'),
+                'label' => $this->category('label')
             ]);
     }
 
