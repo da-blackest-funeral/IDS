@@ -86,7 +86,7 @@ class CategoriesAction extends Controller
             }
         }
 
-        return response()->json([
+        return view('ajax.second-select')->with([
                 'data' => $data,
                 'link' => $this->category('link'),
                 'name' => $this->category('name'),

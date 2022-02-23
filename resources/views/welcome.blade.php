@@ -37,69 +37,6 @@
                 Создать списание
             </a>
         </div>
-{{--        <div class="container-fluid bg-light">--}}
-{{--            <h4 class="h4">Добавить товар</h4>--}}
-{{--            <form action="" id="form_add_new_product" method='POST' class='form-group form_add_new_product'--}}
-{{--                  enctype="multipart/form-data">--}}
-{{--                <div class="row">--}}
-{{--                    <div class="col-12">--}}
-{{--                        <div class="add_tov_tit">Добавить товар</div>--}}
-{{--                    </div>--}}
-{{--                </div>--}}
-{{--                <div class="row mt-2" id="place_with_width">--}}
-{{--                    <div class="col-12 col-md-3">--}}
-{{--                        <div class="mb-1 mt-2 mt-md-0">Высота (длина)</div>--}}
-{{--                        <input type="text" value="" id="height" name="height" placeholder="Высота (габаритн.) в мм."--}}
-{{--                               class="form-control"/>--}}
-{{--                    </div>--}}
-
-{{--                    <div class="col-12 col-md-3 mt-2 mt-md-0">--}}
-{{--                        <div class="mb-1 mt-2 mt-md-0">Ширина (глубина)</div>--}}
-{{--                        <input type="text" value="" id="width" name="width" placeholder="Ширина (габаритн.) в мм."--}}
-{{--                               class="form-control"/>--}}
-{{--                    </div>--}}
-
-{{--                    <div class="col-12 col-md-3 mt-2 mt-md-0">--}}
-{{--                        <div class="mb-1 mt-2 mt-md-0">Количество</div>--}}
-{{--                        <input type="text" value="" id="col" name="col" placeholder="Количество (шт)"--}}
-{{--                               class="form-control"/>--}}
-{{--                    </div>--}}
-
-{{--                    <div class="col-12 col-md-3 d-none d-md-block">--}}
-
-{{--                    </div>--}}
-{{--                </div>--}}
-
-{{--                <div class="row mt-4">--}}
-{{--                    <div class="col-10 col-md-3 mt-2 mt-md-0">--}}
-
-
-{{--                    </div>--}}
-
-{{--                    <div class="col-2 d-block d-md-none">--}}
-{{--                        <div class="pt-3 text-center"><a style="display:none;" id="link_information" target="_blank"--}}
-{{--                                                         href=""><span style="font-size: 18px;"--}}
-{{--                                                                       class="fa fa-info-circle"></span></a></div>--}}
-{{--                    </div>--}}
-
-{{--                    <div class="col-12 col-md-3 mt-2 mt-md-0">--}}
-{{--                        <div id="place_tissue"></div>--}}
-{{--                    </div>--}}
-
-{{--                    <div class="col-12 col-md-3 mt-2 mt-md-0">--}}
-{{--                        <div id="place_profil"></div>--}}
-{{--                    </div>--}}
-{{--                    <div class="col-12 col-md-3 mt-2 mt-md-0">--}}
-{{--                        <div id="place_uslugi"></div>--}}
-{{--                    </div>--}}
-{{--                </div>--}}
-{{--                <div class="row mt-4">--}}
-{{--                    <div class="col-12 mt-2 mt-md-0">--}}
-{{--                        <div id="place_additional"></div>--}}
-{{--                    </div>--}}
-{{--                </div>--}}
-{{--            </form>--}}
-{{--        </div>--}}
         <div class="container-fluid bg-light">
             <form action method="POST" class="form-group">
                 <div class="row">
@@ -150,7 +87,7 @@
                         {{-- Место для четвертого селекта --}}
                     </div>
                 </div>
-                <div class="row mt-4" id="additional">
+                <div class="row mt-4 pb-3" id="additional">
                     {{-- Место для дополнительных опций --}}
                 </div>
             </form>
