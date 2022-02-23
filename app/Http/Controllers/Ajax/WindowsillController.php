@@ -7,13 +7,12 @@ use App\Http\Controllers\Controller;
 class WindowsillController extends Controller
 {
     public function type() {
-        return response()->json([
+        return view('ajax.windowsills.types')->with([
             'data' => \DB::table('windowsills_material_color')->get(),
-            'link' => '/ajax/windowsills/additional',
-            'name' => 'load-additional',
         ]);
-//        return view('ajax.windowsills.types')->with([
-//            'data' => \DB::table('windowsills_material_color')->get(),
-//        ]);
+    }
+
+    public function additional() {
+        return view('ajax.windowsills.additional');
     }
 }

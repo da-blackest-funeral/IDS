@@ -101,8 +101,9 @@ Route::middleware('auth')->group(function () {
             Route::get('/additional', [GlazedWindowsController::class, 'additional']);
         });
 
-        Route::prefix('windowsill')->group(function () {
+        Route::prefix('windowsills')->group(function () {
             Route::get('/type', [WindowsillController::class, 'type']);
+            Route::get('/additional', [WindowsillController::class, 'additional']);
         });
     });
 

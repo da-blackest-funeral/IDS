@@ -51,10 +51,10 @@ class CategoriesAction extends Controller
                 'label' => 'Тип окна'
             ],
             [
-                'link' => '/ajax/windowsill/type',
+                'link' => '/ajax/windowsills/type',
                 'name' => 'windowsills',
                 'ids' => [19],
-                'label' => 'Тип стеклопакета',
+                'label' => 'Тип окна',
             ],
         ];
     }
@@ -86,7 +86,7 @@ class CategoriesAction extends Controller
             }
         }
 
-        return response()->json([
+        return view('ajax.second-select')->with([
                 'data' => $data,
                 'link' => $this->category('link'),
                 'name' => $this->category('name'),
