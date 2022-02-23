@@ -64,7 +64,7 @@ class CategoriesAction extends Controller
      * that specifies method's name to be executed.
      * If method is not specified, returns view with additional data
      *
-     * @return \Illuminate\Contracts\View\View
+//     * @return \Illuminate\Contracts\View\View
      */
     public function __invoke() {
 
@@ -86,8 +86,7 @@ class CategoriesAction extends Controller
             }
         }
 
-        return view('ajax.second-select')
-            ->with([
+        return response()->json([
                 'data' => $data,
                 'link' => $this->category('link'),
                 'name' => $this->category('name'),
