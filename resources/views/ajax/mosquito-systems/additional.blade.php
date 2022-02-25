@@ -13,3 +13,9 @@
         </div>
     @endforeach
 </div>
+<div class="row">
+    @include('components.calculations.additional-mounting-tools')
+    @include('components.calculations.coefficient-difficult')
+</div>
+@include('components.calculations.comment')
+@include('components.calculations.submit')

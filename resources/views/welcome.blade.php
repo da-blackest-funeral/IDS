@@ -87,7 +87,7 @@
                         {{-- Место для четвертого селекта --}}
                     </div>
                 </div>
-                <div class="row mt-4 pb-3" id="additional">
+                <div class="mt-4 pb-3" id="additional">
                     {{-- Место для дополнительных опций --}}
                 </div>
             </form>
