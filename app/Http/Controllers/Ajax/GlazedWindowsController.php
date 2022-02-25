@@ -26,19 +26,20 @@ class GlazedWindowsController extends Controller
         $data = [];
         $name = 'cameras-count';
         $label = 'Кол-во камер';
-//        $isWithHeating = false;
+
         if ($this->isWithHeating()) {
             $data = WithHeating::all(['id', 'name']);
-//            $isWithHeating = true;
             $name = 'with-heating';
             $label = 'Тип стеклопакета';
         } elseif ($this->isGlass()) {
+            $name = 'glass';
+            $label = 'Ширина стекла';
             $data = Glass::query()
                 ->select('thickness')
                 ->groupBy('thickness')
                 ->get();
         }
-        \Debugbar::info($data);
+
         return view('ajax.glazed-windows.last')
             ->with(compact('data', 'name', 'label'));
     }
@@ -81,15 +82,13 @@ class GlazedWindowsController extends Controller
      */
     protected function withHeating() {
         $camerasCount = WithHeating::with('group')
-            ->find((int)$this->request->get('additional'))
+            ->where('id', (int)$this->request->get('additional'))
             ->first()
             ->cameras;
         $widthArray = \DB::table('glazed_windows_with_heating_width')->get();
         $temperatureControllers = TemperatureController::all();
 
-        \Debugbar::info(compact('camerasCount', 'widthArray',
-            'temperatureControllers'
-        ));
+        \Debugbar::info((int)$this->request->get('additional'));
         return view('ajax.glazed-windows.with-heating-additional')
             ->with(
                 compact(
