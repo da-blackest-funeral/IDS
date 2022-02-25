@@ -19,14 +19,14 @@ class MosquitoSystemsSeeder extends Seeder
      */
     public function run() {
         Group::factory()->count(10)->create();
-        Additional::factory()->count(100)->create();
+        Additional::factory()->count(150)->create();
         Tissue::factory()->count(50)->create();
         Profile::factory()->count(50)->create();
         Type::factory()->count(20)->create();
-        Product::factory()->count(100)->create();
-        $this->seedProductAdditional(150);
-        $this->seedTypeAdditional(150);
-        $this->seedTypeGroup(30);
+        Product::factory()->count(350)->create();
+        $this->seedProductAdditional(250);
+        $this->seedTypeAdditional(250);
+        $this->seedTypeGroup(300);
     }
 
     protected function seedProductAdditional(int $times) {

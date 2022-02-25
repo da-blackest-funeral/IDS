@@ -17,12 +17,11 @@ class MosquitoSystemsController extends Controller
      */
     public function profile(Request $request) {
         $data = Profile::query()
-            ->select('name')
+            ->select(['id', 'name'])
             ->whereHas('products.type', function ($query) use ($request) {
                 return $query->where('category_id', $request->get('categoryId'));
             })
             ->get();
-        \Debugbar::info($data);
         return view('ajax.mosquito-systems.profiles')
             ->with(compact('data'));
     }
@@ -34,17 +33,25 @@ class MosquitoSystemsController extends Controller
      * @return \Illuminate\Contracts\View\View
      */
     public function additional(Request $request) {
-        // для москитных сеток в реквесте должны быть category_id, tissue_id, а для стеклопакетов количество камер
+        // для москитных сеток в реквесте должны быть category_id, tissue_id, profile_id
+        // а для стеклопакетов количество камер
         // в остальных первые 3 селекта не влияют на вывод дополнительных полей
         $products = Type::where('category_id', (int)$request->get('categoryId'))
+            ->has('products.additional.group')
             ->with('products.additional.group')
+            ->whereHas('products.additional.group', function ($query) use ($request) {
+                $query->where('tissue_id', $request->get('nextAdditional'))
+                    ->where('profile_id', $request->get('additional'));
+            })
             ->get()
             ->pluck('products');
+        \Debugbar::info($products);
         $products = $this->makeCollectionNotNested($products);
         $additionalCollections = $products->pluck('additional');
         $additional = $this->makeCollectionNotNested($additionalCollections);
         $groups = $additional->pluck('group')->unique();
 
+        \Debugbar::info(compact('additional', 'groups'));
         return view('ajax.mosquito-systems.additional')->with(
             compact('additional', 'groups')
         );
@@ -57,9 +64,12 @@ class MosquitoSystemsController extends Controller
      * @return \Illuminate\Support\Collection
      */
     protected function makeCollectionNotNested($nestedCollection) {
-        foreach ($nestedCollection as $collection) {
-            foreach ($collection as $additional) {
-                $tmp[] = $additional;
+        $tmp = [];
+        if (isset($nestedCollection[0][0])) {
+            foreach ($nestedCollection as $collection) {
+                foreach ($collection as $additional) {
+                    $tmp[] = $additional;
+                }
             }
         }
 
