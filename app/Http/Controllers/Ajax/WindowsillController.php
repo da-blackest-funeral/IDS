@@ -15,4 +15,6 @@ class WindowsillController extends Controller
     public function additional() {
         return view('ajax.windowsills.additional');
     }
+
+
 }

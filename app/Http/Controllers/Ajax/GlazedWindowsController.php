@@ -117,16 +117,63 @@ class GlazedWindowsController extends Controller
      */
     protected function glazedWindows() {
         $camerasCount = (int)$this->request->get('additional');
+        $additionalForCameras = $this->getAdditionalSelects('Камера');
+        $additionalForGlass = $this->getAdditionalSelects('Стекло');
+        \Debugbar::info(compact('additionalForGlass', 'additionalForCameras'));
+
         $glassWidth = GlazedWindows::select(['id', 'name'])
             ->where('layer_id', 2)
             ->get();
         \Debugbar::info($glassWidth);
+
         $camerasWidth = GlazedWindows::with('camerasWidth')
             ->where('category_id', (int)$this->request->get('categoryId'))
             ->where('layer_id', 1)
             ->get()
             ->pluck('camerasWidth');
+
         return view('ajax.glazed-windows.additional')
-            ->with(compact('camerasWidth', 'camerasCount', 'glassWidth'));
+            ->with(
+                compact(
+                    'camerasWidth',
+                    'camerasCount',
+                    'glassWidth',
+                    'additionalForCameras',
+                    'additionalForGlass',
+                )
+            );
+        /*
+         * '' => $this->getAdditionalSelects('Камера'),
+                'additionalForGlass' => $this->getAdditionalSelects('Стекло'),
+         */
+    }
+
+    protected function getAdditionalSelects(string $layer) {
+//        return
+        $options = \DB::table('glazed_windows_additional')
+            ->select(['id', 'name', 'value', 'layer_id', 'price'])
+            ->where(
+                'layer_id',
+                \DB::table('glazed_windows_layers')
+                    ->select('id')
+                    ->where('name', 'like', $layer)
+                    ->first()
+                    ->id
+            )->get();
+
+        $selects = \DB::table('glazed_windows_additional')
+            ->select('name')
+            ->where(
+                'layer_id',
+                \DB::table('glazed_windows_layers')
+                    ->select('id')
+                    ->where('name', 'like', $layer)
+                    ->first()
+                    ->id
+            )
+            ->groupBy('name')
+            ->get();
+
+        return compact('options', 'selects');
     }
 }

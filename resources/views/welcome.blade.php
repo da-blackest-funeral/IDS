@@ -40,8 +40,8 @@
         <div class="container-fluid bg-light">
             <form action method="POST" class="form-group">
                 <div class="row">
-                    <div class="col-12">
-                        <h6 class="h6">Добавить товар</h6>
+                    <div class="col-12 pt-2 pl-2">
+                        <p class="h3">Добавить товар</p>
                     </div>
                     <div class="col-12"></div>
                 </div>

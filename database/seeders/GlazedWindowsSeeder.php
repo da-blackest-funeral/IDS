@@ -7,9 +7,11 @@ use App\Models\GlazedWindows\GlazedWindows;
 use App\Models\GlazedWindows\WithHeating;
 use Database\Factories\GlazedWindows\GlazedWindowsFactory;
 use Illuminate\Database\Seeder;
+use Illuminate\Foundation\Testing\WithFaker;
 
 class GlazedWindowsSeeder extends Seeder
 {
+    use WithFaker;
     /**
      * Run the database seeds.
      *
@@ -23,6 +25,60 @@ class GlazedWindowsSeeder extends Seeder
         WithHeating::factory()->count(15)->create();
         $this->seedTemperatureControllers();
         $this->seedGlazedWindowsWithHeatingWidth();
+        $this->seedAdditional();
+    }
+
+    protected function seedAdditional() {
+        $this->setUpFaker();
+        \DB::table('glazed_windows_additional')
+            ->insert([
+                'name' => 'argon',
+                'value' => 'Нужен аргон',
+                'sort' => $this->faker->numberBetween(1, 10),
+                'price' => 100,
+                'layer_id' => 1
+            ]);
+        \DB::table('glazed_windows_additional')
+            ->insert([
+                'name' => 'argon',
+                'value' => 'Без аргона',
+                'sort' => $this->faker->numberBetween(1, 10),
+                'price' => 0,
+                'layer_id' => 1
+            ]);
+        \DB::table('glazed_windows_additional')
+            ->insert([
+                'name' => 'tempering',
+                'value' => 'Нужна закалка',
+                'sort' => $this->faker->numberBetween(1, 10),
+                'price' => 100,
+                'layer_id' => 2
+            ]);
+        \DB::table('glazed_windows_additional')
+            ->insert([
+                'name' => 'tempering',
+                'value' => 'Без закалки',
+                'sort' => $this->faker->numberBetween(1, 10),
+                'price' => 0,
+                'layer_id' => 2
+            ]);
+        //
+        \DB::table('glazed_windows_additional')
+            ->insert([
+                'name' => 'aluminum_frame',
+                'value' => 'Алюминиевая рамка',
+                'sort' => $this->faker->numberBetween(1, 10),
+                'price' => 100,
+                'layer_id' => 1
+            ]);
+        \DB::table('glazed_windows_additional')
+            ->insert([
+                'name' => 'aluminum_frame',
+                'value' => 'Пластиковая рамка',
+                'sort' => $this->faker->numberBetween(1, 10),
+                'price' => 0,
+                'layer_id' => 1
+            ]);
     }
 
     protected function seedGlazedWindowsWithHeatingWidth() {
