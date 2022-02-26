@@ -3,21 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Order;
+use App\Services\Interfaces\Calculator;
+use Illuminate\Http\Request;
+use function React\Promise\all;
 
 class CalculationController extends Controller
 {
+    protected Request $request;
+
+    public function __construct(Request $request) {
+        $this->request = $request;
+    }
+
     public function index() {
-
-//        dd(
-//            Category::has('type')->with('type')->get()
-//                ->pluck('type')
-//        );
-//        dd(
-//            Category::with('type')
-//                ->getRelation('type')
-//                ->get())
-//        ;
-
         return view('welcome')->with([
             'data' => Category::all(),
             'superCategories' => Category::whereIn(
@@ -27,29 +26,13 @@ class CalculationController extends Controller
                     ->get()
                     ->toArray()
             )->get(),
+            'orderNumber' => Order::count() + 1,
         ]);
+    }
 
-//        $product = Product::first();
-//        dump($product->load(['tissue', 'type']));
-
-//        dump(
-//          Profile::where('id', '49')->with('products')->get()
-//        );
-
-//        dump(
-//            Additional::with('products')->first()
-//        );
-
-//        dump(
-//            Product::with('additional')->first()
-//        );
-
-//        dump(
-//            Type::with('additional')->first()
-//        );
-
-//        dump(
-//          Group::with('types')->first()
-//        );
+    public function save(Calculator $calculator) {
+//        dd($this->request->all());
+        $calculator->calculate();
+        dd($calculator->getPrice());
     }
 }

@@ -21,6 +21,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/', [CalculationController::class, 'index'])
         ->name('welcome');
 
+    Route::post('/', [CalculationController::class, 'save']);
+
     Route::view('/documents', 'pages.documents')
         ->name('documents');
 

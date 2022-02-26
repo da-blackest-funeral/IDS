@@ -12,7 +12,7 @@
                     </select>
                     @foreach($additionalForGlass['selects'] as $select)
                         <div class="mt-1">
-                            <select class="form-control" name="{{ $additionalForGlass['options'][0]->name }}">
+                            <select class="form-control" name="{{ $select->name . "-$i" }}">
                                 @foreach($additionalForGlass['options'] as $additional)
                                     @if($select->name == $additional->name)
                                         <option value="{{ $additional->price }}">{{ $additional->value }}</option>
@@ -33,9 +33,10 @@
                         <option value="{{ $width->id }}">{{ $width->width }} мм.</option>
                     @endforeach
                 </select>
+{{--                @dump(compact('additionalForCameras'))--}}
                 @foreach($additionalForCameras['selects'] as $select)
                     <div class="mt-1">
-                        <select class="form-control" name="{{ $additionalForCameras['options'][0]->name }}">
+                        <select class="form-control" name="{{ $select->name . "-$i"}}">
                             @foreach($additionalForCameras['options'] as $additional)
                                 @if($select->name == $additional->name)
                                     <option value="{{ $additional->price }}">{{ $additional->value }}</option>
@@ -58,7 +59,7 @@
                 </select>
                 @foreach($additionalForGlass['selects'] as $select)
                     <div class="mt-1">
-                        <select class="form-control" name="{{ $additionalForGlass['options'][0]->name }}">
+                        <select class="form-control" name="{{ $select->name . "-" . $i + 1 }}">
                             @foreach($additionalForGlass['options'] as $additional)
                                 @if($select->name == $additional->name)
                                     <option value="{{ $additional->price }}">{{ $additional->value }}</option>

@@ -16,4 +16,6 @@ use Illuminate\Database\Eloquent\Model;
 class Additional extends Model
 {
     use HasFactory;
+
+    protected $table = 'glazed_windows_additional';
 }

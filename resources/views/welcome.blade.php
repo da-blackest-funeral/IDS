@@ -3,7 +3,7 @@
 @section('content')
     <div class="container mt-4">
         <h1 class="h1">
-            Расчёт
+            Заказ <span style="font-size: 30px">№{{ $orderNumber }}</span>
         </h1>
         <div class="container-fluid mb-4" style="padding: 5px;">
             <a href="https://03-okna.ru/offer.php?num_rasch=34084" class="btn btn-secondary btn-sm">
@@ -39,6 +39,7 @@
         </div>
         <div class="container-fluid bg-light">
             <form action method="POST" class="form-group">
+                @csrf
                 <div class="row">
                     <div class="col-12 pt-2 pl-2">
                         <p class="h3">Добавить товар</p>
@@ -52,13 +53,13 @@
                                class="form-control">
                     </div>
                     <div class="col-12 col-md-3">
-                        <label class="mb-1 mt-2 mt-md-0" for="height">Ширина (глубина)</label>
-                        <input name="height" id="height" placeholder="Ширина (габаритн.) в мм." type="text"
+                        <label class="mb-1 mt-2 mt-md-0" for="width">Ширина (глубина)</label>
+                        <input name="width" id="width" placeholder="Ширина (габаритн.) в мм." type="text"
                                class="form-control">
                     </div>
                     <div class="col-12 col-md-3">
-                        <label class="mb-1 mt-2 mt-md-0" for="height">Количество (шт)</label>
-                        <input name="height" id="height" placeholder="Количество (шт)" type="text" class="form-control">
+                        <label class="mb-1 mt-2 mt-md-0" for="count">Количество (шт)</label>
+                        <input name="count" id="count" placeholder="Количество (шт)" type="text" class="form-control">
                     </div>
                 </div>
                 <div class="row mt-4" id="items-row">
