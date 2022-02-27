@@ -118,15 +118,13 @@ class GlazedWindowsController extends Controller
         $camerasCount = (int)$this->request->get('additional');
         $additionalForCameras = $this->getAdditionalSelects('Камера');
         $additionalForGlass = $this->getAdditionalSelects('Стекло');
-        \Debugbar::info(compact('additionalForGlass', 'additionalForCameras'));
 
         $glassWidth = GlazedWindows::select(['id', 'name'])
             ->where('layer_id', 2)
             ->get();
-        \Debugbar::info($glassWidth);
 
         $camerasWidth = GlazedWindows::with('camerasWidth')
-            ->where('category_id', (int)$this->request->get('categoryId'))
+            ->where('category_id', 14)
             ->where('layer_id', 1)
             ->get()
             ->pluck('camerasWidth');
@@ -141,14 +139,9 @@ class GlazedWindowsController extends Controller
                     'additionalForGlass',
                 )
             );
-        /*
-         * '' => $this->getAdditionalSelects('Камера'),
-                'additionalForGlass' => $this->getAdditionalSelects('Стекло'),
-         */
     }
 
     protected function getAdditionalSelects(string $layer) {
-//        return
         $options = \DB::table('glazed_windows_additional')
             ->select(['id', 'name', 'value', 'layer_id', 'price'])
             ->where(
