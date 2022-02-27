@@ -2,8 +2,11 @@
 
 namespace App\Providers;
 
+use App\Http\Requests\SaveGlazedWindowsOrderRequest;
+use App\Http\Requests\SaveOrderRequest;
 use App\Services\Classes\GlazedWindowsCalculator;
 use App\Services\Interfaces\Calculator;
+use Illuminate\Http\Request;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -17,7 +20,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(Calculator::class, function ($app) {
             if (in_array(request()->input('categories'), [14, 15, 16])) {
-                return new GlazedWindowsCalculator(request());
+                return new GlazedWindowsCalculator(new SaveOrderRequest());
             }
         });
     }

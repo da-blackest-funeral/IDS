@@ -2,20 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SaveOrderRequest;
 use App\Models\Category;
 use App\Models\Order;
 use App\Services\Interfaces\Calculator;
-use Illuminate\Http\Request;
-use function React\Promise\all;
 
 class CalculationController extends Controller
 {
-    protected Request $request;
-
-    public function __construct(Request $request) {
-        $this->request = $request;
-    }
-
     public function index() {
         return view('welcome')->with([
             'data' => Category::all(),
@@ -30,8 +23,8 @@ class CalculationController extends Controller
         ]);
     }
 
-    public function save(Calculator $calculator) {
-//        dd($this->request->all());
+    public function save(Calculator $calculator, SaveOrderRequest $request) {
+//        $calculator->setRequest($request);
         $calculator->calculate();
         dd($calculator->getPrice());
     }

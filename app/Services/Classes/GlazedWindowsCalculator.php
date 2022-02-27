@@ -2,6 +2,7 @@
 
 namespace App\Services\Classes;
 
+use App\Http\Requests\SaveOrderRequest;
 use App\Models\GlazedWindows\Additional;
 use App\Models\GlazedWindows\GlazedWindows;
 use Illuminate\Http\Request;
@@ -15,11 +16,15 @@ class GlazedWindowsCalculator implements \App\Services\Interfaces\Calculator
     protected Collection $additional;
     protected Request $request;
 
-    public function __construct(Request $request) {
+    public function __construct(SaveOrderRequest $request) {
         $this->request = $request;
         $this->additional = Additional::groupBy('name')
             ->get('name')
             ->pluck('name');
+    }
+
+    public function setRequest(Request $request) {
+        $this->request = $request;
     }
 
     public function calculate(): void {

@@ -34,11 +34,13 @@
 
     @section('errors')
         @if($errors->any())
-            @foreach($errors->all() as $error)
-                <div class="alert-danger h-25 w-25 bordered">
-                    {{ $error }}
-                </div>
-            @endforeach
+            <div class="m-xxl-3 p-3 alert-danger border shadow border-danger rounded w-25 h-25">
+                @foreach($errors->all() as $error)
+                    <div class="pb-2">
+                        <span class="font-weight-bold">{{ $error }}</span>
+                    </div>
+                @endforeach
+            </div>
         @endif
     @show
     @yield('content')
