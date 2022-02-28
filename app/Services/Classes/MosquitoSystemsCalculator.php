@@ -16,6 +16,7 @@ class MosquitoSystemsCalculator extends BaseCalculator
 
     public function __construct(SaveOrderRequest $request) {
         $this->request = $request;
+//        dd($request);
     }
 
     public function calculate(): void {
@@ -32,13 +33,14 @@ class MosquitoSystemsCalculator extends BaseCalculator
 //                ->where('category_id', $this->request->get('categories'))
 //                ->first()
 //        );
-        \Debugbar::info($this->request);
+//        \Debugbar::info($this->request);
         $this->price = Product::where('tissue_id', $this->request->get('tissues'))
             ->where('profile_id', $this->request->get('profiles'))
             ->where('category_id', $this->request->get('categories'))
-            ->first()
+            ->firstOrFail()
             ->price;
-//        dd($this->price);
+//        dd($this->request->all());
+//        dd($tmp->price);
     }
 
     public function getPrice(): float {

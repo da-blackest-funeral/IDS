@@ -18,7 +18,6 @@ class GlazedWindowsCalculator extends BaseCalculator
 
     public function __construct(Request $request) {
         $this->request = $request;
-        dd($request, get_class($request));
         $this->additional = Additional::groupBy('name')
             ->get('name')
             ->pluck('name');
