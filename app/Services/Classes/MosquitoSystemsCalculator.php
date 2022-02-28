@@ -9,16 +9,15 @@ use Illuminate\Support\Collection;
 class MosquitoSystemsCalculator extends BaseCalculator
 {
     use HasSquare;
-
     /*
      * todo: ремонт, монтаж, демонтаж, доставка, зп монтажникам
      * вроде готово, протестировать todo: просчет цены за все additional (которые в group)
-     * todo: для сеток пр-ва италия другая логика расчета (сделать отдельный класс калькулятор)
      */
 
     protected Collection $options;
 
     public function calculate(): void {
+        parent::calculate();
         $this->getProductPrice();
         $this->setPriceForAdditional();
         $this->setPriceForCount();
@@ -45,6 +44,7 @@ class MosquitoSystemsCalculator extends BaseCalculator
                 ->firstOrFail()
                 ->id;
         } catch (\Exception $exception) {
+            \Debugbar::alert($exception->getMessage());
             return view('welcome')->withErrors([
                 'not_found' => 'Товар не найден',
             ]);
@@ -57,7 +57,7 @@ class MosquitoSystemsCalculator extends BaseCalculator
                     ->where('type_id', $typeId)
                     ->where('additional_id', $this->request->get("group-$i"))
                     ->first()
-                    ->price;
+                    ->price * $this->squareCoefficient;
             } catch (\Exception $exception) {
                 \Debugbar::alert($exception->getMessage());
             }

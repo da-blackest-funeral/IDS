@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Http\Requests\SaveGlazedWindowsOrderRequest;
 use App\Http\Requests\SaveOrderRequest;
 use App\Services\Classes\GlazedWindowsCalculator;
+use App\Services\Classes\ItalianMosquitoSystemCalculator;
 use App\Services\Classes\MosquitoSystemsCalculator;
 use App\Services\Interfaces\Calculator;
 use Illuminate\Http\Request;
@@ -25,8 +26,12 @@ class AppServiceProvider extends ServiceProvider
                 return new GlazedWindowsCalculator($request);
             }
 
-            if (in_array(\request()->input('categories'), [5, 6, 7, 8, 9, 10, 11, 12, 13])) {
+            if (in_array(\request()->input('categories'), [5, 6, 7, 8, 9, 10, 11, 12,])) {
                 return new MosquitoSystemsCalculator($request);
+            }
+
+            if (\request()->input('categories') == 13) {
+                return new ItalianMosquitoSystemCalculator($request);
             }
         });
     }

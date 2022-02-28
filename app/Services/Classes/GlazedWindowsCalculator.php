@@ -22,6 +22,7 @@ class GlazedWindowsCalculator extends BaseCalculator
     }
 
     public function calculate(): void {
+        parent::calculate();
         $this->calculateGlazedWindowsPrice();
         $this->setAdditionalPrice();
         $this->setPriceForCount();

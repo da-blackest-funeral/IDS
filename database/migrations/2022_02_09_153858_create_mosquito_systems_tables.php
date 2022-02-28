@@ -19,6 +19,15 @@ return new class extends Migration
      */
     public function up()
     {
+        Schema::create("{$this->prefix}_italian", function (Blueprint $table) {
+            $table->id();
+            $table->integer('height');
+            $table->integer('width');
+            $table->float('price')->comment('Цена в долларах');
+            $table->softDeletes();
+            $table->timestamps();
+        });
+
         Schema::create("{$this->prefix}_types", function (Blueprint $table) {
             $table->id();
             $table->foreignId('category_id');

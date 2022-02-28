@@ -25,9 +25,13 @@ abstract class BaseCalculator implements \App\Services\Interfaces\Calculator
     }
 
     public function calculate(): void {
-        if (is_a($this, HasSquare::class)) {
+        if ($this->hasSquare()) {
             $this->setSquareCoefficient();
         }
+    }
+
+    protected function hasSquare(): bool {
+        return in_array(HasSquare::class, class_uses($this));
     }
 
     public function getPrice(): float {
