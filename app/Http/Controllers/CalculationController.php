@@ -24,7 +24,6 @@ class CalculationController extends Controller
     }
 
     public function save(Calculator $calculator, SaveOrderRequest $request) {
-//        $calculator->setRequest($request);
         $calculator->calculate();
         dd($calculator->getPrice());
     }

@@ -8,7 +8,7 @@ use App\Models\GlazedWindows\GlazedWindows;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
-class GlazedWindowsCalculator implements \App\Services\Interfaces\Calculator
+class GlazedWindowsCalculator extends BaseCalculator
 {
     protected Collection $options;
     protected float $price = 0.0;
@@ -16,8 +16,9 @@ class GlazedWindowsCalculator implements \App\Services\Interfaces\Calculator
     protected Collection $additional;
     protected Request $request;
 
-    public function __construct(SaveOrderRequest $request) {
+    public function __construct(Request $request) {
         $this->request = $request;
+        dd($request, get_class($request));
         $this->additional = Additional::groupBy('name')
             ->get('name')
             ->pluck('name');
