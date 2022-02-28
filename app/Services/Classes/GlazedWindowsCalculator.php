@@ -10,26 +10,19 @@ use Illuminate\Support\Collection;
 
 class GlazedWindowsCalculator extends BaseCalculator
 {
-    protected Collection $options;
-    protected float $price = 0.0;
-    protected float $squareCoefficient = 1.0;
+    use HasSquare;
+
     protected Collection $additional;
-    protected Request $request;
 
     public function __construct(Request $request) {
-        $this->request = $request;
+        parent::__construct($request);
         $this->additional = Additional::groupBy('name')
             ->get('name')
             ->pluck('name');
     }
 
-    public function setRequest(Request $request) {
-        $this->request = $request;
-    }
-
     public function calculate(): void {
         $this->calculateGlazedWindowsPrice();
-        $this->setSquareCoefficient();
         $this->setAdditionalPrice();
         $this->setPriceForCount();
         $this->additionalPriceForSquare();
@@ -56,10 +49,6 @@ class GlazedWindowsCalculator extends BaseCalculator
         }
     }
 
-    protected function setPriceForCount() {
-        $this->price *= $this->request->get('count');
-    }
-
     protected function getIds(): array {
         $result = [];
         for ($i = 1; $i <= 3; $i++) {
@@ -81,25 +70,7 @@ class GlazedWindowsCalculator extends BaseCalculator
         }
     }
 
-    protected function setSquareCoefficient() {
-        $square = $this->request->get('width') * $this->request->get('height') / 1000000;
-        if ($square < 1) {
-            $this->squareCoefficient = 1;
-        } else {
-            $this->squareCoefficient = $square;
-        }
-    }
-
-    public function getPrice(): float {
-        return $this->price;
-    }
-
-    public function setPrice(float $price) {
-        // TODO: Implement setPrice() method.
-    }
-
-    public function getOptions(): array {
-        // TODO: Implement getOptions() method.
-        return [];
+    public function getOptions(): Collection {
+        return $this->options;
     }
 }

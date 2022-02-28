@@ -3,6 +3,7 @@
 namespace App\Services\Interfaces;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 interface Calculator
 {
@@ -12,5 +13,5 @@ interface Calculator
 
     public function setPrice(float $price);
 
-    public function getOptions(): array;
+    public function getOptions(): Collection;
 }

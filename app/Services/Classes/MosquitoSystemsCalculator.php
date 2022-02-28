@@ -2,56 +2,67 @@
 
 namespace App\Services\Classes;
 
-use App\Http\Requests\SaveOrderRequest;
 use App\Models\MosquitoSystems\Product;
-use Illuminate\Http\Request;
+use App\Models\MosquitoSystems\Type;
 use Illuminate\Support\Collection;
 
 class MosquitoSystemsCalculator extends BaseCalculator
 {
-    protected Request $request;
-    protected float $price = 0.0;
-    protected float $squareCoefficient = 1.0;
-    protected Collection $options;
+    use HasSquare;
 
-    public function __construct(SaveOrderRequest $request) {
-        $this->request = $request;
-//        dd($request);
-    }
+    /*
+     * todo: ремонт, монтаж, демонтаж, доставка, зп монтажникам
+     * вроде готово, протестировать todo: просчет цены за все additional (которые в group)
+     * todo: для сеток пр-ва италия другая логика расчета (сделать отдельный класс калькулятор)
+     */
+
+    protected Collection $options;
 
     public function calculate(): void {
         $this->getProductPrice();
+        $this->setPriceForAdditional();
+        $this->setPriceForCount();
     }
 
     protected function getProductPrice() {
-
-//        \Debugbar::info($this->request);
-
-//        \Debugbar::info(Product::where('tissue_id', $this->request->get('tissues'))->first());
-//        \Debugbar::info(
-//            Product::where('tissue_id', $this->request->get('tissues'))
-//                ->where('category_id', $this->request->get('categories'))
-//                ->first()
-//        );
-//        \Debugbar::info($this->request);
-        $this->price = Product::where('tissue_id', $this->request->get('tissues'))
-            ->where('profile_id', $this->request->get('profiles'))
-            ->where('category_id', $this->request->get('categories'))
-            ->firstOrFail()
-            ->price;
-//        dd($this->request->all());
-//        dd($tmp->price);
+        try {
+            $this->price = Product::where('tissue_id', $this->request->get('tissues'))
+                ->where('profile_id', $this->request->get('profiles'))
+                ->where('category_id', $this->request->get('categories'))
+                ->firstOrFail()
+                ->price;
+        } catch (\Exception $exception) {
+            \Debugbar::alert($exception->getMessage());
+            return view('welcome')->withErrors([
+                'not_found' => 'Такого товара не найдено',
+            ]);
+        }
     }
 
-    public function getPrice(): float {
-        return $this->price;
-    }
+    protected function setPriceForAdditional() {
+        try {
+            $typeId = Type::where('category_id', $this->request->get('categories'))
+                ->firstOrFail()
+                ->id;
+        } catch (\Exception $exception) {
+            return view('welcome')->withErrors([
+                'not_found' => 'Товар не найден',
+            ]);
+        }
 
-    public function setPrice(float $price) {
-        // TODO: Implement setPrice() method.
-    }
-
-    public function getOptions(): array {
-        // TODO: Implement getOptions() method.
+        $i = 1;
+        while ($this->request->has("group-$i")) {
+            try {
+                $additionalPrice = \DB::table('mosquito_systems_type_additional')
+                    ->where('type_id', $typeId)
+                    ->where('additional_id', $this->request->get("group-$i"))
+                    ->first()
+                    ->price;
+            } catch (\Exception $exception) {
+                \Debugbar::alert($exception->getMessage());
+            }
+            $this->price += $additionalPrice ?? 0;
+            $i++;
+        }
     }
 }
