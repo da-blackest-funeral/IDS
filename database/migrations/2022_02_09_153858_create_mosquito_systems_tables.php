@@ -38,6 +38,8 @@ return new class extends Migration
                 ->comment('Ссылка на страницу замера');
             $table->float('salary')
                 ->comment('Доп. зарплата монтажнику');
+            $table->float('delivery')
+                ->comment('Цена за доставку');
             $table->float('price');
             $table->text('description');
             $table->string('img');

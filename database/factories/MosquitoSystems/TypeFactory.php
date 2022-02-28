@@ -30,6 +30,7 @@ class TypeFactory extends Factory
             'description' => $this->faker->text(),
             'img' => $this->faker->imageUrl(),
             'measure_time' => $this->faker->numberBetween(1, 5),
+            'delivery' => 500,
         ];
     }
 }

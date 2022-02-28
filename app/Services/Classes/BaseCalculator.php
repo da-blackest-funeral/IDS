@@ -2,10 +2,11 @@
 
 namespace App\Services\Classes;
 
+use \App\Services\Interfaces\Calculator;
 use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
 
-abstract class BaseCalculator implements \App\Services\Interfaces\Calculator
+abstract class BaseCalculator implements Calculator
 {
 
     protected Request $request;
@@ -16,11 +17,11 @@ abstract class BaseCalculator implements \App\Services\Interfaces\Calculator
         $this->request = $request;
     }
 
-    protected function setPriceForCount() {
+    protected function setPriceForCount(): void {
         $this->price *= $this->request->get('count');
     }
 
-    public function setRequest(Request $request) {
+    public function setRequest(Request $request): void {
         $this->request = $request;
     }
 
@@ -38,7 +39,7 @@ abstract class BaseCalculator implements \App\Services\Interfaces\Calculator
         return $this->price;
     }
 
-    public function setPrice(float $price) {
+    public function setPrice(float $price): void {
         $this->price = $price;
     }
 

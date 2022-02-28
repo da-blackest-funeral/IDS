@@ -9,18 +9,22 @@ use Illuminate\Support\Collection;
 class MosquitoSystemsCalculator extends BaseCalculator
 {
     use HasSquare;
+
     /*
      * todo: ремонт, монтаж, демонтаж, доставка, зп монтажникам
      * вроде готово, протестировать todo: просчет цены за все additional (которые в group)
      */
 
     protected Collection $options;
+    protected float $installationPrice;
+    protected float $deliveryPrice;
 
     public function calculate(): void {
         parent::calculate();
         $this->getProductPrice();
         $this->setPriceForAdditional();
         $this->setPriceForCount();
+        $this->setDeliveryPrice();
     }
 
     protected function getProductPrice() {
@@ -53,16 +57,43 @@ class MosquitoSystemsCalculator extends BaseCalculator
         $i = 1;
         while ($this->request->has("group-$i")) {
             try {
-                $additionalPrice = \DB::table('mosquito_systems_type_additional')
+                $additional = \DB::table('mosquito_systems_type_additional')
                     ->where('type_id', $typeId)
                     ->where('additional_id', $this->request->get("group-$i"))
-                    ->first()
-                    ->price * $this->squareCoefficient;
+                    ->first();
+
+                $additionalPrice = $additional->price * $this->squareCoefficient;
+                if ($this->additionalIsInstallation($additional)) {
+                    $this->installationPrice = $additionalPrice;
+                }
+
             } catch (\Exception $exception) {
                 \Debugbar::alert($exception->getMessage());
             }
             $this->price += $additionalPrice ?? 0;
             $i++;
         }
+    }
+
+    protected function additionalIsInstallation($additional): bool {
+        // todo начнет работать после переноса данных по москитным системам
+        return $additional->group()
+                ->name == 'installation';
+    }
+
+    protected function setDeliveryPrice() {
+        $this->deliveryPrice = Type::where(
+            'category_id',
+            $this->request->get('categories')
+        )
+            ->first()
+            ->delivery;
+    }
+
+    /**
+     * @return float
+     */
+    public function getDeliveryPrice(): float {
+        return $this->deliveryPrice;
     }
 }
