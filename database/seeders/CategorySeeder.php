@@ -15,6 +15,10 @@ class CategorySeeder extends Seeder
 
     protected $subCategories = [
         [
+            'name' => 'Рамные москитные сетки',
+            'parent_id' => 1,
+        ],
+        [
             'name' => 'Вставные сетки VSN',
             'parent_id' => 1,
         ],
@@ -51,6 +55,10 @@ class CategorySeeder extends Seeder
             'parent_id' => 1,
         ],
         [
+            'name' => 'Сетки AlumSN',
+            'parent_id' => 1,
+        ],
+        [
             'name' => 'Стеклопакет',
             'parent_id' => 2,
         ],
@@ -80,23 +88,23 @@ class CategorySeeder extends Seeder
         ],
         [
             'name' => 'Ремонт\\Аксессуары\\Услуги',
-            'parent_id' => 4
+            'parent_id' => 4,
         ],
         [
             'name' => 'Пленка на окно',
-            'parent_id' => 4
+            'parent_id' => 4,
         ],
         [
             'name' => 'Отлив',
-            'parent_id' => 4
+            'parent_id' => 4,
         ],
         [
             'name' => 'Откос',
-            'parent_id' => 4
+            'parent_id' => 4,
         ],
         [
             'name' => 'Добавить позицию',
-            'parent_id' => 4
+            'parent_id' => 4,
         ],
     ];
 

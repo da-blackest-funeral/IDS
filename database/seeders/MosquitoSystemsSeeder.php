@@ -5,8 +5,6 @@ namespace Database\Seeders;
 use App\Models\MosquitoSystems\Additional;
 use App\Models\MosquitoSystems\Group;
 use App\Models\MosquitoSystems\Product;
-use App\Models\MosquitoSystems\Profile;
-use App\Models\MosquitoSystems\Tissue;
 use App\Models\MosquitoSystems\Type;
 use Illuminate\Database\Seeder;
 
@@ -18,46 +16,26 @@ class MosquitoSystemsSeeder extends Seeder
      * @return void
      */
     public function run() {
-        Group::factory()->count(10)->create();
-        Additional::factory()->count(150)->create();
-        Tissue::factory()->count(50)->create();
-        Profile::factory()->count(50)->create();
-        Type::factory()->count(20)->create();
-        Product::factory()->count(350)->create();
-        $this->seedProductAdditional(250);
-        $this->seedTypeAdditional(250);
-        $this->seedTypeGroup(300);
+        $this->seedFor('tissues');
+        $this->seedFor('groups');
+        $this->seedFor('types');
+//        Group::factory()->count(10)->create();
+//        Additional::factory()->count(150)->create();
+//        Tissue::factory()->count(50)->create();
+//        Profile::factory()->count(50)->create();
+//        Type::factory()->count(20)->create();
+//        Product::factory()->count(350)->create();
+//        $this->seedProductAdditional(250);
+//        $this->seedTypeAdditional(250);
+//        $this->seedTypeGroup(300);
     }
 
-    protected function seedProductAdditional(int $times) {
-        for ($i = 0; $i < $times; $i++) {
-            \DB::table('mosquito_systems_product_additional')
-                ->insert([
-                    'product_id' => random_int(1, Product::count()),
-                    'additional_id' => random_int(1, Additional::count()),
-                ]);
-        }
-    }
+    protected function seedFor(string $configKey) {
+        foreach (config("mosquito_systems.$configKey") as $item) {
+            $item['created_at'] = date('Y-m-d H:i:s', time());
+            $item['updated_at'] = date('Y-m-d H:i:s', time());
 
-    protected function seedTypeAdditional(int $times) {
-        for ($i = 0; $i < $times; $i++) {
-            \DB::table('mosquito_systems_type_additional')
-                ->insert([
-                    'type_id' => random_int(1, Type::count()),
-                    'additional_id' => random_int(1, Additional::count()),
-                    'price' => random_int(500, 1000),
-                ]);
-        }
-    }
-
-    protected function seedTypeGroup(int $times) {
-        for ($i = 0; $i < $times; $i++) {
-            \DB::table('mosquito_systems_type_group')
-                ->insert([
-                    'type_id' => random_int(1, Type::count()),
-                    'group_id' => random_int(1, Group::count()),
-                    'sort' => random_int(1, 100),
-                ]);
+            \DB::table("mosquito_systems_$configKey")->insert($item);
         }
     }
 }

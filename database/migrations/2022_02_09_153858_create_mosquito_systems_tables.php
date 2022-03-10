@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     protected function comment(string $table, string $comment) {
         DB::statement("ALTER TABLE $table comment '$comment'");
     }
@@ -17,8 +16,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
-    {
+    public function up() {
         Schema::create("{$this->prefix}_italian", function (Blueprint $table) {
             $table->id();
             $table->integer('height');
@@ -31,18 +29,21 @@ return new class extends Migration
         Schema::create("{$this->prefix}_types", function (Blueprint $table) {
             $table->id();
             $table->foreignId('category_id');
-            $table->string('name');
-            $table->string('yandex');
-            $table->string('page_link');
+            $table->string('yandex')
+                ->default('');
+            $table->string('page_link')
+                ->default('');
             $table->string('measure_link')
+                ->default('')
                 ->comment('Ссылка на страницу замера');
             $table->float('salary')
+                ->default(0)
                 ->comment('Доп. зарплата монтажнику');
             $table->float('delivery')
                 ->comment('Цена за доставку');
-            $table->float('price');
             $table->text('description');
-            $table->string('img');
+            $table->string('img')
+                ->default('');
             $table->integer('measure_time')
                 ->comment('Время замера в часах');
             $table->timestamps();
@@ -52,7 +53,7 @@ return new class extends Migration
         Schema::create("{$this->prefix}_tissues", function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('link_page');
+            $table->string('link_page')->default('');
             $table->text('description');
             $table->float('cut_width')
                 ->comment('Ширина отреза, м.');
@@ -65,6 +66,7 @@ return new class extends Migration
             $table->string('name');
             $table->foreignId('service_id')
                 ->constrained('services');
+            $table->softDeletes();
             $table->timestamps();
         });
         $this->comment("{$this->prefix}_profiles", 'Профили москитных систем');
@@ -137,8 +139,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
-    {
+    public function down() {
         Schema::dropIfExists("{$this->prefix}_types");
         Schema::dropIfExists("{$this->prefix}_tissues");
         Schema::dropIfExists("{$this->prefix}_profiles");
