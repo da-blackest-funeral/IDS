@@ -2,10 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\MosquitoSystems\Additional;
-use App\Models\MosquitoSystems\Group;
-use App\Models\MosquitoSystems\Product;
-use App\Models\MosquitoSystems\Type;
 use Illuminate\Database\Seeder;
 
 class MosquitoSystemsSeeder extends Seeder
@@ -19,11 +15,10 @@ class MosquitoSystemsSeeder extends Seeder
         $this->seedFor('tissues');
         $this->seedFor('groups');
         $this->seedFor('types');
-//        Group::factory()->count(10)->create();
+        $this->seedFor('profiles');
+        $this->seedFor('additional');
+
 //        Additional::factory()->count(150)->create();
-//        Tissue::factory()->count(50)->create();
-//        Profile::factory()->count(50)->create();
-//        Type::factory()->count(20)->create();
 //        Product::factory()->count(350)->create();
 //        $this->seedProductAdditional(250);
 //        $this->seedTypeAdditional(250);
