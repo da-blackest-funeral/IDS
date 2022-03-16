@@ -22,11 +22,11 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(Calculator::class, function ($app) {
             $request = SaveOrderRequest::createFromBase(\request());
-            if (in_array(\request()->input('categories'), [14, 15, 16])) {
+            if (in_array(\request()->input('categories'), [15, 16, 17])) {
                 return new GlazedWindowsCalculator($request);
             }
 
-            if (in_array(\request()->input('categories'), [5, 6, 7, 8, 9, 10, 11, 12,])) {
+            if (in_array(\request()->input('categories'), [5, 6, 7, 8, 9, 10, 11, 12, 13, 14])) {
                 return new MosquitoSystemsCalculator($request);
             }
 

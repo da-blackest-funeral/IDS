@@ -78,9 +78,9 @@ return new class extends Migration {
                 ->constrained("{$this->prefix}_tissues");
             $table->foreignId('profile_id')
                 ->constrained("{$this->prefix}_profiles");
-            $table->foreignId('category_id')
-                ->constrained('categories');
-            $table->float('price');
+//            $table->foreignId('category_id');
+            $table->float('price')
+                ->default(0);
             $table->timestamps();
         });
         $this->comment("{$this->prefix}_products", 'Москитная сетка. Цена характеризуется тремя полями: тип, профиль, ткань.');

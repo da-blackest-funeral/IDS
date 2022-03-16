@@ -6,14 +6,14 @@ use Illuminate\Database\Seeder;
 
 class CategorySeeder extends Seeder
 {
-    protected $superCategories = [
+    protected array $superCategories = [
         ['name' => 'Москитные системы'],
         ['name' => 'Стеклопакеты'],
         ['name' => 'Подоконник'],
         ['name' => 'Другое'],
     ];
 
-    protected $subCategories = [
+    protected array $subCategories = [
         [
             'name' => 'Рамные москитные сетки',
             'parent_id' => 1,
@@ -40,10 +40,6 @@ class CategorySeeder extends Seeder
         ],
         [
             'name' => 'Сетка трапециевидная',
-            'parent_id' => 1,
-        ],
-        [
-            'name' => 'Рамные москитные сетки',
             'parent_id' => 1,
         ],
         [

@@ -4,6 +4,39 @@
  * date: 10.03.2022
  */
 
+/*
+ * productId = 3, 4, 134, 122, 11, 12, 135, 123,
+ * without Z-пластик
+ */
+
+$productAdditional = [];
+
+$default25Profile1Type = [6, 2, 1, 16, 13, 4, 3, 8, 9, 38, 39];
+$default32Profile1Type = [6, 2, 1, 13, 5, 3, 8, 9, 38, 39];
+$defaultProfile2Type = [21, 13, 3, 14, 41, 42];
+
+
+// For default additional_id values of 25-profile Рамных москитных сеток
+foreach ([1, 2, 169, 110, 5, 86, 6, 60, 158, 7, 8, 77] as $product_id) {
+    foreach ($default25Profile1Type as $additional_id) {
+        $productAdditional[] = compact('product_id', 'additional_id');
+    }
+}
+
+// For default additional_id values of 32-profile Рамных москитных сеток
+foreach ([9, 10, 170, 111, 13, 87, 14, 61, 159, 15, 78] as $product_id) {
+    foreach ($default32Profile1Type as $additional_id) {
+        $productAdditional[] = compact('product_id', 'additional_id');
+    }
+}
+
+// For default additional_id values of 25-profile VSN
+foreach ([95, 96, 176, 121, 133, 132, 144, 97, 102, 98, 101, 167, 99, 100, 103] as $product_id) {
+    foreach ($defaultProfile2Type as $additional_id) {
+        $productAdditional[] = compact('product_id', 'additional_id');
+    }
+}
+
 return [
     // Data about tissues
     'tissues' => [
@@ -22,8 +55,15 @@ return [
             'cut_width' => 1.6,
         ],
         [
+            'name' => 'Антикошка черная',
+            'link_page' => 'https://03-okna.ru/moskitnaya-setka-antikoshka/',
+            'description' => 'Москитная сетка “Антимошка” – рамная противомоскитная сетка со специальным полотном “Micro Mesh”,
+            которая способна защитить Ваш дом не только от комаров, но и от мелких мошек.',
+            'cut_width' => 1.6,
+        ],
+        [
             'name' => 'Антикошка серая',
-            'link_page' => 'https://03-okna.ru/moskitnaya-setka-antimoshka-2/',
+            'link_page' => 'https://03-okna.ru/moskitnaya-setka-antikoshka/',
             'description' => 'Москитная сетка “Антимошка” – рамная противомоскитная сетка со специальным полотном “Micro Mesh”,
             которая способна защитить Ваш дом не только от комаров, но и от мелких мошек.',
             'cut_width' => 1.6,
@@ -131,7 +171,7 @@ return [
         ],
     ],
     /*
-     * Data about types, that are one to one related with categories, but contains
+     * Data about types, that are one-to-one related with categories, but contains
      * data only about mosquito systems
      */
     'types' => [
@@ -185,7 +225,7 @@ return [
             'measure_time' => 5,
         ],
         [
-            'category_id' => 14,
+            'category_id' => 13,
             'delivery' => 500,
             'yandex' => 'Сетка плиссе',
             'page_link' => 'https://03-okna.ru/moskitnye-setki-plisse/',
@@ -226,7 +266,7 @@ return [
             'description' => 'Нет описания',
         ],
         [
-            'category_id' => 13,
+            'category_id' => 12,
             'delivery' => 500,
             'yandex' => 'Сетки плиссе производство Россия',
             'page_link' => 'https://03-okna.ru/rossijskie-moskitnye-setki-plisse/',
@@ -237,7 +277,7 @@ return [
             'measure_time' => 5,
         ],
         [
-            'category_id' => 15,
+            'category_id' => 14,
             'yandex' => 'Сетки AlumSN',
             'delivery' => 500,
             'page_link' => 'https://03-okna.ru/vstavnaya-moskitnaya-setka-alumsn/',
@@ -248,7 +288,7 @@ return [
             использования в алюминиевых окнах витражей и фасадов. Является аналогом москитных сеток VSN.',
             'img' => '/wp-content/uploads/2022/03/алюмсн-1.png',
             'measure_time' => 10,
-        ]
+        ],
     ],
     // Data about profiles
     'profiles' => [
@@ -461,5 +501,1086 @@ return [
             'name' => 'Серый цвет',
             'group_id' => 2,
         ],
-    ]
+        [
+            'name' => 'Окна ПВХ или деревянные',
+            'group_id' => '4'
+        ],
+        [
+            'name' => 'Алюминиевые окна',
+            'group_id' => '4'
+        ],
+    ],
+    /*
+     * Data for products.
+     * Product is a combination of 3 parameters - tissue_id, type_id, profile_id,
+     * and it determines main price of product.
+     */
+    'products' => [
+        [
+            'type_id' => 1,
+            'tissue_id' => 1,
+            'profile_id' => 1,
+            'price' => 880,
+        ],
+        [
+            'type_id' => 1,
+            'tissue_id' => 2,
+            'profile_id' => 1,
+            'price' => 1400,
+        ],
+        [
+            'type_id' => 1,
+            'tissue_id' => 3,
+            'profile_id' => 1,
+            'price' => 2140,
+        ],
+        [
+            'type_id' => 1,
+            'tissue_id' => 4,
+            'profile_id' => 1,
+            'price' => 2240,
+        ],
+        [
+            'type_id' => 1,
+            'tissue_id' => 5,
+            'profile_id' => 1,
+            'price' => 1940,
+        ],
+        [
+            'type_id' => 1,
+            'tissue_id' => 6,
+            'profile_id' => 1,
+            'price' => 1400,
+        ],
+        [
+            'type_id' => 1,
+            'tissue_id' => 7,
+            'profile_id' => 1,
+            'price' => 2690,
+        ],
+        [
+            'type_id' => 1,
+            'tissue_id' => 8,
+            'profile_id' => 1,
+            'price' => 4460,
+        ],
+        [
+            'type_id' => 1,
+            'tissue_id' => 1,
+            'profile_id' => 2,
+            'price' => 2050,
+        ],
+        [
+            'type_id' => 1,
+            'tissue_id' => 2,
+            'profile_id' => 2,
+            'price' => 2610,
+        ],
+        [
+            'type_id' => 1,
+            'tissue_id' => 3,
+            'profile_id' => 2,
+            'price' => 3330,
+        ],
+        [
+            'type_id' => 1,
+            'tissue_id' => 4,
+            'profile_id' => 2,
+            'price' => 3430,
+        ],
+        [
+            'type_id' => 1,
+            'tissue_id' => 5,
+            'profile_id' => 2,
+            'price' => 3310,
+        ],
+        [
+            'type_id' => 1,
+            'tissue_id' => 6,
+            'profile_id' => 2,
+            'price' => 2560,
+        ],
+        [
+            'type_id' => 1,
+            'tissue_id' => 7,
+            'profile_id' => 2,
+            'price' => 3970,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 1,
+            'profile_id' => 1,
+            'price' => 1350,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 2,
+            'profile_id' => 1,
+            'price' => 1890,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 3,
+            'profile_id' => 1,
+            'price' => 2380,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 4,
+            'profile_id' => 1,
+            'price' => 2420,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 5,
+            'profile_id' => 1,
+            'price' => 2070,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 6,
+            'profile_id' => 1,
+            'price' => 1850,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 7,
+            'profile_id' => 1,
+            'price' => 2170,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 1,
+            'profile_id' => 2,
+            'price' => 3090,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 2,
+            'profile_id' => 2,
+            'price' => 3430,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 3,
+            'profile_id' => 2,
+            'price' => 4010,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 4,
+            'profile_id' => 2,
+            'price' => 3960,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 5,
+            'profile_id' => 2,
+            'price' => 3810,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 6,
+            'profile_id' => 2,
+            'price' => 3500,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 7,
+            'profile_id' => 2,
+            'price' => 4020,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 1,
+            'profile_id' => 3,
+            'price' => 3330,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 2,
+            'profile_id' => 3,
+            'price' => 3830,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 3,
+            'profile_id' => 3,
+            'price' => 4360,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 4,
+            'profile_id' => 3,
+            'price' => 4390,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 5,
+            'profile_id' => 3,
+            'price' => 4350,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 6,
+            'profile_id' => 3,
+            'price' => 3830,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 7,
+            'profile_id' => 3,
+            'price' => 4350,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 1,
+            'profile_id' => 4,
+            'price' => 3510,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 1,
+            'profile_id' => 4,
+            'price' => 3510,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 2,
+            'profile_id' => 4,
+            'price' => 4050,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 3,
+            'profile_id' => 4,
+            'price' => 4540,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 4,
+            'profile_id' => 4,
+            'price' => 4580,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 5,
+            'profile_id' => 4,
+            'price' => 4500,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 6,
+            'profile_id' => 4,
+            'price' => 4040,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 7,
+            'profile_id' => 4,
+            'price' => 4550,
+        ],
+        [
+            'type_id' => 3,
+            'tissue_id' => 1,
+            'profile_id' => 6,
+            'price' => 1800,
+        ],
+        [
+            'type_id' => 3,
+            'tissue_id' => 2,
+            'profile_id' => 6,
+            'price' => 2250,
+        ],
+        [
+            'type_id' => 3,
+            'tissue_id' => 3,
+            'profile_id' => 6,
+            'price' => 2740,
+        ],
+        [
+            'type_id' => 3,
+            'tissue_id' => 4,
+            'profile_id' => 6,
+            'price' => 2780,
+        ],
+        [
+            'type_id' => 3,
+            'tissue_id' => 5,
+            'profile_id' => 6,
+            'price' => 2430,
+        ],
+        [
+            'type_id' => 3,
+            'tissue_id' => 6,
+            'profile_id' => 6,
+            'price' => 2250,
+        ],
+        [
+            'type_id' => 3,
+            'tissue_id' => 7,
+            'profile_id' => 6,
+            'price' => 2700,
+        ],
+        [
+            'type_id' => 6,
+            'tissue_id' => 1,
+            'profile_id' => 5,
+            'price' => 1390,
+        ],
+        [
+            'type_id' => 6,
+            'tissue_id' => 2,
+            'profile_id' => 5,
+            'price' => 2050,
+        ],
+        [
+            'type_id' => 6,
+            'tissue_id' => 3,
+            'profile_id' => 5,
+            'price' => 2640,
+        ],
+        [
+            'type_id' => 6,
+            'tissue_id' => 4,
+            'profile_id' => 5,
+            'price' => 2870,
+        ],
+        [
+            'type_id' => 6,
+            'tissue_id' => 5,
+            'profile_id' => 5,
+            'price' => 2560,
+        ],
+        [
+            'type_id' => 6,
+            'tissue_id' => 6,
+            'profile_id' => 5,
+            'price' => 2080,
+        ],
+        [
+            'type_id' => 6,
+            'tissue_id' => 7,
+            'profile_id' => 5,
+            'price' => 2960,
+        ],
+        [
+            'type_id' => 6,
+            'tissue_id' => 8,
+            'profile_id' => 5,
+            'price' => 5110,
+        ],
+        [
+            'type_id' => 1,
+            'tissue_id' => 9,
+            'profile_id' => 1,
+            'price' => 5380,
+        ],
+        [
+            'type_id' => 1,
+            'tissue_id' => 9,
+            'profile_id' => 2,
+            'price' => 7090,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 9,
+            'profile_id' => 1,
+            'price' => 4770,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 9,
+            'profile_id' => 2,
+            'price' => 6670,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 9,
+            'profile_id' => 3,
+            'price' => 7280,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 9,
+            'profile_id' => 4,
+            'price' => 7560,
+        ],
+        [
+            'type_id' => 3,
+            'tissue_id' => 9,
+            'profile_id' => 6,
+            'price' => 5310,
+        ],
+        [
+            'type_id' => 6,
+            'tissue_id' => 9,
+            'profile_id' => 5,
+            'price' => 5990,
+        ],
+        [
+            'type_id' => 7,
+            'tissue_id' => 1,
+            'profile_id' => 1,
+            'price' => 770,
+        ],
+        [
+            'type_id' => 7,
+            'tissue_id' => 2,
+            'profile_id' => 1,
+            'price' => 1310,
+        ],
+        [
+            'type_id' => 7,
+            'tissue_id' => 3,
+            'profile_id' => 1,
+            'price' => 1900,
+        ],
+        [
+            'type_id' => 7,
+            'tissue_id' => 4,
+            'profile_id' => 1,
+            'price' => 2110,
+        ],
+        [
+            'type_id' => 7,
+            'tissue_id' => 5,
+            'profile_id' => 1,
+            'price' => 1970,
+        ],
+        [
+            'type_id' => 7,
+            'tissue_id' => 6,
+            'profile_id' => 1,
+            'price' => 1290,
+        ],
+        [
+            'type_id' => 7,
+            'tissue_id' => 7,
+            'profile_id' => 1,
+            'price' => 2590,
+        ],
+        [
+            'type_id' => 7,
+            'tissue_id' => 8,
+            'profile_id' => 1,
+            'price' => 4450,
+        ],
+        [
+            'type_id' => 7,
+            'tissue_id' => 9,
+            'profile_id' => 1,
+            'price' => 6160,
+        ],
+        [
+            'type_id' => 1,
+            'tissue_id' => 11,
+            'profile_id' => 1,
+            'price' => 2100,
+        ],
+        [
+            'type_id' => 1,
+            'tissue_id' => 11,
+            'profile_id' => 2,
+            'price' => 3450,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 11,
+            'profile_id' => 1,
+            'price' => 2050,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 11,
+            'profile_id' => 2,
+            'price' => 3760,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 11,
+            'profile_id' => 3,
+            'price' => 4190,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 11,
+            'profile_id' => 4,
+            'price' => 4390,
+        ],
+        [
+            'type_id' => 3,
+            'tissue_id' => 11,
+            'profile_id' => 6,
+            'price' => 2570,
+        ],
+        [
+            'type_id' => 6,
+            'tissue_id' => 11,
+            'profile_id' => 5,
+            'price' => 2630,
+        ],
+        [
+            'type_id' => 7,
+            'tissue_id' => 11,
+            'profile_id' => 1,
+            'price' => 2100,
+        ],
+        [
+            'type_id' => 1,
+            'tissue_id' => 10,
+            'profile_id' => 1,
+            'price' => 2350,
+        ],
+        [
+            'type_id' => 1,
+            'tissue_id' => 10,
+            'profile_id' => 2,
+            'price' => 3710,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 10,
+            'profile_id' => 1,
+            'price' => 2110,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 10,
+            'profile_id' => 2,
+            'price' => 3710,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 10,
+            'profile_id' => 3,
+            'price' => 4550,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 10,
+            'profile_id' => 4,
+            'price' => 4760,
+        ],
+        [
+            'type_id' => 3,
+            'tissue_id' => 10,
+            'profile_id' => 6,
+            'price' => 2610,
+        ],
+        [
+            'type_id' => 6,
+            'tissue_id' => 10,
+            'profile_id' => 5,
+            'price' => 2860,
+        ],
+        [
+            'type_id' => 7,
+            'tissue_id' => 10,
+            'profile_id' => 1,
+            'price' => 2540,
+        ],
+        [
+            'type_id' => 8,
+            'tissue_id' => 1,
+            'profile_id' => 7,
+            'price' => 1480,
+        ],
+        [
+            'type_id' => 8,
+            'tissue_id' => 2,
+            'profile_id' => 7,
+            'price' => 2110,
+        ],
+        [
+            'type_id' => 8,
+            'tissue_id' => 5,
+            'profile_id' => 7,
+            'price' => 2690,
+        ],
+        [
+            'type_id' => 8,
+            'tissue_id' => 6,
+            'profile_id' => 7,
+            'price' => 2110,
+        ],
+        [
+            'type_id' => 8,
+            'tissue_id' => 7,
+            'profile_id' => 7,
+            'price' => 3230,
+        ],
+        [
+            'type_id' => 8,
+            'tissue_id' => 8,
+            'profile_id' => 7,
+            'price' => 4850,
+        ],
+        [
+            'type_id' => 8,
+            'tissue_id' => 9,
+            'profile_id' => 7,
+            'price' => 6200,
+        ],
+        [
+            'type_id' => 8,
+            'tissue_id' => 10,
+            'profile_id' => 7,
+            'price' => 3190,
+        ],
+        [
+            'type_id' => 8,
+            'tissue_id' => 11,
+            'profile_id' => 7,
+            'price' => 2960,
+        ],
+        [
+            'type_id' => 4,
+            'tissue_id' => 1,
+            'profile_id' => 8,
+            'price' => 5070,
+        ],
+        [
+            'type_id' => 4,
+            'tissue_id' => 4,
+            'profile_id' => 8,
+            'price' => 6100,
+        ],
+        [
+            'type_id' => 4,
+            'tissue_id' => 1,
+            'profile_id' => 9,
+        ],
+        [
+            'type_id' => 4,
+            'tissue_id' => 2,
+            'profile_id' => 9,
+        ],
+        [
+            'type_id' => 5,
+            'tissue_id' => 1,
+            'profile_id' => 10,
+            'price' => 160,
+        ],
+        [
+            'type_id' => 5,
+            'tissue_id' => 1,
+            'profile_id' => 11,
+            'price' => 160,
+        ],
+        [
+            'type_id' => 1,
+            'tissue_id' => 12,
+            'profile_id' => 1,
+            'price' => 1510,
+        ],
+        [
+            'type_id' => 1,
+            'tissue_id' => 12,
+            'profile_id' => 2,
+            'price' => 2790,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 12,
+            'profile_id' => 1,
+            'price' => 3590,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 12,
+            'profile_id' => 2,
+            'price' => 3590,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 12,
+            'profile_id' => 3,
+            'price' => 4210,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 12,
+            'profile_id' => 4,
+            'price' => 4440,
+        ],
+        [
+            'type_id' => 3,
+            'tissue_id' => 12,
+            'profile_id' => 6,
+            'price' => 2480,
+        ],
+        [
+            'type_id' => 4,
+            'tissue_id' => 12,
+            'profile_id' => 9,
+        ],
+        [
+            'type_id' => 6,
+            'tissue_id' => 12,
+            'profile_id' => 5,
+            'price' => 1710,
+        ],
+        [
+            'type_id' => 3,
+            'tissue_id' => 12,
+            'profile_id' => 6,
+        ],
+        [
+            'type_id' => 7,
+            'tissue_id' => 12,
+            'profile_id' => 1,
+            'price' => 1400,
+        ],
+        [
+            'type_id' => 8,
+            'tissue_id' => 12,
+            'profile_id' => 7,
+            'price' => 2330,
+        ],
+        [
+            'type_id' => 1,
+            'tissue_id' => 13,
+            'profile_id' => 1,
+            'price' => 3020,
+        ],
+        [
+            'type_id' => 1,
+            'tissue_id' => 13,
+            'profile_id' => 2,
+            'price' => 4700,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 13,
+            'profile_id' => 1,
+            'price' => 2850,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 13,
+            'profile_id' => 2,
+            'price' => 5000,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 13,
+            'profile_id' => 3,
+            'price' => 5820,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 13,
+            'profile_id' => 4,
+            'price' => 5690,
+        ],
+        [
+            'type_id' => 3,
+            'tissue_id' => 13,
+            'profile_id' => 6,
+            'price' => 4340,
+        ],
+        [
+            'type_id' => 6,
+            'tissue_id' => 13,
+            'profile_id' => 5,
+            'price' => 3980,
+        ],
+        [
+            'type_id' => 7,
+            'tissue_id' => 13,
+            'profile_id' => 1,
+            'price' => 3090,
+        ],
+        [
+            'type_id' => 9,
+            'tissue_id' => 1,
+            'profile_id' => 11,
+        ],
+        [
+            'type_id' => 8,
+            'tissue_id' => 4,
+            'profile_id' => 7,
+            'price' => 2830,
+        ],
+        [
+            'type_id' => 8,
+            'tissue_id' => 3,
+            'profile_id' => 7,
+            'price' => 2570,
+        ],
+        [
+            'type_id' => 1,
+            'tissue_id' => 14,
+            'profile_id' => 1,
+            'price' => 2040,
+        ],
+        [
+            'type_id' => 1,
+            'tissue_id' => 14,
+            'profile_id' => 2,
+            'price' => 3230,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 14,
+            'profile_id' => 1,
+            'price' => 2220,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 14,
+            'profile_id' => 3,
+            'price' => 4190,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 14,
+            'profile_id' => 2,
+            'price' => 3760,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 14,
+            'profile_id' => 4,
+            'price' => 4380,
+        ],
+        [
+            'type_id' => 3,
+            'tissue_id' => 14,
+            'profile_id' => 6,
+            'price' => 2580,
+        ],
+        [
+            'type_id' => 4,
+            'tissue_id' => 14,
+            'profile_id' => 8,
+            'price' => 5950,
+        ],
+        [
+            'type_id' => 6,
+            'tissue_id' => 14,
+            'profile_id' => 5,
+            'price' => 2670,
+        ],
+        [
+            'type_id' => 7,
+            'tissue_id' => 14,
+            'profile_id' => 1,
+            'price' => 1910,
+        ],
+        [
+            'type_id' => 8,
+            'tissue_id' => 14,
+            'profile_id' => 7,
+            'price' => 2630,
+        ],
+        [
+            'type_id' => 8,
+            'tissue_id' => 1,
+            'profile_id' => 12,
+            'price' => 1780,
+        ],
+        [
+            'type_id' => 8,
+            'tissue_id' => 2,
+            'profile_id' => 12,
+            'price' => 2410,
+        ],
+        [
+            'type_id' => 8,
+            'tissue_id' => 3,
+            'profile_id' => 12,
+            'price' => 2870,
+        ],
+        [
+            'type_id' => 8,
+            'tissue_id' => 4,
+            'profile_id' => 12,
+            'price' => 3130,
+        ],
+        [
+            'type_id' => 8,
+            'tissue_id' => 5,
+            'profile_id' => 12,
+            'price' => 2990,
+        ],
+        [
+            'type_id' => 8,
+            'tissue_id' => 6,
+            'profile_id' => 12,
+            'price' => 2410,
+        ],
+        [
+            'type_id' => 8,
+            'tissue_id' => 7,
+            'profile_id' => 12,
+            'price' => 3530,
+        ],
+        [
+            'type_id' => 8,
+            'tissue_id' => 8,
+            'profile_id' => 12,
+            'price' => 5150,
+        ],
+        [
+            'type_id' => 8,
+            'tissue_id' => 9,
+            'profile_id' => 12,
+            'price' => 6500,
+        ],
+        [
+            'type_id' => 8,
+            'tissue_id' => 10,
+            'profile_id' => 12,
+            'price' => 3490,
+        ],
+        [
+            'type_id' => 8,
+            'tissue_id' => 11,
+            'profile_id' => 12,
+            'price' => 3290,
+        ],
+        [
+            'type_id' => 8,
+            'tissue_id' => 12,
+            'profile_id' => 12,
+            'price' => 2630,
+        ],
+        [
+            'type_id' => 8,
+            'tissue_id' => 14,
+            'profile_id' => 12,
+            'price' => 2930,
+        ],
+        [
+            'type_id' => 1,
+            'tissue_id' => 15,
+            'profile_id' => 1,
+            'price' => 5080,
+        ],
+        [
+            'type_id' => 1,
+            'tissue_id' => 15,
+            'profile_id' => 2,
+            'price' => 6790,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 15,
+            'profile_id' => 1,
+            'price' => 4470,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 15,
+            'profile_id' => 2,
+            'price' => 6370,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 15,
+            'profile_id' => 3,
+            'price' => 6980,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 15,
+            'profile_id' => 4,
+            'price' => 7260,
+        ],
+        [
+            'type_id' => 3,
+            'tissue_id' => 15,
+            'profile_id' => 6,
+            'price' => 5010,
+        ],
+        [
+            'type_id' => 6,
+            'tissue_id' => 15,
+            'profile_id' => 5,
+            'price' => 5690,
+        ],
+        [
+            'type_id' => 7,
+            'tissue_id' => 15,
+            'profile_id' => 1,
+            'price' => 5860,
+        ],
+        [
+            'type_id' => 8,
+            'tissue_id' => 15,
+            'profile_id' => 7,
+            'price' => 5900,
+        ],
+        [
+            'type_id' => 8,
+            'tissue_id' => 15,
+            'profile_id' => 12,
+            'price' => 6200,
+        ],
+        [
+            'type_id' => 1,
+            'tissue_id' => 16,
+            'profile_id' => 1,
+            'price' => 950,
+        ],
+        [
+            'type_id' => 1,
+            'tissue_id' => 16,
+            'profile_id' => 2,
+            'price' => 2150,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 16,
+            'profile_id' => 1,
+            'price' => 1430,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 16,
+            'profile_id' => 2,
+            'price' => 3200,
+        ],
+        [
+            'type_id' => 2,
+            'tissue_id' => 16,
+            'profile_id' => 3,
+            'price' => 3450,
+        ],
+        [
+            'type_id' => 3,
+            'tissue_id' => 16,
+            'profile_id' => 6,
+            'price' => 1890,
+        ],
+        [
+            'type_id' => 6,
+            'tissue_id' => 16,
+            'profile_id' => 5,
+            'price' => 1460,
+        ],
+        [
+            'type_id' => 8,
+            'tissue_id' => 16,
+            'profile_id' => 7,
+            'price' => 1550,
+        ],
+        [
+            'type_id' => 8,
+            'tissue_id' => 16,
+            'profile_id' => 12,
+            'price' => 1900,
+        ],
+        [
+            'type_id' => 10,
+            'tissue_id' => 1,
+            'profile_id' => 13,
+            'price' => 1200,
+        ],
+    ],
+    // Pivot table for products and additional
+    'product_additional' => $productAdditional,
+
 ];

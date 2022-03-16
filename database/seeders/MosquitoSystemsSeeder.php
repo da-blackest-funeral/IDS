@@ -17,9 +17,8 @@ class MosquitoSystemsSeeder extends Seeder
         $this->seedFor('types');
         $this->seedFor('profiles');
         $this->seedFor('additional');
-
-//        Additional::factory()->count(150)->create();
-//        Product::factory()->count(350)->create();
+        $this->seedFor('products');
+        $this->seedFor('product_additional');
 //        $this->seedProductAdditional(250);
 //        $this->seedTypeAdditional(250);
 //        $this->seedTypeGroup(300);

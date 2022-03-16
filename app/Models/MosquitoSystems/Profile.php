@@ -4,6 +4,7 @@ namespace App\Models\MosquitoSystems;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * App\Models\MosquitoSystems\Profile
@@ -28,7 +29,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Profile extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'mosquito_systems_profiles';
 

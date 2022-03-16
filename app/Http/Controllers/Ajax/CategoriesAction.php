@@ -15,13 +15,13 @@ class CategoriesAction extends Controller
     /**
      * @var int
      */
-    protected $categoryId;
+    protected int $categoryId;
     /**
      * For getting only related collections, we need to specify all relations
      *
      * @var string[][]
      */
-    protected $relations = [
+    protected array $relations = [
         Category::class => [
             'type',
             'products',
@@ -33,7 +33,7 @@ class CategoriesAction extends Controller
      *
      * @var array
      */
-    protected $categories;
+    protected array $categories;
 
     public function __construct() {
         $this->categoryId = (int)\request()->post('categoryId');
@@ -41,19 +41,19 @@ class CategoriesAction extends Controller
             [
                 'link' => '/ajax/mosquito-systems/profile',
                 'name' => 'tissues',
-                'ids' => range(5, 13),
+                'ids' => range(5, 14),
                 'label' => 'Ткань'
             ],
             [
                 'link' => '/ajax/glazed-windows/last',
                 'name' => 'types_window',
-                'ids' => range(14, 18),
+                'ids' => range(15, 19),
                 'label' => 'Тип окна'
             ],
             [
                 'link' => '/ajax/windowsills/type',
                 'name' => 'windowsills',
-                'ids' => [19],
+                'ids' => [20],
                 'label' => 'Тип окна',
             ],
         ];
@@ -86,8 +86,9 @@ class CategoriesAction extends Controller
             }
         }
 
+        \Debugbar::info($data->unique());
         return view('ajax.second-select')->with([
-                'data' => $data,
+                'data' => $data->unique(),
                 'link' => $this->category('link'),
                 'name' => $this->category('name'),
                 'label' => $this->category('label')

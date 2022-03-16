@@ -16,11 +16,11 @@ class CategoryHasModelSeeder extends Seeder
      * @return void
      */
     public function run() {
-        $array = range(14, 18);
-        array_push($array, 19, 21, 23);
+        $array = range(15, 19);
+        array_push($array, 20, 22, 24);
         $relations = [
             [
-                'category_ids' => range(5, 13),
+                'category_ids' => range(5, 14),
                 'method' => Category::class . '::tissues',
             ],
             [

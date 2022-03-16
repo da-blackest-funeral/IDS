@@ -16,12 +16,12 @@ class MosquitoSystemsController extends Controller
      * @return \Illuminate\Contracts\View\View
      */
     public function profile(Request $request) {
-        $data = Profile::query()
-            ->select(['id', 'name'])
-            ->whereHas('products.type', function ($query) use ($request) {
-                return $query->where('category_id', $request->get('categoryId'));
+        \Debugbar::info($request->all());
+        $data = Profile::whereHas('products.type', function ($query) use ($request) {
+                return $query->where('category_id', $request->get('categoryId'))
+                    ->where('tissue_id', $request->get('additional'));
             })
-            ->get();
+            ->get(['id', 'name']);
         return view('ajax.mosquito-systems.profiles')
             ->with(compact('data'));
     }
@@ -48,7 +48,7 @@ class MosquitoSystemsController extends Controller
         \Debugbar::info($products);
         $products = $this->makeCollectionNotNested($products);
         $additionalCollections = $products->pluck('additional');
-        $additional = $this->makeCollectionNotNested($additionalCollections);
+        $additional = $this->makeCollectionNotNested($additionalCollections)->unique('name');
         $groups = $additional->pluck('group')->unique();
 
         \Debugbar::info(compact('additional', 'groups'));
