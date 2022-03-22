@@ -15,16 +15,13 @@ class MosquitoSystemsData
          * date: 10.03.2022
          */
 
-        /*
-         * productId = 3, 4, 134, 122, 11, 12, 135, 123,
-         * without Z-пластик
-         */
-
-//        $productAdditional = [];
-
         $default25Profile1Type = [6, 2, 1, 16, 13, 4, 3, 8, 9, 38, 39];
 
         $default32Profile1Type = [6, 2, 1, 13, 5, 3, 8, 9, 38, 39];
+
+        // Default for Антикошка
+        $defaultAntikoshkaTissues25Profile = [2, 1, 16, 13, 4, 3, 8, 9, 38, 39];
+        $defaultAntikoshkaTissues32Profile = [2, 1, 13, 5, 3, 8, 9, 38, 39];
 
         $defaultProfile2Type = [21, 13, 3, 14, 41, 42];
 
@@ -37,6 +34,20 @@ class MosquitoSystemsData
         // Москитные двери 42 профиль
         $default42Profile3Type = [15, 13, 3, 11, 14, 38, 39];
 
+        // Раздвижные сетки
+        $default3Type = [3, 4, 12, 13, 14, 38, 39];
+
+        // Рулонные сетки пр-во Россия
+        $default4Type8Profile = [3, 22, 23, 13, 4, 12, 14];
+
+        // Рулонные сетки пр-во Италия
+        $default4Type9Profile = [3, 23, 13, 4, 12, 14];
+
+        // Сетки крыло
+        $default6Type = [17, 13, 3, 14, 38, 39];
+
+        // Сетка трапециевидная
+        $default7Type = [1, 2, 6, 3, 13, 8, 9, 14, ];
 
         // For default additional_id values of 25-profile Рамных москитных сеток
         foreach ([1, 2, 169, 110, 5, 86, 6, 60, 158, 7, 8, 77] as $product_id) {
@@ -73,7 +84,6 @@ class MosquitoSystemsData
         }
 
         // For default additional_id values of 32-profile "Москитные двери"
-        // for all there are the same additional values
         $productIds = Product::where('type_id', 2)
             ->where('profile_id', 2)
             ->get(['id'])
@@ -86,7 +96,6 @@ class MosquitoSystemsData
         }
 
         // For default additional_id values of 42-profile "Москитные двери"
-        // for all there are the same additional values
         $productIds = Product::where('type_id', 2)
             ->where('profile_id', 3)
             ->get(['id'])
@@ -94,6 +103,78 @@ class MosquitoSystemsData
 
         foreach ($productIds as $product_id) {
             foreach ($default42Profile3Type as $additional_id) {
+                $productAdditional[] = compact('product_id', 'additional_id');
+            }
+        }
+
+        // For default additional_id values of 25-profile "Рамные москитные сетки Антикошка"
+        $productIds = Product::where('type_id', 1)
+            ->where('profile_id', 1)
+            ->whereIn('tissue_id', [3, 4, 13, 14])
+            ->get(['id'])
+            ->pluck('id');
+
+        foreach ($productIds as $product_id) {
+            foreach ($defaultAntikoshkaTissues25Profile as $additional_id) {
+                $productAdditional[] = compact('product_id', 'additional_id');
+            }
+        }
+
+        // For default additional_id values of 32-profile "Рамные москитные сетки Антикошка"
+        $productIds = Product::where('type_id', 1)
+            ->where('profile_id', 2)
+            ->whereIn('tissue_id', [3, 4, 13, 14])
+            ->get(['id'])
+            ->pluck('id');
+
+        foreach ($productIds as $product_id) {
+            foreach ($defaultAntikoshkaTissues32Profile as $additional_id) {
+                $productAdditional[] = compact('product_id', 'additional_id');
+            }
+        }
+
+        // For default additional_id values of "Раздвижные сетки"
+        $productIds = Product::where('type_id', 3)
+            ->get(['id'])
+            ->pluck('id');
+
+        foreach ($productIds as $product_id) {
+            foreach ($default3Type as $additional_id) {
+                $productAdditional[] = compact('product_id', 'additional_id');
+            }
+        }
+
+        // For default additional_id values of "Рулонные сетки пр-во Россия"
+        $productIds = Product::where('type_id', 4)
+            ->where('profile_id', 8)
+            ->get(['id'])
+            ->pluck('id');
+
+        foreach ($productIds as $product_id) {
+            foreach ($default4Type8Profile as $additional_id) {
+                $productAdditional[] = compact('product_id', 'additional_id');
+            }
+        }
+
+        // For default additional_id values of "Рулонные сетки пр-во Россия"
+        $productIds = Product::where('type_id', 4)
+            ->where('profile_id', 9)
+            ->get(['id'])
+            ->pluck('id');
+
+        foreach ($productIds as $product_id) {
+            foreach ($default4Type9Profile as $additional_id) {
+                $productAdditional[] = compact('product_id', 'additional_id');
+            }
+        }
+
+        // For default additional_id values of "Сетки крыло"
+        $productIds = Product::where('type_id', 6)
+            ->get(['id'])
+            ->pluck('id');
+
+        foreach ($productIds as $product_id) {
+            foreach ($default6Type as $additional_id) {
                 $productAdditional[] = compact('product_id', 'additional_id');
             }
         }
@@ -364,6 +445,7 @@ class MosquitoSystemsData
                 ],
                 [
                     'name' => '52 профиль',
+                    'deleted_at' => date('Y-m-d H:i:s')
                 ],
                 [
                     'name' => 'Крыло',

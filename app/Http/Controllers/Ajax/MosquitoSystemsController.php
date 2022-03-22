@@ -51,8 +51,9 @@ class MosquitoSystemsController extends Controller
         })->get();
 
         \Debugbar::info(compact('product', 'additional', 'groups'));
+
         return view('ajax.mosquito-systems.additional')->with(
-            compact('additional', 'groups')
+            compact('additional', 'groups', 'product')
         );
     }
 
