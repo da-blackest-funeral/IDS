@@ -34,6 +34,9 @@ class MosquitoSystemsData
         // Москитные двери 32 профиль
         $default32Profile3Type = [7, 13, 3, 5, 10, 14, 38, 39];
 
+        // Москитные двери 42 профиль
+        $default42Profile3Type = [15, 13, 3, 11, 14, 38, 39];
+
 
         // For default additional_id values of 25-profile Рамных москитных сеток
         foreach ([1, 2, 169, 110, 5, 86, 6, 60, 158, 7, 8, 77] as $product_id) {
@@ -63,8 +66,6 @@ class MosquitoSystemsData
             ->get(['id'])
             ->pluck('id');
 
-        echo $productIds;
-
         foreach ($productIds as $product_id) {
             foreach ($default25Profile3Type as $additional_id) {
                 $productAdditional[] = compact('product_id', 'additional_id');
@@ -78,10 +79,21 @@ class MosquitoSystemsData
             ->get(['id'])
             ->pluck('id');
 
-        echo $productIds;
-
         foreach ($productIds as $product_id) {
             foreach ($default32Profile3Type as $additional_id) {
+                $productAdditional[] = compact('product_id', 'additional_id');
+            }
+        }
+
+        // For default additional_id values of 42-profile "Москитные двери"
+        // for all there are the same additional values
+        $productIds = Product::where('type_id', 2)
+            ->where('profile_id', 3)
+            ->get(['id'])
+            ->pluck('id');
+
+        foreach ($productIds as $product_id) {
+            foreach ($default42Profile3Type as $additional_id) {
                 $productAdditional[] = compact('product_id', 'additional_id');
             }
         }

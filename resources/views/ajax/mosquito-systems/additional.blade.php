@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row w-75">
     @foreach($groups as $group)
         <div class="col-10 col-md-3 mt-1 pb-xxl-3">
             <label for="{{ $group->name }}">{{ $group->name }}</label>
@@ -13,9 +13,11 @@
         </div>
     @endforeach
 </div>
-<div class="row">
+<div class="row w-75">
     @include('components.calculations.additional-mounting-tools')
     @include('components.calculations.coefficient-difficult')
+    @include('components.calculations.new')
+    @include('components.calculations.immediatly')
 </div>
 @include('components.calculations.comment')
 @include('components.calculations.submit')

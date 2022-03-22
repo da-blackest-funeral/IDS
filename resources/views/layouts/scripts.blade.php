@@ -21,7 +21,7 @@
             url: url,
             data: data,
             success: function (data) {
-                // console.log(id);
+                $('#additional').hide();
                 elementToLoad.html(data)
                 elementToLoad.show();
             }
