@@ -25,7 +25,8 @@ class MosquitoSystemsSeeder extends Seeder
     }
 
     protected function seedFor(string $configKey) {
-        foreach (config("mosquito_systems.$configKey") as $item) {
+
+        foreach (MosquitoSystemsData::all($configKey) as $item) {
             $item['created_at'] = date('Y-m-d H:i:s', time());
             $item['updated_at'] = date('Y-m-d H:i:s', time());
 

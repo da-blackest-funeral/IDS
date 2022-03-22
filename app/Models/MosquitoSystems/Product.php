@@ -41,7 +41,7 @@ class Product extends Model
 
     protected $table = 'mosquito_systems_products';
 
-    protected $hidden = ['id'];
+//    protected $hidden = ['id'];
 
     public function tissue() {
         return $this->belongsTo(Tissue::class,'tissue_id','id');

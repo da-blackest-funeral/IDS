@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SaveOrderRequest;
 use App\Models\Category;
+use App\Models\MosquitoSystems\Type;
 use App\Models\Order;
 use App\Services\Interfaces\Calculator;
+use Illuminate\Http\Request;
 
 class CalculationController extends Controller
 {
-    public function index() {
+    public function index(Request $request) {
         return view('welcome')->with([
             'data' => Category::all(),
             'superCategories' => Category::whereIn(
