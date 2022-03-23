@@ -23,7 +23,7 @@ class MosquitoSystemsData
         $defaultAntikoshkaTissues25Profile = [2, 1, 16, 13, 4, 3, 8, 9, 38, 39];
         $defaultAntikoshkaTissues32Profile = [2, 1, 13, 5, 3, 8, 9, 38, 39];
 
-        $defaultProfile2Type = [21, 13, 3, 14, 41, 42];
+        $defaultProfile2Type = [21, 13, 3, 14, 41, 42, 38, 39];
 
         // Москитные двери 25 профиль
         $default25Profile3Type = [7, 13, 3, 4, 10, 14, 38, 39];
@@ -47,7 +47,17 @@ class MosquitoSystemsData
         $default6Type = [17, 13, 3, 14, 38, 39];
 
         // Сетка трапециевидная
-        $default7Type = [1, 2, 6, 3, 13, 8, 9, 14, ];
+        $default7Type = [1, 2, 3, 13, 8, 9, 14, 19, 20, 38, 39];
+
+        // Сетки плиссе Россия
+        $default9Type = [33, 34, 35, 36, 3, 4, 13, 14, 29, ];
+
+        // Сетки плиссе Италия
+        $default5Type10Profile = [32, 24, 25, 26, 27, 3, 4, 13, 14, 28, 30, 31];
+        $default5Type11Profile = [32, 24, 25, 26, 27, 3, 4, 13, 29];
+
+        // Сетки AlumSN
+        $default10Type = [21, 40, 14, 38, 39];
 
         // For default additional_id values of 25-profile Рамных москитных сеток
         foreach ([1, 2, 169, 110, 5, 86, 6, 60, 158, 7, 8, 77] as $product_id) {
@@ -175,6 +185,61 @@ class MosquitoSystemsData
 
         foreach ($productIds as $product_id) {
             foreach ($default6Type as $additional_id) {
+                $productAdditional[] = compact('product_id', 'additional_id');
+            }
+        }
+
+        // For default additional_id values of "Сетка трапециевидная"
+        $productIds = Product::where('type_id', 7)
+            ->get(['id'])
+            ->pluck('id');
+
+        foreach ($productIds as $product_id) {
+            foreach ($default7Type as $additional_id) {
+                $productAdditional[] = compact('product_id', 'additional_id');
+            }
+        }
+
+        // For "Сетки плиссе Россия"
+        $productIds = Product::where('type_id', 9)
+            ->get(['id'])
+            ->pluck('id');
+
+        foreach ($productIds as $product_id) {
+            foreach ($default9Type as $additional_id) {
+                $productAdditional[] = compact('product_id', 'additional_id');
+            }
+        }
+
+        // For "Сетки плиссе Италия"
+        $productIds = Product::where('type_id', 5)
+            ->where('profile_id', 10)
+            ->get(['id'])
+            ->pluck('id');
+
+        foreach ($productIds as $product_id) {
+            foreach ($default5Type10Profile as $additional_id) {
+                $productAdditional[] = compact('product_id', 'additional_id');
+            }
+        }
+
+        $productIds = Product::where('type_id', 5)
+            ->where('profile_id', 11)
+            ->get(['id'])
+            ->pluck('id');
+
+        foreach ($productIds as $product_id) {
+            foreach ($default5Type11Profile as $additional_id) {
+                $productAdditional[] = compact('product_id', 'additional_id');
+            }
+        }
+
+        $productIds = Product::where('type_id', 10)
+            ->get(['id'])
+            ->pluck('id');
+
+        foreach ($productIds as $product_id) {
+            foreach ($default10Type as $additional_id) {
                 $productAdditional[] = compact('product_id', 'additional_id');
             }
         }
@@ -311,6 +376,12 @@ class MosquitoSystemsData
                 [
                     'name' => 'Дополнительные параметры',
                 ],
+                [
+                    'name' => 'Тип окна',
+                ],
+                [
+                    'name' => 'Вид углов'
+                ]
             ],
             /*
              * Data about types, that are one-to-one related with categories, but contains
@@ -445,7 +516,7 @@ class MosquitoSystemsData
                 ],
                 [
                     'name' => '52 профиль',
-                    'deleted_at' => date('Y-m-d H:i:s')
+                    'deleted_at' => date('Y-m-d H:i:s'),
                 ],
                 [
                     'name' => 'Крыло',
@@ -558,11 +629,11 @@ class MosquitoSystemsData
                 ],
                 [
                     'name' => '2 прямых угла, 2 не прямых',
-                    'group_id' => 4,
+                    'group_id' => 6,
                 ],
                 [
                     'name' => 'Все углы не прямые',
-                    'group_id' => 4,
+                    'group_id' => 6,
                 ],
                 [
                     'name' => 'Не требуется',
@@ -646,11 +717,11 @@ class MosquitoSystemsData
                 ],
                 [
                     'name' => 'Окна ПВХ или деревянные',
-                    'group_id' => '4',
+                    'group_id' => 5,
                 ],
                 [
                     'name' => 'Алюминиевые окна',
-                    'group_id' => '4',
+                    'group_id' => 5,
                 ],
             ],
             /*

@@ -37,7 +37,7 @@
                 Создать списание
             </a>
         </div>
-        <div class="container-fluid bg-light">
+        <div class="container-fluid bg-light" style="min-height: 250px;">
             <form action method="POST" class="form-group">
                 @csrf
                 <div class="row">

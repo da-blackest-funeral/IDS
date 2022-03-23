@@ -4,7 +4,7 @@
                 id="{{ $name }}"
                 onchange="getConfiguration('{{ $link }}', 'third', '{{ $name }}')"
                 class="form-control">
-            <option>Выберите</option>
+            <option value="0">Выберите</option>
             @forelse($data as $item)
                 <option value="{{ $item->id }}">{{ $item->name }}</option>
             @empty

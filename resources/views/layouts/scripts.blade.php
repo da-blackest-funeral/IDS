@@ -21,9 +21,13 @@
             url: url,
             data: data,
             success: function (data) {
-                $('#additional').hide();
+                if (id !== 'additional') {
+                    $('#additional').hide(350);
+                } else {
+                    $('#additional').hide()
+                }
                 elementToLoad.html(data)
-                elementToLoad.show();
+                elementToLoad.show(350)
             }
         });
     }

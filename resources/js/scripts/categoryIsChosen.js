@@ -11,10 +11,12 @@ $('#categories').change(function () {
         },
         success: function (data) {
             console.log(data);
-            $('#third').hide();
-            $('#fourth').hide();
-            $('#additional').hide();
+            $('#third').hide(350);
+            $('#fourth').hide(350);
+            $('#additional').hide(350);
+            $('#items').hide();
             $('#items').html(data);
+            $('#items').show(350);
         }
     })
 });
