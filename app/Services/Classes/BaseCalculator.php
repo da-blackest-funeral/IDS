@@ -15,6 +15,7 @@ abstract class BaseCalculator implements Calculator
 
     public function __construct(Request $request) {
         $this->request = $request;
+        $this->options = new Collection();
     }
 
     protected function setPriceForCount(): void {

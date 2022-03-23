@@ -27,17 +27,10 @@
         </div>
     @show
 
-    @section('errors')
-        @if($errors->any())
-            <div class="m-xxl-3 p-3 alert-danger border shadow border-danger rounded w-25 h-25">
-                @foreach($errors->all() as $error)
-                    <div class="pb-2">
-                        <span class="font-weight-bold">{{ $error }}</span>
-                    </div>
-                @endforeach
-            </div>
-        @endif
-    @show
+    <div class="errors w-25 h-25 ml-3" onclick="$('#errors').hide(500); $('#error').hide(350)">
+        @include('components.alert-danger')
+    </div>
+
     @yield('content')
 </main>
 

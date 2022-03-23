@@ -19,6 +19,7 @@ class MosquitoSystemsSeeder extends Seeder
         $this->seedFor('additional');
         $this->seedFor('products');
         $this->seedFor('product_additional');
+        $this->seedFor('type_additional');
 //        $this->seedProductAdditional(250);
 //        $this->seedTypeAdditional(250);
 //        $this->seedTypeGroup(300);

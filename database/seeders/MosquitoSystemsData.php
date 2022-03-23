@@ -1796,6 +1796,465 @@ class MosquitoSystemsData
             ],
             // Pivot table for products and additional
             'product_additional' => $productAdditional,
+            // Table with prices for type-additional
+            // там где от 8 до 15 сделать -2, там где от 16 до 19 сделать -3, там где больше 20 сделать -4
+            'type_additional' => [
+                [
+                    'additional_id' => 1,
+                    'type_id' => 1,
+                    'price' => 648,
+                ],
+                [
+                    'additional_id' => 2,
+                    'type_id' => 1,
+                    'price' => 240,
+                ],
+                [
+                    'additional_id' => 3,
+                    'type_id' => 1,
+                    'price' => 360,
+                ],
+                [
+                    'additional_id' => 4,
+                    'type_id' => 1,
+                    'price' => 2220,
+                ],
+                [
+                    'additional_id' => 6,
+                    'type_id' => 1,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 8,
+                    'type_id' => 1,
+                    'price' => 720,
+                ],
+                [
+                    'additional_id' => 9,
+                    'type_id' => 1,
+                    'price' => 792,
+                ],
+                [
+                    'additional_id' => 13,
+                    'type_id' => 1,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 14,
+                    'type_id' => 1,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 5,
+                    'type_id' => 1,
+                    'price' => 2880,
+                ],
+                [
+                    'additional_id' => 16,
+                    'type_id' => 1,
+                    'price' => 120,
+                ],
+                [
+                    'additional_id' => 21,
+                    'type_id' => 1,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 38,
+                    'type_id' => 1,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 39,
+                    'type_id' => 1,
+                    'price' => 60,
+                ],
+                [
+                    'additional_id' => 3,
+                    'type_id' => 2,
+                    'price' => 300,
+                ],
+                [
+                    'additional_id' => 4,
+                    'type_id' => 2,
+                    'price' => 2220,
+                ],
+                [
+                    'additional_id' => 5,
+                    'type_id' => 2,
+                    'price' => 2880,
+                ],
+                [
+                    'additional_id' => 7,
+                    'type_id' => 2,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 10,
+                    'type_id' => 2,
+                    'price' => 1368,
+                ],
+                [
+                    'additional_id' => 11,
+                    'type_id' => 2,
+                    'price' => 1728,
+                ],
+                [
+                    'additional_id' => 13,
+                    'type_id' => 2,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 14,
+                    'type_id' => 2,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 15,
+                    'type_id' => 2,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 38,
+                    'type_id' => 2,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 39,
+                    'type_id' => 2,
+                    'price' => 60,
+                ],
+                [
+                    'additional_id' => 4,
+                    'type_id' => 3,
+                    'price' => 5880,
+                ],
+                [
+                    'additional_id' => 3,
+                    'type_id' => 3,
+                    'price' => 636,
+                ],
+                [
+                    'additional_id' => 12,
+                    'type_id' => 3,
+                    'price' => 1728,
+                ],
+                [
+                    'additional_id' => 13,
+                    'type_id' => 3,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 14,
+                    'type_id' => 3,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 38,
+                    'type_id' => 3,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 39,
+                    'type_id' => 3,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 4,
+                    'type_id' => 4,
+                    'price' => 1200,
+                ],
+                [
+                    'additional_id' => 12,
+                    'type_id' => 4,
+                    'price' => 1872,
+                ],
+                [
+                    'additional_id' => 13,
+                    'type_id' => 4,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 14,
+                    'type_id' => 4,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 22,
+                    'type_id' => 4,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 23,
+                    'type_id' => 4,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 3,
+                    'type_id' => 4,
+                    'price' => 1200,
+                ],
+                [
+                    'additional_id' => 14,
+                    'type_id' => 5,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 24,
+                    'type_id' => 5,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 25,
+                    'type_id' => 5,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 26,
+                    'type_id' => 5,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 27,
+                    'type_id' => 5,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 13,
+                    'type_id' => 5,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 14,
+                    'type_id' => 5,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 3,
+                    'type_id' => 5,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 4,
+                    'type_id' => 5,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 28,
+                    'type_id' => 5,
+                    'price' => 1728,
+                ],
+                [
+                    'additional_id' => 29,
+                    'type_id' => 5,
+                    'price' => 2232,
+                ],
+                [
+                    'additional_id' => 31,
+                    'type_id' => 5,
+                    'price' => 1728,
+                ],
+                [
+                    'additional_id' => 31,
+                    'type_id' => 5,
+                    'price' => 2232,
+                ],
+                [
+                    'additional_id' => 32,
+                    'type_id' => 5,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 17,
+                    'type_id' => 6,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 13,
+                    'type_id' => 6,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 14,
+                    'type_id' => 6,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 3,
+                    'type_id' => 6,
+                    'price' => 180,
+                ],
+                [
+                    'additional_id' => 39,
+                    'type_id' => 6,
+                    'price' => 60,
+                ],
+                [
+                    'additional_id' => 38,
+                    'type_id' => 6,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 6,
+                    'type_id' => 7,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 2,
+                    'type_id' => 7,
+                    'price' => 240,
+                ],
+                [
+                    'additional_id' => 13,
+                    'type_id' => 7,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 14,
+                    'type_id' => 7,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 8,
+                    'type_id' => 7,
+                    'price' => 720,
+                ],
+                [
+                    'additional_id' => 19,
+                    'type_id' => 7,
+                    'price' => 1560,
+                ],
+                [
+                    'additional_id' => 20,
+                    'type_id' => 7,
+                    'price' => 3120,
+                ],
+                [
+                    'additional_id' => 1,
+                    'type_id' => 7,
+                    'price' => 648,
+                ],
+                [
+                    'additional_id' => 9,
+                    'type_id' => 7,
+                    'price' => 792,
+                ],
+                [
+                    'additional_id' => 3,
+                    'type_id' => 7,
+                    'price' => 360,
+                ],
+                [
+                    'additional_id' => 38,
+                    'type_id' => 7,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 39,
+                    'type_id' => 7,
+                    'price' => 60,
+                ],
+                [
+                    'additional_id' => 13,
+                    'type_id' => 8,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 14,
+                    'type_id' => 8,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 21,
+                    'type_id' => 8,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 38,
+                    'type_id' => 8,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 3,
+                    'type_id' => 8,
+                    'price' => 180,
+                ],
+                [
+                    'additional_id' => 39,
+                    'type_id' => 8,
+                    'price' => 60,
+                ],
+                [
+                    'additional_id' => 33,
+                    'type_id' => 9,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 34,
+                    'type_id' => 9,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 35,
+                    'type_id' => 9,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 36,
+                    'type_id' => 9,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 29,
+                    'type_id' => 9,
+                    'price' => 2232,
+                ],
+                [
+                    'additional_id' => 13,
+                    'type_id' => 9,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 3,
+                    'type_id' => 9,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 4,
+                    'type_id' => 9,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 14,
+                    'type_id' => 9,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 40,
+                    'type_id' => 10,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 14,
+                    'type_id' => 10,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 21,
+                    'type_id' => 10,
+                    'price' => 0,
+                ],
+                [
+                    'additional_id' => 39,
+                    'type_id' => 10,
+                    'price' => 60,
+                ],
+                [
+                    'additional_id' => 38,
+                    'type_id' => 10,
+                    'price' => 0,
+                ],
+            ]
 
         ];
 

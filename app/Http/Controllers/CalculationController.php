@@ -28,5 +28,7 @@ class CalculationController extends Controller
     public function save(Calculator $calculator, SaveOrderRequest $request) {
         $calculator->calculate();
         dump($calculator->getPrice());
+        dump($request->all());
+        dump($calculator->getOptions()->toJson());
     }
 }
