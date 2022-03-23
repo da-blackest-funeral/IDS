@@ -1,11 +1,8 @@
-@section('errors')
-    @if($errors->any())
-        <div class="m-xxl-3 pr-3 pt-3 pb-3 alert-danger border border-danger rounded w-100 h-100" id="error">
-            @foreach($errors->all() as $error)
-                <div class="pb-2 w-50" style="margin: 0 auto">
-                    <span class="font-weight-bold">{{ $error }}</span>
-                </div>
-            @endforeach
-        </div>
-    @endif
-@show
+<div class="alert-danger rounded border border-danger w-50 p-3 position-relative">
+    <i class="fa fa-exclamation-triangle fa-lg" aria-hidden="true"></i>
+    <span style="font-weight: bold; margin-left: 5px;">Внимание!</span>
+    <div class="mt-1">
+        @yield('info')
+    </div>
+    @include('components.close')
+</div>

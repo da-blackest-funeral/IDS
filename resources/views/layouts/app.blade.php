@@ -27,9 +27,14 @@
         </div>
     @show
 
-    <div class="errors w-25 h-25 ml-3" onclick="$('#errors').hide(500); $('#error').hide(350)">
-        @include('components.alert-danger')
+    <div class="w-25 h-25 ml-3">
+        @include('components.errors')
     </div>
+
+{{--    <div class="w-25 h-25 ml-3" onclick="$('#notification').hide(600); $('#notifications').hide(500);">--}}
+{{--        @include('components.notifications')--}}
+{{--    </div>--}}
+
 
     @yield('content')
 </main>
