@@ -50,16 +50,18 @@
                     <div class="col-12 col-md-3">
                         <label class="mb-1 mt-2 mt-md-0" for="height">Высота (длина)</label>
                         <input name="height" id="height" placeholder="Высота (габаритн.) в мм." type="text"
-                               class="form-control">
+                               class="form-control" required>
                     </div>
                     <div class="col-12 col-md-3">
                         <label class="mb-1 mt-2 mt-md-0" for="width">Ширина (глубина)</label>
                         <input name="width" id="width" placeholder="Ширина (габаритн.) в мм." type="text"
-                               class="form-control">
+                               class="form-control" required>
                     </div>
                     <div class="col-12 col-md-3">
                         <label class="mb-1 mt-2 mt-md-0" for="count">Количество (шт)</label>
-                        <input name="count" id="count" placeholder="Количество (шт)" type="text" class="form-control">
+                        <input name="count" id="count" placeholder="Количество (шт)" type="text"
+                               class="form-control"
+                               required>
                     </div>
                 </div>
                 <div class="row mt-4" id="items-row">

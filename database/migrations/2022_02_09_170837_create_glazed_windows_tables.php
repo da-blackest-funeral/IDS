@@ -71,12 +71,12 @@ return new class extends Migration {
         });
         $this->comment("{$this->prefix}_layers", 'Камера или стекло');
 
-        Schema::create("{$this->prefix}_cameras_width", function (Blueprint $table) {
-            $table->id();
-            $table->float('width');
-            $table->timestamps();
-        });
-        $this->comment("{$this->prefix}_cameras_width", 'Все значения ширины камеры');
+//        Schema::create("{$this->prefix}_cameras_width", function (Blueprint $table) {
+//            $table->id();
+//            $table->float('width');
+//            $table->timestamps();
+//        });
+//        $this->comment("{$this->prefix}_cameras_width", 'Все значения ширины камеры');
 
         Schema::create("{$this->prefix}_additional", function (Blueprint $table) {
             $table->id();
@@ -98,12 +98,10 @@ return new class extends Migration {
             $table->string('name');
             $table->foreignId('layer_id')
                 ->constrained("{$this->prefix}_layers");
-            $table->foreignId('width_id')
-                ->constrained("{$this->prefix}_cameras_width");
             $table->foreignId('category_id')
                 ->constrained('categories');
-            $table->float('price');
-            $table->integer('sort');
+            $table->float('price')->default(0);
+            $table->integer('sort')->default(0);
             $table->timestamps();
         });
         $this->comment("{$this->prefix}", 'Цена на стеклопакет определяется шириной камеры');
@@ -112,7 +110,8 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->float('price');
-            $table->integer('sort');
+            $table->integer('sort')
+                ->default(0);
             $table->string('thickness')->comment('Толщина');
             $table->foreignId('category_id')
                 ->constrained('categories');

@@ -30,7 +30,7 @@
                 <select name="cameras-width-{{ $i }}" id="cameras-width-{{ $i }}" class="form-control">
                     <option value="0">Ширина камеры</option>
                     @foreach($camerasWidth as $width)
-                        <option value="{{ $width->id }}">{{ $width->width }} мм.</option>
+                        <option value="{{ $width->id }}">{{ $width->name }}</option>
                     @endforeach
                 </select>
 {{--                @dump(compact('additionalForCameras'))--}}

@@ -120,14 +120,13 @@ class GlazedWindowsController extends Controller
         $additionalForGlass = $this->getAdditionalSelects('Стекло');
 
         $glassWidth = GlazedWindows::select(['id', 'name'])
-            ->where('layer_id', 2)
+            ->where('layer_id', 1)
+            ->where('category_id', $this->request->get('categoryId'))
             ->get();
 
-        $camerasWidth = GlazedWindows::with('camerasWidth')
-            ->where('category_id', 14)
-            ->where('layer_id', 1)
-            ->get()
-            ->pluck('camerasWidth');
+        $camerasWidth = GlazedWindows::where('category_id', $this->request->get('categoryId'))
+            ->where('layer_id', 2)
+            ->get();
 
         return view('ajax.glazed-windows.additional')
             ->with(

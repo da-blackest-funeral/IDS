@@ -43,7 +43,8 @@ return new class extends Migration {
         Schema::create('types_windows', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('sort');
+            $table->integer('sort')
+                ->default(0);
             $table->timestamps();
         });
         $this->comment('types_windows', 'Типы окон - Алюминиевые, окна из ПВХ и т.д.');
