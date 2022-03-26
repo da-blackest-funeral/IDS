@@ -4,5 +4,7 @@
     <div class="mt-1">
         @yield('info')
     </div>
-    @include('components.close')
+    @if(!isset($cantClose))
+        @include('components.close')
+    @endif
 </div>

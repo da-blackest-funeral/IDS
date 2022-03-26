@@ -21,7 +21,7 @@
 {{-- Для сеток плиссе Италия вывести дополнительное примечание --}}
 @if($product->type_id == 5)
     @section('info', 'Если одностороннее открывание, то это одно полотно и одна ручка, которая двигается в проеме.')
-@include('components.calculations.alert-info')
+@include('components.alert-info')
 @endif
 
 {{-- Для раздвижных сеток добавить дополнительный инпут с полозьями --}}
@@ -36,7 +36,7 @@
         <input id="poloz" type="text" placeholder="Полозья, мм." name="poloz" class="form-control mt-2">
     </div>
 @endsection
-@include('components.alert-info')
+@include('components.alert-info', ['cantClose' => true])
 @endif
 
 <div class="row w-75">
