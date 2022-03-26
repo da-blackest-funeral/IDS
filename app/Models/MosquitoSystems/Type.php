@@ -45,6 +45,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MosquitoSystems\Product[] $products
  * @property-read int|null $products_count
  * @method static \Illuminate\Database\Eloquent\Builder|Type whereCategoryId($value)
+ * @property float $delivery Цена за доставку
+ * @method static \Illuminate\Database\Eloquent\Builder|Type whereDelivery($value)
  */
 class Type extends Model
 {

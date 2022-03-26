@@ -26,6 +26,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @mixin \Eloquent
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MosquitoSystems\Product[] $products
  * @property-read int|null $products_count
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @method static \Illuminate\Database\Query\Builder|Profile onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile whereDeletedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|Profile withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|Profile withoutTrashed()
  */
 class Profile extends Model
 {

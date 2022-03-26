@@ -80,9 +80,8 @@ return new class extends Migration {
 
         Schema::create("{$this->prefix}_additional", function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('value');
-            $table->integer('sort');
+            $table->string('option_name');
+            $table->string('group');
             $table->float('price');
             $table->foreignId('layer_id')
                 ->constrained("{$this->prefix}_layers");

@@ -12,10 +12,14 @@
                     </select>
                     @foreach($additionalForGlass['selects'] as $select)
                         <div class="mt-1">
-                            <select class="form-control" name="{{ $select->name . "-$i" }}">
+                            <select class="form-control" name="{{ $select->group . "-$i" }}">
                                 @foreach($additionalForGlass['options'] as $additional)
-                                    @if($select->name == $additional->name)
-                                        <option value="{{ $additional->price }}">{{ $additional->value }}</option>
+                                    @if($select->group == $additional->group)
+                                        <option
+                                            @if(!$additional->price) selected @endif
+                                            value="{{ $additional->price }}">
+                                            {{ $additional->option_name }}
+                                        </option>
                                     @endif
                                 @endforeach
                             </select>
@@ -36,10 +40,14 @@
 {{--                @dump(compact('additionalForCameras'))--}}
                 @foreach($additionalForCameras['selects'] as $select)
                     <div class="mt-1">
-                        <select class="form-control" name="{{ $select->name . "-$i"}}">
+                        <select class="form-control" name="{{ $select->group . "-$i"}}">
                             @foreach($additionalForCameras['options'] as $additional)
-                                @if($select->name == $additional->name)
-                                    <option value="{{ $additional->price }}">{{ $additional->value }}</option>
+                                @if($select->group == $additional->group)
+                                    <option
+                                        @if(!$additional->price) selected @endif
+                                        value="{{ $additional->price }}">
+                                        {{ $additional->option_name }}
+                                    </option>
                                 @endif
                             @endforeach
                         </select>
@@ -59,10 +67,14 @@
                 </select>
                 @foreach($additionalForGlass['selects'] as $select)
                     <div class="mt-1">
-                        <select class="form-control" name="{{ $select->name . "-" . $i + 1 }}">
+                        <select class="form-control" name="{{ $select->group . "-" . $i + 1 }}">
                             @foreach($additionalForGlass['options'] as $additional)
-                                @if($select->name == $additional->name)
-                                    <option value="{{ $additional->price }}">{{ $additional->value }}</option>
+                                @if($select->group == $additional->group)
+                                    <option
+                                        @if(!$additional->price) selected @endif
+                                        value="{{ $additional->price }}">
+                                        {{ $additional->option_name }}
+                                    </option>
                                 @endif
                             @endforeach
                         </select>

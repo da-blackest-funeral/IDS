@@ -20,7 +20,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(Calculator::class, function ($app) {
+        $this->app->bind(Calculator::class, function () {
             $request = SaveOrderRequest::createFromBase(\request());
             if (in_array(\request()->input('categories'), [15, 16, 17])) {
                 return new GlazedWindowsCalculator($request);

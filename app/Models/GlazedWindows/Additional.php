@@ -34,4 +34,8 @@ class Additional extends Model
     use HasFactory;
 
     protected $table = 'glazed_windows_additional';
+
+    public function layer() {
+        return $this->belongsTo(Layer::class, 'layer_id', 'id');
+    }
 }

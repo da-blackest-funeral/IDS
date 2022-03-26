@@ -21,6 +21,7 @@ class GlazedWindowsSeeder extends Seeder
 //        $this->seedFor('types_windows');
         $this->seedFor('glazed_windows_layers');
         $this->seedFor("glazed_windows");
+        $this->seedFor('glazed_windows_additional');
     }
 
     protected function seedFor($name) {
