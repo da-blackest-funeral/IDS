@@ -58,6 +58,10 @@ class Type extends Model
         return $this->hasMany(Product::class);
     }
 
+    public static function byCategory($categoryId) {
+        return self::where('category_id', $categoryId)->firstOrFail();
+    }
+
     public function additional() {
         return $this->belongsToMany(
             Additional::class,

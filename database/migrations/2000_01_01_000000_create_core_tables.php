@@ -70,7 +70,6 @@ return new class extends Migration {
             $table->float('price');
             $table->float('discounted_price')
                 ->comment('Цена со скидкой');
-            $table->date('date');
             $table->boolean('status')
                 ->comment('Выполнен заказ или нет');
             $table->boolean('measuring')

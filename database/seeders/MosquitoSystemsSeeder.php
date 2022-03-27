@@ -20,9 +20,7 @@ class MosquitoSystemsSeeder extends Seeder
         $this->seedFor('products');
         $this->seedFor('product_additional');
         $this->seedFor('type_additional');
-//        $this->seedProductAdditional(250);
-//        $this->seedTypeAdditional(250);
-//        $this->seedTypeGroup(300);
+        $this->seedFor('type_salary');
     }
 
     protected function seedFor(string $configKey) {
