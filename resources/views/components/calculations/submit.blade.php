@@ -1,3 +1,3 @@
 <div class="mt-3">
-    <input type="submit" name="add" class="btn btn-primary" value="Добавить позицию">
+    <input type="submit" name="add" class="btn btn-primary" value="Сохранить">
 </div>

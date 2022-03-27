@@ -4,7 +4,6 @@
 
     use App\Models\GlazedWindows\Additional;
     use App\Models\GlazedWindows\GlazedWindows;
-    use App\Models\GlazedWindows\Layer;
     use App\Models\SystemVariables;
     use Illuminate\Http\Request;
     use Illuminate\Support\Collection;
@@ -45,7 +44,7 @@
         protected function saveMainPrice($glazedWindow) {
             $this->options->push([
                 $glazedWindow->description => $glazedWindow->value,
-                'Общая цена: ' => $glazedWindow->value * $this->squareCoefficient
+                'Общая цена: ' => $glazedWindow->value * $this->squareCoefficient,
             ]);
         }
 

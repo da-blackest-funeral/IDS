@@ -38,7 +38,7 @@
             </a>
         </div>
         <div class="container-fluid bg-light" style="min-height: 250px;">
-            <form action method="POST" class="form-group">
+            <form action method="POST" class="form-group" style="margin-bottom: 100px;">
                 @csrf
                 <div class="row">
                     <div class="col-12 pt-2 pl-2">
@@ -93,6 +93,104 @@
                 <div class="mt-4 pb-3" id="additional">
                     {{-- Место для дополнительных опций --}}
                 </div>
+                <div class="mt-5">
+                    <label class="btn btn-sm btn-secondary active">
+                        <input type="radio" name="delivery" value="1" checked
+                               onclick="$('#delivery-options').show(400)">
+                        <span style="font-weight: bold;">Доставка \ Выезд на монтаж</span>
+                    </label>
+                    <label class="btn btn-sm btn-secondary active">
+                        <input type="radio" name="delivery" value="0" id="no_delivery"
+                               onchange="toggleDeliveryOptions()">
+                        Самовывоз
+                    </label>
+                    <label class="btn btn-sm btn-secondary active">
+                        <input type="radio" name="measuring" value="1" checked
+                               onclick="$('#delivery-options').show(400)">
+                        <span style="font-weight: bold;">Нужен Замер</span>
+                    </label>
+                    <label class="btn btn-sm btn-secondary active">
+                        <input type="radio" name="measuring" value="0" id="no_measuring"
+                               onchange="toggleDeliveryOptions()">
+                        Без замера
+                    </label>
+                </div>
+                <div id="delivery-options">
+                    <div class="row mt-3 mb-3 w-75">
+                        <div class="p-2 w-25">
+                            <label>
+                                Количество доп. выездов
+                                <input type="text" value="0" name="count-additional-visits" class="form-control">
+                            </label>
+                        </div>
+                        <div class="p-2 w-25">
+                            <label>
+                                Км.
+                                <input type="text" value="0" name="kilometres" class="form-control">
+                            </label>
+                        </div>
+                    </div>
+                    <div class="mt-3 w-50">
+                        <label for="address">Укажите точный адрес клиента</label>
+                        <input type="text" class="form-control w-50" placeholder="Адрес клиента" name="address"
+                               id="address">
+                    </div>
+                </div>
+                <div class="mt-3 w-50">
+                    <label for="sale">Дополнительная скидка</label>
+                    <select type="text" class="form-control w-50" name="sale" id="sale">
+                        <option value="0">Без скидки</option>
+                        <option value="5">Скидка 5%</option>
+                    </select>
+                </div>
+                {{--                data-bs-toggle="tooltip" data-bs-placement="top" title="Подсказка вверху"--}}
+                <div class="mt-3 w-50">
+                    <label for="auto-sale">
+                        Автоматическая скидка от цены заказа
+                        @include('components.tooltip', ['tooltip' => 'Автоматическая скидка на некоторые категории товаров'])
+                    </label>
+                    <select class="form-control w-50" name="auto-sale" id="auto-sale">
+                        <option value="0">Без скидки</option>
+                        <option value="10">Скидка 10%</option>
+                        <option value="15">Скидка 15%</option>
+                    </select>
+                </div>
+                <div class="mt-3 w-50">
+                    <label for="person">
+                        Лицо
+                        @include('components.tooltip', ['tooltip' => 'Если оплата производится по счету, то это юр. лицо'])
+                    </label>
+                    <select class="form-control w-50" name="person" id="person">
+                        <option value="physical">Физ. лицо</option>
+                        <option value="legal">Юр. лицо</option>
+                    </select>
+                </div>
+                <div class="mt-3 w-50">
+                    <label for="min-sum">
+                        Минимальная сумма заказа
+                    </label>
+                    <input type="text" class="form-control w-50" name="min-sum" id="min-sum" value="5000">
+                </div>
+                <div class="mt-3 w-50">
+                    <label for="sum-manually">
+                        Ручное изменение суммы заказа
+                    </label>
+                    <input type="text" class="form-control w-50" name="sum-manually" id="sum-manually" value="0">
+                </div>
+                <div class="mt-3 w-50">
+                    <label for="wage-manually">
+                        Ручное изменение зарплаты
+                        @include('components.tooltip', [
+                            'tooltip' =>
+                            '1. -1 - какой процент потерь из-за ручного изменения, такой процент и вычитается из зп.
+2. 0 - не вычитать ничего.
+3. любое число больше 0 - прибавить эту сумму.
+4. любое число меньше -1 - вычесть эту сумму.'
+                        ])
+                    </label>
+                    <input type="text" class="form-control w-50" name="wage-manually" id="wage-manually" value="-1">
+                </div>
+                @include('components.calculations.submit')
             </form>
         </div>
     </div>

@@ -13,6 +13,15 @@
         });
     });
 
+    function toggleDeliveryOptions() {
+        let noDelivery = document.getElementById('no_delivery');
+        let noMeasuring = document.getElementById('no_measuring');
+
+        if (noDelivery.checked && noMeasuring.checked) {
+            $('#delivery-options').hide(400)
+        }
+    }
+
     function getConfiguration(url, id, selectorIds = null, element = null) {
         let elementToLoad = $('#' + id);
         let data = {

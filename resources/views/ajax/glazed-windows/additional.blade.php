@@ -94,4 +94,3 @@
     @include('components.calculations.fast-creating')
 </div>
 @include('components.calculations.comment')
-@include('components.calculations.submit')
