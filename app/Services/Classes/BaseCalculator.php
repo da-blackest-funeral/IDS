@@ -100,7 +100,9 @@
          */
         protected function savePrice($price) {
             $this->options->push([
-                'Цена изделия: ' => $price * $this->count,
+                'main_price' => [
+                    'Цена изделия: ' => $price * $this->count,
+                ],
             ]);
         }
 
@@ -111,7 +113,9 @@
          */
         protected function saveInstallationData() {
             $this->options->push([
-                'Замер: ' => $this->measuringPrice > 0 ? $this->measuringPrice : 'Бесплатно',
+                'measuring' => [
+                    'Замер: ' => $this->measuringPrice > 0 ? $this->measuringPrice : 'Бесплатно',
+                ],
             ]);
             if ($this->installersWage) {
                 $this->options->push([
@@ -136,10 +140,13 @@
          * @param $additional
          * @return void
          */
-        protected function saveDelivery($additional) {
+        protected function saveDelivery($additional, $salary) {
             $this->options->push([
-                'Цена доставки: ' => $this->deliveryPrice,
-                'Из этого за доп. количество километров: ' => $additional,
+                'delivery' => [
+                    'Цена доставки: ' => $this->deliveryPrice,
+                    'Из этого за доп. количество километров: ' => $additional,
+                    'Заработок монтажника за доп. км.: ' => $salary > 0 ? $salary : 'Нет',
+                ],
             ]);
         }
 

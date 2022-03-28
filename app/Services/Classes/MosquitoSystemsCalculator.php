@@ -39,14 +39,14 @@
         public function __construct(Request $request) {
             parent::__construct($request);
 
-            $this->needMeasuring = (bool) $request->get('measuring');
+            $this->needMeasuring = (bool)$request->get('measuring');
 
             try {
                 $this->type = Type::byCategory($request->get('categories'));
             } catch (\Exception $exception) {
                 return view('welcome')->withErrors([
                     'not_found' => 'Тип не найден',
-                    'message' => 'Информация для отладки: ' . $exception->getMessage()
+                    'message' => 'Информация для отладки: ' . $exception->getMessage(),
                 ]);
             }
 
@@ -129,7 +129,7 @@
                 return;
             }
 
-            $distance = (float) $this->request->get('kilometres');
+            $distance = (float)$this->request->get('kilometres');
 
             $additionalDistancePrice = SystemVariables::where('name', 'additionalPriceDeliveryPerKm')
                 ->first();
@@ -140,13 +140,17 @@
 
             $additionalDistanceWage = SystemVariables::where('name', 'additionalWagePerKm')
                 ->first();
-            $this->installersWage += $additionalDistanceWage->value * $distance * $this->count;
+            $salaryForAdditionalDelivery = $additionalDistanceWage->value * $distance;
 
+            // Цена за доп. км. и зп за доставку за замер считаются отдельно от выбора "нужна доставка"
             if ($this->needMeasuring) {
-                $this->installersWage += $additionalDistanceWage->value * $distance * $this->count;
+                $this->deliveryPrice += $additionalDistancePrice->value * $distance;
+                $salaryForAdditionalDelivery += $additionalDistanceWage->value * $distance;
             }
 
-            $this->saveDelivery($additionalDistancePrice->value * $distance * $this->count);
+            $this->installersWage += $salaryForAdditionalDelivery;
+
+            $this->saveDelivery($additionalDistancePrice->value * $distance * $this->count, $salaryForAdditionalDelivery);
         }
 
         /**
@@ -212,6 +216,9 @@
                     'mosquito_systems_additional.name',
                 ]);
 
+            $items = collect();
+            $additionalCollection = collect();
+
             foreach ($additional as $item) {
                 $additionalPrice = $item->price;
 
@@ -224,10 +231,14 @@
                     }
                 }
 
-                $this->saveAdditional($item, $additionalPrice);
+                $items->put("Доп. за $item->name: ", $additionalPrice);
+                $additionalCollection->push($item);
 
                 $this->price += $additionalPrice ?? 0;
             }
+
+            $this->saveAdditional($items);
+            $this->additional->push($additionalCollection)->collapse();
 
             return $this;
         }
@@ -247,6 +258,7 @@
                 $this->installersWage += $this->measuringSalary;
             }
 
+            $this->additional = $this->additional->collapse();
             foreach ($this->additional as $item) {
                 if (!$this->additionalIsInstallation($item)) {
                     continue;
@@ -274,18 +286,13 @@
         /**
          * Saving info to json
          *
-         * @param $additionalId
-         * @param $price
+         * @param Collection $additional
          * @return void
          */
-        protected
-        function saveAdditional($additional, $price) {
-
+        protected function saveAdditional(Collection $additional) {
             $this->options->push([
-                "Доп. $additional->name: " => $price * $this->count,
+                'additional' => $additional
             ]);
-
-            $this->additional->push($additional);
         }
 
         /**
