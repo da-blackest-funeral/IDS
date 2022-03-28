@@ -13,5 +13,13 @@ interface Calculator
 
     public function setPrice(float $price);
 
+    public function getDeliveryPrice(): float;
+
     public function getOptions(): Collection;
+
+    public function getNeedMeasuring(): bool;
+
+    public function getMeasuringPrice(): float;
+
+    public function getCount(): int;
 }

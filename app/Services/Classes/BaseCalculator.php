@@ -65,6 +65,9 @@
          */
         protected float $measuringPrice = 0.0;
 
+        /**
+         * @var bool
+         */
         protected bool $needInstallation = false;
 
         public function __construct(Request $request) {
@@ -90,6 +93,24 @@
             if ($this->request->get('delivery')) {
                 $this->calculateDelivery();
             }
+        }
+
+        /**
+         * @return float
+         */
+        public function getMeasuringPrice(): float {
+            return $this->measuringPrice;
+        }
+
+        public function getCount(): int {
+            return $this->count;
+        }
+
+        /**
+         * @return bool
+         */
+        public function isNeedInstallation(): bool {
+            return $this->needInstallation;
         }
 
         /**

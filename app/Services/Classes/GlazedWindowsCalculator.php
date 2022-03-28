@@ -115,4 +115,16 @@
         public function getOptions(): Collection {
             return $this->options;
         }
+
+        protected function setMeasuringPrice(): void {
+            // TODO: Implement setMeasuringPrice() method.
+        }
+
+        protected function calculateDelivery(): void {
+            // TODO: Implement calculateDelivery() method.
+        }
+
+        public function getNeedMeasuring(): bool {
+            // TODO: Implement getNeedMeasuring() method.
+        }
     }

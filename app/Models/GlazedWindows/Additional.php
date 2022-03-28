@@ -28,6 +28,11 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Additional whereSort($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Additional whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Additional whereValue($value)
+ * @property string $option_name
+ * @property string $group
+ * @property-read \App\Models\GlazedWindows\Layer $layer
+ * @method static \Illuminate\Database\Eloquent\Builder|Additional whereGroup($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Additional whereOptionName($value)
  */
 class Additional extends Model
 {

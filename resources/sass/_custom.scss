@@ -28,6 +28,18 @@
     transform: scale(1.02)
 }
 
+.cards-success {
+    transition: all 0.25s ease-in-out;
+    cursor: pointer;
+    border: solid 1px lightgreen;
+}
+
+.cards-success:hover {
+    box-shadow: 2px 2px 10px 7px rgba(0, 200, 0, 0.2);
+    border: 2px solid lightgreen;
+    transform: scale(1.02)
+}
+
 .cards-errors {
     transition: all 0.25s ease-in-out;
     cursor: pointer;
@@ -45,5 +57,9 @@
 }
 
 #notifications :hover {
+    box-shadow: none;
+}
+
+#success :hover {
     box-shadow: none;
 }

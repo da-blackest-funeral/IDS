@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'ИДС')
+@section('title', 'Создание заказа')
 @section('content')
     <div class="container mt-4">
         <h1 class="h1">
@@ -37,9 +37,11 @@
                 Создать списание
             </a>
         </div>
+        @dump(json_decode($productData->data ?? null))
         <div class="container-fluid bg-light" style="min-height: 250px;">
             <form action method="POST" class="form-group" style="margin-bottom: 100px;">
                 @csrf
+                <input type="hidden" value="{{ $orderNumber }}" name="order_id">
                 <div class="row">
                     <div class="col-12 pt-2 pl-2">
                         <p class="h3">Добавить товар</p>

@@ -34,6 +34,9 @@
          */
         protected float $measuringSalary = 0.0;
 
+        /**
+         * @var bool
+         */
         protected bool $needMeasuring;
 
         public function __construct(Request $request) {
@@ -102,6 +105,27 @@
                     ->first()
                     ->value;
             }
+        }
+
+        /**
+         * @return Type
+         */
+        public function getType(): Type {
+            return $this->type;
+        }
+
+        /**
+         * @return Collection
+         */
+        public function getAdditional(): Collection {
+            return $this->additional;
+        }
+
+        /**
+         * @return float
+         */
+        public function getMeasuringSalary(): float {
+            return $this->measuringSalary;
         }
 
         protected function setMeasuringPrice(): void {
@@ -316,5 +340,12 @@
         public
         function getOptions(): Collection {
             return $this->options;
+        }
+
+        /**
+         * @return bool
+         */
+        public function getNeedMeasuring(): bool {
+            return $this->needMeasuring;
         }
     }
