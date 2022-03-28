@@ -26,6 +26,14 @@ class MosquitoSystemsSeeder extends Seeder
     protected function seedFor(string $configKey) {
 
         foreach (MosquitoSystemsData::all($configKey) as $item) {
+            if ($configKey == 'products' && isset($item['price'])) {
+                $item['price'] *= 1.2;
+            }
+
+            if ($configKey == 'types' && isset($item['delivery'])) {
+                $item['delivery'] *= 1.2;
+            }
+
             $item['created_at'] = date('Y-m-d H:i:s', time());
             $item['updated_at'] = date('Y-m-d H:i:s', time());
 

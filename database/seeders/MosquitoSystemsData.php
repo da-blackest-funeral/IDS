@@ -15,21 +15,21 @@
              * date: 10.03.2022
              */
 
-            $default25Profile1Type = [6, 2, 1, 16, 13, 4, 3, 8, 9, 38, 39];
+            $default25Profile1Type = [6, 2, 1, 16, 13, 14, 4, 3, 8, 9, 38, 39];
 
-            $default32Profile1Type = [6, 2, 1, 13, 5, 3, 8, 9, 38, 39];
+            $default32Profile1Type = [6, 2, 1, 13, 5, 3, 8, 9, 38, 39, 14];
 
             // Default for Антикошка
-            $defaultAntikoshkaTissues25Profile = [2, 1, 16, 13, 4, 3, 8, 9, 38, 39];
-            $defaultAntikoshkaTissues32Profile = [2, 1, 13, 5, 3, 8, 9, 38, 39];
+            $defaultAntikoshkaTissues25Profile = [2, 1, 16, 13, 4, 14, 3, 8, 9, 38, 39];
+            $defaultAntikoshkaTissues32Profile = [2, 1, 13, 14, 5, 3, 8, 9, 38, 39];
 
             $defaultProfile2Type = [21, 13, 3, 14, 41, 42, 38, 39];
 
             // Москитные двери 25 профиль
-            $default25Profile3Type = [7, 13, 3, 4, 10, 14, 38, 39];
+            $default25Profile3Type = [7, 13, 3, 14, 4, 10, 14, 38, 39];
 
             // Москитные двери 32 профиль
-            $default32Profile3Type = [7, 13, 3, 5, 10, 14, 38, 39];
+            $default32Profile3Type = [7, 13, 3, 14, 5, 10, 38, 39];
 
             // Москитные двери 42 профиль
             $default42Profile3Type = [15, 13, 3, 11, 14, 38, 39];
@@ -54,7 +54,7 @@
 
             // Сетки плиссе Италия
             $default5Type10Profile = [32, 24, 25, 26, 27, 3, 4, 13, 14, 28, 30, 31];
-            $default5Type11Profile = [32, 24, 25, 26, 27, 3, 4, 13, 29];
+            $default5Type11Profile = [32, 24, 25, 26, 27, 3, 4, 13, 14, 29];
 
             // Сетки AlumSN
             $default10Type = [21, 40, 14, 38, 39];
@@ -2265,6 +2265,13 @@
                     ],
                     [
                         'type_id' => 1,
+                        'additional_id' => 14,
+                        'count' => 1,
+                        'salary' => 0,
+                        'salary_for_count' => 0,
+                    ],
+                    [
+                        'type_id' => 1,
                         'additional_id' => 8,
                         'salary' => 1050,
                     ],
@@ -2300,6 +2307,12 @@
                     ],
                     [
                         'type_id' => 2,
+                        'additional_id' => 14,
+                        'salary' => 0,
+                        'salary_for_count' => 0,
+                    ],
+                    [
+                        'type_id' => 2,
                         'additional_id' => 11,
                         'salary' => 1200,
                         'salary_for_count' => 480,
@@ -2311,15 +2324,36 @@
                         'salary_for_count' => 360,
                     ],
                     [
+                        'type_id' => 3,
+                        'additional_id' => 14,
+                        'count' => 1,
+                        'salary' => 0,
+                        'salary_for_count' => 0,
+                    ],
+                    [
                         'type_id' => 4,
                         'additional_id' => 12,
                         'salary' => 1100,
                         'salary_for_count' => 360,
                     ],
                     [
+                        'type_id' => 4,
+                        'additional_id' => 14,
+                        'count' => 1,
+                        'salary' => 0,
+                        'salary_for_count' => 0,
+                    ],
+                    [
                         'type_id' => 6,
                         'additional_id' => 18,
                         'salary' => 1050,
+                        'salary_for_count' => 0,
+                    ],
+                    [
+                        'type_id' => 6,
+                        'additional_id' => 14,
+                        'count' => 1,
+                        'salary' => 0,
                         'salary_for_count' => 0,
                     ],
                     [
@@ -2333,6 +2367,13 @@
                         'type_id' => 7,
                         'additional_id' => 8,
                         'salary' => 1050,
+                    ],
+                    [
+                        'type_id' => 7,
+                        'additional_id' => 14,
+                        'count' => 1,
+                        'salary' => 0,
+                        'salary_for_count' => 0,
                     ],
                     [
                         'type_id' => 7,
@@ -2373,6 +2414,13 @@
                     ],
                     [
                         'type_id' => 5,
+                        'additional_id' => 14,
+                        'count' => 1,
+                        'salary' => 0,
+                        'salary_for_count' => 0,
+                    ],
+                    [
+                        'type_id' => 5,
                         'additional_id' => 29,
                         'salary' => 2400,
                         'salary_for_count' => 600,
@@ -2394,6 +2442,13 @@
                         'additional_id' => 29,
                         'salary' => 2400,
                         'salary_for_count' => 600,
+                    ],
+                    [
+                        'type_id' => 9,
+                        'additional_id' => 14,
+                        'count' => 1,
+                        'salary' => 0,
+                        'salary_for_count' => 0,
                     ],
                 ]
             ];

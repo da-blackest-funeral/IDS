@@ -2,7 +2,6 @@
 
     namespace App\Services\Classes;
 
-    use App\Models\MosquitoSystems\Type;
     use App\Models\SystemVariables;
     use App\Services\Interfaces\Calculator;
     use Illuminate\Http\Request;
@@ -66,10 +65,12 @@
          */
         protected float $measuringPrice = 0.0;
 
+        protected bool $needInstallation = false;
+
         public function __construct(Request $request) {
             $this->request = $request;
             $this->options = new Collection();
-            $this->count = (int) $request->get('count');
+            $this->count = (int)$request->get('count');
         }
 
         /**
@@ -108,19 +109,25 @@
          *
          * @return void
          */
-        protected function saveInstallersWage() {
+        protected function saveInstallationData() {
             $this->options->push([
-               'Заработок монтажника: ' => $this->installersWage
+                'Замер: ' => $this->measuringPrice > 0 ? $this->measuringPrice : 'Бесплатно',
             ]);
+            if ($this->installersWage) {
+                $this->options->push([
+                    'Заработок монтажника: ' => $this->installersWage,
+                ]);
+            }
         }
 
         /**
          * Multiplying price of product by count of products
          *
-         * @return void
+         * @return BaseCalculator
          */
-        protected function setPriceForCount(): void {
+        protected function setPriceForCount(): BaseCalculator {
             $this->price *= $this->count;
+            return $this;
         }
 
         /**
@@ -141,54 +148,29 @@
          *
          * @return bool
          */
-        protected function needDelivery() {
+        protected function needDelivery(): bool {
             return $this->request->has('delivery') && $this->request->get('delivery');
         }
 
         /**
          * Adding delivery price to all product's price
          *
-         * @return void
+         * @return BaseCalculator
          */
-        protected function addDelivery() {
+        protected function addDelivery(): BaseCalculator {
             $this->price += $this->deliveryPrice;
+            return $this;
         }
 
         /**
          * Adding measuring price to all product's price
          *
-         * @return void
+         * @return BaseCalculator
          */
-        protected function addMeasuringPrice() {
+        protected function addMeasuringPrice(): BaseCalculator {
             $this->price += $this->measuringPrice;
-        }
 
-        /**
-         * Calculates delivery price, salary for delivery and writes it
-         * to json data
-         *
-         * @return void
-         */
-        protected function calculateDelivery() {
-            if (!$this->needDelivery()) {
-                return;
-            }
-
-            $distance = (float) $this->request->get('kilometres');
-
-            $additionalDistancePrice = SystemVariables::where('name', 'additionalPriceDeliveryPerKm')
-                ->first();
-
-            $this->deliveryPrice += $additionalDistancePrice->value * $distance;
-
-            $type = Type::byCategory($this->request->get('categories'));
-            $this->deliveryPrice += $type->delivery;
-
-            $additionalDistanceWage = SystemVariables::where('name', 'additionalWagePerKm')
-                ->first();
-            $this->installersWage += $additionalDistanceWage->value * $distance * $this->count;
-
-            $this->saveDelivery($additionalDistancePrice->value * $distance);
+            return $this;
         }
 
         /**
@@ -202,34 +184,15 @@
         }
 
         /**
-         * Calculates the measuring price and salary, writes info in json
-         *
-         * @return void
-         */
-        protected function setMeasuringPrice() {
-            $measuring = SystemVariables::where('name', 'measuring')
-                ->first(['value', 'description']);
-
-            $this->saveSystemOptions($measuring);
-
-            $measuringWage = SystemVariables::where('name', 'measuringWage')
-                ->first(['value', 'description']);
-
-            $this->saveSystemOptions($measuringWage);
-
-            $this->measuringPrice += $measuring->value;
-        }
-
-        /**
          * Writes info of system variables
          *
          * @param SystemVariables $variable
-         * @param $count
+         * @param int $count
          * @return void
          */
-        protected function saveSystemOptions(SystemVariables $variable, $count = 1) {
+        protected function saveSystemOptions($variable, int $count = 1): void {
             $this->options->push([
-                $variable->description => $variable->value * $count
+                $variable->description => $variable->value * $count > 0 ? $variable->value * $count : 'Бесплатно',
             ]);
         }
 
@@ -276,4 +239,19 @@
         public function getInstallersWage(): float {
             return $this->installersWage;
         }
+
+        /**
+         * Calculates the measuring price and salary, writes info in json
+         *
+         * @return void
+         */
+        abstract protected function setMeasuringPrice(): void;
+
+        /**
+         * Calculates delivery price, salary for delivery and writes it
+         * to json data
+         *
+         * @return void
+         */
+        abstract protected function calculateDelivery(): void;
     }

@@ -2,9 +2,9 @@
 
     namespace App\Services\Classes;
 
-    use App\Models\MosquitoSystems\Additional;
     use App\Models\MosquitoSystems\Product;
     use App\Models\MosquitoSystems\Type;
+    use App\Models\SystemVariables;
     use Illuminate\Database\Eloquent\Builder;
     use Illuminate\Http\Request;
     use Illuminate\Support\Collection;
@@ -29,15 +29,24 @@
          */
         protected Collection $additional;
 
+        /**
+         * @var float
+         */
+        protected float $measuringSalary = 0.0;
+
+        protected bool $needMeasuring;
+
         public function __construct(Request $request) {
             parent::__construct($request);
+
+            $this->needMeasuring = (bool) $request->get('measuring');
 
             try {
                 $this->type = Type::byCategory($request->get('categories'));
             } catch (\Exception $exception) {
-                \Debugbar::alert($exception->getMessage());
                 return view('welcome')->withErrors([
                     'not_found' => 'Тип не найден',
+                    'message' => 'Информация для отладки: ' . $exception->getMessage()
                 ]);
             }
 
@@ -51,38 +60,93 @@
             parent::calculate();
 
             /*
-             * Firstly, need to calculate product's main price
-             */
-            $this->setProductPrice();
-
-            /*
-             * Then, calculating price of additional attributes
-             */
-            $this->setPriceForAdditional();
-
-            /*
+             * Firstly, need to calculate product's main price.
+             * Then, calculating price of additional attributes.
              * Multiplying prices of additional and main product's price by count of products.
              * Delivery price, salary, measuring price etc. don't depend on count.
-             */
-            $this->setPriceForCount();
-
-            /*
              * Because delivery doesn't depend on count and other order characteristics,
              * it's price must be added here. It had already been calculated in BaseCalculator.
-             */
-            $this->addDelivery();
-
-            /*
              * Similarly with the price of measurement
              */
-            $this->addMeasuringPrice();
+            $this->setProductPrice()
+                ->calculatePriceForAdditional()
+                ->setPriceForCount()
+                ->addDelivery()
+                ->addMeasuringPrice();
+
+            /*
+             * If we are needed in installation, measuring becomes free.
+             */
+            $this->checkMeasuringSale();
+
+            /*
+             * If we are needed in installation, constant sum of delivery
+             * takes away from salary. But sum for additional km remains unchanged
+             */
+            $this->checkDeliverySalary();
 
             /*
              * Calculating salary based on list of additional items
              */
             $this->calculateSalary();
 
-            $this->saveInstallersWage();
+            $this->saveInstallationData();
+        }
+
+        /**
+         * @return void
+         */
+        protected function checkDeliverySalary() {
+            if (!$this->needInstallation) {
+                $this->installersWage += SystemVariables::where('name', 'delivery')
+                    ->first()
+                    ->value;
+            }
+        }
+
+        protected function setMeasuringPrice(): void {
+            $measuring = SystemVariables::where('name', 'measuring')
+                ->first(['value', 'description']);
+
+            $measuringWage = SystemVariables::where('name', 'measuringWage')
+                ->first(['value', 'description']);
+
+            $this->measuringSalary += $measuringWage->value;
+
+            $this->measuringPrice += $measuring->value;
+        }
+
+        protected function checkMeasuringSale() {
+            if ($this->needInstallation) {
+                $this->price -= $this->measuringPrice;
+                $this->measuringPrice = 0;
+                $this->measuringSalary = 0;
+            }
+        }
+
+        protected function calculateDelivery(): void {
+            if (!$this->needDelivery()) {
+                return;
+            }
+
+            $distance = (float) $this->request->get('kilometres');
+
+            $additionalDistancePrice = SystemVariables::where('name', 'additionalPriceDeliveryPerKm')
+                ->first();
+
+            $this->deliveryPrice += $additionalDistancePrice->value * $distance;
+
+            $this->deliveryPrice += $this->type->delivery;
+
+            $additionalDistanceWage = SystemVariables::where('name', 'additionalWagePerKm')
+                ->first();
+            $this->installersWage += $additionalDistanceWage->value * $distance * $this->count;
+
+            if ($this->needMeasuring) {
+                $this->installersWage += $additionalDistanceWage->value * $distance * $this->count;
+            }
+
+            $this->saveDelivery($additionalDistancePrice->value * $distance * $this->count);
         }
 
         /**
@@ -92,10 +156,9 @@
          * That price multiplies by square - but if square <= 1, squareCoefficient = 1, else
          * squareCoefficient = square (in square meters)
          *
-         * @return \Illuminate\Http\RedirectResponse|void
+         * @return \Illuminate\Http\RedirectResponse|BaseCalculator
          */
-        protected
-        function setProductPrice() {
+        protected function setProductPrice() {
             try {
                 $product = Product::where('tissue_id', $this->request->get('tissues'))
                     ->where('profile_id', $this->request->get('profiles'))
@@ -114,6 +177,8 @@
                     'not_found' => 'Такого товара не найдено',
                 ]);
             }
+
+            return $this;
         }
 
         /**
@@ -125,37 +190,46 @@
          * In the page, groups are marked from 1 to n as html select's names, and
          * values of additional ids as option's values.
          */
-        protected function setPriceForAdditional() {
+        protected function calculatePriceForAdditional() {
             $typeId = $this->type->id;
 
             $i = 1;
+            $ids = [];
             while ($this->request->has("group-$i")) {
-                // todo возможно заполнить коллекцию id-шников, а потом сделать whereIn()->with('group')
-                try {
-                    $additional = \DB::table('mosquito_systems_type_additional')
-                        ->where('type_id', $typeId)
-                        ->where('additional_id', $this->request->get("group-$i"))
-                        ->first();
-
-                    $additionalPrice = $additional->price;
-
-                    if (!$this->additionalIsInstallation($additional)) {
-                        $additionalPrice *= $this->squareCoefficient;
-                    }
-
-                    $this->saveAdditional($additional->additional_id, $additionalPrice);
-
-                    $this->price += $additionalPrice ?? 0;
-
-                    if ($this->additionalIsInstallation($additional)) {
-                        $this->installationPrice = $additionalPrice;
-                    }
-
-                } catch (\Exception $exception) {
-                    \Debugbar::alert($exception->getMessage());
-                }
+                $ids[] = $this->request->get("group-$i");
                 $i++;
             }
+
+            $additional = \DB::table('mosquito_systems_type_additional')
+                ->where('type_id', $typeId)
+                ->whereIn('additional_id', $ids)
+                ->leftJoin('mosquito_systems_additional', 'additional_id', '=', 'mosquito_systems_additional.id')
+                ->leftJoin('mosquito_systems_groups', 'group_id', '=', 'mosquito_systems_groups.id')
+                ->get([
+                    'price',
+                    'additional_id',
+                    'mosquito_systems_groups.name as group_name',
+                    'mosquito_systems_additional.name',
+                ]);
+
+            foreach ($additional as $item) {
+                $additionalPrice = $item->price;
+
+                if (!$this->additionalIsInstallation($item)) {
+                    $additionalPrice *= $this->squareCoefficient;
+                } else {
+                    $this->installationPrice = $additionalPrice;
+                    if (!$this->needInstallation) {
+                        $this->needInstallation = true;
+                    }
+                }
+
+                $this->saveAdditional($item, $additionalPrice);
+
+                $this->price += $additionalPrice ?? 0;
+            }
+
+            return $this;
         }
 
         /**
@@ -168,6 +242,11 @@
          * @return void
          */
         protected function calculateSalary() {
+
+            if (!$this->needInstallation) {
+                $this->installersWage += $this->measuringSalary;
+            }
+
             foreach ($this->additional as $item) {
                 if (!$this->additionalIsInstallation($item)) {
                     continue;
@@ -175,7 +254,7 @@
 
                 $salary = \DB::table('mosquito_systems_type_salary')
                     ->where('type_id', $this->type->id)
-                    ->where('additional_id', $item->id)
+                    ->where('additional_id', $item->additional_id)
                     ->where('count', $this->count)
                     ->first();
 
@@ -184,7 +263,7 @@
                 } else {
                     $salary = \DB::table('mosquito_systems_type_salary')
                         ->where('type_id', $this->type->id)
-                        ->where('additional_id', $item->id)
+                        ->where('additional_id', $item->additional_id)
                         ->orderByDesc('count')
                         ->first();
                     $this->installersWage += $salary->salary + $this->count * $salary->salary_for_count;
@@ -199,8 +278,8 @@
          * @param $price
          * @return void
          */
-        protected function saveAdditional($additionalId, $price) {
-            $additional = Additional::findOrFail($additionalId);
+        protected
+        function saveAdditional($additional, $price) {
 
             $this->options->push([
                 "Доп. $additional->name: " => $price * $this->count,
@@ -215,20 +294,20 @@
          * @param $additional
          * @return bool
          */
-        protected function additionalIsInstallation($additional): bool {
+        protected
+        function additionalIsInstallation($additional): bool {
             if (get_class($additional) != 'App\Models\MosquitoSystems\Additional') {
-                return Additional::findOrFail($additional->additional_id ?? $additional->id)
-                        ->group
-                        ->name == 'Монтаж';
+                return $additional->group_name == 'Монтаж' && $additional->name != 'Без монтажа';
             } else {
-                return $additional->group->name == 'Монтаж';
+                return $additional->group->name == 'Монтаж' && $additional->name != 'Без монтажа';
             }
         }
 
         /**
          * @return Collection
          */
-        public function getOptions(): Collection {
+        public
+        function getOptions(): Collection {
             return $this->options;
         }
     }
