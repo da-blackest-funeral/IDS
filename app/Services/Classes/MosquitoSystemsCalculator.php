@@ -255,7 +255,7 @@
                     }
                 }
 
-                $items->put("Доп. за $item->name: ", $additionalPrice);
+                $items->push("Доп. за $item->name: $additionalPrice");
                 $additionalCollection->push($item);
 
                 $this->price += $additionalPrice ?? 0;
@@ -314,9 +314,9 @@
          * @return void
          */
         protected function saveAdditional(Collection $additional) {
-            $this->options->push([
-                'additional' => $additional
-            ]);
+            $this->options->put(
+                'additional', $additional
+            );
         }
 
         /**

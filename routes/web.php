@@ -6,6 +6,7 @@ use App\Http\Controllers\Ajax\MosquitoSystemsController;
 use App\Http\Controllers\Ajax\WindowsillController;
 use App\Http\Controllers\CalculationController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\OrdersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,6 +23,8 @@ Route::middleware('auth')->group(function () {
         ->name('welcome');
 
     Route::post('/', [CalculationController::class, 'save']);
+
+    Route::get('/orders/{id}', [OrdersController::class, 'order']);
 
     Route::view('/documents', 'pages.documents')
         ->name('documents');

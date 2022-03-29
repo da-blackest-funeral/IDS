@@ -65,4 +65,8 @@ class Order extends Model
 
     protected $hidden = [];
     protected $guarded = [];
+
+    public function products() {
+        return $this->hasMany(ProductInOrder::class);
+    }
 }

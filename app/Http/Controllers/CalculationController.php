@@ -37,22 +37,11 @@
             // todo сделать логику с "была ли взята машина компании"
             $order = $this->createOrder();
 
-            $product = $this->createProductInOrder($order->id);
+            $this->createProductInOrder($order->id);
 
             session()->flash('success', ['Заказ успешно создан!', 'Товар успешно добавлен!']);
 
-            return view('welcome')->with([
-                'orderNumber' => $order->id,
-                'data' => Category::all(),
-                'superCategories' => Category::whereIn(
-                    'id', Category::select(['parent_id'])
-                    ->whereNotNull('parent_id')
-                    ->groupBy(['parent_id'])
-                    ->get()
-                    ->toArray()
-                )->get(),
-                'productData' => $product,
-            ]);
+            return redirect("/orders/$order->id");
         }
 
         protected function createOrder() {

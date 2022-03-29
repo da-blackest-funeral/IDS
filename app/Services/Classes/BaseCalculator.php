@@ -120,11 +120,10 @@
          * @return void
          */
         protected function savePrice($price) {
-            $this->options->push([
-                'main_price' => [
-                    'Цена изделия: ' => $price * $this->count,
-                ],
-            ]);
+            $this->options->put(
+                'main_price',
+                $price * $this->count,
+            );
         }
 
         /**
@@ -133,15 +132,15 @@
          * @return void
          */
         protected function saveInstallationData() {
-            $this->options->push([
-                'measuring' => [
-                    'Замер: ' => $this->measuringPrice > 0 ? $this->measuringPrice : 'Бесплатно',
-                ],
-            ]);
+            $this->options->put(
+                'measuring', $this->measuringPrice > 0 ? $this->measuringPrice : 'Бесплатно'
+            );
+
             if ($this->installersWage) {
-                $this->options->push([
-                    'Заработок монтажника: ' => $this->installersWage,
-                ]);
+                $this->options->put(
+                    'salary',
+                    $this->installersWage,
+                );
             }
         }
 
@@ -162,13 +161,13 @@
          * @return void
          */
         protected function saveDelivery($additional, $salary) {
-            $this->options->push([
-                'delivery' => [
-                    'Цена доставки: ' => $this->deliveryPrice,
-                    'Из этого за доп. количество километров: ' => $additional,
-                    'Заработок монтажника за доп. км.: ' => $salary > 0 ? $salary : 'Нет',
-                ],
-            ]);
+            $this->options->put(
+                'delivery', [
+                'deliveryPrice' => $this->deliveryPrice,
+                'additional' => $additional,
+                'additionalSalary' => $salary > 0 ? $salary : 'Нет',
+            ],
+            );
         }
 
         /**
@@ -219,9 +218,10 @@
          * @return void
          */
         protected function saveSystemOptions($variable, int $count = 1): void {
-            $this->options->push([
-                $variable->description => $variable->value * $count > 0 ? $variable->value * $count : 'Бесплатно',
-            ]);
+            $this->options->put(
+                $variable->name,
+                $variable->description . ' ' . $variable->value * $count > 0 ? $variable->value * $count : 'Бесплатно',
+            );
         }
 
         /**
