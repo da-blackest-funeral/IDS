@@ -6,6 +6,8 @@
     use App\Models\Category;
     use App\Models\Order;
     use App\Models\ProductInOrder;
+    use App\Models\Salaries\InstallerSalary;
+    use App\Models\User;
     use App\Services\Interfaces\Calculator;
     use Illuminate\Http\Request;
 
@@ -26,6 +28,7 @@
                     ->toArray()
                 )->get(),
                 'orderNumber' => Order::count() + 1,
+                'installers' => User::role('installer')->get()
             ]);
         }
 
@@ -35,11 +38,17 @@
 
             $calculator->calculate();
             // todo сделать логику с "была ли взята машина компании"
+            // todo сделать в калькуляторе логику просчета общей стоимости заказа
+            // todo соответствующее поле в таблице order
+            // todo сделать учет ручного изменения цены заказа
+            // todo сделать вывод всевозможных сообщений
             $order = $this->createOrder();
 
             $this->createProductInOrder($order->id);
 
-            session()->flash('success', ['Заказ успешно создан!', 'Товар успешно добавлен!']);
+            $this->createSalary($order);
+
+            session()->flash('success', ['Заказ успешно создан!']);
 
             return redirect("/orders/$order->id");
         }
@@ -47,6 +56,7 @@
         protected function createOrder() {
             return Order::create([
                 'user_id' => auth()->user()->getAuthIdentifier(),
+                'installer_id' => 2, // todo функционал прикрепления монтажника к заказу
                 'price' => $this->calculator->getPrice(),
                 'discounted_price' => $this->calculator->getPrice(), // todo сделать расчет с учетом скидок
                 'measuring' => $this->calculator->getNeedMeasuring(),
@@ -68,6 +78,20 @@
                 'name' => 'Пока не готово',
                 'count' => $this->request->get('count'),
                 'data' => $this->calculator->getOptions()->toJson(),
+            ]);
+        }
+
+        protected function createSalary(Order $order) {
+            return InstallerSalary::create([
+                'installer_id' => $order->installer_id,
+                'order_id' => $order->id,
+                'sum' => $this->calculator->getInstallersWage(),
+                // todo вытаскивать сумму из калькулятора installers wage, при добавлении товаров увеличивать её
+                'comment' => 'Пока не готово',
+                'status' => false,
+                'changed_sum' => $this->calculator->getInstallersWage(),
+                'created_user_id' => auth()->user()->getAuthIdentifier(),
+                'type' => 'Заказ', // todo сделать Enum для этого
             ]);
         }
     }

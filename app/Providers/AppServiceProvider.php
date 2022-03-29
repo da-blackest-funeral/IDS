@@ -43,6 +43,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+//        \Blade::directive('order', function () {
+/*            return "<?php if (isOrderPage()) ?>";*/
+//        });
+//
+//        \Blade::directive('endorder', function () {
+/*            return "<?php endif ?>";*/
+//        });
     }
 }

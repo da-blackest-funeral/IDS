@@ -22,4 +22,6 @@ interface Calculator
     public function getMeasuringPrice(): float;
 
     public function getCount(): int;
+
+    public function getInstallersWage();
 }

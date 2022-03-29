@@ -33,6 +33,30 @@
                 $table->timestamps();
             });
 
+            Schema::create('salaries', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('user_id');
+                $table->float('sum');
+                $table->text('reason');
+                $table->timestamps();
+            });
+
+            Schema::create('installers_salaries', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('installer_id');
+                $table->foreignId('order_id');
+                $table->float('sum');
+                $table->text('comment');
+                $table->boolean('status')
+                    ->comment('Спросить что это');
+                $table->float('changed_sum')
+                    ->comment('Спросить можно ли без этого');
+                $table->foreignId('created_user_id');
+                $table->string('type')
+                    ->comment('Тип выплаты - за монтаж, за бензин и т.д.');
+                $table->timestamps();
+            });
+
             Schema::create('services', function (Blueprint $table) {
                 $table->id();
                 $table->timestamps();
@@ -68,6 +92,8 @@
                 $table->foreignId('user_id')
                     ->constrained('users');
                 $table->float('price');
+                $table->foreignId('installer_id')
+                    ->constrained('users');
                 $table->float('discounted_price')
                     ->comment('Цена со скидкой');
                 $table->boolean('status')

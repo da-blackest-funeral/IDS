@@ -13,7 +13,7 @@
     {
         use HasSquare;
 
-        // todo: ремонт
+        // todo: ремонт, срочное изготовление, коэффициент сложности монтажа
 
         /**
          * Type of mosquito system in current request
@@ -57,6 +57,11 @@
         }
 
         public function calculate(): void {
+            // todo сделать return (общая сумма всех слагаемых)
+            // todo в таком случае для обновления заказа нужно не забыть что замер и доставка не должны учитываться
+            // дважды
+
+
             /*
              * Making all preparations that are the same to all products
              */

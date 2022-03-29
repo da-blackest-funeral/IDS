@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Salaries\InstallerSalary;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -58,6 +59,10 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereUserId($value)
  * @mixin \Eloquent
+ * @property float $measuring_price
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ProductInOrder[] $products
+ * @property-read InstallerSalary|null $salary
+ * @method static \Illuminate\Database\Eloquent\Builder|Order whereMeasuringPrice($value)
  */
 class Order extends Model
 {
@@ -68,5 +73,9 @@ class Order extends Model
 
     public function products() {
         return $this->hasMany(ProductInOrder::class);
+    }
+
+    public function salary() {
+        return $this->hasOne(InstallerSalary::class);
     }
 }
