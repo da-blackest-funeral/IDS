@@ -94,18 +94,20 @@
                         <table class="table table-bordered rounded" style="min-height: 130px;">
                             <thead>
                             <tr class="table-secondary">
+                                <th scope="col" class="text-center">Стоимость заказа</th>
                                 <th scope="col" class="text-center">Замер</th>
+                                {{-- todo Доставка --}}
+                                {{-- todo размеры --}}
                                 <th scope="col" class="text-center">Заработок монтажника</th>
-                                <th scope="col" class="text-center">Общая стоимость заказа</th>
                                 <th class="text-center">Число товаров</th>
                                 <th class="text-center">Создан</th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr>
+                                <td class="text-center align-middle">{{ $order->price }}</td>
                                 <td class="text-center align-middle">{{ $order->measuring_price }}</td>
                                 <td class="text-center align-middle">{{ $order->salary->sum ?? 'Не готово' }}</td>
-                                <td class="text-center align-middle">{{ $order->price }}</td>
                                 <td class="text-center align-middle">{{ $order->products_count }}</td>
                                 <td class="text-center align-middle">{{ \Carbon\Carbon::parse($order->created_at)->format('d.m.Y') }}</td>
                             </tr>

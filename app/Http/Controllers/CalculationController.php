@@ -42,7 +42,10 @@
             // todo соответствующее поле в таблице order
             // todo сделать учет ручного изменения цены заказа
             // todo сделать вывод всевозможных сообщений
-            dump($this->calculator->getPrice(), $this->calculator->getOptions());
+            dump([
+                'price all order' => $this->calculator->getPrice(),
+                'options' => $this->calculator->getOptions()
+            ]);
 //            $order = $this->createOrder();
 //
 //            $this->createProductInOrder($order->id);

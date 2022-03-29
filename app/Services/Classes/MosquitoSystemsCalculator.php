@@ -148,6 +148,9 @@
         }
 
         protected function checkMeasuringSale() {
+            dump([
+               'need installation' => $this->needInstallation
+            ]);
             if ($this->needInstallation) {
                 $this->price -= $this->measuringPrice;
                 $this->measuringPrice = 0;
@@ -156,7 +159,10 @@
         }
 
         protected function calculateDelivery(): void {
-            dump($this->needDelivery());
+            dump([
+                'need delivery' =>
+                $this->needDelivery()
+            ]);
             if (!$this->needDelivery()) {
                 return;
             }
@@ -332,14 +338,25 @@
          */
         protected
         function additionalIsInstallation($additional): bool {
+            if ($additional->name == 'Без монтажа') {
+                $this->needInstallation = false;
+            }
+
             if (get_class($additional) != 'App\Models\MosquitoSystems\Additional') {
-                if ($additional->name == 'Без монтажа') {
-                    $this->needInstallation = false;
+                if ($additional->group_name == 'Монтаж' && $additional->name != 'Без монтажа') {
+                    $this->needInstallation = true;
+//                    return true;
                 }
                 return $additional->group_name == 'Монтаж' && $additional->name != 'Без монтажа';
             } else {
+                if ($additional->name != 'Без монтажа' && $additional->group->name == 'Монтаж') {
+                    $this->needInstallation = true;
+//                    return true;
+                }
                 return $additional->name != 'Без монтажа';
             }
+
+//            return $this->needInstallation;
         }
 
         /**
