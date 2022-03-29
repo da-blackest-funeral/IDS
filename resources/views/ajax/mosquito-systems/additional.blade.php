@@ -51,5 +51,6 @@
 
 </div>
 @include('components.calculations.comment')
+@include('components.calculations.submit', ['value' => 'Добавить'])
 {{-- todo Добавить тут функционал кнопки "дополнительное крепление" --}}
 
