@@ -42,21 +42,23 @@
             // todo соответствующее поле в таблице order
             // todo сделать учет ручного изменения цены заказа
             // todo сделать вывод всевозможных сообщений
-            $order = $this->createOrder();
-
-            $this->createProductInOrder($order->id);
-
-            $this->createSalary($order);
-
-            session()->flash('success', ['Заказ успешно создан!']);
-
-            return redirect("/orders/$order->id");
+            dump($this->calculator->getPrice(), $this->calculator->getOptions());
+//            $order = $this->createOrder();
+//
+//            $this->createProductInOrder($order->id);
+//
+//            $this->createSalary($order);
+//
+//            session()->flash('success', ['Заказ успешно создан!']);
+//
+//            return redirect("/orders/$order->id");
         }
 
         protected function createOrder() {
+            // todo по дефолту сделать что замер нужен, монтаж нужен, доставка нужна
             return Order::create([
                 'user_id' => auth()->user()->getAuthIdentifier(),
-                'installer_id' => 2, // todo функционал прикрепления монтажника к заказу
+                'installer_id' => $this->request->get('installer') ?? 2,
                 'price' => $this->calculator->getPrice(),
                 'discounted_price' => $this->calculator->getPrice(), // todo сделать расчет с учетом скидок
                 'measuring' => $this->calculator->getNeedMeasuring(),

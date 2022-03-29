@@ -42,7 +42,9 @@
         public function __construct(Request $request) {
             parent::__construct($request);
 
-            $this->needMeasuring = (bool)$request->get('measuring');
+            dump($request->all());
+
+            $this->needMeasuring = !$request->has('measuring') || $request->get('measuring');
 
             try {
                 $this->type = Type::byCategory($request->get('categories'));
@@ -154,6 +156,7 @@
         }
 
         protected function calculateDelivery(): void {
+            dump($this->needDelivery());
             if (!$this->needDelivery()) {
                 return;
             }
@@ -255,9 +258,6 @@
                     $additionalPrice *= $this->squareCoefficient;
                 } else {
                     $this->installationPrice = $additionalPrice;
-                    if (!$this->needInstallation) {
-                        $this->needInstallation = true;
-                    }
                 }
 
                 $items->push("Доп. за $item->name: $additionalPrice");
@@ -333,9 +333,12 @@
         protected
         function additionalIsInstallation($additional): bool {
             if (get_class($additional) != 'App\Models\MosquitoSystems\Additional') {
+                if ($additional->name == 'Без монтажа') {
+                    $this->needInstallation = false;
+                }
                 return $additional->group_name == 'Монтаж' && $additional->name != 'Без монтажа';
             } else {
-                return $additional->group->name == 'Монтаж' && $additional->name != 'Без монтажа';
+                return $additional->name != 'Без монтажа';
             }
         }
 

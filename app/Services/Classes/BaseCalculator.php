@@ -86,13 +86,13 @@
                 $this->setSquareCoefficient();
             }
 
-            if ($this->request->get('measuring')) {
-                $this->setMeasuringPrice();
-            }
+//            if ($this->request->get('measuring')) {
+//                $this->setMeasuringPrice();
+//            }
 
-            if ($this->request->get('delivery')) {
-                $this->calculateDelivery();
-            }
+            $this->setMeasuringPrice();
+
+            $this->calculateDelivery();
         }
 
         /**
@@ -133,7 +133,7 @@
          */
         protected function saveInstallationData() {
             $this->options->put(
-                'measuring', $this->measuringPrice > 0 ? $this->measuringPrice : 'Бесплатно'
+                'measuring', $this->measuringPrice ? : 'Бесплатно'
             );
 
             if ($this->installersWage) {
@@ -158,12 +158,14 @@
          * Writing info about delivery to json
          *
          * @param $additional
+         * @param $salary
          * @return void
          */
         protected function saveDelivery($additional, $salary) {
             $this->options->put(
                 'delivery', [
                 'deliveryPrice' => $this->deliveryPrice,
+//                'deliverySalary' => ,
                 'additional' => $additional,
                 'additionalSalary' => $salary > 0 ? $salary : 'Нет',
             ],
@@ -175,8 +177,13 @@
          *
          * @return bool
          */
-        protected function needDelivery(): bool {
-            return $this->request->has('delivery') && $this->request->get('delivery');
+        public function needDelivery(): bool {
+            // as default, when creating orders, delivery are set to true
+            if (!$this->request->has('delivery')) {
+                return true;
+            }
+
+            return $this->request->get('delivery');
         }
 
         /**
