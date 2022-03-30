@@ -2,6 +2,7 @@
 
 namespace App\Models\MosquitoSystems;
 
+use App\Models\Category;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -62,5 +63,10 @@ class Product extends Model
             'product_id',
             'additional_id'
         );
+    }
+
+    public function name() {
+        $category = Category::whereId(\request()->input('categories'))->first()->name;
+        return "$category, {$this->profile->name}, полотно {$this->tissue->name}";
     }
 }

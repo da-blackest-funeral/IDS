@@ -24,4 +24,6 @@ interface Calculator
     public function getCount(): int;
 
     public function getInstallersWage();
+
+    public function getProduct();
 }

@@ -86,13 +86,18 @@
                 $this->setSquareCoefficient();
             }
 
-//            if ($this->request->get('measuring')) {
-//                $this->setMeasuringPrice();
-//            }
+            $this->setSize();
 
             $this->setMeasuringPrice();
 
             $this->calculateDelivery();
+        }
+
+        protected function setSize() {
+            $this->options->put('size', [
+                'height' => $this->request->get('height') ?? 'Нет',
+                'width' => $this->request->get('width') ?? 'Нет'
+            ]);
         }
 
         /**

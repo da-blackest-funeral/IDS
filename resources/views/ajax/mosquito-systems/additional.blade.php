@@ -51,6 +51,9 @@
 
 </div>
 @include('components.calculations.comment')
-@include('components.calculations.submit', ['value' => 'Добавить'])
-{{-- todo Добавить тут функционал кнопки "дополнительное крепление" --}}
 
+<div class="row">
+    @include('components.calculations.submit', ['value' => 'Добавить'])
+    @include('components.calculations.additional-bracing')
+    {{-- todo Добавить тут функционал кнопки "дополнительное крепление" --}}
+</div>

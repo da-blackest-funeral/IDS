@@ -51,7 +51,10 @@
             {{--            @php--}}
             {{--            dump($order)--}}
             {{--            @endphp--}}
-            <div class="row align-content-between">
+            <a href="#" id="show" class="btn w-25" style="display: none;"
+               onclick="$( this ).parent().children().show(400); $( this ).hide(400)">Развернуть</a>
+            <div class="row align-content-between position-relative">
+                @include('components.close', ['closeText' => 'Свернуть'])
                 <div class="mt-4 w-75">
                     <h1 class="h2"><strong>Список товаров</strong></h1>
                     <div style="border-radius: 8px;overflow: hidden;">
@@ -59,7 +62,8 @@
                             <thead class="table-dark">
                             <tr>
                                 <th scope="col" class="text-center">№</th>
-                                <th scope="col" class="text-center">Название</th>
+                                <th scope="col" class="text-center" style="max-width: 100px;">Название</th>
+                                <th scope="col" class="text-center">Размеры</th>
                                 <th scope="col" class="text-center">Количество</th>
                                 <th scope="col" class="text-center">Цена изделия</th>
                                 <th scope="col" class="text-center">Дополнительно</th>
@@ -70,10 +74,23 @@
                                 @php($productData = json_decode($product->data))
                                 <tr>
                                     <th scope="row" class="text-center"><strong>{{ $loop->iteration }}</strong></th>
-                                    <td class="text-center">{{ $product->name }}</td>
-                                    <td class="text-center">{{ $product->count }}</td>
-                                    <td class="text-center">{{ $productData->main_price }}</td>
+                                    <td class="text-center" style="max-width: 200px;">{{ $product->name }}</td>
+                                    <td class="text-center text-success">
+                                        <div>Высота: {{ $productData->size->height }} мм.</div>
+                                        <br>
+                                        <div>Ширина: {{ $productData->size->width }} мм.</div>
+                                    </td>
+                                    <td class="text-center"><strong>{{ $product->count }}</strong></td>
                                     <td class="text-center">
+                                        <strong>{{ $productData->main_price }}</strong>
+                                        @if($product->count > 1)
+                                            <p class="mt-3 ml-3">
+                                                <em>где {{ ceil($productData->main_price / $product->count) }} за
+                                                    шт.</em></p>
+                                        @endif
+                                        {{--                                        <strong>{{ $productData->main_price }}</strong>--}}
+                                    </td>
+                                    <td class="text-center text-decoration-underline">
                                         @foreach($productData->additional as $additional)
                                             <div class="p-1">
                                                 {{ $additional }}
@@ -90,7 +107,7 @@
                 </div>
                 <div class="w-75 mt-4">
                     <h1 class="h2"><strong>Общие сведения о заказе</strong></h1>
-                    <div style="border-radius: 8px;overflow: hidden;">
+                    <div style="border-radius: 8px;overflow: hidden;" class="position-relative">
                         <table class="table table-bordered rounded" style="min-height: 130px;">
                             <thead>
                             <tr class="table-secondary">
@@ -175,6 +192,9 @@
                     <div class="mt-4 pb-3" id="additional">
                         {{-- Место для дополнительных опций --}}
                     </div>
+                    <div class="mt-4 pb-3" id="bracing">
+                        {{-- Место для "добавить дополнительное крепление" --}}
+                    </div>
                 </form>
             </div>
         </div>
@@ -226,7 +246,8 @@
                         @if(!isOrderPage())
                             <div class="mt-3 select-order">
                                 <label for="address">Укажите точный адрес клиента</label>
-                                <input type="text" class="form-control select-order" placeholder="Адрес клиента" name="address"
+                                <input type="text" class="form-control select-order" placeholder="Адрес клиента"
+                                       name="address"
                                        id="address">
                             </div>
                         @endif
@@ -264,7 +285,8 @@
                                     'tooltip' => 'Во время замера вы взяли предоплату с клиента (вписывать только если это предоплата, а не оплата за заказ)'
                                 ])
                             </label>
-                            <input type="text" id="prepayment" name="prepayment" value="0" class="form-control select-order">
+                            <input type="text" id="prepayment" name="prepayment" value="0"
+                                   class="form-control select-order">
                         </div>
                     @endif
 
@@ -308,7 +330,8 @@
                         <label for="sum-manually">
                             Ручное изменение суммы заказа
                         </label>
-                        <input type="text" class="form-control select-order" name="sum-manually" id="sum-manually" value="0">
+                        <input type="text" class="form-control select-order" name="sum-manually" id="sum-manually"
+                               value="0">
                     </div>
                     <div class="mt-3">
                         <label for="wage-manually">
@@ -321,7 +344,8 @@
         4. любое число меньше -1 - вычесть эту сумму.'
                             ])
                         </label>
-                        <input type="text" class="form-control select-order" name="wage-manually" id="wage-manually" value="-1">
+                        <input type="text" class="form-control select-order" name="wage-manually" id="wage-manually"
+                               value="-1">
                     </div>
                     <div class="mt-3">
                         @include('components.calculations.submit')

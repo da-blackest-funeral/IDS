@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\MosquitoSystems\Group;
 use App\Models\MosquitoSystems\Profile;
 use App\Models\MosquitoSystems\Type;
+use App\Models\Service;
 use Illuminate\Http\Request;
 
 class MosquitoSystemsController extends Controller
@@ -25,6 +26,12 @@ class MosquitoSystemsController extends Controller
             ->get(['id', 'name']);
         return view('ajax.mosquito-systems.profiles')
             ->with(compact('data'));
+    }
+
+    public function bracing() {
+        return '<div><p class="h3">Пока не готово :-)</p></div>';
+        // todo функционал кнопки добавить крепление будет полноценным когда я перенесу таблицу услуг
+//        Service::where();
     }
 
     /**

@@ -22,6 +22,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/', [CalculationController::class, 'index'])
         ->name('welcome');
 
+    Route::get('/bracing', [MosquitoSystemsController::class, 'bracing'])
+        ->name('bracing');
+
     Route::post('/', [CalculationController::class, 'save']);
 
     Route::get('/orders/{id}', [OrdersController::class, 'order']);

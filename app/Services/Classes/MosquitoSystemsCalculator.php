@@ -37,14 +37,26 @@
         /**
          * @var bool
          */
-        protected bool $needMeasuring;
+        protected bool $needMeasuring = true;
+
+        protected Product $product;
 
         public function __construct(Request $request) {
             parent::__construct($request);
 
-            dump($request->all());
-
-            $this->needMeasuring = !$request->has('measuring') || $request->get('measuring');
+            try {
+                $this->product = Product::where('tissue_id', $this->request->get('tissues'))
+                    ->where('profile_id', $this->request->get('profiles'))
+                    ->whereHas('type', function (Builder $query) {
+                        $query->where('category_id', $this->request->get('categories'));
+                    })
+                    ->firstOrFail();
+            } catch(\Exception $exception) {
+                return view('welcome')->withErrors([
+                    'not_found' => 'Товар не найден',
+                    'message' => 'Информация для отладки: ' . $exception->getMessage(),
+                ]);
+            }
 
             try {
                 $this->type = Type::byCategory($request->get('categories'));
@@ -135,6 +147,13 @@
             return $this->measuringSalary;
         }
 
+        /**
+         * @return Product|Builder|\Illuminate\Database\Eloquent\Model
+         */
+        public function getProduct(): \Illuminate\Database\Eloquent\Model|Builder|Product {
+            return $this->product;
+        }
+
         protected function setMeasuringPrice(): void {
             $measuring = SystemVariables::where('name', 'measuring')
                 ->first(['value', 'description']);
@@ -148,9 +167,9 @@
         }
 
         protected function checkMeasuringSale() {
-            dump([
-               'need installation' => $this->needInstallation
-            ]);
+////            dump([
+//               'need installation' => $this->needInstallation
+//            ]);
             if ($this->needInstallation) {
                 $this->price -= $this->measuringPrice;
                 $this->measuringPrice = 0;
@@ -159,10 +178,10 @@
         }
 
         protected function calculateDelivery(): void {
-            dump([
-                'need delivery' =>
-                $this->needDelivery()
-            ]);
+////            dump([
+//                'need delivery' =>
+//                $this->needDelivery()
+//            ]);
             if (!$this->needDelivery()) {
                 return;
             }
@@ -202,16 +221,16 @@
          */
         protected function setProductPrice() {
             try {
-                $product = Product::where('tissue_id', $this->request->get('tissues'))
-                    ->where('profile_id', $this->request->get('profiles'))
-                    ->whereHas('type', function (Builder $query) {
-                        $query->where('category_id', $this->request->get('categories'));
-                    })
-                    ->firstOrFail();
+//                $product = Product::where('tissue_id', $this->request->get('tissues'))
+//                    ->where('profile_id', $this->request->get('profiles'))
+//                    ->whereHas('type', function (Builder $query) {
+//                        $query->where('category_id', $this->request->get('categories'));
+//                    })
+//                    ->firstOrFail();
 
-                $this->price += $product->price * $this->squareCoefficient;
+                $this->price += $this->product->price * $this->squareCoefficient;
 
-                $this->savePrice($product->price * $this->squareCoefficient);
+                $this->savePrice($this->product->price * $this->squareCoefficient);
 
             } catch (\Exception $exception) {
                 \Debugbar::alert($exception->getMessage());
@@ -336,8 +355,7 @@
          * @param $additional
          * @return bool
          */
-        protected
-        function additionalIsInstallation($additional): bool {
+        protected function additionalIsInstallation($additional): bool {
             if ($additional->name == 'Без монтажа') {
                 $this->needInstallation = false;
             }
@@ -345,18 +363,15 @@
             if (get_class($additional) != 'App\Models\MosquitoSystems\Additional') {
                 if ($additional->group_name == 'Монтаж' && $additional->name != 'Без монтажа') {
                     $this->needInstallation = true;
-//                    return true;
                 }
                 return $additional->group_name == 'Монтаж' && $additional->name != 'Без монтажа';
             } else {
                 if ($additional->name != 'Без монтажа' && $additional->group->name == 'Монтаж') {
                     $this->needInstallation = true;
-//                    return true;
                 }
                 return $additional->name != 'Без монтажа';
             }
 
-//            return $this->needInstallation;
         }
 
         /**

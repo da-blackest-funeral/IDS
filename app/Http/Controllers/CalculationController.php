@@ -42,19 +42,19 @@
             // todo соответствующее поле в таблице order
             // todo сделать учет ручного изменения цены заказа
             // todo сделать вывод всевозможных сообщений
-            dump([
-                'price all order' => $this->calculator->getPrice(),
-                'options' => $this->calculator->getOptions()
-            ]);
-//            $order = $this->createOrder();
-//
-//            $this->createProductInOrder($order->id);
-//
-//            $this->createSalary($order);
-//
-//            session()->flash('success', ['Заказ успешно создан!']);
-//
-//            return redirect("/orders/$order->id");
+//            dump([
+//                'price all order' => $this->calculator->getPrice(),
+//                'options' => $this->calculator->getOptions()
+//            ]);
+            $order = $this->createOrder();
+
+            $this->createProductInOrder($order->id);
+
+            $this->createSalary($order);
+
+            session()->flash('success', ['Заказ успешно создан!']);
+
+            return redirect("/orders/$order->id");
         }
 
         protected function createOrder() {
@@ -80,7 +80,7 @@
                 'order_id' => $orderId,
                 'user_id' => auth()->user()->getAuthIdentifier(),
                 'category_id' => $this->request->get('categories'),
-                'name' => 'Пока не готово',
+                'name' => $this->calculator->getProduct()->name(),
                 'count' => $this->request->get('count'),
                 'data' => $this->calculator->getOptions()->toJson(),
             ]);

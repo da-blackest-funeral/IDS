@@ -10,7 +10,6 @@ class OtherCategoriesSeeder extends Seeder
     use WithFaker;
     /**
      * Run the database seeds.
-     * todo сделать сидеры для остальных таблиц
      * @return void
      */
     public function run() {

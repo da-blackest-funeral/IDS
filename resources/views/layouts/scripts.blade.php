@@ -53,4 +53,18 @@
             }
         });
     }
+
+    function addBracing() {
+        $.ajax({
+            type: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: '/bracing',
+            success: function (data) {
+                $('#bracing').append(data);
+            },
+        });
+    }
+
 </script>
