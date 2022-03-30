@@ -91,6 +91,8 @@
                 $table->id();
                 $table->foreignId('user_id')
                     ->constrained('users');
+                $table->integer('delivery')
+                    ->default(0);
                 $table->float('price');
                 $table->foreignId('installer_id')
                     ->constrained('users');
@@ -151,30 +153,30 @@
                 $table->softDeletes();
             });
 
-            Schema::create('deliveries', function (Blueprint $table) {
-                $table->id();
-                $table->foreignId('order_id');
-                $table->float('price');
-                $table->float('discounted_price');
-                $table->float('discounted_price_km')
-                    ->comment('Уточнить что это');
-                $table->integer('range')
-                    ->comment('Дальность доставки');
-                $table->integer('loaders_count')
-                    ->comment('Количество грузчиков');
-                $table->integer('additional_visits')
-                    ->comment('Количество дополнительных выездов');
-                $table->float('price_additional_visits')
-                    ->comment('Цена за дополнительные выезды');
-                $table->boolean('discharge')
-                    ->comment('Выгрузка');
-                $table->dateTime('discharged_at')
-                    ->comment('Дата выгрузки');
-                $table->float('gazel_price')
-                    ->comment('Цена за доставку газелью');
-                $table->timestamps();
-                $table->softDeletes();
-            });
+//            Schema::create('deliveries', function (Blueprint $table) {
+//                $table->id();
+//                $table->foreignId('order_id');
+//                $table->float('price');
+//                $table->float('discounted_price');
+//                $table->float('discounted_price_km')
+//                    ->comment('Уточнить что это');
+//                $table->integer('range')
+//                    ->comment('Дальность доставки');
+//                $table->integer('loaders_count')
+//                    ->comment('Количество грузчиков');
+//                $table->integer('additional_visits')
+//                    ->comment('Количество дополнительных выездов');
+//                $table->float('price_additional_visits')
+//                    ->comment('Цена за дополнительные выезды');
+//                $table->boolean('discharge')
+//                    ->comment('Выгрузка');
+//                $table->dateTime('discharged_at')
+//                    ->comment('Дата выгрузки');
+//                $table->float('gazel_price')
+//                    ->comment('Цена за доставку газелью');
+//                $table->timestamps();
+//                $table->softDeletes();
+//            });
 
             Schema::create('managements', function (Blueprint $table) {
                 $table->id();

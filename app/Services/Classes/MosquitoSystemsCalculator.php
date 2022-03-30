@@ -51,7 +51,7 @@
                         $query->where('category_id', $this->request->get('categories'));
                     })
                     ->firstOrFail();
-            } catch(\Exception $exception) {
+            } catch (\Exception $exception) {
                 return view('welcome')->withErrors([
                     'not_found' => 'Товар не найден',
                     'message' => 'Информация для отладки: ' . $exception->getMessage(),
@@ -148,9 +148,9 @@
         }
 
         /**
-         * @return Product|Builder|\Illuminate\Database\Eloquent\Model
+         * @return \Illuminate\Database\Eloquent\Model
          */
-        public function getProduct(): \Illuminate\Database\Eloquent\Model|Builder|Product {
+        public function getProduct(): \Illuminate\Database\Eloquent\Model {
             return $this->product;
         }
 
@@ -221,13 +221,6 @@
          */
         protected function setProductPrice() {
             try {
-//                $product = Product::where('tissue_id', $this->request->get('tissues'))
-//                    ->where('profile_id', $this->request->get('profiles'))
-//                    ->whereHas('type', function (Builder $query) {
-//                        $query->where('category_id', $this->request->get('categories'));
-//                    })
-//                    ->firstOrFail();
-
                 $this->price += $this->product->price * $this->squareCoefficient;
 
                 $this->savePrice($this->product->price * $this->squareCoefficient);
@@ -304,15 +297,29 @@
          * need to find salary for maximal count and add to it the product(*) of an
          * additional price for the number of items
          *
-         * @return void
+         * @param int $count
+         * @return float|null
          */
-        protected function calculateSalary() {
+        // todo чтобы не колхозить с $count разбить на два метода и вынести общую часть в третий
+        public function calculateSalary(int $count = 0): float|null {
 
             if (!$this->needInstallation) {
                 $this->installersWage += $this->measuringSalary;
             }
 
-            $this->additional = $this->additional->collapse();
+            if ($count == 0) {
+                $count = $this->count;
+                $this->additional = $this->additional->collapse();
+            }
+            // todo при вынесении в разные методы избавиться от этого
+            // todo переименовать метод в calculateInstallationSalary
+            // это заглушка которая обнуляет зп для всего заказа, поэтому в отдельном методе
+            // нужно сделать такого не будет
+            else {
+                $this->installersWage = 0;
+            }
+
+
             foreach ($this->additional as $item) {
                 if (!$this->additionalIsInstallation($item)) {
                     continue;
@@ -321,18 +328,21 @@
                 $salary = \DB::table('mosquito_systems_type_salary')
                     ->where('type_id', $this->type->id)
                     ->where('additional_id', $item->additional_id)
-                    ->where('count', $this->count)
+                    ->where('count', $count)
                     ->first();
 
                 if ($salary) {
                     $this->installersWage += $salary->salary;
+                    return $salary->salary;
                 } else {
                     $salary = \DB::table('mosquito_systems_type_salary')
                         ->where('type_id', $this->type->id)
                         ->where('additional_id', $item->additional_id)
                         ->orderByDesc('count')
                         ->first();
-                    $this->installersWage += $salary->salary + $this->count * $salary->salary_for_count;
+
+                    $this->installersWage += $salary->salary + $count * $salary->salary_for_count;
+                    return $salary->salary + $count * $salary->salary_for_count;
                 }
             }
         }

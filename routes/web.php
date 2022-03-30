@@ -29,6 +29,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/orders/{id}', [OrdersController::class, 'order']);
 
+    Route::post('/orders/{order}', [OrdersController::class, 'addProduct']);
+
     Route::view('/documents', 'pages.documents')
         ->name('documents');
 

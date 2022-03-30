@@ -26,4 +26,6 @@ interface Calculator
     public function getInstallersWage();
 
     public function getProduct();
+
+    public function calculateSalary(): float|null;
 }
