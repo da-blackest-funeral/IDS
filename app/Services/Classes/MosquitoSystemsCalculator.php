@@ -4,7 +4,6 @@
 
     use App\Models\MosquitoSystems\Product;
     use App\Models\MosquitoSystems\Type;
-    use App\Models\Order;
     use App\Models\ProductInOrder;
     use App\Models\SystemVariables;
     use Illuminate\Database\Eloquent\Builder;
@@ -74,8 +73,6 @@
 
         public function calculate(): void {
             // todo сделать return (общая сумма всех слагаемых)
-            // todo в таком случае для обновления заказа нужно не забыть что замер и доставка не должны учитываться
-            // дважды
 
 
             /*
@@ -169,21 +166,15 @@
         }
 
         protected function checkMeasuringSale() {
-////            dump([
-//               'need installation' => $this->needInstallation
-//            ]);
             if ($this->needInstallation) {
                 $this->price -= $this->measuringPrice;
                 $this->measuringPrice = 0;
+                warning('Замер бесплатный при заключении договора!');
                 $this->measuringSalary = 0;
             }
         }
 
         protected function calculateDelivery(): void {
-////            dump([
-//                'need delivery' =>
-//                $this->needDelivery()
-//            ]);
             if (!$this->needDelivery()) {
                 return;
             }
@@ -314,10 +305,6 @@
 
             $this->additional = $this->additional->collapse();
 
-            // todo сделать метод который будет искать монтаж (как объект additional), и поле $installation
-            // это заглушка которая обнуляет зп для всего заказа, поэтому в отдельном методе
-            // нужно сделать такого не будет
-
             foreach ($this->additional as $item) {
                 if (!$this->additionalIsInstallation($item)) {
                     continue;
@@ -338,19 +325,27 @@
 
         public function calculateSalaryForCount(int $count, ProductInOrder $productInOrder) {
             $result = 0;
-            // Если в заказе уже задан монтаж, и добавляется товар без монтажа
-            if ($productInOrder->installation_id) {
-                $salary = $this->getInstallationSalary(
-                    $productInOrder->installation_id,
-                    $count
-                );
+            if (
+                $productInOrder->installation_id == 0 &&
+                !$this->installation->additional_id &&
+                !$this->installation->id
+            ) {
+                return $this->installersWage;
+            }
+            $installation = $productInOrder->installation_id > 0 && $productInOrder->installation_id != 14 ?
+                $productInOrder->installation_id :
+                $this->installation->additional_id ?? $this->installation->id;
 
-                if ($salary != null) {
-                    $result = $salary->salary;
-                } else {
-                    $salary = $this->salaryWhenNotFoundSpecificCount($productInOrder->installation_id);
-                    $result = $salary->salary + $count * $salary->salary_for_count;
-                }
+            $salary = $this->getInstallationSalary(
+                $installation,
+                $count
+            );
+
+            if ($salary != null) {
+                $result = $salary->salary;
+            } else {
+                $salary = $this->salaryWhenNotFoundSpecificCount($installation);
+                $result = $salary->salary + $count * $salary->salary_for_count;
             }
 
             return $result;
@@ -393,6 +388,7 @@
         protected function additionalIsInstallation($additional): bool {
             if ($additional->name == 'Без монтажа') {
                 $this->needInstallation = false;
+                $this->installation = $additional;
             }
 
             if (get_class($additional) != 'App\Models\MosquitoSystems\Additional') {

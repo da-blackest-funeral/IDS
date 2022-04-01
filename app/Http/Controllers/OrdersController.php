@@ -51,17 +51,11 @@
 
             $order->update();
 
-            createProductInOrder($order, $calculator);
+            createProductInOrder($order->refresh(), $calculator);
 
 //            updateSalary($calculator->getInstallersWage(), $order);
 
             return redirect("/orders/$order->id");
-
-//            $products = $order->products;
-//
-//            return view('welcome')->with(
-//                compact('data', 'order', 'products', 'superCategories', 'orderNumber')
-//            );
 
             // todo увеличение зарплаты при обновлении заказа
             // todo считаем данные по нынешнему товару с помощью калькулятора

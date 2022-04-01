@@ -1,7 +1,7 @@
 <?php
 
-    // todo возможно вообще сделать фасады для всех своих хелперов чтобы определить четкий интерфейс для их
-    // использования
+    // todo возможно вообще сделать фасады для всех своих хелперов
+    // чтобы определить четкий интерфейс для их использования
     use App\Models\Order;
     use App\Models\ProductInOrder;
     use App\Models\Salaries\InstallerSalary;
@@ -41,7 +41,6 @@
     // остальные файлы хелперов в своей директории (типо точки входа)
     function createProductInOrder(Order $order, MosquitoSystemsCalculator $calculator) {
         $products = ProductInOrder::whereOrderId($order->id)
-            // todo баг из-за main_salary
             ->where('name', $calculator->getProduct()->name())
             ->get();
 
@@ -58,19 +57,30 @@
                     $count = $product->count + (int)\request()->input('count');
                 }
 
-                // todo не считает потому что не задано для "Без монтажа"
-                // тогда если name="Без монтажа" и при этом в заказе уже задан монтаж,
-                // то вытаскивать этот монтаж и по его id находить по числу старое кол-во + новое
+                // todo проблема возникает тогда когда к уже добавленным товарам добавляется еще один
+                // и он добавляется дважды и все ломается
+                // todo если сначала добавлен заказ без монтажа а потом с монтажом то зп обнуляется
+                // видимо потому что выбирается значение "без монтажа" по которому пытается искать зарплату калькулятор
                 updateSalary($calculator->calculateSalaryForCount($count, $product), $order);
             }
 
         } else {
-            newProduct($calculator, $order);
+            $product = newProduct($calculator, $order);
+            if ($calculator->isNeedInstallation()) {
+                updateSalary(
+                    $calculator->calculateSalaryForCount(
+                        (int)\request()->input('count'),
+                        $product
+                    ),
+                    $order
+                );
+            }
         }
+
     }
 
     function newProduct($calculator, $order) {
-        ProductInOrder::create([
+        return ProductInOrder::create([
             'installation_id' => $calculator->getInstallation('additional_id') ?? 0,
             'order_id' => $order->id,
             'name' => $calculator->getProduct()->name(),
@@ -118,4 +128,8 @@
         $salary = $order->salary()->first();
         $salary->sum = $sum;
         $salary->save();
+    }
+
+    function warning($text) {
+        session()->put('warnings', [$text]);
     }
