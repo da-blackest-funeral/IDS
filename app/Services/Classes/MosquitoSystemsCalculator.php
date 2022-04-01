@@ -4,6 +4,8 @@
 
     use App\Models\MosquitoSystems\Product;
     use App\Models\MosquitoSystems\Type;
+    use App\Models\Order;
+    use App\Models\ProductInOrder;
     use App\Models\SystemVariables;
     use Illuminate\Database\Eloquent\Builder;
     use Illuminate\Http\Request;
@@ -110,7 +112,7 @@
             /*
              * Calculating salary based on list of additional items
              */
-            $this->calculateSalary();
+            $this->calculateInstallationSalary();
 
             $this->saveInstallationData();
         }
@@ -254,17 +256,7 @@
                 $i++;
             }
 
-            $additional = \DB::table('mosquito_systems_type_additional')
-                ->where('type_id', $typeId)
-                ->whereIn('additional_id', $ids)
-                ->leftJoin('mosquito_systems_additional', 'additional_id', '=', 'mosquito_systems_additional.id')
-                ->leftJoin('mosquito_systems_groups', 'group_id', '=', 'mosquito_systems_groups.id')
-                ->get([
-                    'price',
-                    'additional_id',
-                    'mosquito_systems_groups.name as group_name',
-                    'mosquito_systems_additional.name',
-                ]);
+            $additional = $this->getTypeAdditional($ids);
 
             $items = collect();
             $additionalCollection = collect();
@@ -290,6 +282,20 @@
             return $this;
         }
 
+        protected function getTypeAdditional($ids) {
+            return \DB::table('mosquito_systems_type_additional')
+                ->where('type_id', $this->type->id)
+                ->whereIn('additional_id', $ids)
+                ->leftJoin('mosquito_systems_additional', 'additional_id', '=', 'mosquito_systems_additional.id')
+                ->leftJoin('mosquito_systems_groups', 'group_id', '=', 'mosquito_systems_groups.id')
+                ->get([
+                    'price',
+                    'additional_id',
+                    'mosquito_systems_groups.name as group_name',
+                    'mosquito_systems_additional.name',
+                ]);
+        }
+
         /**
          * Salary for mosquito systems are depended on count of products,
          * it's type and kind of installation.
@@ -297,54 +303,73 @@
          * need to find salary for maximal count and add to it the product(*) of an
          * additional price for the number of items
          *
-         * @param int $count
          * @return float|null
          */
-        // todo чтобы не колхозить с $count разбить на два метода и вынести общую часть в третий
-        public function calculateSalary(int $count = 0): float|null {
+
+        public function calculateInstallationSalary(): float|null {
 
             if (!$this->needInstallation) {
                 $this->installersWage += $this->measuringSalary;
             }
 
-            if ($count == 0) {
-                $count = $this->count;
-                $this->additional = $this->additional->collapse();
-            }
-            // todo при вынесении в разные методы избавиться от этого
-            // todo переименовать метод в calculateInstallationSalary
+            $this->additional = $this->additional->collapse();
+
+            // todo сделать метод который будет искать монтаж (как объект additional), и поле $installation
             // это заглушка которая обнуляет зп для всего заказа, поэтому в отдельном методе
             // нужно сделать такого не будет
-            else {
-                $this->installersWage = 0;
-            }
-
 
             foreach ($this->additional as $item) {
                 if (!$this->additionalIsInstallation($item)) {
                     continue;
                 }
 
-                $salary = \DB::table('mosquito_systems_type_salary')
-                    ->where('type_id', $this->type->id)
-                    ->where('additional_id', $item->additional_id)
-                    ->where('count', $count)
-                    ->first();
+                $salary = $this->getInstallationSalary($item);
 
-                if ($salary) {
+                if ($salary !== null) {
                     $this->installersWage += $salary->salary;
-                    return $salary->salary;
                 } else {
-                    $salary = \DB::table('mosquito_systems_type_salary')
-                        ->where('type_id', $this->type->id)
-                        ->where('additional_id', $item->additional_id)
-                        ->orderByDesc('count')
-                        ->first();
-
-                    $this->installersWage += $salary->salary + $count * $salary->salary_for_count;
-                    return $salary->salary + $count * $salary->salary_for_count;
+                    $salary = $this->salaryWhenNotFoundSpecificCount($item);
+                    $this->installersWage += $salary->salary + $this->count * $salary->salary_for_count;
                 }
             }
+
+            return $this->installersWage;
+        }
+
+        public function calculateSalaryForCount(int $count, ProductInOrder $productInOrder) {
+            $result = 0;
+            // Если в заказе уже задан монтаж, и добавляется товар без монтажа
+            if ($productInOrder->installation_id) {
+                $salary = $this->getInstallationSalary(
+                    $productInOrder->installation_id,
+                    $count
+                );
+
+                if ($salary != null) {
+                    $result = $salary->salary;
+                } else {
+                    $salary = $this->salaryWhenNotFoundSpecificCount($productInOrder->installation_id);
+                    $result = $salary->salary + $count * $salary->salary_for_count;
+                }
+            }
+
+            return $result;
+        }
+
+        protected function getInstallationSalary($installation, $count = null) {
+            return \DB::table('mosquito_systems_type_salary')
+                ->where('type_id', $this->type->id)
+                ->where('additional_id', $installation->additional_id ?? $installation)
+                ->where('count', $count ?? $this->count)
+                ->first();
+        }
+
+        protected function salaryWhenNotFoundSpecificCount($installation) {
+            return \DB::table('mosquito_systems_type_salary')
+                ->where('type_id', $this->type->id)
+                ->where('additional_id', $installation->additional_id ?? $installation)
+                ->orderByDesc('count')
+                ->first();
         }
 
         /**
@@ -373,11 +398,13 @@
             if (get_class($additional) != 'App\Models\MosquitoSystems\Additional') {
                 if ($additional->group_name == 'Монтаж' && $additional->name != 'Без монтажа') {
                     $this->needInstallation = true;
+                    $this->installation = $additional;
                 }
                 return $additional->group_name == 'Монтаж' && $additional->name != 'Без монтажа';
             } else {
                 if ($additional->name != 'Без монтажа' && $additional->group->name == 'Монтаж') {
                     $this->needInstallation = true;
+                    $this->installation = $additional;
                 }
                 return $additional->name != 'Без монтажа';
             }

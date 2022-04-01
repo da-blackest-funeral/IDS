@@ -53,7 +53,7 @@
 
             createProductInOrder($order, $calculator);
 
-            updateSalary($calculator->getInstallersWage(), $order);
+//            updateSalary($calculator->getInstallersWage(), $order);
 
             return redirect("/orders/$order->id");
 

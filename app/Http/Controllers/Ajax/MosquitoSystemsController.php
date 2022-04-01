@@ -31,7 +31,6 @@ class MosquitoSystemsController extends Controller
     public function bracing() {
         return '<div><p class="h3">Пока не готово :-)</p></div>';
         // todo функционал кнопки добавить крепление будет полноценным когда я перенесу таблицу услуг
-//        Service::where();
     }
 
     /**

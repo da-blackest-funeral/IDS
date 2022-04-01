@@ -115,8 +115,6 @@
                                 <th class="text-center">Число товаров</th>
                                 <th scope="col" class="text-center">Замер</th>
                                 <th scope="col" class="text-center">Доставка</th>
-
-                                {{-- todo размеры --}}
                                 <th scope="col" class="text-center">Заработок монтажника</th>
                                 <th class="text-center">Создан</th>
                             </tr>

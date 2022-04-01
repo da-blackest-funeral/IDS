@@ -93,6 +93,8 @@
                     ->constrained('users');
                 $table->integer('delivery')
                     ->default(0);
+                $table->integer('installation')
+                    ->default(0);
                 $table->float('price');
                 $table->foreignId('installer_id')
                     ->constrained('users');
@@ -147,6 +149,8 @@
                 $table->foreignId('category_id');
                 $table->string('name');
                 $table->integer('count');
+                $table->integer('installation_id')
+                    ->default(0);
                 $table->json('data')
                     ->comment('Все дополнительные данные о заказе');
                 $table->timestamps();

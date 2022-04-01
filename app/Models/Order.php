@@ -61,8 +61,14 @@ use Illuminate\Database\Eloquent\Model;
  * @mixin \Eloquent
  * @property float $measuring_price
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ProductInOrder[] $products
- * @property-read InstallerSalary|null $salary
+ * @property InstallerSalary|null $salary
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereMeasuringPrice($value)
+ * @property int $delivery
+ * @property int $installation
+ * @property int $installer_id
+ * @method static \Illuminate\Database\Eloquent\Builder|Order whereDelivery($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Order whereInstallation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Order whereInstallerId($value)
  */
 class Order extends Model
 {

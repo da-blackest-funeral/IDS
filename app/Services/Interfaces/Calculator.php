@@ -27,5 +27,9 @@ interface Calculator
 
     public function getProduct();
 
-    public function calculateSalary(): float|null;
+    public function calculateInstallationSalary(): float|null;
+
+    public function getInstallationPrice();
+
+    public function getInstallation($property = null);
 }

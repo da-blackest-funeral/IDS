@@ -35,7 +35,7 @@
          *
          * @var float
          */
-        protected float $installationPrice;
+        protected float $installationPrice = 0;
 
         /**
          * Salary for installer that does installation
@@ -69,6 +69,8 @@
          * @var bool
          */
         protected bool $needInstallation = false;
+
+        protected $installation;
 
         public function __construct(Request $request) {
             $this->request = $request;
@@ -116,6 +118,20 @@
          */
         public function isNeedInstallation(): bool {
             return $this->needInstallation;
+        }
+
+        /**
+         * @return float
+         */
+        public function getInstallationPrice(): float {
+            return $this->installationPrice;
+        }
+
+        /**
+         * @return mixed
+         */
+        public function getInstallation($property = null) {
+            return $this->installation->$property ?? $this->installation;
         }
 
         /**

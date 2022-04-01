@@ -12,6 +12,10 @@
         return \request()->path() == '/' || substr_count(request()->path(), 'orders',);
     }
 
+    function notify($text) {
+        session()->flash('notifications', [$text]);
+    }
+
     function createOrder(Calculator $calculator) {
         return Order::create([
             'delivery' => $calculator->getDeliveryPrice(),
@@ -30,45 +34,63 @@
         ]);
     }
 
+    // todo когда замер обнуляется, сделать warning (компонент с иконкой который) что нужно заключить договор
     // todo вынести в два метода: createProduct и updateProduct
     // todo функции в этом файле не совсем реюзабельны, лучше сделать это как файл хелперов для москитных систем
     // todo сделать файл хелперов, который будет подключаться в AppServiceProvider, и который будет подключать все
     // остальные файлы хелперов в своей директории (типо точки входа)
     function createProductInOrder(Order $order, MosquitoSystemsCalculator $calculator) {
-        $product = ProductInOrder::whereOrderId($order->id)
-            // todo баг с тем что при кол-ве больше двух товар идет отдельно может быть в методе getProduct
+        $products = ProductInOrder::whereOrderId($order->id)
+            // todo баг из-за main_salary
             ->where('name', $calculator->getProduct()->name())
-            ->first();
+            ->get();
 
-//        dump(json_decode($calculator->getOptions()));
-//
-//        dd(json_decode($product->data));
+        // Если был найден товар полностью идентичный уже добавленному
+        if ($products->isNotEmpty()) {
+            foreach ($products as $product) {
+                // Если все его добавочные опции идентичны
+                if (productAlreadyExists($calculator, $product)) {
+                    updateProductInOrder($product, $calculator->getOptions()->get('main_price'));
+                    notify('Добавленные товары идентичны. Во избежание ошибок лучше сразу указывайте количество товара в поле "Количество".');
+                    $count = $product->refresh()->count;
+                } else {
+                    newProduct($calculator, $order);
+                    $count = $product->count + (int)\request()->input('count');
+                }
 
-        if (
-            $product !== null &&
-            json_decode($calculator->getOptions()->toJson()) == json_decode($product->data)
-        ) {
-            updateProductInOrder($product, $calculator->getOptions()->get('main_price'));
-//            dd([
-//                'product count before refresh' => $product->count,
-//                'request count' => \request()->input('count'),
-//                'count in product after refresh' => $product->refresh()->count,
-//                'additional' => $calculator->getAdditional()
-////                'price' => $calculator->calculateSalary($product->refresh()->count)
-//            ]);
-            updateSalary($calculator->calculateSalary($product->refresh()->count), $order);
-//            $order->salary->sum = ;
-            // todo обновление зарплаты
+                // todo не считает потому что не задано для "Без монтажа"
+                // тогда если name="Без монтажа" и при этом в заказе уже задан монтаж,
+                // то вытаскивать этот монтаж и по его id находить по числу старое кол-во + новое
+                updateSalary($calculator->calculateSalaryForCount($count, $product), $order);
+            }
+
         } else {
-            ProductInOrder::create([
-                'order_id' => $order->id,
-                'name' => $calculator->getProduct()->name(),
-                'data' => $calculator->getOptions()->toJson(),
-                'user_id' => auth()->user()->getAuthIdentifier(),
-                'category_id' => \request()->input('categories'),
-                'count' => \request()->input('count'),
-            ]);
+            newProduct($calculator, $order);
         }
+    }
+
+    function newProduct($calculator, $order) {
+        ProductInOrder::create([
+            'installation_id' => $calculator->getInstallation('additional_id') ?? 0,
+            'order_id' => $order->id,
+            'name' => $calculator->getProduct()->name(),
+            'data' => $calculator->getOptions()->toJson(),
+            'user_id' => auth()->user()->getAuthIdentifier(),
+            'category_id' => \request()->input('categories'),
+            'count' => \request()->input('count'),
+        ]);
+    }
+
+    function productAlreadyExists($calculator, $product) {
+        return json_decode(
+                $calculator->getOptions()
+                    ->except(['main_price', 'salary', 'measuring', 'delivery'])
+                    ->toJson()
+            ) == json_decode(
+                collect(json_decode($product->data))
+                    ->except(['main_price', 'salary', 'measuring', 'delivery'])
+                    ->toJson()
+            );
     }
 
     function updateProductInOrder($product, $mainPrice) {
@@ -93,6 +115,7 @@
     }
 
     function updateSalary(int|float $sum, Order $order) {
-        $order->salary->sum = $sum;
-        $order->salary->update();
+        $salary = $order->salary()->first();
+        $salary->sum = $sum;
+        $salary->save();
     }

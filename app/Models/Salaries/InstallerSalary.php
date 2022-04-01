@@ -34,6 +34,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|InstallerSalary whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InstallerSalary whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InstallerSalary whereUserId($value)
+ * @property int $installer_id
+ * @method static \Illuminate\Database\Eloquent\Builder|InstallerSalary whereInstallerId($value)
  */
 class InstallerSalary extends Model
 {

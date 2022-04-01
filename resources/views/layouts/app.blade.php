@@ -21,11 +21,11 @@
 </header>
 
 <main class="main">
-{{--    @section('success')--}}
-{{--        <div class="alert-success h-25 w-25 bordered">--}}
-{{--            {{ session()->pull('registered') }}--}}
-{{--        </div>--}}
-{{--    @show--}}
+    {{--    @section('success')--}}
+    {{--        <div class="alert-success h-25 w-25 bordered">--}}
+    {{--            {{ session()->pull('registered') }}--}}
+    {{--        </div>--}}
+    {{--    @show--}}
 
     <div class="w-25 h-25 ml-3">
         @include('components.errors')
@@ -36,9 +36,9 @@
     </div>
 
 
-    {{--    <div class="w-25 h-25 ml-3" onclick="$('#notification').hide(600); $('#notifications').hide(500);">--}}
-    {{--        @include('components.notifications')--}}
-    {{--    </div>--}}
+    <div class="w-25 h-25 ml-3" onclick="$('#notification').hide(600); $('#notifications').hide(500);">
+        @include('components.notifications')
+    </div>
 
 
     @yield('content')
