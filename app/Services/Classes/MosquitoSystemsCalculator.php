@@ -15,6 +15,8 @@
         use HasSquare;
 
         // todo: ремонт, срочное изготовление, коэффициент сложности монтажа
+        // todo вынести все методы по сохранению в options в другой класс
+        // возможно в тот же класс куда я добавлю функции, т.е. фасад
 
         /**
          * Type of mosquito system in current request
@@ -69,12 +71,20 @@
             }
 
             $this->additional = new Collection();
+
+            $this->saveTissue();
+            $this->saveProfile();
+        }
+
+        protected function saveTissue() {
+            $this->options->put('tissueId', $this->product->tissue_id);
+        }
+
+        protected function saveProfile() {
+            $this->options->put('profileId', $this->product->profile_id);
         }
 
         public function calculate(): void {
-            // todo сделать return (общая сумма всех слагаемых)
-
-
             /*
              * Making all preparations that are the same to all products
              */

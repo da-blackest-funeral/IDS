@@ -16,7 +16,7 @@ class ProductController extends Controller
         $this->request = $request;
     }
 
-    public function index(ProductInOrder $productInOrder) {
+    public function index(Order $order, ProductInOrder $productInOrder) {
         return view('pages.add-product')->with([
             'data' => Category::all(),
             'superCategories' => Category::whereIn(
@@ -26,8 +26,10 @@ class ProductController extends Controller
                 ->get()
                 ->toArray()
             )->get(),
-            'orderNumber' => Order::count() + 1,
-            'installers' => User::role('installer')->get()
+            'orderNumber' => $order->id,
+            'product' => $productInOrder,
+            'productData' => json_decode($productInOrder->data),
+            'needPreload' => true
         ]);
     }
 

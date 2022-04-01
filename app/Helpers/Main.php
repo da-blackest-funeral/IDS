@@ -2,6 +2,10 @@
 
     // todo возможно вообще сделать фасады для всех своих хелперов
     // чтобы определить четкий интерфейс для их использования
+    // тем более что они не реюзабельны, можно сделать фасад для москитных систем, для стеклопакетов и т.д.
+    use App\Models\MosquitoSystems\Group;
+    use App\Models\MosquitoSystems\Profile;
+    use App\Models\MosquitoSystems\Type;
     use App\Models\Order;
     use App\Models\ProductInOrder;
     use App\Models\Salaries\InstallerSalary;
@@ -9,7 +13,7 @@
     use App\Services\Interfaces\Calculator;
 
     function isOrderPage() {
-        return \request()->path() == '/' || substr_count(request()->path(), 'orders',);
+        return request()->path() == '/' || substr_count(request()->path(), 'orders',);
     }
 
     function notify($text) {
@@ -20,22 +24,23 @@
         return Order::create([
             'delivery' => $calculator->getDeliveryPrice(),
             'user_id' => auth()->user()->getAuthIdentifier(),
-            'installer_id' => \request()->input('installer') ?? 2,
+            'installer_id' => request()->input('installer') ?? 2,
             'price' => $calculator->getPrice(),
             'discounted_price' => $calculator->getPrice(), // todo сделать расчет с учетом скидок
             'measuring' => $calculator->getNeedMeasuring(),
             'measuring_price' => $calculator->getMeasuringPrice(),
             'discounted_measuring_price' => $calculator->getMeasuringPrice(), // todo скидки
-            'comment' => \request()->input('comment') ?? 'Комментарий отсутствует',
+            'comment' => request()->input('comment') ?? 'Комментарий отсутствует',
             'products_count' => $calculator->getCount(),
-            'installing_difficult' => \request()->input('coefficient'),
-            'is_private_person' => \request()->input('person') == 'physical',
+            'installing_difficult' => request()->input('coefficient'),
+            'is_private_person' => request()->input('person') == 'physical',
             'structure' => 'Пока не готово',
         ]);
     }
 
     // todo вынести в два метода: createProduct и updateProduct
-    // todo функции в этом файле не совсем реюзабельны, лучше сделать это как файл хелперов для москитных систем
+    // todo функции в этом файле (кроме создания заказа и товара и некоторых других)
+    // не совсем реюзабельны, лучше сделать это как файл хелперов для москитных систем
     // todo сделать файл хелперов, который будет подключаться в AppServiceProvider, и который будет подключать все
     // остальные файлы хелперов в своей директории (типо точки входа)
     function createProductInOrder(Order $order, MosquitoSystemsCalculator $calculator) {
@@ -53,7 +58,7 @@
                     $count = $product->refresh()->count;
                 } else {
                     newProduct($calculator, $order);
-                    $count = $product->count + (int)\request()->input('count');
+                    $count = $product->count + (int)request()->input('count');
                 }
 
                 // todo баг когда создаешь сначала без монтажа, потом с монтажом, потом опять без монтажа
@@ -66,7 +71,7 @@
             if ($calculator->isNeedInstallation()) {
                 updateSalary(
                     $calculator->calculateSalaryForCount(
-                        (int)\request()->input('count'),
+                        (int)request()->input('count'),
                         $product
                     ),
                     $order
@@ -83,8 +88,8 @@
             'name' => $calculator->getProduct()->name(),
             'data' => $calculator->getOptions()->toJson(),
             'user_id' => auth()->user()->getAuthIdentifier(),
-            'category_id' => \request()->input('categories'),
-            'count' => \request()->input('count'),
+            'category_id' => request()->input('categories'),
+            'count' => request()->input('count'),
         ]);
     }
 
@@ -101,7 +106,7 @@
     }
 
     function updateProductInOrder($product, $mainPrice) {
-        $product->count += (int)\request()->input('count');
+        $product->count += (int)request()->input('count');
         $data = json_decode($product->data);
         $data->main_price += $mainPrice;
         $product->data = json_encode($data);
@@ -129,4 +134,48 @@
 
     function warning($text) {
         session()->put('warnings', [$text]);
+    }
+
+    function profiles($product = null) {
+        return Profile::whereHas('products.type', function ($query) {
+            return $query->where('category_id', $product->category ?? request()->input('categoryId'))
+                ->where('tissue_id', $product->tissueId ?? request()->input('additional'));
+        })
+            ->get(['id', 'name']);
+    }
+
+    function tissues($categoryId) {
+        return \App\Models\Category::tissues($categoryId)->get()->collapse()->unique();
+    }
+
+    function additional($productInOrder = null) {
+        $productData = json_decode($productInOrder->data);
+        $product = Type::where(
+            'category_id',
+            $productData->category ??
+            request()->input('categoryId')
+        )
+            ->with('products', function ($query) use ($productData) {
+                $query->where(
+                    'tissue_id',
+                    $productData->tissueId
+                    ?? request()->input('nextAdditional')
+                )
+                    ->where(
+                        'profile_id',
+                        $productData->profileId
+                        ?? request()->input('additional')
+                    );
+            })
+            ->get()
+            ->pluck('products')
+            ->first()
+            ->first();
+
+        $additional = $product->additional()->get();
+        $groups = Group::whereHas('additional', function ($query) use ($additional) {
+            $query->whereIn('id', $additional->pluck('id'));
+        })->get();
+
+        return compact('additional', 'groups', 'product');
     }

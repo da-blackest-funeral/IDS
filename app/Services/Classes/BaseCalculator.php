@@ -72,10 +72,13 @@
 
         protected $installation;
 
+        protected int $categoryId;
+
         public function __construct(Request $request) {
             $this->request = $request;
             $this->options = new Collection();
             $this->count = (int)$request->get('count');
+            $this->categoryId = (int) $request->get('categories');
         }
 
         /**
@@ -93,6 +96,12 @@
             $this->setMeasuringPrice();
 
             $this->calculateDelivery();
+
+            $this->setCategory();
+        }
+
+        protected function setCategory() {
+            $this->options->put('category', $this->categoryId);
         }
 
         protected function setSize() {
@@ -132,6 +141,13 @@
          */
         public function getInstallation($property = null) {
             return $this->installation->$property ?? $this->installation;
+        }
+
+        /**
+         * @return int
+         */
+        public function getCategoryId(): int {
+            return $this->categoryId;
         }
 
         /**

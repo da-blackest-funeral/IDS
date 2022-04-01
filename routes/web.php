@@ -32,7 +32,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/orders/{order}', [OrdersController::class, 'addProduct']);
 
-    Route::get('/orders/{order}/{product}', [ProductController::class, 'index']);
+    Route::get('/orders/{order}/{productInOrder}', [ProductController::class, 'index']);
 
     Route::view('/documents', 'pages.documents')
         ->name('documents');

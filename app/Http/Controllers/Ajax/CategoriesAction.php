@@ -86,7 +86,7 @@ class CategoriesAction extends Controller
             }
         }
 
-        \Debugbar::info($data->unique());
+//        \Debugbar::info($data->unique());
         return view('ajax.second-select')->with([
                 'data' => $data->unique(),
                 'link' => $this->category('link'),
