@@ -5,7 +5,8 @@ use App\Http\Controllers\Ajax\GlazedWindowsController;
 use App\Http\Controllers\Ajax\MosquitoSystemsController;
 use App\Http\Controllers\Ajax\WindowsillController;
 use App\Http\Controllers\CalculationController;
-use Illuminate\Support\Facades\Route;
+    use App\Http\Controllers\ProductController;
+    use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OrdersController;
 
 /*
@@ -27,9 +28,11 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/', [CalculationController::class, 'save']);
 
-    Route::get('/orders/{id}', [OrdersController::class, 'order']);
+    Route::get('/orders/{id}', [OrdersController::class, 'order']); // todo сделать {order}
 
     Route::post('/orders/{order}', [OrdersController::class, 'addProduct']);
+
+    Route::get('/orders/{order}/{product}', [ProductController::class, 'index']);
 
     Route::view('/documents', 'pages.documents')
         ->name('documents');

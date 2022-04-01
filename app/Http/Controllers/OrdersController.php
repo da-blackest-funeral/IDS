@@ -4,6 +4,7 @@
 
     use App\Models\Category;
     use App\Models\Order;
+    use App\Models\ProductInOrder;
     use App\Services\Interfaces\Calculator;
     use Illuminate\Http\Request;
 
@@ -53,12 +54,12 @@
 
             createProductInOrder($order->refresh(), $calculator);
 
-//            updateSalary($calculator->getInstallersWage(), $order);
-
             return redirect("/orders/$order->id");
+        }
 
-            // todo увеличение зарплаты при обновлении заказа
-            // todo считаем данные по нынешнему товару с помощью калькулятора
-            // todo если в заказе уже заданы доставка \ замер, то вычитаем из цены цену доставки \ замера
+        public function updateProduct(ProductInOrder $product) {
+            // todo при обновлении уже существующего товара нужно
+            // 1) обновить зарплату монтажнику
+            // 2) пересчитать сумму заказа
         }
     }
