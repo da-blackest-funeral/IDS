@@ -6,7 +6,15 @@
             onchange="getConfiguration('/ajax/mosquito-systems/additional', 'additional', 'profiles', 'tissues')">
         <option value="0">Профиль</option>
         @forelse($data as $item)
-            <option value="{{ $item->id }}">{{ $item->name }}</option>
+            <option
+                @isset($selected)
+                @if($selected === $item->id)
+                selected
+                @endif
+                @endisset
+                value="{{ $item->id }}">
+                {{ $item->name }}
+            </option>
         @empty
             Нет профилей
         @endforelse

@@ -7,7 +7,7 @@
         <option value="0">Выберите</option>
         @forelse($data as $item)
             <option
-                @if($selected === $item->id)
+                @if(isset($selected) && $selected === $item->id)
                     selected
                 @endif
                 value="{{ $item->id }}">

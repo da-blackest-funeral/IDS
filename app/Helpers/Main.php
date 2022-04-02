@@ -137,9 +137,26 @@
     }
 
     function profiles($product = null) {
-        return Profile::whereHas('products.type', function ($query) {
-            return $query->where('category_id', $product->category ?? request()->input('categoryId'))
-                ->where('tissue_id', $product->tissueId ?? request()->input('additional'));
+//        dump($product);
+        if (isset($product)) {
+            $productData = json_decode($product->data);
+        } else {
+            $productData = null;
+        }
+
+//        dump($product->category_id, $productData->tissueId);
+
+//        dump(Profile::whereHas('products.type', function ($query) use ($product, $productData) {
+//            return $query
+//                ->where('category_id', $product->category_id ?? request()->input('categoryId'))
+//                ->where('tissue_id', $productData->tissueId ?? request()->input('additional'))
+//            ;
+//        })
+//            ->get(['id', 'name']));
+
+        return Profile::whereHas('products.type', function ($query) use ($product, $productData) {
+            return $query->where('category_id', $product->category_id ?? request()->input('categoryId'))
+                ->where('tissue_id', $productData->tissueId ?? request()->input('additional'));
         })
             ->get(['id', 'name']);
     }

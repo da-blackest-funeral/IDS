@@ -77,7 +77,11 @@
                     <div class="col-10 col-md-3 mt-1" id="third">
                         {{-- Место для третьего селекта --}}
                         @if($needPreload ?? false)
-                            @include('ajax.mosquito-systems.profiles', ['data' => profiles($product)])
+{{--                            @dump($product)--}}
+                            @include('ajax.mosquito-systems.profiles', [
+                                'data' => profiles($product),
+                                'selected' => $productData->profileId
+                            ])
                         @endif
                     </div>
                     <div class="col-10 col-md-3 mt-1" id="fourth">
