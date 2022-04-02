@@ -66,10 +66,11 @@
                         {{-- Сюда грузится второй селект --}}
                         @if($needPreload ?? false)
                             @include('ajax.second-select', [
-                                'data' => tissues($product->categoryId),
+                                'data' => tissues($product->category_id),
                                 'link' => '/ajax/mosquito-systems/profile',
                                 'name' => 'tissues',
-                                'label' => 'Ткань'
+                                'label' => 'Ткань',
+                                'selected' => $productData->tissueId
                             ])
                         @endif
                     </div>

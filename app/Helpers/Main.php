@@ -145,11 +145,24 @@
     }
 
     function tissues($categoryId) {
-        return \App\Models\Category::tissues($categoryId)->get()->collapse()->unique();
+//        dump(\App\Models\Category::tissues($categoryId)->get()->unique());
+        return \App\Models\Category::tissues($categoryId)
+            ->get()
+            ->pluck('type')
+            ->pluck('products')
+            ->collapse()
+            ->pluck('tissue')
+            ->unique();
+
     }
 
     function additional($productInOrder = null) {
-        $productData = json_decode($productInOrder->data);
+        if (isset($productInOrder->data)) {
+            $productData = json_decode($productInOrder->data);
+        } else {
+            // todo колхоз
+            $productData = null;
+        }
         $product = Type::where(
             'category_id',
             $productData->category ??
