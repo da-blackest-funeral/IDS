@@ -137,22 +137,11 @@
     }
 
     function profiles($product = null) {
-//        dump($product);
         if (isset($product)) {
             $productData = json_decode($product->data);
         } else {
             $productData = null;
         }
-
-//        dump($product->category_id, $productData->tissueId);
-
-//        dump(Profile::whereHas('products.type', function ($query) use ($product, $productData) {
-//            return $query
-//                ->where('category_id', $product->category_id ?? request()->input('categoryId'))
-//                ->where('tissue_id', $productData->tissueId ?? request()->input('additional'))
-//            ;
-//        })
-//            ->get(['id', 'name']));
 
         return Profile::whereHas('products.type', function ($query) use ($product, $productData) {
             return $query->where('category_id', $product->category_id ?? request()->input('categoryId'))
@@ -162,7 +151,6 @@
     }
 
     function tissues($categoryId) {
-//        dump(\App\Models\Category::tissues($categoryId)->get()->unique());
         return \App\Models\Category::tissues($categoryId)
             ->get()
             ->pluck('type')
@@ -170,7 +158,6 @@
             ->collapse()
             ->pluck('tissue')
             ->unique();
-
     }
 
     function additional($productInOrder = null) {
@@ -188,15 +175,15 @@
             ->with('products', function ($query) use ($productData) {
                 $query->where(
                     'tissue_id',
-                    $productData->tissueId
-                    ?? request()->input('nextAdditional')
-                )
-                    ->where(
-                        'profile_id',
-                        $productData->profileId
-                        ?? request()->input('additional')
-                    );
+                    $productData->tissueId ??
+                    request()->input('nextAdditional')
+                )->where(
+                    'profile_id',
+                    $productData->profileId ??
+                    request()->input('additional')
+                );
             })
+            // todo колхоз
             ->get()
             ->pluck('products')
             ->first()
@@ -205,7 +192,13 @@
         $additional = $product->additional()->get();
         $groups = Group::whereHas('additional', function ($query) use ($additional) {
             $query->whereIn('id', $additional->pluck('id'));
-        })->get();
+        })->get()
+            ->each(function ($item) use ($productData) {
+                $name = "group-$item->id";
+                if (isset($productData) && $productData->$name !== null) {
+                    $item->selected = $productData->$name;
+                }
+            });
 
         return compact('additional', 'groups', 'product');
     }

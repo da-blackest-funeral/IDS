@@ -248,8 +248,6 @@
          * values of additional ids as option's values.
          */
         protected function calculatePriceForAdditional() {
-            $typeId = $this->type->id;
-
             $i = 1;
             $ids = [];
             while ($this->request->has("group-$i")) {
@@ -257,7 +255,10 @@
                 $i++;
             }
 
-            $additional = $this->getTypeAdditional($ids);
+            $additional = $this->getTypeAdditional($ids)
+                ->each(function ($item) {
+                    $this->options->put("group-$item->group_id", $item->additional_id);
+                });
 
             $items = collect();
             $additionalCollection = collect();
@@ -293,6 +294,7 @@
                     'price',
                     'additional_id',
                     'mosquito_systems_groups.name as group_name',
+                    'mosquito_systems_groups.id as group_id',
                     'mosquito_systems_additional.name',
                 ]);
         }

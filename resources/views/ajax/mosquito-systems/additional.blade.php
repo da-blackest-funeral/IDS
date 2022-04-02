@@ -10,7 +10,15 @@
             <select name="group-{{ $loop->iteration }}" id="{{ $group->name }}" class="form-control">
                 @foreach($additional as $item)
                     @if($item->group_id == $group->id)
-                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                        <option
+                            @isset($group->selected)
+                            @if($group->selected == $item->id)
+                            selected
+                            @endif
+                            @endisset
+                            value="{{ $item->id }}">
+                            {{ $item->name }}
+                        </option>
                     @endif
                 @endforeach
             </select>
