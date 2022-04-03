@@ -81,14 +81,15 @@
 
         $product = Product::whereTissueId($productData->tissueId ?? request()->input('nextAdditional'))
             ->whereProfileId($productData->profileId ?? request()->input('additional'))
-            ->whereHas('type', function ($query) {
+            ->whereHas('type', function ($query) use ($productData) {
                 $query->where('category_id', $productData->category ?? request()->input('categoryId'));
             })->first();
 
-        $additional = $product->additional()->get();
+        $additional = $product->additional;
         $groups = Group::whereHas('additional', function ($query) use ($additional) {
             $query->whereIn('id', $additional->pluck('id'));
         })->get()
+            // Заполняем для каждой группы выбранное в заказе значение
             ->each(function ($item) use ($productData) {
                 $name = "group-$item->id";
                 if (isset($productData) && $productData->$name !== null) {
