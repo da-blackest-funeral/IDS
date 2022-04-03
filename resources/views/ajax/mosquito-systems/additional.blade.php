@@ -54,7 +54,7 @@
     {{-- Для рулонных сеток не выводятся эти поля --}}
     @if(!in_array($product->type_id, [4, 5]))
         @include('components.calculations.new')
-        @include('components.calculations.immediately')
+        @include('components.calculations.fast-creating')
     @endif
 
 </div>

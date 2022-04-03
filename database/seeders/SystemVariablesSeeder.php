@@ -59,7 +59,7 @@ class SystemVariablesSeeder extends Seeder
                 'description' => 'ЗП монтажника и доставщика за каждый км за кад',
             ],
             [
-                'value' => 0.3,
+                'value' => 0.7,
                 'name' => 'repairCoefficient',
                 'description' => 'Процентное соотношение цены ремонта сеток к цене самих сеток',
             ],
@@ -99,7 +99,7 @@ class SystemVariablesSeeder extends Seeder
                 'description' => 'Стоимость прибавки за доставку на юг для Андрею Доп. Север',
             ],
             [
-                'value' => 1.5,
+                'value' => 1.3,
                 'name' => 'coefficientFastCreating',
                 'description' => 'Коэф. срочного изготовления стеклопакета. (влияет на : стеклопакет, стекла, теплопакет, замер, доставку, монтаж стеклоп., километраж)',
             ],

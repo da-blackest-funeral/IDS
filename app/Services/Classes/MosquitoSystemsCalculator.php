@@ -14,7 +14,7 @@
     {
         use HasSquare;
 
-        // todo: ремонт, срочное изготовление, коэффициент сложности монтажа
+        // todo: коэффициент сложности монтажа
         // todo вынести все методы по сохранению в options в другой класс
         // возможно в тот же класс куда я добавлю функции, т.е. фасад
 
@@ -42,6 +42,11 @@
          */
         protected bool $needMeasuring = true;
 
+        /**
+         * Instance of current product
+         *
+         * @var Product
+         */
         protected Product $product;
 
         public function __construct(Request $request) {
@@ -224,6 +229,15 @@
          */
         protected function setProductPrice() {
             try {
+                // Decreasing price if customer need repairing instead new
+                if ($this->request->has('new') && !$this->request->get('new')) {
+                    $this->product->price *= SystemVariables::repairCoefficient();
+                }
+                // Increasing price if customer need product to be created faster
+                if ($this->request->has('fast') && $this->request->get('fast')) {
+                    $this->product->price *= SystemVariables::coefficientFastCreating();
+                }
+
                 $this->price += $this->product->price * $this->squareCoefficient;
 
                 $this->savePrice($this->product->price * $this->squareCoefficient);
@@ -238,6 +252,17 @@
             return $this;
         }
 
+        protected function getSelectedIds() {
+            $i = 1;
+            $ids = [];
+            while ($this->request->has("group-$i")) {
+                $ids[] = $this->request->get("group-$i");
+                $i++;
+            }
+
+            return $ids;
+        }
+
         /**
          * Secondary, need to calculate price of all additional options.
          * Additional is the service of the accessory, that may be added to product.
@@ -248,20 +273,17 @@
          * values of additional ids as option's values.
          */
         protected function calculatePriceForAdditional() {
-            $i = 1;
-            $ids = [];
-            while ($this->request->has("group-$i")) {
-                $ids[] = $this->request->get("group-$i");
-                $i++;
-            }
+            $ids = $this->getSelectedIds();
 
             $additional = $this->getTypeAdditional($ids)
+                // Writing to options selected groups
                 ->each(function ($item) {
                     $this->options->put("group-$item->group_id", $item->additional_id);
                 });
 
-            $items = collect();
-            $additionalCollection = collect();
+            // Items will be displayed to user
+            $items = new Collection();
+            $additionalCollection = new Collection();
 
             foreach ($additional as $item) {
                 $additionalPrice = $item->price;
@@ -269,6 +291,11 @@
                 if (!$this->additionalIsInstallation($item)) {
                     $additionalPrice *= $this->squareCoefficient;
                 } else {
+                    // If customer need fast creating, installation price increases
+                    if ($this->request->has('fast')) {
+                        $additionalPrice *= SystemVariables::coefficientFastCreating();
+                    }
+
                     $this->installationPrice = $additionalPrice;
                 }
 
@@ -336,7 +363,6 @@
         }
 
         public function calculateSalaryForCount(int $count, ProductInOrder $productInOrder) {
-            $result = 0;
             if (
                 $productInOrder->installation_id == 0 &&
                 !$this->installation->additional_id &&
@@ -401,6 +427,7 @@
             if ($additional->name == 'Без монтажа') {
                 $this->needInstallation = false;
                 $this->installation = $additional;
+                return false;
             }
 
             if (get_class($additional) != 'App\Models\MosquitoSystems\Additional') {
@@ -422,8 +449,7 @@
         /**
          * @return Collection
          */
-        public
-        function getOptions(): Collection {
+        public function getOptions(): Collection {
             return $this->options;
         }
 

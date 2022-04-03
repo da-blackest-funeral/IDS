@@ -50,6 +50,7 @@
 
         protected function setAdditionalPrice() {
             foreach ($this->additional as $field) {
+                // todo видимо эта часть общая, вынести в суперкласс
                 // todo заменить на while(request has $field->group . '-' . $i)
                 // todo придумать как избавиться от n+1 query
                 for ($i = 1; $i <= 3; $i++) {

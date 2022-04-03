@@ -6,7 +6,7 @@ use App\Models\MosquitoSystems\Italian;
 
 class ItalianMosquitoSystemCalculator extends MosquitoSystemsCalculator
 {
-    protected $dollar = 100; // просто от балды, на будущее
+    protected int $dollar = 100; // просто от балды, на будущее
 
     // todo сделать условие если сетка – антимошка черная или антикошка серая или антимошка серая,
     // то цену увеличить на 30%
