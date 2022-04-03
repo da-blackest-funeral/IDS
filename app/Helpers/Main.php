@@ -86,6 +86,6 @@
         $order->salary->update();
     }
 
-    function warning($text) {
-        session()->put('warnings', [$text]);
+    function warning(string $text) {
+        session()->push('warnings', $text);
     }
