@@ -43,14 +43,7 @@
             @endif
         </div>
 
-        {{--        @isset($installers)--}}
-        {{--            @dump($installers)--}}
-        {{--        @endif--}}
-
         @isset($products)
-            {{--            @php--}}
-            {{--            dump($order)--}}
-            {{--            @endphp--}}
             <a href="#" id="show" class="btn w-25" style="display: none;"
                onclick="$( this ).parent().children().show(400); $( this ).hide(400)">Развернуть</a>
             <div class="row align-content-between position-relative">
@@ -72,7 +65,13 @@
                             <tbody>
                             @foreach($products as $product)
                                 @php($productData = json_decode($product->data))
-                                <tr>
+                                <tr style="cursor:pointer;" onclick="
+                                    window.location ='{{ route('product-in-order', [
+                                        'order' => $orderNumber,
+                                        'productInOrder' => $product
+                                        ])
+                                    }}';">
+
                                     <th scope="row" class="text-center"><strong>{{ $loop->iteration }}</strong></th>
                                     <td class="text-center" style="max-width: 200px;">{{ $product->name }}</td>
                                     <td class="text-center text-success">
@@ -88,7 +87,6 @@
                                                 <em>где {{ ceil($productData->main_price / $product->count) }} за
                                                     шт.</em></p>
                                         @endif
-                                        {{--                                        <strong>{{ $productData->main_price }}</strong>--}}
                                     </td>
                                     <td class="text-center text-decoration-underline">
                                         @foreach($productData->additional as $additional)
@@ -97,8 +95,6 @@
                                             </div>
                                         @endforeach
                                     </td>
-                                    {{--                            <td class="text-center">{{ $productData->measuring > 0 ? $productData->measuring : 'Нет' }}</td>--}}
-                                    {{--                            <td class="text-center">{{ $productData->salary }}</td>--}}
                                 </tr>
                             @endforeach
                             </tbody>
@@ -135,7 +131,6 @@
             </div>
         @endif
 
-        {{--        @dump(json_decode($productData->data ?? null))--}}
         @include('pages.add-product-form')
         @yield('add-product')
 

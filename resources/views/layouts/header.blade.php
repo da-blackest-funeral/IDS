@@ -215,7 +215,7 @@
 
                 @can('canCalculate')
                     <li class="nav-item dropdown my-auto">
-                        <a class="btn nav-link" href="{{ route('welcome') }}">Рассчитать</a>
+                        <a class="btn nav-link" href="{{ route('new-order') }}">Рассчитать</a>
                     </li>
                 @endcan
 

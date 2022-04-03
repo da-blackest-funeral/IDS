@@ -5,15 +5,13 @@
     use App\Http\Requests\SaveOrderRequest;
     use App\Models\Category;
     use App\Models\Order;
-    use App\Models\ProductInOrder;
-    use App\Models\Salaries\InstallerSalary;
     use App\Models\User;
     use App\Services\Interfaces\Calculator;
     use Illuminate\Http\Request;
 
     class CalculationController extends Controller
     {
-
+        
         protected Request $request;
         protected Calculator $calculator;
 
@@ -45,10 +43,11 @@
 
             createSalary($order, $calculator);
 
+            // todo тут сделано только для москитных систем (возможно, удастся сделать это реюзабельным)
             createProductInOrder($order, $calculator);
 
             session()->flash('success', ['Заказ успешно создан!']);
 
-            return redirect("/orders/$order->id");
+            return redirect(route('order', ['order' => $order->id]));
         }
     }

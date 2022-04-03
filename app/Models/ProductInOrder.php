@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use mysql_xdevapi\Table;
 
 /**
  * App\Models\ProductinOrder
@@ -33,6 +32,8 @@ use mysql_xdevapi\Table;
  * @method static \Illuminate\Database\Eloquent\Builder|ProductInOrder whereOrderId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ProductInOrder whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ProductInOrder whereUserId($value)
+ * @property int $installation_id
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductInOrder whereInstallationId($value)
  */
 class ProductInOrder extends Model
 {

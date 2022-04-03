@@ -1,8 +1,16 @@
 @section('add-product')
     <div class="mt-4">
-        <h1 class="h3"><strong>{{ $heading ?? 'Добавить товар' }}</strong></h1>
-        <div class="container-fluid bg-light" style="min-height: 250px;">
-            <form action method="POST" class="form-group">
+        <h1 class="h3">
+            <strong>
+                {{ $heading ?? 'Добавить товар' }} {{ isset($product->name) && !isOrderPage() ? "\"$product->name\"" : '' }}
+            </strong>
+        </h1>
+        @if(!isOrderPage())
+            <p class="h4 mt-3">Заказ №{{ $orderNumber }}</p>
+        @endif
+        {{-- todo когда добавлени заказ на странице /orders/{order} тут автозаполняется при добавлении товара --}}
+        <div class="container-fluid bg-light mt-4" style="min-height: 250px;">
+            <form method="POST" class="form-group">
                 @csrf
                 <input type="hidden" value="{{ $orderNumber }}" name="order_id">
                 <div class="row">
@@ -53,7 +61,7 @@
                                         @if($item->parent_id == $category->id)
                                             <option
                                                 @if(isset($product) && $product->category_id == $item->id && ($needPreload ?? false))
-                                                    selected
+                                                selected
                                                 @endif
                                                 value="{{ $item->id }}">{{ $item->name }}</option>
                                         @endif
@@ -77,7 +85,7 @@
                     <div class="col-10 col-md-3 mt-1" id="third">
                         {{-- Место для третьего селекта --}}
                         @if($needPreload ?? false)
-{{--                            @dump($product)--}}
+                            {{--                            @dump($product)--}}
                             @include('ajax.mosquito-systems.profiles', [
                                 'data' => profiles($product),
                                 'selected' => $productData->profileId
@@ -91,7 +99,6 @@
                 <div class="mt-4 pb-3" id="additional">
                     @if($needPreload ?? false)
                         @include('ajax.mosquito-systems.additional', additional($product))
-                        {{-- todo сделать selected уже выбранные допы, нужно сохранять их в калькуляторе --}}
                     @endif
                     {{-- Место для дополнительных опций --}}
                 </div>

@@ -21,18 +21,20 @@ use App\Http\Controllers\OrdersController;
 */
 Route::middleware('auth')->group(function () {
     Route::get('/', [CalculationController::class, 'index'])
-        ->name('welcome');
+        ->name('new-order');
 
     Route::get('/bracing', [MosquitoSystemsController::class, 'bracing'])
         ->name('bracing');
 
     Route::post('/', [CalculationController::class, 'save']);
 
-    Route::get('/orders/{id}', [OrdersController::class, 'order']); // todo сделать {order}
+    Route::get('/orders/{order}', [OrdersController::class, 'order'])
+        ->name('order');
 
     Route::post('/orders/{order}', [OrdersController::class, 'addProduct']);
 
-    Route::get('/orders/{order}/{productInOrder}', [ProductController::class, 'index']);
+    Route::get('/orders/{order}/{productInOrder}', [ProductController::class, 'index'])
+        ->name('product-in-order');
 
     Route::view('/documents', 'pages.documents')
         ->name('documents');

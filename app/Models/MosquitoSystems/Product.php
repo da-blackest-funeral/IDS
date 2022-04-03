@@ -17,9 +17,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property float $price
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\MosquitoSystems\Profile|null $profile
- * @property-read \App\Models\MosquitoSystems\Tissue|null $tissue
- * @property-read \App\Models\MosquitoSystems\Type|null $type
+ * @property-read Profile|null $profile
+ * @property-read Tissue|null $tissue
+ * @property-read Type|null $type
  * @method static \Database\Factories\MosquitoSystems\ProductFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|Product newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Product newQuery()
@@ -33,7 +33,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereTypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MosquitoSystems\Additional[] $additional
+ * @property-read \Illuminate\Database\Eloquent\Collection|Additional[] $additional
  * @property-read int|null $additional_count
  */
 class Product extends Model

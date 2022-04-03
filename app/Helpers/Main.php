@@ -3,17 +3,15 @@
     // todo возможно вообще сделать фасады для всех своих хелперов
     // чтобы определить четкий интерфейс для их использования
     // тем более что они не реюзабельны, можно сделать фасад для москитных систем, для стеклопакетов и т.д.
-    use App\Models\MosquitoSystems\Group;
-    use App\Models\MosquitoSystems\Profile;
-    use App\Models\MosquitoSystems\Type;
     use App\Models\Order;
     use App\Models\ProductInOrder;
     use App\Models\Salaries\InstallerSalary;
-    use App\Services\Classes\MosquitoSystemsCalculator;
     use App\Services\Interfaces\Calculator;
 
+    require_once 'MosquitoSystems.php';
+
     function isOrderPage() {
-        return request()->path() == '/' || substr_count(request()->path(), 'orders',);
+        return Route::is('new-order', 'order');
     }
 
     function notify($text) {
@@ -36,49 +34,6 @@
             'is_private_person' => request()->input('person') == 'physical',
             'structure' => 'Пока не готово',
         ]);
-    }
-
-    // todo вынести в два метода: createProduct и updateProduct
-    // todo функции в этом файле (кроме создания заказа и товара и некоторых других)
-    // не совсем реюзабельны, лучше сделать это как файл хелперов для москитных систем
-    // todo сделать файл хелперов, который будет подключаться в AppServiceProvider, и который будет подключать все
-    // остальные файлы хелперов в своей директории (типо точки входа)
-    function createProductInOrder(Order $order, MosquitoSystemsCalculator $calculator) {
-        $products = ProductInOrder::whereOrderId($order->id)
-            ->where('name', $calculator->getProduct()->name())
-            ->get();
-
-        // Если был найден товар полностью идентичный уже добавленному
-        if ($products->isNotEmpty()) {
-            foreach ($products as $product) {
-                // Если все его добавочные опции идентичны
-                if (productAlreadyExists($calculator, $product)) {
-                    updateProductInOrder($product, $calculator->getOptions()->get('main_price'));
-                    notify('Добавленные товары идентичны. Во избежание ошибок лучше сразу указывайте количество товара в поле "Количество".');
-                    $count = $product->refresh()->count;
-                } else {
-                    newProduct($calculator, $order);
-                    $count = $product->count + (int)request()->input('count');
-                }
-
-                // todo баг когда создаешь сначала без монтажа, потом с монтажом, потом опять без монтажа
-
-                updateSalary($calculator->calculateSalaryForCount($count, $product), $order);
-            }
-
-        } else {
-            $product = newProduct($calculator, $order);
-            if ($calculator->isNeedInstallation()) {
-                updateSalary(
-                    $calculator->calculateSalaryForCount(
-                        (int)request()->input('count'),
-                        $product
-                    ),
-                    $order
-                );
-            }
-        }
-
     }
 
     function newProduct($calculator, $order) {
@@ -127,78 +82,10 @@
     }
 
     function updateSalary(int|float $sum, Order $order) {
-        $salary = $order->salary()->first(); // todo попробовать с $product->salary
-        $salary->sum = $sum;
-        $salary->save();
+        $order->salary->sum = $sum;
+        $order->salary->update();
     }
 
     function warning($text) {
         session()->put('warnings', [$text]);
-    }
-
-    function profiles($product = null) {
-        if (isset($product)) {
-            $productData = json_decode($product->data);
-        } else {
-            $productData = null;
-        }
-
-        return Profile::whereHas('products.type', function ($query) use ($product, $productData) {
-            return $query->where('category_id', $product->category_id ?? request()->input('categoryId'))
-                ->where('tissue_id', $productData->tissueId ?? request()->input('additional'));
-        })
-            ->get(['id', 'name']);
-    }
-
-    function tissues($categoryId) {
-        return \App\Models\Category::tissues($categoryId)
-            ->get()
-            ->pluck('type')
-            ->pluck('products')
-            ->collapse()
-            ->pluck('tissue')
-            ->unique();
-    }
-
-    function additional($productInOrder = null) {
-        if (isset($productInOrder->data)) {
-            $productData = json_decode($productInOrder->data);
-        } else {
-            // todo колхоз
-            $productData = null;
-        }
-        $product = Type::where(
-            'category_id',
-            $productData->category ??
-            request()->input('categoryId')
-        )
-            ->with('products', function ($query) use ($productData) {
-                $query->where(
-                    'tissue_id',
-                    $productData->tissueId ??
-                    request()->input('nextAdditional')
-                )->where(
-                    'profile_id',
-                    $productData->profileId ??
-                    request()->input('additional')
-                );
-            })
-            // todo колхоз
-            ->get()
-            ->pluck('products')
-            ->first()
-            ->first();
-
-        $additional = $product->additional()->get();
-        $groups = Group::whereHas('additional', function ($query) use ($additional) {
-            $query->whereIn('id', $additional->pluck('id'));
-        })->get()
-            ->each(function ($item) use ($productData) {
-                $name = "group-$item->id";
-                if (isset($productData) && $productData->$name !== null) {
-                    $item->selected = $productData->$name;
-                }
-            });
-
-        return compact('additional', 'groups', 'product');
     }

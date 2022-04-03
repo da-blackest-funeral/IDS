@@ -14,8 +14,7 @@
         protected Calculator $calculator;
         protected Request $request;
 
-        public function order(Request $request, $id) {
-            $order = Order::whereId($id)->firstOrFail();
+        public function order(Order $order) {
             $products = $order->products()->get();
             $data = Category::all();
             $superCategories = Category::whereIn(
@@ -54,7 +53,7 @@
 
             createProductInOrder($order->refresh(), $calculator);
 
-            return redirect("/orders/$order->id");
+            return redirect(route('order', ['order' => $order->id]));
         }
 
         public function updateProduct(ProductInOrder $product) {
