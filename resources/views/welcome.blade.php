@@ -88,12 +88,17 @@
                                                     шт.</em></p>
                                         @endif
                                     </td>
-                                    <td class="text-center text-decoration-underline">
+                                    <td class="text-center">
                                         @foreach($productData->additional as $additional)
-                                            <div class="p-1">
+                                            <div class="p-1 text-decoration-underline">
                                                 {{ $additional }}
                                             </div>
                                         @endforeach
+                                        @isset($productData->salaryForCoefficient)
+                                            <div class="p-1">
+                                                <strong>{{ $productData->salaryForCoefficient }}</strong>
+                                            </div>
+                                        @endisset
                                     </td>
                                 </tr>
                             @endforeach
@@ -131,7 +136,7 @@
             </div>
         @endif
 
-        @include('pages.add-product-form')
+        @include('pages.add-product-form', ['needPreload' => !isset($order)])
         @yield('add-product')
 
         <div class="mt-5">

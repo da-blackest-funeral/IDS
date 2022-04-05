@@ -7,8 +7,7 @@
     use App\Models\ProductInOrder;
     use App\Services\Classes\MosquitoSystemsCalculator;
 
-    // todo сделать файл хелперов, который будет подключаться в AppServiceProvider, и который будет подключать все
-    // остальные файлы хелперов в своей директории (типо точки входа)
+    // todo отрефакторить этот метод, т.к. не нужно "склеивать" два товара в один если они одинаковые
     function createProductInOrder(Order $order, MosquitoSystemsCalculator $calculator) {
         $products = ProductInOrder::whereOrderId($order->id)
             ->where('name', $calculator->getProduct()->name())

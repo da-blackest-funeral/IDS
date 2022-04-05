@@ -51,7 +51,7 @@
 
             $order->update();
 
-            createProductInOrder($order->refresh(), $calculator);
+            newProduct($calculator, $order->refresh());
 
             return redirect(route('order', ['order' => $order->id]));
         }

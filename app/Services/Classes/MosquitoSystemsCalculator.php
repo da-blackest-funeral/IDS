@@ -14,7 +14,7 @@
     {
         use HasSquare;
 
-        // todo: коэффициент сложности монтажа
+        // todo: коэффициент сложности монтажа, скидки
         // todo вынести все методы по сохранению в options в другой класс
         // возможно в тот же класс куда я добавлю функции, т.е. фасад
 
@@ -49,6 +49,8 @@
          */
         protected Product $product;
 
+        protected float $coefficient = 1.0;
+
         public function __construct(Request $request) {
             parent::__construct($request);
 
@@ -73,6 +75,10 @@
                     'not_found' => 'Тип не найден',
                     'message' => 'Информация для отладки: ' . $exception->getMessage(),
                 ]);
+            }
+
+            if ($this->hasCoefficient()) {
+                $this->coefficient = $this->request->get('coefficient');
             }
 
             $this->additional = new Collection();
@@ -126,7 +132,28 @@
              */
             $this->calculateInstallationSalary();
 
+            if ($this->hasCoefficient()) {
+                $this->setSalaryForInstallationDifficult();
+            }
+
             $this->saveInstallationData();
+        }
+
+        protected function hasCoefficient() {
+            return $this->request->has('coefficient') && $this->request->get('coefficient') != 1;
+        }
+
+        protected function setSalaryForInstallationDifficult() {
+            $additionalSalary = (int) ceil(
+                    $this->installationPrice *
+                    ($this->request->get('coefficient') - 1)
+                ) * SystemVariables::coefficientSalaryForDifficult();
+
+            $this->installersWage += $additionalSalary;
+
+            // todo это надо пушить в options с ключом additional
+            $this->options->put('salaryForCoefficient', "Доп. зарплата за коэффициент сложности: $additionalSalary");
+//            $this->additional->push("Доп. зарплата за коэффициент сложности: $additionalSalary");
         }
 
         /**
@@ -292,11 +319,19 @@
                     $additionalPrice *= $this->squareCoefficient;
                 } else {
                     // If customer need fast creating, installation price increases
-                    if ($this->request->has('fast')) {
+                    if ($this->request->has('fast') && $this->request->get('fast')) {
                         $additionalPrice *= SystemVariables::coefficientFastCreating();
                     }
 
                     $this->installationPrice = $additionalPrice;
+
+                    if ($this->hasCoefficient()) {
+                        $this->additional->push(
+                            "Доп. цена за сложность монтажа: " .
+                            $this->installationPrice * ($this->coefficient - 1)
+                        );
+                        $this->installationPrice *= $this->coefficient;
+                    }
                 }
 
                 $items->push("Доп. за $item->name: $additionalPrice");
@@ -340,6 +375,7 @@
 
             if (!$this->needInstallation) {
                 $this->installersWage += $this->measuringSalary;
+                // todo тут не надо сделать return?
             }
 
             $this->additional = $this->additional->collapse();

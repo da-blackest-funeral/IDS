@@ -26,7 +26,9 @@
                                placeholder="Высота (габаритн.) в мм."
                                type="text"
                                class="form-control"
+                               @if($needPreload ?? false)
                                value="{{ $productData->size->height ?? '' }}"
+                               @endif
                                required>
                     </div>
                     <div class="col-12 col-md-3">
@@ -36,7 +38,9 @@
                                placeholder="Ширина (габаритн.) в мм."
                                type="text"
                                class="form-control"
+                               @if($needPreload ?? false)
                                value="{{ $productData->size->width ?? '' }}"
+                               @endif
                                required>
                     </div>
                     <div class="col-12 col-md-3">
@@ -46,7 +50,9 @@
                                placeholder="Количество (шт)"
                                type="text"
                                class="form-control"
+                               @if($needPreload ?? false)
                                value="{{ $product->count ?? '' }}"
+                               @endif
                                required>
                     </div>
                 </div>

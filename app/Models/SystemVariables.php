@@ -40,4 +40,8 @@ class SystemVariables extends Model
     public static function coefficientFastCreating() {
         return self::whereName('coefficientFastCreating')->first()->value;
     }
+
+    public static function coefficientSalaryForDifficult() {
+        return self::whereName('coefficientSalaryForDifficult')->first()->value;
+    }
 }
