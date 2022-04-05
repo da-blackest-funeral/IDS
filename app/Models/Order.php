@@ -69,6 +69,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereDelivery($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereInstallation($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereInstallerId($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection|InstallerSalary[] $salaries
+ * @property-read int|null $salaries_count
  */
 class Order extends Model
 {

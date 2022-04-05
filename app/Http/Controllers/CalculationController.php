@@ -44,7 +44,7 @@
             createSalary($order, $calculator);
 
             // todo тут сделано только для москитных систем (возможно, удастся сделать это реюзабельным)
-            newProduct($order, $calculator);
+            newProduct($calculator, $order);
 
             session()->flash('success', ['Заказ успешно создан!']);
 

@@ -4,6 +4,7 @@
 
     use App\Models\MosquitoSystems\Product;
     use App\Models\MosquitoSystems\Type;
+    use App\Models\Order;
     use App\Models\ProductInOrder;
     use App\Models\SystemVariables;
     use Illuminate\Database\Eloquent\Builder;
@@ -51,6 +52,8 @@
 
         protected float $coefficient = 1.0;
 
+//        protected Order $order;
+
         public function __construct(Request $request) {
             parent::__construct($request);
 
@@ -76,6 +79,15 @@
                     'message' => 'Информация для отладки: ' . $exception->getMessage(),
                 ]);
             }
+
+//            try {
+//                $this->order = Order::findOrFail($this->request->get('order_id'));
+//            } catch(\Exception $exception) {
+//                \Debugbar::warning($exception->getMessage());
+//                return view('welcome')->withErrors([
+//                    'not_found' => 'Заказ не найден',
+//                ]);
+//            }
 
             if ($this->hasCoefficient()) {
                 $this->coefficient = $this->request->get('coefficient');
@@ -375,7 +387,6 @@
 
             if (!$this->needInstallation) {
                 $this->installersWage += $this->measuringSalary;
-                // todo тут не надо сделать return?
             }
 
             $this->additional = $this->additional->collapse();
@@ -391,7 +402,8 @@
                     $this->installersWage += $salary->salary;
                 } else {
                     $salary = $this->salaryWhenNotFoundSpecificCount($item);
-                    $this->installersWage += $salary->salary + $this->count * $salary->salary_for_count;
+
+                    $this->installersWage += $salary->salary + ($this->count - $salary->count) * $salary->salary_for_count;
                 }
             }
 
@@ -418,8 +430,16 @@
             if ($salary != null) {
                 $result = $salary->salary;
             } else {
+                // todo при добавлении нового товара сюда код даже не заходит и считает зарплату неправильно
                 $salary = $this->salaryWhenNotFoundSpecificCount($installation);
-                $result = $salary->salary + $count * $salary->salary_for_count;
+                // todo количество на которое умножаем должно считаться так:
+                // общее количество товаров этого типа в заказе - salary->count
+                // todo если добавить другой товар, которого еще не было, то
+                // считается общее количество ВСЕХ товаров (а не конкретного типа) и зарплата не прибавляется
+                // а заменяется этим значением
+                $missingCount = productsCount($this->order) - $salary->count;
+                $result = $salary->salary + $missingCount * $salary->salary_for_count;
+//                dd($result);
             }
 
             return $result;

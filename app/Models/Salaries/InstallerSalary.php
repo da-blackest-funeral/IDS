@@ -36,6 +36,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|InstallerSalary whereUserId($value)
  * @property int $installer_id
  * @method static \Illuminate\Database\Eloquent\Builder|InstallerSalary whereInstallerId($value)
+ * @property int $category_id
+ * @method static \Illuminate\Database\Eloquent\Builder|InstallerSalary whereCategoryId($value)
  */
 class InstallerSalary extends Model
 {

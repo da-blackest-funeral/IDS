@@ -47,17 +47,36 @@
     }
 
     function updateOrCreateSalary(ProductInOrder $productInOrder, Calculator $calculator) {
-        $products = ProductInOrder::whereCategoryId($productInOrder->category_id);
-        if ($products->exists()) {
-            $products = $products->get('count');
-            $count = $products->sum('count');
+        $products = ProductInOrder::whereCategoryId($productInOrder->category_id)
+            ->whereOrderId($productInOrder->order_id);
+        if ($products->exists() && salary($productInOrder)->exists()) {
+
+            $count = $products->get('count')->sum('count');
             updateSalary(
                 $calculator->calculateSalaryForCount($count, $productInOrder),
                 $productInOrder
             );
-         } else {
+        } else {
             createSalary($productInOrder->order, $calculator);
         }
+    }
+
+    function productsCount(Order $order) {
+//        dd(
+//            $productInOrder->order
+//                ->products
+//                ->filter(function ($item) use ($productInOrder) {
+//                    return $item->category_id == $productInOrder->category_id;
+//                })->sum('count')
+//        );
+        return $order
+            // todo тут ебаная церковь у меня не фильтруются products по category_id
+            // из бд поэтому я сделал фильтрацию по коллекции
+            ->products
+            ->filter(function ($item) {
+                return $item->category_id == \request()->input('categories');
+            })
+            ->sum('count');
     }
 
     function profiles($product = null) {

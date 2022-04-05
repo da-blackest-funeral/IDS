@@ -36,7 +36,7 @@
         ]);
     }
 
-    function newProduct($calculator, $order) {
+    function newProduct(Calculator $calculator, Order $order) {
         return ProductInOrder::create([
             'installation_id' => $calculator->getInstallation('additional_id') ?? 0,
             'order_id' => $order->id,
@@ -82,11 +82,14 @@
         ]);
     }
 
-    function updateSalary(int|float $sum, ProductInOrder $productInOrder) {
-        $salary = $productInOrder
-            ->order
+    function salary(ProductInOrder $productInOrder) {
+        return $productInOrder->order
             ->salaries()
-            ->whereCategoryId($productInOrder->category_id)
+            ->whereCategoryId($productInOrder->category_id);
+    }
+
+    function updateSalary(int|float $sum, ProductInOrder $productInOrder) {
+        $salary = salary($productInOrder)
             ->first();
 
         $salary->sum = $sum;
