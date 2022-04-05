@@ -84,15 +84,21 @@
                                         <strong>{{ $productData->main_price }}</strong>
                                         @if($product->count > 1)
                                             <p class="mt-3 ml-3">
-                                                <em>где {{ ceil($productData->main_price / $product->count) }} за
+                                                <em>{{ ceil($productData->main_price / $product->count) }} за
                                                     шт.</em></p>
                                         @endif
                                     </td>
+{{--                                    @dd($productData)--}}
                                     <td class="text-center">
                                         @foreach($productData->additional as $additional)
                                             <div class="p-1 text-decoration-underline">
-                                                {{ $additional }}
+                                                {{ $additional->text }}
                                             </div>
+                                            @if($product->count > 1 && $additional->price)
+                                                <p class="mt-1">
+                                                    <em>({{ ceil($additional->price / $product->count) }} за
+                                                        шт.)</em></p>
+                                            @endif
                                         @endforeach
                                         @isset($productData->salaryForCoefficient)
                                             <div class="p-1">

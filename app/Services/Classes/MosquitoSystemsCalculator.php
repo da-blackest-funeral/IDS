@@ -346,7 +346,10 @@
                     }
                 }
 
-                $items->push("Доп. за $item->name: $additionalPrice");
+                $items->push([
+                    'text' => "Доп. за $item->name: " . $additionalPrice * $this->count,
+                    'price' => $additionalPrice * $this->count
+                ]);
                 $additionalCollection->push($item);
 
                 $this->price += $additionalPrice ?? 0;
