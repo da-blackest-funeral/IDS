@@ -2,6 +2,7 @@
 
 namespace App\Services\Interfaces;
 
+use App\Models\ProductInOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
@@ -32,4 +33,6 @@ interface Calculator
     public function getInstallationPrice();
 
     public function getInstallation($property = null);
+
+    public function calculateSalaryForCount(int $count, ProductInOrder $productInOrder);
 }

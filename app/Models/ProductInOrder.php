@@ -34,6 +34,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|ProductInOrder whereUserId($value)
  * @property int $installation_id
  * @method static \Illuminate\Database\Eloquent\Builder|ProductInOrder whereInstallationId($value)
+ * @property-read \App\Models\Order|null $order
  */
 class ProductInOrder extends Model
 {
@@ -42,4 +43,8 @@ class ProductInOrder extends Model
     protected $table = 'products';
 
     protected $guarded = [];
+
+    public function order() {
+        return $this->belongsTo(Order::class);
+    }
 }

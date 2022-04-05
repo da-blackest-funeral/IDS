@@ -126,7 +126,7 @@
                                 <td class="text-center align-middle">{{ $order->products_count }}</td>
                                 <td class="text-center align-middle">{{ $order->measuring_price }}</td>
                                 <td class="text-center align-middle">{{ $order->delivery }}</td>
-                                <td class="text-center align-middle">{{ $order->salary->sum ?? 'Не готово' }}</td>
+                                <td class="text-center align-middle">{{ $order->salaries()->get()->sum('sum') ?? 'Не готово' }}</td>
                                 <td class="text-center align-middle">{{ \Carbon\Carbon::parse($order->created_at)->format('d.m.Y') }}</td>
                             </tr>
                             </tbody>

@@ -78,7 +78,7 @@
                     </div>
                     <div class="col-10 col-md-3 mt-1" id="items">
                         {{-- Сюда грузится второй селект --}}
-                        @if($needPreload ?? false)
+                        @if(isset($needPreload, $product) && $needPreload)
                             @include('ajax.second-select', [
                                 'data' => tissues($product->category_id),
                                 'link' => '/ajax/mosquito-systems/profile',
@@ -90,7 +90,7 @@
                     </div>
                     <div class="col-10 col-md-3 mt-1" id="third">
                         {{-- Место для третьего селекта --}}
-                        @if($needPreload ?? false)
+                        @if(isset($needPreload, $product) && $needPreload)
                             {{--                            @dump($product)--}}
                             @include('ajax.mosquito-systems.profiles', [
                                 'data' => profiles($product),
@@ -103,7 +103,7 @@
                     </div>
                 </div>
                 <div class="mt-4 pb-3" id="additional">
-                    @if($needPreload ?? false)
+                    @if(isset($needPreload, $product) && $needPreload)
                         @include('ajax.mosquito-systems.additional', additional($product))
                     @endif
                     {{-- Место для дополнительных опций --}}

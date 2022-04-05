@@ -51,7 +51,12 @@
 
             $order->update();
 
-            newProduct($calculator, $order->refresh());
+            $product = newProduct($calculator, $order->refresh());
+
+            updateOrCreateSalary($product, $calculator);
+            // todo начисление новой зарплаты
+            // если такой товар с таким типом уже был найден, то зарплату обновлять и увеличивать,
+            // иначе прибавлять к зарплате новую
 
             return redirect(route('order', ['order' => $order->id]));
         }

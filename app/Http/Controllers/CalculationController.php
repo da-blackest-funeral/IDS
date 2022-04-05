@@ -11,7 +11,7 @@
 
     class CalculationController extends Controller
     {
-        
+
         protected Request $request;
         protected Calculator $calculator;
 
@@ -44,7 +44,7 @@
             createSalary($order, $calculator);
 
             // todo тут сделано только для москитных систем (возможно, удастся сделать это реюзабельным)
-            createProductInOrder($order, $calculator);
+            newProduct($order, $calculator);
 
             session()->flash('success', ['Заказ успешно создан!']);
 

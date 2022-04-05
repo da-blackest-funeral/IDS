@@ -71,6 +71,7 @@
     function createSalary(Order $order, Calculator $calculator) {
         return InstallerSalary::create([
             'installer_id' => $order->installer_id,
+            'category_id' => \request()->input('categories'),
             'order_id' => $order->id,
             'sum' => $calculator->getInstallersWage(),
             'comment' => 'Пока не готово',
@@ -81,9 +82,15 @@
         ]);
     }
 
-    function updateSalary(int|float $sum, Order $order) {
-        $order->salary->sum = $sum;
-        $order->salary->update();
+    function updateSalary(int|float $sum, ProductInOrder $productInOrder) {
+        $salary = $productInOrder
+            ->order
+            ->salaries()
+            ->whereCategoryId($productInOrder->category_id)
+            ->first();
+
+        $salary->sum = $sum;
+        $salary->update();
     }
 
     function warning(string $text) {

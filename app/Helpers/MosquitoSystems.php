@@ -6,6 +6,7 @@
     use App\Models\Order;
     use App\Models\ProductInOrder;
     use App\Services\Classes\MosquitoSystemsCalculator;
+    use App\Services\Interfaces\Calculator;
 
     // todo отрефакторить этот метод, т.к. не нужно "склеивать" два товара в один если они одинаковые
     function createProductInOrder(Order $order, MosquitoSystemsCalculator $calculator) {
@@ -39,9 +40,23 @@
                         (int)request()->input('count'),
                         $product
                     ),
-                    $order
+                    $product
                 );
             }
+        }
+    }
+
+    function updateOrCreateSalary(ProductInOrder $productInOrder, Calculator $calculator) {
+        $products = ProductInOrder::whereCategoryId($productInOrder->category_id);
+        if ($products->exists()) {
+            $products = $products->get('count');
+            $count = $products->sum('count');
+            updateSalary(
+                $calculator->calculateSalaryForCount($count, $productInOrder),
+                $productInOrder
+            );
+         } else {
+            createSalary($productInOrder->order, $calculator);
         }
     }
 

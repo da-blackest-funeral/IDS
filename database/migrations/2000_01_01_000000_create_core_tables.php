@@ -45,6 +45,7 @@
                 $table->id();
                 $table->foreignId('installer_id');
                 $table->foreignId('order_id');
+                $table->foreignId('category_id');
                 $table->float('sum');
                 $table->text('comment');
                 $table->boolean('status')

@@ -81,7 +81,7 @@ class Order extends Model
         return $this->hasMany(ProductInOrder::class);
     }
 
-    public function salary() {
-        return $this->hasOne(InstallerSalary::class);
+    public function salaries() {
+        return $this->hasMany(InstallerSalary::class);
     }
 }
