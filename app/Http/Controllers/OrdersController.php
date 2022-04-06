@@ -31,39 +31,11 @@
             );
         }
 
-        public function addProduct(Calculator $calculator, Request $request, Order $order) {
-            $this->request = $request;
-            $this->calculator = $calculator;
-
-            $this->calculator->calculate();
-            $newProductPrice = $this->calculator->getPrice();
-
-            if ($order->measuring) {
-                $newProductPrice -= $this->calculator->getMeasuringPrice();
-            }
-
-            if ($order->delivery) {
-                $newProductPrice -= $this->calculator->getDeliveryPrice();
-            }
-
-            $order->price += $newProductPrice;
-            $order->products_count += $calculator->getCount();
-
-            $order->update();
-
-            $product = newProduct($calculator, $order->refresh());
-
-            updateOrCreateSalary($product, $calculator);
-            // todo начисление новой зарплаты
-            // если такой товар с таким типом уже был найден, то зарплату обновлять и увеличивать,
-            // иначе прибавлять к зарплате новую
+        public function addProduct(Calculator $calculator, Order $order) {
+            addProductToOrder($calculator, $order);
 
             return redirect(route('order', ['order' => $order->id]));
         }
 
-        public function updateProduct(ProductInOrder $product) {
-            // todo при обновлении уже существующего товара нужно
-            // 1) обновить зарплату монтажнику
-            // 2) пересчитать сумму заказа
-        }
+        // todo функция которая обновляет общие данные о заказе
     }

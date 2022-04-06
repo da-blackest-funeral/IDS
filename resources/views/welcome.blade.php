@@ -65,6 +65,7 @@
                             <tbody>
                             @foreach($products as $product)
                                 @php($productData = json_decode($product->data))
+{{--                                @dump($productData)--}}
                                 <tr style="cursor:pointer;" onclick="
                                     window.location ='{{ route('product-in-order', [
                                         'order' => $orderNumber,
@@ -105,6 +106,7 @@
                                                 <strong>{{ $productData->salaryForCoefficient }}</strong>
                                             </div>
                                         @endisset
+                                        {{-- todo сделать вывод поля Итого --}}
                                     </td>
                                 </tr>
                             @endforeach

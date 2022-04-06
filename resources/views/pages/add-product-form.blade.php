@@ -10,9 +10,13 @@
         @endif
         {{-- todo когда добавлени заказ на странице /orders/{order} тут автозаполняется при добавлении товара --}}
         <div class="container-fluid bg-light mt-4" style="min-height: 250px;">
+{{--            @dump(json_decode($product->data))--}}
             <form method="POST" class="form-group">
                 @csrf
                 <input type="hidden" value="{{ $orderNumber }}" name="order_id">
+                @isset($product)
+                    <input type="hidden" value="{{ $product->id }}" name="product_id">
+                @endisset
                 <div class="row">
                     <div class="col-12">
 

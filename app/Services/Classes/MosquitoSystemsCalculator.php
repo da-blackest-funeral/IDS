@@ -4,7 +4,6 @@
 
     use App\Models\MosquitoSystems\Product;
     use App\Models\MosquitoSystems\Type;
-    use App\Models\Order;
     use App\Models\ProductInOrder;
     use App\Models\SystemVariables;
     use Illuminate\Database\Eloquent\Builder;
@@ -80,15 +79,6 @@
                 ]);
             }
 
-//            try {
-//                $this->order = Order::findOrFail($this->request->get('order_id'));
-//            } catch(\Exception $exception) {
-//                \Debugbar::warning($exception->getMessage());
-//                return view('welcome')->withErrors([
-//                    'not_found' => 'Заказ не найден',
-//                ]);
-//            }
-
             if ($this->hasCoefficient()) {
                 $this->coefficient = $this->request->get('coefficient');
             }
@@ -156,16 +146,14 @@
         }
 
         protected function setSalaryForInstallationDifficult() {
-            $additionalSalary = (int) ceil(
+            $additionalSalary = (int)ceil(
                     $this->installationPrice *
                     ($this->request->get('coefficient') - 1)
                 ) * SystemVariables::coefficientSalaryForDifficult();
 
             $this->installersWage += $additionalSalary;
 
-            // todo это надо пушить в options с ключом additional
             $this->options->put('salaryForCoefficient', "Доп. зарплата за коэффициент сложности: $additionalSalary");
-//            $this->additional->push("Доп. зарплата за коэффициент сложности: $additionalSalary");
         }
 
         /**
@@ -316,18 +304,18 @@
 
             $additional = $this->getTypeAdditional($ids)
                 // Writing to options selected groups
-                ->each(function ($item) {
-                    $this->options->put("group-$item->group_id", $item->additional_id);
+                ->each(function ($option) {
+                    $this->options->put("group-$option->group_id", $option->additional_id);
                 });
 
             // Items will be displayed to user
             $items = new Collection();
             $additionalCollection = new Collection();
 
-            foreach ($additional as $item) {
-                $additionalPrice = $item->price;
+            foreach ($additional as $add) {
+                $additionalPrice = $add->price;
 
-                if (!$this->additionalIsInstallation($item)) {
+                if (!$this->additionalIsInstallation($add)) {
                     $additionalPrice *= $this->squareCoefficient;
                 } else {
                     // If customer need fast creating, installation price increases
@@ -347,10 +335,10 @@
                 }
 
                 $items->push([
-                    'text' => "Доп. за $item->name: " . $additionalPrice * $this->count,
-                    'price' => $additionalPrice * $this->count
+                    'text' => "Доп. за $add->name: " . $additionalPrice * $this->count,
+                    'price' => $additionalPrice * $this->count,
                 ]);
-                $additionalCollection->push($item);
+                $additionalCollection->push($add);
 
                 $this->price += $additionalPrice ?? 0;
             }
@@ -440,9 +428,15 @@
                 // todo если добавить другой товар, которого еще не было, то
                 // считается общее количество ВСЕХ товаров (а не конкретного типа) и зарплата не прибавляется
                 // а заменяется этим значением
-                $missingCount = productsCount($this->order) - $salary->count;
+
+                // Если это страница обновления товара
+                if ($this->request->has('product_id')) {
+                    $missingCount = $this->request->get('count') - $salary->count;
+                } else {
+                    $missingCount = productsCount($productInOrder) - $salary->count;
+                }
+
                 $result = $salary->salary + $missingCount * $salary->salary_for_count;
-//                dd($result);
             }
 
             return $result;
@@ -478,31 +472,25 @@
 
         /**
          * Determines if additional belongs to installation group of services
+         * @TODO сделать отдельную функцию которая проходит по всем additional и выставляет ПРАВИЛЬНО needInstallation
          *
          * @param $additional
          * @return bool
          */
         protected function additionalIsInstallation($additional): bool {
+            if ($additional->name != 'Без монтажа' && $additional->group_name == 'Монтаж') {
+                $this->needInstallation = true;
+                $this->installation = $additional;
+                return true;
+            }
+
             if ($additional->name == 'Без монтажа') {
                 $this->needInstallation = false;
                 $this->installation = $additional;
                 return false;
             }
 
-            if (get_class($additional) != 'App\Models\MosquitoSystems\Additional') {
-                if ($additional->group_name == 'Монтаж' && $additional->name != 'Без монтажа') {
-                    $this->needInstallation = true;
-                    $this->installation = $additional;
-                }
-                return $additional->group_name == 'Монтаж' && $additional->name != 'Без монтажа';
-            } else {
-                if ($additional->name != 'Без монтажа' && $additional->group->name == 'Монтаж') {
-                    $this->needInstallation = true;
-                    $this->installation = $additional;
-                }
-                return $additional->name != 'Без монтажа';
-            }
-
+            return false;
         }
 
         /**

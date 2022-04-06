@@ -51,7 +51,12 @@
             ->whereOrderId($productInOrder->order_id);
         if ($products->exists() && salary($productInOrder)->exists()) {
 
-            $count = $products->get('count')->sum('count');
+            // Если это страница обновления товара, то количество берем новое
+            if (request()->has('product_id')) {
+                $count = request()->input('count');
+            } else {
+                $count = $products->get('count')->sum('count');
+            }
             updateSalary(
                 $calculator->calculateSalaryForCount($count, $productInOrder),
                 $productInOrder
@@ -61,7 +66,7 @@
         }
     }
 
-    function productsCount(Order $order) {
+    function productsCount(ProductInOrder $productInOrder) {
 //        dd(
 //            $productInOrder->order
 //                ->products
@@ -69,7 +74,8 @@
 //                    return $item->category_id == $productInOrder->category_id;
 //                })->sum('count')
 //        );
-        return $order
+        return $productInOrder
+            ->order
             // todo тут ебаная церковь у меня не фильтруются products по category_id
             // из бд поэтому я сделал фильтрацию по коллекции
             ->products

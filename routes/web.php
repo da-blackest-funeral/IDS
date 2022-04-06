@@ -28,13 +28,17 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/', [CalculationController::class, 'save']);
 
-    Route::get('/orders/{order}', [OrdersController::class, 'order'])
-        ->name('order');
+    Route::prefix('orders')->group(function () {
+        Route::get('/{order}', [OrdersController::class, 'order'])
+            ->name('order');
 
-    Route::post('/orders/{order}', [OrdersController::class, 'addProduct']);
+        Route::post('/{order}', [OrdersController::class, 'addProduct']);
 
-    Route::get('/orders/{order}/{productInOrder}', [ProductController::class, 'index'])
-        ->name('product-in-order');
+        Route::get('/{order}/{productInOrder}', [ProductController::class, 'index'])
+            ->name('product-in-order');
+
+        Route::post('/{order}/{productInOrder}', [ProductController::class, 'update']);
+    });
 
     Route::view('/documents', 'pages.documents')
         ->name('documents');

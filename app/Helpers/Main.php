@@ -99,3 +99,44 @@
     function warning(string $text) {
         session()->push('warnings', $text);
     }
+
+    function addProductToOrder(Calculator $calculator, Order $order) {
+        $calculator->calculate();
+        $newProductPrice = $calculator->getPrice();
+
+        if ($order->measuring) {
+            $newProductPrice -= $calculator->getMeasuringPrice();
+        }
+
+        if ($order->delivery) {
+            $newProductPrice -= $calculator->getDeliveryPrice();
+        }
+
+        $order->price += $newProductPrice;
+        $order->products_count += $calculator->getCount();
+
+        $order->update();
+
+        $product = newProduct($calculator, $order->refresh());
+
+        updateOrCreateSalary($product, $calculator);
+    }
+
+    function hasInstallationInOrder(Order $order): bool {
+        return $order->products->contains(function ($product) {
+            $productData = json_decode($product->data);
+            foreach ($productData->additional as $additional) {
+                if (isInstallation($additional)) {
+                    return true;
+                }
+            }
+
+            return false;
+        });
+    }
+
+    function isInstallation(object $additional): bool {
+        return
+            str_contains(strtolower($additional->text), 'монтаж') &&
+            (int) $additional->price;
+    }
