@@ -65,7 +65,7 @@
                             <tbody>
                             @foreach($products as $product)
                                 @php($productData = json_decode($product->data))
-{{--                                @dump($productData)--}}
+{{--                                @dump($product)--}}
                                 <tr style="cursor:pointer;" onclick="
                                     window.location ='{{ route('product-in-order', [
                                         'order' => $orderNumber,

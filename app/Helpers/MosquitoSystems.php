@@ -57,6 +57,7 @@
             } else {
                 $count = $products->get('count')->sum('count');
             }
+//            dd($calculator->calculateSalaryForCount($count, $productInOrder));
             updateSalary(
                 $calculator->calculateSalaryForCount($count, $productInOrder),
                 $productInOrder

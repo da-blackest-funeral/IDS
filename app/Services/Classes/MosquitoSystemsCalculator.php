@@ -133,7 +133,7 @@
             $this->calculateInstallationSalary();
 
             if ($this->hasCoefficient()) {
-                $this->setSalaryForInstallationDifficult();
+                $this->salaryForDifficulty();
             }
 
             $this->saveInstallationData();
@@ -143,11 +143,15 @@
             return $this->request->has('coefficient') && $this->request->get('coefficient') != 1;
         }
 
-        protected function setSalaryForInstallationDifficult() {
-            $additionalSalary = (int)ceil(
-                    $this->installationPrice *
-                    ($this->request->get('coefficient') - 1)
-                ) * SystemVariables::value('coefficientSalaryForDifficult');
+        protected function salaryForDifficulty($salary = null) {
+            $additionalSalary = (int) ceil ((
+                $this->installationPrice -
+                $this->installationPrice / $this->coefficient
+            ) * (float) SystemVariables::value('coefficientSalaryForDifficult'));
+
+            if (!is_null($salary)) {
+                return $salary + $additionalSalary;
+            }
 
             $this->installersWage += $additionalSalary;
 
@@ -318,11 +322,8 @@
                     $this->installationPrice = $additionalPrice;
 
                     if ($this->hasCoefficient()) {
-                        $this->additional->push(
-                            "Доп. цена за сложность монтажа: " .
-                            $this->installationPrice * ($this->coefficient - 1)
-                        );
                         $this->installationPrice *= $this->coefficient;
+                        $additionalPrice *= $this->coefficient;
                     }
                 }
 
@@ -333,6 +334,14 @@
                 $additionalCollection->push($add);
 
                 $this->price += $additionalPrice ?? 0;
+            }
+
+            if ($this->hasCoefficient()) {
+                $items->push([
+                    'text' => 'Доп. цена за сложность монтажа: ' . $this->installationPrice -
+                        $this->installationPrice / $this->coefficient,
+                    'price' => 0,
+                ]);
             }
 
             $this->saveAdditional($items);
@@ -401,6 +410,7 @@
             ) {
                 return $this->installersWage;
             }
+
             $installation = $productInOrder->installation_id > 0 && $productInOrder->installation_id != 14 ?
                 $productInOrder->installation_id :
                 $this->installation->additional_id ?? $this->installation->id;
@@ -431,7 +441,14 @@
                 $result = $salary->salary + $missingCount * $salary->salary_for_count;
             }
 
-            return $result;
+//            $this->setSalaryForInstallationDifficult();
+
+//            return $this->setSalaryForInstallationDifficult($result);
+            if ($this->hasCoefficient()) {
+                return $this->salaryForDifficulty($result);
+            } else {
+                return $result;
+            }
         }
 
         protected function getInstallationSalary($installation, $count = null) {

@@ -103,8 +103,9 @@
     function addProductToOrder(Calculator $calculator, Order $order) {
         $calculator->calculate();
         $newProductPrice = $calculator->getPrice();
+//        dd($newProductPrice); тут считает правильно
 
-        if ($order->measuring) {
+        if ($order->measuring_price) {
             $newProductPrice -= $calculator->getMeasuringPrice();
         }
 

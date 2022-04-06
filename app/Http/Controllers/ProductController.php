@@ -36,12 +36,15 @@
 
         public function update(Order $order, ProductInOrder $productInOrder, Calculator $calculator) {
             $productData = json_decode($productInOrder->data);
+//            dd($order->price, $productData->main_price, $productData->additional);
             $order->price -= $productData->main_price;
             $order->products_count -= $productInOrder->count;
 
             foreach ($productData->additional as $additional) {
                 $order->price -= $additional->price;
             }
+
+            // todo при обновлении товара если выставить ему коэффициент сложности то сумма заказа неправильно считается
 
             $order->update();
 
