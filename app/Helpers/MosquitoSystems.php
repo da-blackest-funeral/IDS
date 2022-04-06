@@ -34,7 +34,7 @@
 
         } else {
             $product = newProduct($calculator, $order);
-            if ($calculator->isNeedInstallation()) {
+            if ($calculator->productNeedsInstallation()) {
                 updateSalary(
                     $calculator->calculateSalaryForCount(
                         (int)request()->input('count'),

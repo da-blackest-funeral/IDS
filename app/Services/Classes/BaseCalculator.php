@@ -125,7 +125,7 @@
         /**
          * @return bool
          */
-        public function isNeedInstallation(): bool {
+        public function productNeedsInstallation(): bool {
             return $this->needInstallation;
         }
 

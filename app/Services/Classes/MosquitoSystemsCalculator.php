@@ -51,8 +51,6 @@
 
         protected float $coefficient = 1.0;
 
-//        protected Order $order;
-
         public function __construct(Request $request) {
             parent::__construct($request);
 
@@ -149,7 +147,7 @@
             $additionalSalary = (int)ceil(
                     $this->installationPrice *
                     ($this->request->get('coefficient') - 1)
-                ) * SystemVariables::coefficientSalaryForDifficult();
+                ) * SystemVariables::value('coefficientSalaryForDifficult');
 
             $this->installersWage += $additionalSalary;
 
@@ -161,9 +159,7 @@
          */
         protected function checkDeliverySalary() {
             if (!$this->needInstallation) {
-                $this->installersWage += SystemVariables::where('name', 'delivery')
-                    ->first()
-                    ->value;
+                $this->installersWage += SystemVariables::value('delivery');
             }
         }
 
@@ -196,11 +192,9 @@
         }
 
         protected function setMeasuringPrice(): void {
-            $measuring = SystemVariables::where('name', 'measuring')
-                ->first(['value', 'description']);
+            $measuring = SystemVariables::byName('measuring');
 
-            $measuringWage = SystemVariables::where('name', 'measuringWage')
-                ->first(['value', 'description']);
+            $measuringWage = SystemVariables::byName('measuringWage');
 
             $this->measuringSalary += $measuringWage->value;
 
@@ -223,15 +217,13 @@
 
             $distance = (float)$this->request->get('kilometres');
 
-            $additionalDistancePrice = SystemVariables::where('name', 'additionalPriceDeliveryPerKm')
-                ->first();
+            $additionalDistancePrice = SystemVariables::byName('additionalPriceDeliveryPerKm');
 
             $this->deliveryPrice += $additionalDistancePrice->value * $distance;
 
             $this->deliveryPrice += $this->type->delivery;
 
-            $additionalDistanceWage = SystemVariables::where('name', 'additionalWagePerKm')
-                ->first();
+            $additionalDistanceWage = SystemVariables::byName('additionalWagePerKm');
             $salaryForAdditionalDelivery = $additionalDistanceWage->value * $distance;
 
             // Цена за доп. км. и зп за доставку за замер считаются отдельно от выбора "нужна доставка"
@@ -258,11 +250,11 @@
             try {
                 // Decreasing price if customer need repairing instead new
                 if ($this->request->has('new') && !$this->request->get('new')) {
-                    $this->product->price *= SystemVariables::repairCoefficient();
+                    $this->product->price *= SystemVariables::value('repairCoefficient');
                 }
                 // Increasing price if customer need product to be created faster
                 if ($this->request->has('fast') && $this->request->get('fast')) {
-                    $this->product->price *= SystemVariables::coefficientFastCreating();
+                    $this->product->price *= SystemVariables::value('coefficientFastCreating');
                 }
 
                 $this->price += $this->product->price * $this->squareCoefficient;
@@ -320,7 +312,7 @@
                 } else {
                     // If customer need fast creating, installation price increases
                     if ($this->request->has('fast') && $this->request->get('fast')) {
-                        $additionalPrice *= SystemVariables::coefficientFastCreating();
+                        $additionalPrice *= SystemVariables::value('coefficientFastCreating');
                     }
 
                     $this->installationPrice = $additionalPrice;

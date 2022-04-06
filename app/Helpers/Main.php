@@ -122,7 +122,7 @@
         updateOrCreateSalary($product, $calculator);
     }
 
-    function hasInstallationInOrder(Order $order): bool {
+    function orderHasInstallation(Order $order): bool {
         return $order->products->contains(function ($product) {
             $productData = json_decode($product->data);
             foreach ($productData->additional as $additional) {

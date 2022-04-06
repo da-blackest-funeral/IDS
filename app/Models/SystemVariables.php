@@ -25,23 +25,11 @@ class SystemVariables extends Model
 {
     use HasFactory;
 
-    public static function oneCameraPrice() {
-        return self::whereName('oneCamGlazedWindow')->first();
+    public static function byName(string $varName, array $columns = ['value', 'description']) {
+        return self::whereName($varName)->firstOrFail($columns);
     }
 
-    public static function twoCameraPrice() {
-        return self::whereName('twoCamGlazedWindow')->first();
-    }
-
-    public static function repairCoefficient() {
-        return self::whereName('repairCoefficient')->first()->value;
-    }
-
-    public static function coefficientFastCreating() {
-        return self::whereName('coefficientFastCreating')->first()->value;
-    }
-
-    public static function coefficientSalaryForDifficult() {
-        return self::whereName('coefficientSalaryForDifficult')->first()->value;
+    public static function value(string $varName) {
+        return self::whereName($varName)->firstOrFail()->value;
     }
 }
