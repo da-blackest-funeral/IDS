@@ -155,7 +155,8 @@
 
             $this->installersWage += $additionalSalary;
 
-            $this->options->put('salaryForCoefficient', "Доп. зарплата за коэффициент сложности: $additionalSalary");
+            $this->options->put('coefficient', $this->coefficient)
+                ->put('salaryForCoefficient', "Доп. зарплата за коэффициент сложности: $additionalSalary");
         }
 
         /**

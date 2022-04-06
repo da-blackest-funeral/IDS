@@ -141,3 +141,7 @@
             str_contains(strtolower($additional->text), 'монтаж') &&
             (int) $additional->price;
     }
+
+    function equals(float|int $first, float|int $second) {
+        return strval($first) === strval($second);
+    }

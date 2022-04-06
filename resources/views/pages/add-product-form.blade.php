@@ -8,15 +8,14 @@
         @if(!isOrderPage())
             <p class="h4 mt-3">Заказ №{{ $orderNumber }}</p>
         @endif
-        {{-- todo когда добавлени заказ на странице /orders/{order} тут автозаполняется при добавлении товара --}}
         <div class="container-fluid bg-light mt-4" style="min-height: 250px;">
-{{--            @dump(json_decode($product->data))--}}
             <form method="POST" class="form-group">
                 @csrf
                 <input type="hidden" value="{{ $orderNumber }}" name="order_id">
                 @isset($product)
                     <input type="hidden" value="{{ $product->id }}" name="product_id">
                 @endisset
+                {{-- todo это что? --}}
                 <div class="row">
                     <div class="col-12">
 
@@ -95,7 +94,6 @@
                     <div class="col-10 col-md-3 mt-1" id="third">
                         {{-- Место для третьего селекта --}}
                         @if(isset($needPreload, $product) && $needPreload)
-                            {{--                            @dump($product)--}}
                             @include('ajax.mosquito-systems.profiles', [
                                 'data' => profiles($product),
                                 'selected' => $productData->profileId
@@ -107,10 +105,10 @@
                     </div>
                 </div>
                 <div class="mt-4 pb-3" id="additional">
+                    {{-- Место для дополнительных опций --}}
                     @if(isset($needPreload, $product) && $needPreload)
                         @include('ajax.mosquito-systems.additional', additional($product))
                     @endif
-                    {{-- Место для дополнительных опций --}}
                 </div>
                 <div class="mt-4 pb-3" id="bracing">
                     {{-- Место для "добавить дополнительное крепление" --}}
