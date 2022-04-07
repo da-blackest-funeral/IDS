@@ -8,7 +8,6 @@
     use App\Services\Classes\MosquitoSystemsCalculator;
     use App\Services\Interfaces\Calculator;
 
-    // todo отрефакторить этот метод, т.к. не нужно "склеивать" два товара в один если они одинаковые
     function createProductInOrder(Order $order, MosquitoSystemsCalculator $calculator) {
         $products = ProductInOrder::whereOrderId($order->id)
             ->where('name', $calculator->getProduct()->name())
@@ -57,7 +56,6 @@
             } else {
                 $count = $products->get('count')->sum('count');
             }
-//            dd($calculator->calculateSalaryForCount($count, $productInOrder));
             updateSalary(
                 $calculator->calculateSalaryForCount($count, $productInOrder),
                 $productInOrder
@@ -68,13 +66,6 @@
     }
 
     function productsCount(ProductInOrder $productInOrder) {
-//        dd(
-//            $productInOrder->order
-//                ->products
-//                ->filter(function ($item) use ($productInOrder) {
-//                    return $item->category_id == $productInOrder->category_id;
-//                })->sum('count')
-//        );
         return $productInOrder
             ->order
             // todo тут ебаная церковь у меня не фильтруются products по category_id

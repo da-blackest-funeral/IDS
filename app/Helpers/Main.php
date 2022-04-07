@@ -71,7 +71,7 @@
     function createSalary(Order $order, Calculator $calculator) {
         return InstallerSalary::create([
             'installer_id' => $order->installer_id,
-            'category_id' => \request()->input('categories'),
+            'category_id' => request()->input('categories'),
             'order_id' => $order->id,
             'sum' => $calculator->getInstallersWage(),
             'comment' => 'Пока не готово',
@@ -139,9 +139,30 @@
     function isInstallation(object $additional): bool {
         return
             str_contains(strtolower($additional->text), 'монтаж') &&
-            (int) $additional->price;
+            (int)$additional->price;
     }
 
     function equals(float|int $first, float|int $second) {
         return strval($first) === strval($second);
+    }
+
+    function selectedGroups() {
+        $i = 1;
+        $ids = [];
+        while (request()->has("group-$i")) {
+            $ids[] = request()->input("group-$i");
+            $i++;
+        }
+
+        return $ids;
+    }
+
+    function jsonData(string $file) {
+        return collect(
+            json_decode(
+                file_get_contents(
+                    app_path("Services/Config/$file.json")
+                )
+            )
+        );
     }

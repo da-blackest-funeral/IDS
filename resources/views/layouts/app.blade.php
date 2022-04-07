@@ -11,7 +11,6 @@
 
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
-    {{--    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">--}}
     <link rel="stylesheet" type="text/css" href="{{ asset('css/app.css') }}"/>
 
 </head>
@@ -21,25 +20,20 @@
 </header>
 
 <main class="main">
-    {{--    @section('success')--}}
-    {{--        <div class="alert-success h-25 w-25 bordered">--}}
-    {{--            {{ session()->pull('registered') }}--}}
-    {{--        </div>--}}
-    {{--    @show--}}
 
-    <div class="w-25 h-25 ml-3">
+    <div class="h-25 ml-3" style="min-width: 200px; max-width: 550px;">
         @include('components.errors')
     </div>
 
-    <div class="w-25 h-25 ml-3">
+    <div class="h-25 ml-3" style="min-width: 200px; max-width: 550px;">
         @include('components.success')
     </div>
 
 
-    <div class="w-25 h-25 ml-3" onclick="$('#notification').hide(600); $('#notifications').hide(500);">
+    <div class="h-25 ml-3" style="min-width: 200px; max-width: 550px;"
+         onclick="$('#notification').hide(600); $('#notifications').hide(500);">
         @include('components.notifications')
     </div>
-
 
     @yield('content')
 </main>

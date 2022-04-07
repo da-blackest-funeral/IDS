@@ -276,17 +276,6 @@
             return $this;
         }
 
-        protected function getSelectedIds() {
-            $i = 1;
-            $ids = [];
-            while ($this->request->has("group-$i")) {
-                $ids[] = $this->request->get("group-$i");
-                $i++;
-            }
-
-            return $ids;
-        }
-
         /**
          * Secondary, need to calculate price of all additional options.
          * Additional is the service of the accessory, that may be added to product.
@@ -297,7 +286,7 @@
          * values of additional ids as option's values.
          */
         protected function calculatePriceForAdditional() {
-            $ids = $this->getSelectedIds();
+            $ids = selectedGroups();
 
             $additional = $this->getTypeAdditional($ids)
                 // Writing to options selected groups
