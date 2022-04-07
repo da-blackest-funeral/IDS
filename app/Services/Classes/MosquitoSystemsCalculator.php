@@ -413,17 +413,14 @@
             if ($salary != null) {
                 $result = $salary->salary;
             } else {
-                // todo при добавлении нового товара сюда код даже не заходит и считает зарплату неправильно
+//                 todo при добавлении нового товара сюда код даже не заходит и считает зарплату неправильно
                 $salary = $this->salaryWhenNotFoundSpecificCount($installation);
-                // todo количество на которое умножаем должно считаться так:
-                // общее количество товаров этого типа в заказе - salary->count
-                // todo если добавить другой товар, которого еще не было, то
-                // считается общее количество ВСЕХ товаров (а не конкретного типа) и зарплата не прибавляется
-                // а заменяется этим значением
 
                 // Если это страница обновления товара
-                if ($this->request->has('product_id')) {
-                    $missingCount = $this->request->get('count') - $salary->count;
+                if (fromUpdatingProductPage()) {
+                    // todo зарплата тут считается по количеству из данного запроса, нужно сделать так чтобы считало
+                    // и старые товары тоже
+                    $missingCount = productsCount($productInOrder) - $salary->count - session()->pull('oldCount', 0);
                 } else {
                     $missingCount = productsCount($productInOrder) - $salary->count;
                 }
@@ -431,9 +428,6 @@
                 $result = $salary->salary + $missingCount * $salary->salary_for_count;
             }
 
-//            $this->setSalaryForInstallationDifficult();
-
-//            return $this->setSalaryForInstallationDifficult($result);
             if ($this->hasCoefficient()) {
                 return $this->salaryForDifficulty($result);
             } else {

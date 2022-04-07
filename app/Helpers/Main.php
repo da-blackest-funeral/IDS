@@ -14,8 +14,12 @@
         return Route::is('new-order', 'order');
     }
 
+    function fromUpdatingProductPage() {
+        return Route::getRoutes()->match(app('request')->create(url()->previous()))->getName() == 'product-in-order';
+    }
+
     function notify($text) {
-        session()->flash('notifications', [$text]);
+        session()->push('notifications', $text);
     }
 
     function createOrder(Calculator $calculator) {
@@ -103,7 +107,6 @@
     function addProductToOrder(Calculator $calculator, Order $order) {
         $calculator->calculate();
         $newProductPrice = $calculator->getPrice();
-//        dd($newProductPrice); тут считает правильно
 
         if ($order->measuring_price) {
             $newProductPrice -= $calculator->getMeasuringPrice();

@@ -39,6 +39,7 @@
 //            dd($order->price, $productData->main_price, $productData->additional);
             $order->price -= $productData->main_price;
             $order->products_count -= $productInOrder->count;
+            session()->put('oldCount', $productInOrder->count);
 
             foreach ($productData->additional as $additional) {
                 $order->price -= $additional->price;
