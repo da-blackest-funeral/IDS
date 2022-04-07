@@ -6,7 +6,6 @@
     use App\Models\Category;
     use App\Models\Order;
     use App\Models\ProductInOrder;
-    use App\Models\SystemVariables;
     use App\Services\Interfaces\Calculator;
 
     class ProductController extends Controller
@@ -51,13 +50,11 @@
 
             addProductToOrder($calculator, $order->refresh());
 
-            if (orderHasInstallation($order) || $calculator->productNeedsInstallation()) {
-                $order->measuring_price = 0;
-            } else {
-                $order->measuring_price = SystemVariables::value('measuring');
-                // Прибавить к зп монтажника стоимости замера и доставки, если они заданы
-                updateSalary($calculator->getInstallersWage(), $productInOrder);
-            }
+            checkSalaryForMeasuringAndDelivery(
+                order: $order,
+                calculator: $calculator,
+                productInOrder: $productInOrder
+            );
 
             $productInOrder->delete();
             $order->update();

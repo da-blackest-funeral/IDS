@@ -6,6 +6,7 @@
     use App\Models\Order;
     use App\Models\ProductInOrder;
     use App\Models\Salaries\InstallerSalary;
+    use App\Models\SystemVariables;
     use App\Services\Interfaces\Calculator;
 
     require_once 'MosquitoSystems.php';
@@ -104,6 +105,16 @@
         session()->push('warnings', $text);
     }
 
+    function checkSalaryForMeasuringAndDelivery(Order $order, Calculator $calculator, ProductInOrder $productInOrder) {
+        if (orderHasInstallation($order) || $calculator->productNeedsInstallation()) {
+            $order->measuring_price = 0;
+        } else {
+            $order->measuring_price = SystemVariables::value('measuring');
+            // Прибавить к зп монтажника стоимости замера и доставки, если они заданы
+            updateSalary($calculator->getInstallersWage(), $productInOrder);
+        }
+    }
+
     function addProductToOrder(Calculator $calculator, Order $order) {
         $calculator->calculate();
         $newProductPrice = $calculator->getPrice();
@@ -124,6 +135,8 @@
         $product = newProduct($calculator, $order->refresh());
 
         updateOrCreateSalary($product, $calculator);
+
+        return $product;
     }
 
     function orderHasInstallation(Order $order): bool {

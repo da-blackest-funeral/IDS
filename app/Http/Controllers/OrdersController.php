@@ -32,7 +32,13 @@
         }
 
         public function addProduct(Calculator $calculator, Order $order) {
-            addProductToOrder($calculator, $order);
+            $productInOrder = addProductToOrder($calculator, $order);
+
+            checkSalaryForMeasuringAndDelivery(
+                order: $order,
+                calculator: $calculator,
+                productInOrder: $productInOrder
+            );
 
             return redirect(route('order', ['order' => $order->id]));
         }
