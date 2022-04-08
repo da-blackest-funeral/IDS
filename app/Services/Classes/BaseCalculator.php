@@ -123,13 +123,6 @@
         }
 
         /**
-         * @return bool
-         */
-        public function productNeedsInstallation(): bool {
-            return $this->needInstallation;
-        }
-
-        /**
          * @return float
          */
         public function getInstallationPrice(): float {
@@ -148,6 +141,13 @@
          */
         public function getCategoryId(): int {
             return $this->categoryId;
+        }
+
+        /**
+         * @return bool
+         */
+        public function productNeedInstallation(): bool {
+            return $this->needInstallation;
         }
 
         /**

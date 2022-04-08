@@ -139,11 +139,11 @@
             $this->saveInstallationData();
         }
 
-        protected function hasCoefficient() {
+        public function hasCoefficient() {
             return $this->request->has('coefficient') && $this->request->get('coefficient') != 1;
         }
 
-        protected function salaryForDifficulty($salary = null) {
+        public function salaryForDifficulty($salary = null) {
             $additionalSalary = (int) ceil ((
                 $this->installationPrice -
                 $this->installationPrice / $this->coefficient
@@ -416,13 +416,10 @@
 //                 todo при добавлении нового товара сюда код даже не заходит и считает зарплату неправильно
                 $salary = $this->salaryWhenNotFoundSpecificCount($installation);
 
+                $missingCount = productsCount($productInOrder) - $salary->count;
                 // Если это страница обновления товара
                 if (fromUpdatingProductPage()) {
-                    // todo зарплата тут считается по количеству из данного запроса, нужно сделать так чтобы считало
-                    // и старые товары тоже
-                    $missingCount = productsCount($productInOrder) - $salary->count - session()->pull('oldCount', 0);
-                } else {
-                    $missingCount = productsCount($productInOrder) - $salary->count;
+                    $missingCount -= session()->pull('oldCount', 0);
                 }
 
                 $result = $salary->salary + $missingCount * $salary->salary_for_count;
@@ -430,22 +427,22 @@
 
             if ($this->hasCoefficient()) {
                 return $this->salaryForDifficulty($result);
-            } else {
-                return $result;
             }
+
+            return $result;
         }
 
-        protected function getInstallationSalary($installation, $count = null) {
+        public function getInstallationSalary($installation, $count = null, int $typeId = null) {
             return \DB::table('mosquito_systems_type_salary')
-                ->where('type_id', $this->type->id)
+                ->where('type_id', $typeId ?? $this->type->id)
                 ->where('additional_id', $installation->additional_id ?? $installation)
                 ->where('count', $count ?? $this->count)
                 ->first();
         }
 
-        protected function salaryWhenNotFoundSpecificCount($installation) {
+        public function salaryWhenNotFoundSpecificCount($installation, int $typeId = null) {
             return \DB::table('mosquito_systems_type_salary')
-                ->where('type_id', $this->type->id)
+                ->where('type_id', $typeId ?? $this->type->id)
                 ->where('additional_id', $installation->additional_id ?? $installation)
                 ->orderByDesc('count')
                 ->first();

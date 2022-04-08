@@ -32,7 +32,11 @@
         }
 
         public function addProduct(Calculator $calculator, Order $order) {
-            $productInOrder = addProductToOrder($calculator, $order);
+
+            $productInOrder = addProductToOrder(
+                calculator: $calculator,
+                order: $order
+            );
 
             checkSalaryForMeasuringAndDelivery(
                 order: $order,

@@ -43,7 +43,7 @@
 
     function newProduct(Calculator $calculator, Order $order) {
         return ProductInOrder::create([
-            'installation_id' => $calculator->getInstallation('additional_id') ?? 0,
+            'installation_id' => $calculator->getInstallation('additional_id'),
             'order_id' => $order->id,
             'name' => $calculator->getProduct()->name(),
             'data' => $calculator->getOptions()->toJson(),
@@ -106,7 +106,7 @@
     }
 
     function checkSalaryForMeasuringAndDelivery(Order $order, Calculator $calculator, ProductInOrder $productInOrder) {
-        if (orderHasInstallation($order) || $calculator->productNeedsInstallation()) {
+        if (orderHasInstallation($order) || $calculator->productNeedInstallation()) {
             $order->measuring_price = 0;
         } else {
             $order->measuring_price = SystemVariables::value('measuring');
@@ -141,14 +141,8 @@
 
     function orderHasInstallation(Order $order): bool {
         return $order->products->contains(function ($product) {
-            $productData = json_decode($product->data);
-            foreach ($productData->additional as $additional) {
-                if (isInstallation($additional)) {
-                    return true;
-                }
-            }
-
-            return false;
+            return !in_array($product->installation_id, [0, 14]);
+//            return $product->installation_id != 14 ;
         });
     }
 

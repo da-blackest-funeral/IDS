@@ -150,7 +150,7 @@
                 $table->foreignId('category_id');
                 $table->string('name');
                 $table->integer('count');
-                $table->integer('installation_id')
+                $table->boolean('installation_id')
                     ->default(0);
                 $table->json('data')
                     ->comment('Все дополнительные данные о заказе');

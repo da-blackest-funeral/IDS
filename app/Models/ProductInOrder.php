@@ -35,6 +35,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $installation_id
  * @method static \Illuminate\Database\Eloquent\Builder|ProductInOrder whereInstallationId($value)
  * @property-read \App\Models\Order|null $order
+ * @property int $need_installation
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductInOrder whereNeedInstallation($value)
  */
 class ProductInOrder extends Model
 {
