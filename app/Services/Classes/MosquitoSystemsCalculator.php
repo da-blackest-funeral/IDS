@@ -149,10 +149,16 @@
         }
 
         public function salaryForDifficulty($salary = null, $price = null, $coefficient = null) {
-            $additionalSalary = (int)ceil((
-                    $price ?? $this->installationPrice -
-                    $price ?? $this->installationPrice / $coefficient ?? $this->coefficient
-                ) * SystemVariables::value('coefficientSalaryForDifficult'));
+            if (is_null($salary) || is_null($price) || is_null($coefficient)) {
+                $price = $this->installationPrice;
+                $coefficient = $this->coefficient;
+            }
+
+            $additionalSalary = (int) ceil(
+                $price *
+                (1 - 1 / $coefficient) *
+                (float)SystemVariables::value('coefficientSalaryForDifficult')
+            );
 
             if (!is_null($salary)) {
                 return $salary + $additionalSalary;
@@ -404,9 +410,9 @@
          * @return float|int|mixed|void
          */
         public function calculateSalaryForCount(
-            int $count,
+            int            $count,
             ProductInOrder $productInOrder,
-            $installation = null
+                           $installation = null
         ) {
             if (
                 $productInOrder->installation_id == 0 &&

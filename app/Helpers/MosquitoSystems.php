@@ -50,31 +50,46 @@
              * у которых задан монтаж, даже если он другой
              */
 
-            if (
-                !orderHasInstallation($productInOrder->order) ||
-                $calculator->productNeedInstallation()
-            ) {
-                updateSalary(
-                    sum: calculateInstallationSalary(
-                        calculator: $calculator,
-                        productInOrder: $productsWithMaxInstallation->first(),
-                        count: $count,
-                    ),
-                    productInOrder: $productInOrder,
-                );
-            } else {
-                $count = countProductsWithInstallation($productInOrder);
-                updateSalary(
-                    // todo возможно сделать через калькулятор
-                    // т.к. там больше деталей учитывается (например коэффициент сложности монтажа)
-                    calculateInstallationSalary(
-                        calculator: $calculator,
-                        productInOrder: $productsWithMaxInstallation->first(),
-                        count: $count,
-                    ),
-                    $productInOrder
-                );
-            }
+            /*
+             * todo проверить, когда разные виды монтажа
+             *  и при этом у некоторых есть коэффициент
+             */
+
+            // todo когда меняешь в товаре тип монтажа
+            // то старый тип еще находит (сделать проверку что это не старый
+            // товар через session)
+
+            updateSalary(
+                sum: calculateInstallationSalary(
+                    calculator: $calculator,
+                    productInOrder: $productsWithMaxInstallation->first(),
+                    count: $count,
+                ),
+                productInOrder: $productInOrder,
+            );
+
+//            if (
+//                !orderHasInstallation($productInOrder->order) ||
+//                $calculator->productNeedInstallation()
+//            ) {
+//                updateSalary(
+//                    sum: calculateInstallationSalary(
+//                        calculator: $calculator,
+//                        productInOrder: $productsWithMaxInstallation->first(),
+//                        count: $count,
+//                    ),
+//                    productInOrder: $productInOrder,
+//                );
+//            } else {
+//                updateSalary(
+//                    sum: calculateInstallationSalary(
+//                        calculator: $calculator,
+//                        productInOrder: $productsWithMaxInstallation->first(),
+//                        count: $count,
+//                    ),
+//                    productInOrder: $productInOrder
+//                );
+//            }
             /*
              * todo есть два варианта
              * иначе - если у товара был монтаж, а теперь его нет, то отнять от зп:
@@ -99,9 +114,9 @@
 
     function calculateInstallationSalary(
         MosquitoSystemsCalculator $calculator,
-        ProductInOrder $productInOrder,
-        int $count,
-        $installation = null
+        ProductInOrder            $productInOrder,
+        int                       $count,
+                                  $installation = null
     ): int {
 
         if (fromUpdatingProductPage() && oldProductHasInstallation()) {
@@ -139,23 +154,26 @@
              *   3.1) если указан коэффициент сложности, вызов метода калькулятора для подсчета - сделал
              */
 
-            foreach (productsWithInstallation($productInOrder) as $product) {
-                // todo пропускать старый товар который еще не удален, колхоз, при рефакторинге избавиться от этого
-                if (oldProduct('id') == $product->id) {
-                    continue;
-                }
+            /*
+             * todo коэф. сложности когда товары разных категорий
+             */
+        }
+        foreach (productsWithInstallation($productInOrder) as $product) {
+            // todo пропускать старый товар который еще не удален, колхоз, при рефакторинге избавиться от этого
+            if (oldProduct('id') == $product->id) {
+                continue;
+            }
 
-                if (productHasCoefficient($product)) {
-                    $data = productData($product);
+            if (productHasCoefficient($product)) {
+                $data = productData($product);
 
-                    $result = $calculator->salaryForDifficulty(
-                        salary: $result,
-                        price: $data->installationPrice / $data->coefficient,
-                        coefficient: $data->coefficient
-                    );
+                $result = $calculator->salaryForDifficulty(
+                    salary: $result,
+                    price: $data->installationPrice,
+                    coefficient: $data->coefficient
+                );
 
-                    dump($product->getAttributes(), $result);
-                }
+                dump($product->getAttributes(), $result);
             }
         }
 
