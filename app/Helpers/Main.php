@@ -42,7 +42,6 @@
     }
 
     function newProduct(Calculator $calculator, Order $order) {
-//        dd($calculator->getInstallation('additional_id'));
         return ProductInOrder::create([
             'installation_id' => $calculator->getInstallation('additional_id'),
             'order_id' => $order->id,
@@ -117,7 +116,6 @@
     }
 
     function addProductToOrder(Calculator $calculator, Order $order) {
-        $calculator->calculate();
         $newProductPrice = $calculator->getPrice();
 
         if ($order->measuring_price) {
@@ -148,8 +146,6 @@
 
     // when updating products, we save
     // count of products that was before update
-    /**
-     */
     function oldProductsCount() {
         try {
             return oldProduct()->count;
@@ -171,6 +167,10 @@
             isset($productInOrder->installation_id) &&
             $productInOrder->installation_id &&
             $productInOrder->installation_id != 14;
+    }
+
+    function oldProductHasInstallation(): bool {
+        return productHasInstallation(oldProduct());
     }
 
     function isInstallation(object $additional): bool {

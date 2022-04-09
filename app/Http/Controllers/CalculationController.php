@@ -34,7 +34,6 @@
             $this->request = $request;
             $this->calculator = $calculator;
 
-            $calculator->calculate();
             // todo сделать логику с "была ли взята машина компании"
             // todo соответствующее поле в таблице order
             // todo сделать учет ручного изменения цены заказа

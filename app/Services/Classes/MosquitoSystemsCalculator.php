@@ -85,6 +85,8 @@
 
             $this->saveTissue();
             $this->saveProfile();
+
+            $this->calculate();
         }
 
         protected function saveTissue() {
@@ -95,7 +97,7 @@
             $this->options->put('profileId', $this->product->profile_id);
         }
 
-        public function calculate(): void {
+        protected function calculate(): void {
             /*
              * Making all preparations that are the same to all products
              */
@@ -393,8 +395,9 @@
         }
 
         /**
-         * @throws \Psr\Container\ContainerExceptionInterface
-         * @throws \Psr\Container\NotFoundExceptionInterface
+         * @param int $count
+         * @param ProductInOrder $productInOrder
+         * @return float|int|mixed|void
          */
         public function calculateSalaryForCount(int $count, ProductInOrder $productInOrder) {
             if (
@@ -405,33 +408,11 @@
                 return $this->installersWage;
             }
 
-            $installation = $productInOrder->installation_id > 0 && $productInOrder->installation_id != 14 ?
-                $productInOrder->installation_id :
-                $this->installation->additional_id ?? $this->installation->id;
-
-            $salary = $this->getInstallationSalary(
-                $installation,
-                $count
+            $result = calculateInstallationSalary(
+                calculator: $this,
+                productInOrder: $productInOrder,
+                count: $count
             );
-
-            if ($salary != null) {
-                $result = $salary->salary;
-            } else {
-//                 todo при добавлении нового товара сюда код даже не заходит и считает зарплату неправильно
-                $salary = $this->maxCountSalary($installation);
-
-                $missingCount = productsWithInstallationCount($productInOrder) - $salary->count;
-                // Если это страница обновления товара
-//                dd(oldProduct());
-                if (fromUpdatingProductPage() && productHasInstallation(oldProduct())) {
-                    // todo баг
-                    // заключается в том, что если у этого товара не был задан монтаж, то старое количество отнимается,
-                    // хотя не должно
-                    $missingCount -= oldProductsCount();
-                }
-
-                $result = $salary->salary + $missingCount * $salary->salary_for_count;
-            }
 
             if ($this->hasCoefficient()) {
                 return $this->salaryForDifficulty($result);

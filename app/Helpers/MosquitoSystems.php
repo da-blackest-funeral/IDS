@@ -43,16 +43,11 @@
              */
 
             /*
-             * todo еще один баг
-             * когда в заказе уже есть товары с монтажом, и хотя бы один без монтажа, если тому который
-             * был без монтажа поставить монтаж, то цена не пересчитывается
-             */
-
-            /*
              * todo баг
              * если уже есть товары с монтажом, и при этом на товаре без монтажа увеличить количество, то, видимо,
              * его количество отнимается от числа товаров с монтажом, поэтому з\п меньше чем нужно
              */
+
 //            dd(orderHasInstallation($productInOrder->order), $calculator->productNeedInstallation(), $count, oldProductsCount());
 
             if (
@@ -65,7 +60,11 @@
                 );
             } else {
                 $products = productsWithMaxInstallation($productInOrder);
-                $count = countMaxInstallation($products) - oldProductsCount();
+                $count = countMaxInstallation($products);
+//                dd($count);
+//                if (oldProductHasInstallation()) {
+//                    $count -= oldProductsCount();
+//                }
                 /*
                  * todo если товар остается единственным с монтажом, то код сюда даже не заходит
                  */
@@ -118,7 +117,7 @@
 
             $missingCount = productsWithInstallationCount($productInOrder) - $salary->count;
             // Если это страница обновления товара
-            if (fromUpdatingProductPage()) {
+            if (fromUpdatingProductPage() && oldProductHasInstallation()) {
                 $missingCount -= oldProductsCount();
             }
 

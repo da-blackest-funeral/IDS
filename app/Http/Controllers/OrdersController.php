@@ -4,7 +4,6 @@
 
     use App\Models\Category;
     use App\Models\Order;
-    use App\Models\ProductInOrder;
     use App\Services\Interfaces\Calculator;
     use Illuminate\Http\Request;
 
