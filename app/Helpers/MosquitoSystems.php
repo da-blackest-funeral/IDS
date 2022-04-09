@@ -49,6 +49,7 @@
                 !orderHasInstallation($productInOrder->order) ||
                 $calculator->productNeedInstallation()
             ) {
+//                dd($count);
                 updateSalary(
                     sum: $calculator->calculateSalaryForCount(
                         count: $count,
@@ -60,7 +61,8 @@
             } else {
                 $count = countProductsWithInstallation($productInOrder);
                 updateSalary(
-                    // todo возможно сделать через калькулятор, т.к. там больше деталей учитывается
+                    // todo возможно сделать через калькулятор
+                    // т.к. там больше деталей учитывается (например коэффициент сложности монтажа)
                     calculateInstallationSalary(
                         calculator: $calculator,
                         productInOrder: $productsWithMaxInstallation->first(),
@@ -97,6 +99,11 @@
         int $count,
         $installation = null
     ): int {
+
+        if (fromUpdatingProductPage() && oldProductHasInstallation()) {
+            $count -= oldProductsCount();
+        }
+
         $salary = $calculator->getInstallationSalary(
             installation: $installation ?? $productInOrder->installation_id,
             count: $count,

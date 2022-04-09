@@ -146,10 +146,10 @@
         }
 
         public function salaryForDifficulty($salary = null) {
-            $additionalSalary = (int) ceil ((
-                $this->installationPrice -
-                $this->installationPrice / $this->coefficient
-            ) * (float) SystemVariables::value('coefficientSalaryForDifficult'));
+            $additionalSalary = (int)ceil((
+                    $this->installationPrice -
+                    $this->installationPrice / $this->coefficient
+                ) * (float)SystemVariables::value('coefficientSalaryForDifficult'));
 
             if (!is_null($salary)) {
                 return $salary + $additionalSalary;
