@@ -42,6 +42,7 @@ class Category extends Model
         return $this->hasOne(Type::class, 'category_id');
     }
 
+    // todo возможно отрефакторить чтобы не грузить лишние данные
     public function scopeTissues($query, $id) {
         $query->whereId($id)
             ->has('type.products.tissue')

@@ -7,12 +7,21 @@
     use App\Models\ProductInOrder;
     use App\Services\Interfaces\Calculator;
 
+    /**
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
     function updateOrCreateSalary(ProductInOrder $productInOrder, Calculator $calculator) {
         $products = ProductInOrder::whereCategoryId($productInOrder->category_id)
             ->whereOrderId($productInOrder->order_id);
         if ($products->exists() && salary($productInOrder)->exists()) {
 
-            $count = productsCount($productInOrder);
+            $count = productsWithInstallationCount($productInOrder);
+//            if ($calculator->productNeedInstallation()) {
+//                $count -= oldProductsCount();
+//            }
+
+//            dd($count);
 
             /*
              * orderHasInstallation($order) || $calculator->isNeedInstallation()
@@ -25,6 +34,27 @@
              * можно брать $count - request->count()
              */
 
+
+            /*
+             * todo расчет зарплаты при добавлении товаров одинакового типа
+             * если добавлено несколько товаров одинакового типа, то при расчете з\п
+             * берется монтаж с максимальной ценой, а количество равняется всем товарам данного типа,
+             * у которых задан монтаж, даже если он другой
+             */
+
+            /*
+             * todo еще один баг
+             * когда в заказе уже есть товары с монтажом, и хотя бы один без монтажа, если тому который
+             * был без монтажа поставить монтаж, то цена не пересчитывается
+             */
+
+            /*
+             * todo баг
+             * если уже есть товары с монтажом, и при этом на товаре без монтажа увеличить количество, то, видимо,
+             * его количество отнимается от числа товаров с монтажом, поэтому з\п меньше чем нужно
+             */
+//            dd(orderHasInstallation($productInOrder->order), $calculator->productNeedInstallation(), $count, oldProductsCount());
+
             if (
                 !orderHasInstallation($productInOrder->order) ||
                 $calculator->productNeedInstallation()
@@ -35,7 +65,10 @@
                 );
             } else {
                 $products = productsWithMaxInstallation($productInOrder);
-                $count = countMaxInstallation($products) - session('oldCount', 0);
+                $count = countMaxInstallation($products) - oldProductsCount();
+                /*
+                 * todo если товар остается единственным с монтажом, то код сюда даже не заходит
+                 */
                 updateSalary(
                     calculateInstallationSalary(
                         calculator: $calculator,
@@ -78,15 +111,15 @@
         if ($salary != null) {
             return $salary->salary;
         } else {
-            $salary = $calculator->salaryWhenNotFoundSpecificCount(
+            $salary = $calculator->maxCountSalary(
                 installation: $productInOrder->installation_id,
                 typeId: $productInOrder->type_id
             );
 
-            $missingCount = productsCount($productInOrder) - $salary->count;
+            $missingCount = productsWithInstallationCount($productInOrder) - $salary->count;
             // Если это страница обновления товара
             if (fromUpdatingProductPage()) {
-                $missingCount -= session()->pull('oldCount', 0);
+                $missingCount -= oldProductsCount();
             }
 
             return $salary->salary + $missingCount * $salary->salary_for_count;
@@ -118,8 +151,7 @@
         });
     }
 
-    // todo переименовать метод, т.к. тут не количество всех товаров, а только тех у которых есть монтаж
-    function productsCount(ProductInOrder $productInOrder) {
+    function productsWithInstallationCount(ProductInOrder $productInOrder) {
         return $productInOrder->order
             ->products()
             ->where('category_id', \request()->input('categories'))

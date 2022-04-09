@@ -383,7 +383,7 @@
                 if ($salary !== null) {
                     $this->installersWage += $salary->salary;
                 } else {
-                    $salary = $this->salaryWhenNotFoundSpecificCount($item);
+                    $salary = $this->maxCountSalary($item);
 
                     $this->installersWage += $salary->salary + ($this->count - $salary->count) * $salary->salary_for_count;
                 }
@@ -392,6 +392,10 @@
             return $this->installersWage;
         }
 
+        /**
+         * @throws \Psr\Container\ContainerExceptionInterface
+         * @throws \Psr\Container\NotFoundExceptionInterface
+         */
         public function calculateSalaryForCount(int $count, ProductInOrder $productInOrder) {
             if (
                 $productInOrder->installation_id == 0 &&
@@ -414,12 +418,16 @@
                 $result = $salary->salary;
             } else {
 //                 todo при добавлении нового товара сюда код даже не заходит и считает зарплату неправильно
-                $salary = $this->salaryWhenNotFoundSpecificCount($installation);
+                $salary = $this->maxCountSalary($installation);
 
-                $missingCount = productsCount($productInOrder) - $salary->count;
+                $missingCount = productsWithInstallationCount($productInOrder) - $salary->count;
                 // Если это страница обновления товара
-                if (fromUpdatingProductPage()) {
-                    $missingCount -= session()->pull('oldCount', 0);
+//                dd(oldProduct());
+                if (fromUpdatingProductPage() && productHasInstallation(oldProduct())) {
+                    // todo баг
+                    // заключается в том, что если у этого товара не был задан монтаж, то старое количество отнимается,
+                    // хотя не должно
+                    $missingCount -= oldProductsCount();
                 }
 
                 $result = $salary->salary + $missingCount * $salary->salary_for_count;
@@ -440,7 +448,7 @@
                 ->first();
         }
 
-        public function salaryWhenNotFoundSpecificCount($installation, int $typeId = null) {
+        public function maxCountSalary($installation, int $typeId = null) {
             return \DB::table('mosquito_systems_type_salary')
                 ->where('type_id', $typeId ?? $this->type->id)
                 ->where('additional_id', $installation->additional_id ?? $installation)

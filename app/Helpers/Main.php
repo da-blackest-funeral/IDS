@@ -42,6 +42,7 @@
     }
 
     function newProduct(Calculator $calculator, Order $order) {
+//        dd($calculator->getInstallation('additional_id'));
         return ProductInOrder::create([
             'installation_id' => $calculator->getInstallation('additional_id'),
             'order_id' => $order->id,
@@ -142,8 +143,34 @@
     function orderHasInstallation(Order $order): bool {
         return $order->products->contains(function ($product) {
             return !in_array($product->installation_id, [0, 14]);
-//            return $product->installation_id != 14 ;
         });
+    }
+
+    // when updating products, we save
+    // count of products that was before update
+    /**
+     */
+    function oldProductsCount() {
+        try {
+            return oldProduct()->count;
+        } catch (\Exception $e) {
+            return 0;
+        }
+    }
+
+    /**
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
+    function oldProduct() {
+        return session()->get('oldProduct');
+    }
+
+    function productHasInstallation(ProductInOrder $productInOrder) {
+        return
+            isset($productInOrder->installation_id) &&
+            $productInOrder->installation_id &&
+            $productInOrder->installation_id != 14;
     }
 
     function isInstallation(object $additional): bool {

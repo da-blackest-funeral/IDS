@@ -36,13 +36,12 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \Illuminate\Database\Eloquent\Collection|Additional[] $additional
  * @property-read int|null $additional_count
  */
+// todo расставить $hidden, $guarder аттрибуты
 class Product extends Model
 {
     use HasFactory;
 
     protected $table = 'mosquito_systems_products';
-
-//    protected $hidden = ['id'];
 
     public function tissue() {
         return $this->belongsTo(Tissue::class,'tissue_id','id');
