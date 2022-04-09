@@ -139,17 +139,20 @@
             }
 
             $this->saveInstallationData();
+
+            $this->options->put('coefficient', $this->coefficient)
+                ->put('installationPrice', $this->installationPrice);
         }
 
         public function hasCoefficient() {
             return $this->request->has('coefficient') && $this->request->get('coefficient') != 1;
         }
 
-        public function salaryForDifficulty($salary = null) {
+        public function salaryForDifficulty($salary = null, $price = null, $coefficient = null) {
             $additionalSalary = (int)ceil((
-                    $this->installationPrice -
-                    $this->installationPrice / $this->coefficient
-                ) * (float)SystemVariables::value('coefficientSalaryForDifficult'));
+                    $price ?? $this->installationPrice -
+                    $price ?? $this->installationPrice / $coefficient ?? $this->coefficient
+                ) * SystemVariables::value('coefficientSalaryForDifficult'));
 
             if (!is_null($salary)) {
                 return $salary + $additionalSalary;

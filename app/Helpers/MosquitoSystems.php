@@ -5,6 +5,7 @@
     use App\Models\MosquitoSystems\Profile;
     use App\Models\MosquitoSystems\Type;
     use App\Models\ProductInOrder;
+    use App\Services\Classes\MosquitoSystemsCalculator;
     use App\Services\Interfaces\Calculator;
     use Illuminate\Support\Collection;
 
@@ -19,8 +20,12 @@
 
             /*
              * todo для правильного подсчета з\п при разных монтажах одинакового типа нужно
-             * 1) найти какой монтаж максимальный
-             * 2) общее количество товаров с монтажом
+             * 1) найти какой монтаж максимальный - сделано
+             * 2) общее количество товаров с монтажом - сделано
+             * 3) записывать в данные о товаре коэффициент сложности монтажа
+             *   3.1) создать поле в таблице
+             *   3.2) записывать туда коэффициент из request
+             *   3.3) при каждом расчете проверять по всем товарам коэффициент сложности монтажа
              */
 
             $count = countProductsWithInstallation($productInOrder);
@@ -49,12 +54,11 @@
                 !orderHasInstallation($productInOrder->order) ||
                 $calculator->productNeedInstallation()
             ) {
-//                dd($count);
                 updateSalary(
-                    sum: $calculator->calculateSalaryForCount(
+                    sum: calculateInstallationSalary(
+                        calculator: $calculator,
+                        productInOrder: $productsWithMaxInstallation->first(),
                         count: $count,
-                        productInOrder: $productInOrder,
-                        installation: $productsWithMaxInstallation->first()->installation_id
                     ),
                     productInOrder: $productInOrder,
                 );
@@ -94,7 +98,7 @@
     }
 
     function calculateInstallationSalary(
-        Calculator $calculator,
+        MosquitoSystemsCalculator $calculator,
         ProductInOrder $productInOrder,
         int $count,
         $installation = null
@@ -111,7 +115,7 @@
         );
 
         if ($salary != null) {
-            return $salary->salary;
+            $result = $salary->salary;
         } else {
             $salary = $calculator->maxCountSalary(
                 installation: $installation ?? $productInOrder->installation_id,
@@ -124,12 +128,54 @@
                 $missingCount -= oldProductsCount();
             }
 
-            return $salary->salary + $missingCount * $salary->salary_for_count;
+            $result = $salary->salary + $missingCount * $salary->salary_for_count;
+
+            /*
+             * todo коэффициент сложности монтажа
+             * В этом методе:
+             * 1) в товарах надо сохранять цену монтажа - сделано
+             * 2) сохранять коэффициент сложности монтажа - сделано
+             * 3) по всем товарам, где есть монтаж:
+             *   3.1) если указан коэффициент сложности, вызов метода калькулятора для подсчета - сделал
+             */
+
+            foreach (productsWithInstallation($productInOrder) as $product) {
+                // todo пропускать старый товар который еще не удален, колхоз, при рефакторинге избавиться от этого
+                if (oldProduct('id') == $product->id) {
+                    continue;
+                }
+
+                if (productHasCoefficient($product)) {
+                    $data = productData($product);
+
+                    $result = $calculator->salaryForDifficulty(
+                        salary: $result,
+                        price: $data->installationPrice / $data->coefficient,
+                        coefficient: $data->coefficient
+                    );
+
+                    dump($product->getAttributes(), $result);
+                }
+            }
         }
+
+        return $result;
     }
 
     function countOfProducts(Collection $products) {
         return $products->sum('count');
+    }
+
+    function productHasCoefficient(ProductInOrder $productInOrder) {
+        return productData($productInOrder, 'coefficient') > 1;
+    }
+
+    function productData(ProductInOrder $productInOrder, string $field = null) {
+        if (is_null($field)) {
+            return json_decode($productInOrder->data);
+        }
+
+        return json_decode($productInOrder->data)->$field;
     }
 
     function productsWithMaxInstallation(ProductInOrder $productInOrder) {
@@ -154,10 +200,17 @@
     }
 
     function countProductsWithInstallation(ProductInOrder $productInOrder): int {
-        return productsWithInstallation($productInOrder)
-            ->sum('count');
+        return countOfProducts(
+            productsWithInstallation($productInOrder)
+        );
     }
 
+    /*
+     * todo улучшение кода
+     * когда буду рефакторить, надо сделать так, чтобы пропускался старый товар (при обновлении который еще не удален)
+     * во всех местах где используется этот метод нужно это учесть
+     *
+     */
     function productsWithInstallation(ProductInOrder $productInOrder): Collection {
         return $productInOrder->order
             ->products()
@@ -169,7 +222,7 @@
     function profiles($product = null): Collection {
         $productData = null;
 
-        if (isset($product)) {
+        if (!is_null($product)) {
             $productData = json_decode($product->data);
         }
 

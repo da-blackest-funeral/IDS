@@ -140,7 +140,7 @@
 
     function orderHasInstallation(Order $order): bool {
         return $order->products->contains(function ($product) {
-            return !in_array($product->installation_id, [0, 14]);
+            return productHasInstallation($product);
         });
     }
 
@@ -158,8 +158,12 @@
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    function oldProduct() {
-        return session()->get('oldProduct');
+    function oldProduct(string $field = null) {
+        if (is_null($field)) {
+            return session()->get('oldProduct');
+        }
+
+        return session()->get('oldProduct')->$field;
     }
 
     function productHasInstallation(ProductInOrder $productInOrder) {
