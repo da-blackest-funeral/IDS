@@ -6,6 +6,7 @@
     use App\Models\MosquitoSystems\Type;
     use App\Models\ProductInOrder;
     use App\Services\Interfaces\Calculator;
+    use Illuminate\Support\Collection;
 
     /**
      * @throws \Psr\Container\ContainerExceptionInterface
@@ -16,12 +17,14 @@
             ->whereOrderId($productInOrder->order_id);
         if ($products->exists() && salary($productInOrder)->exists()) {
 
-            $count = productsWithInstallationCount($productInOrder);
-//            if ($calculator->productNeedInstallation()) {
-//                $count -= oldProductsCount();
-//            }
+            /*
+             * todo для правильного подсчета з\п при разных монтажах одинакового типа нужно
+             * 1) найти какой монтаж максимальный
+             * 2) общее количество товаров с монтажом
+             */
 
-//            dd($count);
+            $count = countProductsWithInstallation($productInOrder);
+            $productsWithMaxInstallation = productsWithMaxInstallation($productInOrder);
 
             /*
              * orderHasInstallation($order) || $calculator->isNeedInstallation()
@@ -42,36 +45,25 @@
              * у которых задан монтаж, даже если он другой
              */
 
-            /*
-             * todo баг
-             * если уже есть товары с монтажом, и при этом на товаре без монтажа увеличить количество, то, видимо,
-             * его количество отнимается от числа товаров с монтажом, поэтому з\п меньше чем нужно
-             */
-
-//            dd(orderHasInstallation($productInOrder->order), $calculator->productNeedInstallation(), $count, oldProductsCount());
-
             if (
                 !orderHasInstallation($productInOrder->order) ||
                 $calculator->productNeedInstallation()
             ) {
                 updateSalary(
-                    sum: $calculator->calculateSalaryForCount($count, $productInOrder),
-                    productInOrder: $productInOrder
+                    sum: $calculator->calculateSalaryForCount(
+                        count: $count,
+                        productInOrder: $productInOrder,
+                        installation: $productsWithMaxInstallation->first()->installation_id
+                    ),
+                    productInOrder: $productInOrder,
                 );
             } else {
-                $products = productsWithMaxInstallation($productInOrder);
-                $count = countMaxInstallation($products);
-//                dd($count);
-//                if (oldProductHasInstallation()) {
-//                    $count -= oldProductsCount();
-//                }
-                /*
-                 * todo если товар остается единственным с монтажом, то код сюда даже не заходит
-                 */
+                $count = countProductsWithInstallation($productInOrder);
                 updateSalary(
+                    // todo возможно сделать через калькулятор, т.к. там больше деталей учитывается
                     calculateInstallationSalary(
                         calculator: $calculator,
-                        productInOrder: $products->first(),
+                        productInOrder: $productsWithMaxInstallation->first(),
                         count: $count,
                     ),
                     $productInOrder
@@ -99,10 +91,14 @@
         }
     }
 
-    function calculateInstallationSalary(Calculator $calculator, ProductInOrder $productInOrder, $count): int {
-        // todo !!! нарушение DRY, в калькуляторе уже есть похожий метод, придумать как избавиться от дублирования
+    function calculateInstallationSalary(
+        Calculator $calculator,
+        ProductInOrder $productInOrder,
+        int $count,
+        $installation = null
+    ): int {
         $salary = $calculator->getInstallationSalary(
-            installation: $productInOrder->installation_id,
+            installation: $installation ?? $productInOrder->installation_id,
             count: $count,
             typeId: $productInOrder->type_id
         );
@@ -111,11 +107,11 @@
             return $salary->salary;
         } else {
             $salary = $calculator->maxCountSalary(
-                installation: $productInOrder->installation_id,
+                installation: $installation ?? $productInOrder->installation_id,
                 typeId: $productInOrder->type_id
             );
 
-            $missingCount = productsWithInstallationCount($productInOrder) - $salary->count;
+            $missingCount = countProductsWithInstallation($productInOrder) - $salary->count;
             // Если это страница обновления товара
             if (fromUpdatingProductPage() && oldProductHasInstallation()) {
                 $missingCount -= oldProductsCount();
@@ -125,7 +121,7 @@
         }
     }
 
-    function countMaxInstallation(\Illuminate\Support\Collection $products) {
+    function countOfProducts(Collection $products) {
         return $products->sum('count');
     }
 
@@ -150,16 +146,20 @@
         });
     }
 
-    function productsWithInstallationCount(ProductInOrder $productInOrder) {
+    function countProductsWithInstallation(ProductInOrder $productInOrder): int {
+        return productsWithInstallation($productInOrder)
+            ->sum('count');
+    }
+
+    function productsWithInstallation(ProductInOrder $productInOrder): Collection {
         return $productInOrder->order
             ->products()
             ->where('category_id', \request()->input('categories'))
             ->whereNotIn('installation_id', [0, 14])
-            ->get()
-            ->sum('count');
+            ->get();
     }
 
-    function profiles($product = null) {
+    function profiles($product = null): Collection {
         $productData = null;
 
         if (isset($product)) {

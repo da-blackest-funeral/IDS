@@ -397,9 +397,14 @@
         /**
          * @param int $count
          * @param ProductInOrder $productInOrder
+         * @param null $installation
          * @return float|int|mixed|void
          */
-        public function calculateSalaryForCount(int $count, ProductInOrder $productInOrder) {
+        public function calculateSalaryForCount(
+            int $count,
+            ProductInOrder $productInOrder,
+            $installation = null
+        ) {
             if (
                 $productInOrder->installation_id == 0 &&
                 !$this->installation->additional_id &&
@@ -411,7 +416,8 @@
             $result = calculateInstallationSalary(
                 calculator: $this,
                 productInOrder: $productInOrder,
-                count: $count
+                count: $count,
+                installation: $installation
             );
 
             if ($this->hasCoefficient()) {

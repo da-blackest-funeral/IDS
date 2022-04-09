@@ -31,7 +31,7 @@ interface Calculator
 
     public function getInstallation($property = null);
 
-    public function calculateSalaryForCount(int $count, ProductInOrder $productInOrder);
+    public function calculateSalaryForCount(int $count, ProductInOrder $productInOrder, $installation = null);
 
     public function productNeedInstallation(): bool;
 }
