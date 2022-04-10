@@ -123,7 +123,15 @@
         }
 
         if ($order->delivery) {
-            $newProductPrice -= $calculator->getDeliveryPrice();
+            $newProductPrice -= min(
+                $order->delivery,
+                $calculator->getDeliveryPrice()
+            );
+
+            $order->delivery = max(
+                $calculator->getDeliveryPrice(),
+                oldProductData(['delivery', 'deliveryPrice'])
+            );
         }
 
         $order->price += $newProductPrice;
@@ -151,6 +159,21 @@
             return oldProduct()->count;
         } catch (\Exception $e) {
             return 0;
+        }
+    }
+
+    function oldProductData(string|array $field = null) {
+        if (is_null($field)) {
+            return json_decode(oldProduct('data'));
+        } elseif (is_string($field)) {
+            return json_decode(oldProduct('data'))->$field;
+        } elseif (is_array($field)) {
+            $result = json_decode(oldProduct('data'));
+            foreach ($field as $item) {
+                $result = $result->$item;
+            }
+
+            return $result;
         }
     }
 

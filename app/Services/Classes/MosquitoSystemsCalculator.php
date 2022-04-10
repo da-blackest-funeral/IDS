@@ -98,9 +98,7 @@
         }
 
         protected function calculate(): void {
-            /*
-             * Making all preparations that are the same to all products
-             */
+            // Making all preparations that are the same for all products
             parent::calculate();
 
             /*
@@ -341,8 +339,8 @@
 
             if ($this->hasCoefficient()) {
                 $items->push([
-                    'text' => 'Доп. цена за сложность монтажа: ' . $this->installationPrice -
-                        $this->installationPrice / $this->coefficient,
+                    'text' => 'Доп. цена за сложность монтажа: ' . ($this->installationPrice -
+                        $this->installationPrice / $this->coefficient) * $this->count,
                     'price' => 0,
                 ]);
             }
