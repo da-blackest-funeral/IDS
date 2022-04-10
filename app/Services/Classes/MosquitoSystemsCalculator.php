@@ -148,16 +148,18 @@
             return $this->request->has('coefficient') && $this->request->get('coefficient') != 1;
         }
 
-        public function salaryForDifficulty($salary = null, $price = null, $coefficient = null) {
-            if (is_null($salary) || is_null($price) || is_null($coefficient)) {
+        public function salaryForDifficulty($salary = null, $price = null, $coefficient = null, $count = null) {
+            if (is_null($salary) || is_null($price) || is_null($coefficient) || is_null($count)) {
                 $price = $this->installationPrice;
                 $coefficient = $this->coefficient;
+                $count = $this->count;
             }
 
-            $additionalSalary = (int) ceil(
+            $additionalSalary = (int) round(
                 $price *
                 (1 - 1 / $coefficient) *
                 (float)SystemVariables::value('coefficientSalaryForDifficult')
+                * $count
             );
 
             if (!is_null($salary)) {

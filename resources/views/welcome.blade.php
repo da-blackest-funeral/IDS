@@ -65,7 +65,6 @@
                             <tbody>
                             @foreach($products as $product)
                                 @php($productData = json_decode($product->data))
-{{--                                @dump($product)--}}
                                 <tr style="cursor:pointer;" onclick="
                                     window.location ='{{ route('product-in-order', [
                                         'order' => $orderNumber,
@@ -80,7 +79,7 @@
                                         <br>
                                         <div>Ширина: {{ $productData->size->width }} мм.</div>
                                     </td>
-                                    <td class="text-center"><strong>{{ $product->count }}</strong></td>
+                                    <td class="text-center"><strong>{{ $product->count }} шт.</strong></td>
                                     <td class="text-center">
                                         <strong>{{ $productData->main_price }}</strong>
                                         @if($product->count > 1)
@@ -89,7 +88,6 @@
                                                     шт.</em></p>
                                         @endif
                                     </td>
-{{--                                    @dd($productData)--}}
                                     <td class="text-center">
                                         @foreach($productData->additional as $additional)
                                             <div class="p-1 text-decoration-underline">

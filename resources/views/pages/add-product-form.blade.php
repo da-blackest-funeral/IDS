@@ -9,19 +9,13 @@
             <p class="h4 mt-3">Заказ №{{ $orderNumber }}</p>
         @endif
         <div class="container-fluid bg-light mt-4" style="min-height: 250px;">
-            <form method="POST" class="form-group">
+            <form method="POST" class="form-group pt-1">
                 @csrf
                 <input type="hidden" value="{{ $orderNumber }}" name="order_id">
                 @isset($product)
                     <input type="hidden" value="{{ $product->id }}" name="product_id">
                 @endisset
-                {{-- todo это что? --}}
-                <div class="row">
-                    <div class="col-12">
-
-                    </div>
-                </div>
-                <div class="row mt-2">
+                <div class="row mt-3">
                     <div class="col-12 col-md-3">
                         <label class="mb-1 mt-2 mt-md-0" for="height">Высота (длина)</label>
                         <input name="height"
