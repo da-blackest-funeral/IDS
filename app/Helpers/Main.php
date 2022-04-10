@@ -90,7 +90,7 @@
     function salary(ProductInOrder $productInOrder) {
         return $productInOrder->order
             ->salaries()
-            ->whereCategoryId($productInOrder->category_id);
+            ->where('category_id', $productInOrder->category_id);
     }
 
     function updateSalary(int|float $sum, ProductInOrder $productInOrder) {
@@ -157,7 +157,8 @@
     function oldProductsCount() {
         try {
             return oldProduct()->count;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
+            Debugbar::info($e->getMessage());
             return 0;
         }
     }
@@ -177,16 +178,12 @@
         }
     }
 
-    /**
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     */
     function oldProduct(string $field = null) {
         if (is_null($field)) {
-            return session()->get('oldProduct');
+            return session('oldProduct');
         }
 
-        return session()->get('oldProduct')->$field;
+        return session('oldProduct')->$field;
     }
 
     function productHasInstallation(ProductInOrder $productInOrder) {

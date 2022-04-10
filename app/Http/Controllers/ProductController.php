@@ -18,6 +18,7 @@
 
         public function index(Order $order, ProductInOrder $productInOrder) {
             return view('pages.add-product')->with([
+                // todo часть данных отсюда общая и ее можно вынести в отдельный метод
                 'data' => Category::all(),
                 'superCategories' => Category::whereIn(
                     'id', Category::select(['parent_id'])
@@ -42,8 +43,6 @@
             foreach ($productData->additional as $additional) {
                 $order->price -= $additional->price;
             }
-            // todo видимо не отнимаются цены за доставку и замер от общей цены заказа
-            // todo при обновлении товара если выставить ему коэффициент сложности то сумма заказа неправильно считается
 
             $order->update();
 

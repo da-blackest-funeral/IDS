@@ -9,10 +9,6 @@
     use App\Services\Interfaces\Calculator;
     use Illuminate\Support\Collection;
 
-    /**
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     */
     function updateOrCreateSalary(ProductInOrder $productInOrder, Calculator $calculator) {
         $products = ProductInOrder::whereCategoryId($productInOrder->category_id)
             ->whereOrderId($productInOrder->order_id);
@@ -79,6 +75,11 @@
         $salary = $calculator->getInstallationSalary(
             installation: $installation ?? $productInOrder->installation_id,
             count: $count,
+            /*
+             * todo подумать как это можно исправить
+             * обычно, ProductInOrder не имеет поля type_id,
+             * но в этот метод передается результат с left join
+             */
             typeId: $productInOrder->type_id
         );
 
@@ -98,10 +99,6 @@
 
             $result = $salary->salary + $missingCount * $salary->salary_for_count;
         }
-
-        /*
-         * todo цена доставки должна выбираться наибольшая
-         */
 
         foreach (productsWithInstallation($productInOrder) as $product) {
             // todo пропускать старый товар который еще не удален, колхоз, при рефакторинге избавиться от этого
@@ -176,7 +173,7 @@
     function productsWithInstallation(ProductInOrder $productInOrder): Collection {
         return $productInOrder->order
             ->products()
-            ->where('category_id', \request()->input('categories'))
+            ->where('category_id', request()->input('categories'))
             ->whereNotIn('installation_id', [0, 14])
             ->get();
     }
