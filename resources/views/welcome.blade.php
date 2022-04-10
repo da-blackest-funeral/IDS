@@ -44,6 +44,7 @@
         </div>
 
         @isset($products)
+            {{-- todo Вова: колхозная кнопка --}}
             <a href="#" id="show" class="btn w-25" style="display: none;"
                onclick="$( this ).parent().children().show(400); $( this ).hide(400)">Развернуть</a>
             <div class="row align-content-between position-relative">
@@ -51,6 +52,7 @@
                 <div class="mt-4 w-75">
                     <h1 class="h2"><strong>Список товаров</strong></h1>
                     <div style="border-radius: 8px;overflow: hidden;">
+                        {{-- todo Вова: надо сделать таблицу адаптивной --}}
                         <table class="table table-light table-hover table-bordered align-middle rounded">
                             <thead class="table-dark">
                             <tr>
@@ -66,6 +68,7 @@
                             @foreach($products as $product)
                                 @php($productData = json_decode($product->data))
                                 <tr style="cursor:pointer;" onclick="
+                                    {{-- todo Вова: вот таблица и вот как реализован переход на страницу редактирования товара --}}
                                     window.location ='{{ route('product-in-order', [
                                         'order' => $orderNumber,
                                         'productInOrder' => $product
@@ -104,7 +107,7 @@
                                                 <strong>{{ $productData->salaryForCoefficient }}</strong>
                                             </div>
                                         @endisset
-                                        {{-- todo сделать вывод поля Итого --}}
+                                        {{-- todo сделать вывод поля "Итого", Вова: тут же будет кнопка "Удалить" --}}
                                     </td>
                                 </tr>
                             @endforeach
@@ -152,6 +155,7 @@
                     @csrf
                     <div class="mt-5">
                         <label class="btn btn-sm btn-secondary active">
+                            {{-- todo Вова: тут тоже есть забавный таск позже расскажу ч тут д --}}
                             <input type="radio" name="delivery" value="1" checked
                                    onclick="$('#delivery-options').show(400)">
                             <span style="font-weight: bold;">Доставка \ Выезд на монтаж</span>
