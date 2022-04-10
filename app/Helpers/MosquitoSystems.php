@@ -22,8 +22,6 @@
             $productsWithMaxInstallation = productsWithMaxInstallation($productInOrder);
 
             /*
-             * orderHasInstallation($order) || $calculator->isNeedInstallation()
-             *
              * Условие звучит так: если в заказе уже есть такой же товар с монтажом, и добалвяется
              * товар без монтажа, то зп не пересчитывается. Если в заказе уже есть товар с монтажом, кроме нынешнего,
              * у которого монтаж убирается, то зп тоже не пересчитывается
@@ -46,22 +44,32 @@
                 productInOrder: $productInOrder,
             );
 
-            /* (я выбрал этот вариант)
-             * 1) найти товар данного типа с наибольшей ценой монтажа
-             * 2) просчитать количество товара с таким типом монтажа
-             * 3) зарплату за этот тип приравнять к зарплате за количество из п.2
+        } elseif (
+            // если в заказе есть товары
+            $productInOrder->order->products->isNotEmpty() &&
+            /*
+             * но нет товаров с монтажом, т.е. за
+             * доставку з\п уже начислена
              */
-
-        } else {
-            createSalary($productInOrder->order, $calculator);
+            productsWithMaxInstallation($productInOrder)->isEmpty() &&
+            // и нынешний товар не нуждается в монтаже
+            !$calculator->productNeedInstallation()
+        ) {
+            /*
+             * то не создавать новую з.п., т.к. за
+             * доставку и замер з\п уже должна быть начислена
+             */
+            return;
         }
+
+        createSalary($productInOrder->order, $calculator);
     }
 
     function calculateInstallationSalary(
         MosquitoSystemsCalculator $calculator,
-        ProductInOrder $productInOrder,
-        int $count,
-        $installation = null
+        ProductInOrder            $productInOrder,
+        int                       $count,
+                                  $installation = null
     ): int {
 
         if (fromUpdatingProductPage() && oldProductHasInstallation()) {
@@ -111,7 +119,6 @@
                     count: $product->count
                 );
 
-//                dump($product->getAttributes(), $result);
             }
         }
 
