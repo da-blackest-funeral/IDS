@@ -14,7 +14,7 @@
     {
         use HasSquare;
 
-        // todo: коэффициент сложности монтажа, скидки
+        // todo: скидки
         // todo вынести все методы по сохранению в options в другой класс
         // возможно в тот же класс куда я добавлю функции, т.е. фасад
 
@@ -379,6 +379,8 @@
          */
 
         public function calculateInstallationSalary(): float|null {
+            // todo нарушение DRY, в этом классе есть похожий метод,
+            // надо "склеить" их в один
 
             if (!$this->needInstallation) {
                 $this->installersWage += $this->measuringSalary;
@@ -468,7 +470,6 @@
 
         /**
          * Determines if additional belongs to installation group of services
-         * @TODO сделать отдельную функцию которая проходит по всем additional и выставляет ПРАВИЛЬНО needInstallation
          *
          * @param $additional
          * @return bool
