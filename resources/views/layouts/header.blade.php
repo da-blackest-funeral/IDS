@@ -6,9 +6,8 @@
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="collapse navbar-collapse" id="navbar1">
+        <div class="collapse navbar-collapse d-flex justify-content-between px-4" id="navbar1">
             <ul class="navbar-nav">
-
                 <li class="nav-item active">
                     <a class="nav-link" href="#">
                             <span style="font-size: 16px; font-weight: 600;">
@@ -241,7 +240,8 @@
                     <li class="nav-item dropdown my-auto">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button"
                            data-bs-toggle="dropdown"
-                           aria-haspopup="true" aria-expanded="false">Склад</a>
+                           aria-haspopup="true" aria-expanded="false">Склад
+                        </a>
                         @if(auth()->user()->isInstaller())
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
                                 <a class="dropdown-item" href="{{ route('remains') }}">Остатки на складе</a>
@@ -255,7 +255,8 @@
 
                                 @can('seeInventory')
                                     <a class="dropdown-item"
-                                       href="{{ route('inventory') }}">Инвентаризации</a>
+                                       href="{{ route('inventory') }}">Инвентаризации
+                                    </a>
                                 @endcan
 
                                 <a class="dropdown-item" href="{{ route('issuance') }}">Текущие выдачи</a>
@@ -331,7 +332,7 @@
             </ul>
 
             @auth()
-                <form method="POST" action="{{ route('logout') }}" class="ms-5 form-inline">
+                <form method="POST" action="{{ route('logout') }}" class="form-inline">
                     @csrf
                     <button class="btn btn-outline-info my-2 my-sm-0" name="sb_out" type="submit">
                         Выйти
