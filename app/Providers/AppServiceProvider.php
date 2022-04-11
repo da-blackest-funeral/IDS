@@ -6,6 +6,7 @@
     use App\Services\Calculator\Classes\GlazedWindowsCalculator;
     use App\Services\Calculator\Classes\ItalianMosquitoSystemCalculator;
     use App\Services\Calculator\Classes\MosquitoSystemsCalculator;
+    use App\Services\Calculator\Interfaces\Calculator;
     use App\Services\Notifications\Notifier;
     use Illuminate\Support\ServiceProvider;
 
@@ -17,7 +18,7 @@
          * @return void
          */
         public function register() {
-            $this->app->bind(\App\Services\Calculator\Interfaces\Calculator::class, function () {
+            $this->app->singleton(Calculator::class, function () {
                 $request = SaveOrderRequest::createFromBase(\request());
                 if (in_array(\request()->input('categories'), [15, 16, 17])) {
                     return new GlazedWindowsCalculator($request);
