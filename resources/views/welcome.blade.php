@@ -1,10 +1,11 @@
 @extends('layouts.app')
 @section('title', 'Создание заказа')
 @section('content')
-    <div class="container mt-4" style="margin-bottom: 100px;">
+    <div class="container mt-4" id="app" style="margin-bottom: 100px;">
         <h1 class="h1">
             Заказ <span style="font-size: 30px">№{{ $orderNumber }}</span>
         </h1>
+        <app></app>
         <div class="container-fluid mb-4" style="padding: 5px;">
             <a href="https://03-okna.ru/offer.php?num_rasch=34084" class="btn btn-secondary btn-sm">
                 Комм.предл.
@@ -46,7 +47,8 @@
         @isset($products)
             {{-- todo Вова: колхозная кнопка --}}
             <a href="#" id="show" class="btn w-25" style="display: none;"
-               onclick="$( this ).parent().children().show(400); $( this ).hide(400)">Развернуть</a>
+               onclick="$( this ).parent().children().show(400); $( this ).hide(400)">Развернуть
+            </a>
             <div class="row align-content-between position-relative">
                 @include('components.close', ['closeText' => 'Свернуть'])
                 <div class="mt-4 w-75">
@@ -68,7 +70,7 @@
                             @foreach($products as $product)
                                 @php($productData = json_decode($product->data))
                                 <tr style="cursor:pointer;" onclick="
-                                    {{-- todo Вова: вот таблица и вот как реализован переход на страницу редактирования товара --}}
+                                {{-- todo Вова: вот таблица и вот как реализован переход на страницу редактирования товара --}}
                                     window.location ='{{ route('product-in-order', [
                                         'order' => $orderNumber,
                                         'productInOrder' => $product
