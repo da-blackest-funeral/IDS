@@ -40,28 +40,9 @@
                 productInOrder: $productInOrder,
             );
 
-            // todo баг
-            // когда обновляешь товар и ничего не меняешь то создается новая зарплата
-
-        } elseif (
-            // если в заказе есть товары
-            $productInOrder->order->products->isNotEmpty() &&
-            /*
-             * но нет товаров с монтажом, т.е. за
-             * доставку з\п уже начислена
-             */
-            productsWithMaxInstallation($productInOrder)->isEmpty() &&
-            // и нынешний товар не нуждается в монтаже
-            !$calculator->productNeedInstallation() // todo баг в этом условии
-        ) {
-            /*
-             * то не создавать новую з.п., т.к. за
-             * доставку и замер з\п уже должна быть начислена
-             */
-            return;
+        } else {
+            createSalary($productInOrder->order, $calculator);
         }
-
-        createSalary($productInOrder->order, $calculator);
     }
 
     function calculateInstallationSalary(
@@ -74,8 +55,6 @@
         if (fromUpdatingProductPage() && oldProductHasInstallation()) {
             $count -= oldProductsCount();
         }
-
-        \Notifier::warning('test it works');
 
         $salary = $calculator->getInstallationSalary(
             installation: $installation ?? $productInOrder->installation_id,
