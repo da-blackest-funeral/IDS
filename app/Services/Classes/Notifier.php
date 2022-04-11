@@ -8,13 +8,29 @@
 
     class Notifier
     {
+        /**
+         * Specified data for conditional displaying warnings
+         *
+         * @var Collection
+         */
         protected static Collection $messagesAndRules;
 
-        public static function setData() {
+        /**
+         * Setting data from json file
+         * (it happens at every post request automatically)
+         *
+         * @return void
+         */
+        public function setData() {
             static::$messagesAndRules = jsonData('warnings');
         }
 
-        #[NoReturn] public static function displayWarnings() {
+        /**
+         * Checks specified conditions and writes warning messages
+         *
+         * @return void
+         */
+        #[NoReturn] public function displayWarnings() {
             $selected = collect(selectedGroups());
 
             static::$messagesAndRules->each(function ($object) use ($selected) {
@@ -31,24 +47,40 @@
                         foreach ($object->groups as $group) {
                             $needWarning = $needWarning && $selected->contains($group);
                         }
-                        dump($needWarning, $object->groups, $selected);
                     }
 
                     if (isset($object->width)) {
-                        $needWarning = $needWarning && (int) request()->input('width') > $object->width;
+                        $needWarning = $needWarning && (int)request()->input('width') > $object->width;
                     }
 
                     if (isset($object->height)) {
-                        $needWarning = $needWarning && (int) request()->input('height') > $object->height;
+                        $needWarning = $needWarning && (int)request()->input('height') > $object->height;
                     }
 
                     if ($needWarning) {
-                        // todo это сообщение отправляется дважды, поэтому можно сделать проверку если оно уже есть
-                        // то не отправлять
-                        warning($object->message);
+                        static::warning($object->message);
                         return false;
                     }
                 }
             });
+        }
+
+        /**
+         * Outputs only unique warning-messages
+         *
+         * @param string $text
+         * @return void
+         */
+        public function warning(string $text) {
+            if (is_null(session('warnings'))) {
+                warning($text);
+                return;
+            }
+
+            foreach (session('warnings') as $warning) {
+                if ($warning !== $text) {
+                    warning($text);
+                }
+            }
         }
     }

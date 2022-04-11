@@ -13,9 +13,8 @@
 
 @if(session()->has('warnings'))
     <div class="m-xxl-3 pr-3 pt-3 pb-3">
-        @foreach(session()->pull('warnings') as $warning)
-            @section('info', $warning)
-        @include('components.alert-danger')
+        @foreach(session()->pull('warnings') as $text)
+            @include('components.alert-danger', compact('text'))
         @endforeach
     </div>
 @endif

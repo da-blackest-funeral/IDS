@@ -221,7 +221,7 @@
             if ($this->needInstallation) {
                 $this->price -= $this->measuringPrice;
                 $this->measuringPrice = 0;
-                warning('Замер бесплатный при заключении договора!');
+                \Notifier::warning('Замер бесплатный при заключении договора!');
                 $this->measuringSalary = 0;
             }
         }

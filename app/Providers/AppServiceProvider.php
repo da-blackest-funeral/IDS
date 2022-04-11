@@ -32,6 +32,10 @@
                     return new ItalianMosquitoSystemCalculator($request);
                 }
             });
+
+            $this->app->bind(Notifier::class, function () {
+                return new Notifier();
+            });
         }
 
         /**
@@ -41,8 +45,8 @@
          */
         public function boot() {
             if (request()->method() == 'POST') {
-                Notifier::setData();
-                Notifier::displayWarnings();
+                \App\Services\Classes\NotifierFacade::setData();
+                \App\Services\Classes\NotifierFacade::displayWarnings();
             }
         }
     }
