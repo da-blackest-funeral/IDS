@@ -40,6 +40,9 @@
                 productInOrder: $productInOrder,
             );
 
+            // todo баг
+            // когда обновляешь товар и ничего не меняешь то создается новая зарплата
+
         } elseif (
             // если в заказе есть товары
             $productInOrder->order->products->isNotEmpty() &&
@@ -49,7 +52,7 @@
              */
             productsWithMaxInstallation($productInOrder)->isEmpty() &&
             // и нынешний товар не нуждается в монтаже
-            !$calculator->productNeedInstallation()
+            !$calculator->productNeedInstallation() // todo баг в этом условии
         ) {
             /*
              * то не создавать новую з.п., т.к. за

@@ -16,7 +16,13 @@
     }
 
     function fromUpdatingProductPage() {
-        return Route::getRoutes()->match(app('request')->create(url()->previous()))->getName() == 'product-in-order';
+        return Route::getRoutes()
+                ->match(
+                    app('request')
+                        ->create(
+                            url()->previous()
+                        )
+                )->getName() == 'product-in-order';
     }
 
     function notify($text) {

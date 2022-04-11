@@ -22,13 +22,16 @@
                     request()->has('categories') &&
                     $object->category == request()->input('categories')
                 ) {
-                    $needWarning = true;
+                    $needWarning = false;
                     if (isset($object->profile)) {
                         $needWarning = $object->profile == request()->input('profiles');
                     }
 
                     if (isset($object->groups) && !empty($object->groups)) {
-                        $needWarning = $needWarning && $selected->hasAny($object->groups);
+                        foreach ($object->groups as $group) {
+                            $needWarning = $needWarning && $selected->contains($group);
+                        }
+                        dump($needWarning, $object->groups, $selected);
                     }
 
                     if (isset($object->width)) {
