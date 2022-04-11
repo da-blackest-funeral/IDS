@@ -5,11 +5,10 @@
     use App\Models\MosquitoSystems\Profile;
     use App\Models\MosquitoSystems\Type;
     use App\Models\ProductInOrder;
-    use App\Services\Calculator\Classes\MosquitoSystemsCalculator;
-    use App\Services\Calculator\Interfaces\Calculator;
+    use Facades\App\Services\Calculator\Interfaces\Calculator;
     use Illuminate\Support\Collection;
 
-    function updateOrCreateSalary(ProductInOrder $productInOrder, Calculator $calculator) {
+    function updateOrCreateSalary(ProductInOrder $productInOrder) {
         $products = ProductInOrder::whereCategoryId($productInOrder->category_id)
             ->whereOrderId($productInOrder->order_id);
         if ($products->exists() && salary($productInOrder)->exists()) {
@@ -33,7 +32,6 @@
 
             updateSalary(
                 sum: calculateInstallationSalary(
-                    calculator: $calculator,
                     productInOrder: $productsWithMaxInstallation->first(),
                     count: $count,
                 ),
@@ -41,12 +39,11 @@
             );
 
         } else {
-            createSalary($productInOrder->order, $calculator);
+            createSalary($productInOrder->order);
         }
     }
 
     function calculateInstallationSalary(
-        MosquitoSystemsCalculator $calculator,
         ProductInOrder            $productInOrder,
         int                       $count,
                                   $installation = null
@@ -56,7 +53,7 @@
             $count -= oldProductsCount();
         }
 
-        $salary = $calculator->getInstallationSalary(
+        $salary = Calculator::getInstallationSalary(
             installation: $installation ?? $productInOrder->installation_id,
             count: $count,
             /*
@@ -70,7 +67,7 @@
         if ($salary != null) {
             $result = $salary->salary;
         } else {
-            $salary = $calculator->maxCountSalary(
+            $salary = Calculator::maxCountSalary(
                 installation: $installation ?? $productInOrder->installation_id,
                 typeId: $productInOrder->type_id
             );
@@ -93,7 +90,7 @@
             if (productHasCoefficient($product)) {
                 $data = productData($product);
 
-                $result = $calculator->salaryForDifficulty(
+                $result = Calculator::salaryForDifficulty(
                     salary: $result,
                     price: $data->installationPrice,
                     coefficient: $data->coefficient,

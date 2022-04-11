@@ -7,7 +7,8 @@
     use App\Models\ProductInOrder;
     use App\Models\Salaries\InstallerSalary;
     use App\Models\SystemVariables;
-    use App\Services\Calculator\Interfaces\Calculator;
+    // this feature called real-time facades
+    use Facades\App\Services\Calculator\Interfaces\Calculator;
 
     require_once 'MosquitoSystems.php';
 
@@ -29,30 +30,30 @@
         session()->push('notifications', $text);
     }
 
-    function createOrder(Calculator $calculator) {
+    function createOrder() {
         return Order::create([
-            'delivery' => $calculator->getDeliveryPrice(),
+            'delivery' => Calculator::getDeliveryPrice(),
             'user_id' => auth()->user()->getAuthIdentifier(),
             'installer_id' => request()->input('installer') ?? 2,
-            'price' => $calculator->getPrice(),
-            'discounted_price' => $calculator->getPrice(), // todo сделать расчет с учетом скидок
-            'measuring' => $calculator->getNeedMeasuring(),
-            'measuring_price' => $calculator->getMeasuringPrice(),
-            'discounted_measuring_price' => $calculator->getMeasuringPrice(), // todo скидки
+            'price' => Calculator::getPrice(),
+            'discounted_price' => Calculator::getPrice(), // todo сделать расчет с учетом скидок
+            'measuring' => Calculator::getNeedMeasuring(),
+            'measuring_price' => Calculator::getMeasuringPrice(),
+            'discounted_measuring_price' => Calculator::getMeasuringPrice(), // todo скидки
             'comment' => request()->input('comment') ?? 'Комментарий отсутствует',
-            'products_count' => $calculator->getCount(),
+            'products_count' => Calculator::getCount(),
             'installing_difficult' => request()->input('coefficient'),
             'is_private_person' => request()->input('person') == 'physical',
             'structure' => 'Пока не готово',
         ]);
     }
 
-    function newProduct(Calculator $calculator, Order $order) {
+    function newProduct(Order $order) {
         return ProductInOrder::create([
-            'installation_id' => $calculator->getInstallation('additional_id'),
+            'installation_id' => Calculator::getInstallation('additional_id'),
             'order_id' => $order->id,
-            'name' => $calculator->getProduct()->name(),
-            'data' => $calculator->getOptions()->toJson(),
+            'name' => Calculator::getProduct()->name(),
+            'data' => Calculator::getOptions()->toJson(),
             'user_id' => auth()->user()->getAuthIdentifier(),
             'category_id' => request()->input('categories'),
             'count' => request()->input('count'),
@@ -79,15 +80,15 @@
         $product->update();
     }
 
-    function createSalary(Order $order, Calculator $calculator) {
+    function createSalary(Order $order) {
         return InstallerSalary::create([
             'installer_id' => $order->installer_id,
             'category_id' => request()->input('categories'),
             'order_id' => $order->id,
-            'sum' => $calculator->getInstallersWage(),
+            'sum' => Calculator::getInstallersWage(),
             'comment' => 'Пока не готово',
             'status' => false,
-            'changed_sum' => $calculator->getInstallersWage(),
+            'changed_sum' => Calculator::getInstallersWage(),
             'created_user_id' => auth()->user()->getAuthIdentifier(),
             'type' => 'Заказ', // todo сделать Enum для этого
         ]);
@@ -111,43 +112,43 @@
         session()->push('warnings', $text);
     }
 
-    function checkSalaryForMeasuringAndDelivery(Order $order, Calculator $calculator, ProductInOrder $productInOrder) {
-        if (orderHasInstallation($order) || $calculator->productNeedInstallation()) {
+    function checkSalaryForMeasuringAndDelivery(Order $order, ProductInOrder $productInOrder) {
+        if (orderHasInstallation($order) || Calculator::productNeedInstallation()) {
             $order->measuring_price = 0;
         } else {
             $order->measuring_price = SystemVariables::value('measuring');
             // Прибавить к зп монтажника стоимости замера и доставки, если они заданы
-            updateSalary($calculator->getInstallersWage(), $productInOrder);
+            updateSalary(Calculator::getInstallersWage(), $productInOrder);
         }
     }
 
-    function addProductToOrder(Calculator $calculator, Order $order) {
-        $newProductPrice = $calculator->getPrice();
+    function addProductToOrder(Order $order) {
+        $newProductPrice = Calculator::getPrice();
 
         if ($order->measuring_price) {
-            $newProductPrice -= $calculator->getMeasuringPrice();
+            $newProductPrice -= Calculator::getMeasuringPrice();
         }
 
         if ($order->delivery) {
             $newProductPrice -= min(
                 $order->delivery,
-                $calculator->getDeliveryPrice()
+                Calculator::getDeliveryPrice()
             );
 
             $order->delivery = max(
-                $calculator->getDeliveryPrice(),
+                Calculator::getDeliveryPrice(),
                 oldProductData(['delivery', 'deliveryPrice'])
             );
         }
 
         $order->price += $newProductPrice;
-        $order->products_count += $calculator->getCount();
+        $order->products_count += Calculator::getCount();
 
         $order->update();
 
-        $product = newProduct($calculator, $order->refresh());
+        $product = newProduct($order->refresh());
 
-        updateOrCreateSalary($product, $calculator);
+        updateOrCreateSalary($product);
 
         return $product;
     }

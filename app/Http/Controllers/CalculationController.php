@@ -30,20 +30,19 @@
             ]);
         }
 
-        public function save(Calculator $calculator, SaveOrderRequest $request) {
+        public function save(SaveOrderRequest $request) {
             $this->request = $request;
-            $this->calculator = $calculator;
 
             // todo сделать логику с "была ли взята машина компании"
             // todo соответствующее поле в таблице order
             // todo сделать учет ручного изменения цены заказа
             // todo сделать вывод всевозможных сообщений
-            $order = createOrder($calculator);
+            $order = createOrder();
 
-            createSalary($order, $calculator);
+            createSalary($order);
 
             // todo тут сделано только для москитных систем (возможно, удастся сделать это реюзабельным)
-            newProduct($calculator, $order);
+            newProduct($order);
 
             session()->flash('success', ['Заказ успешно создан!']);
 

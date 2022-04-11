@@ -6,7 +6,6 @@
     use App\Models\Category;
     use App\Models\Order;
     use App\Models\ProductInOrder;
-    use App\Services\Calculator\Interfaces\Calculator;
 
     class ProductController extends Controller
     {
@@ -34,7 +33,7 @@
             ]);
         }
 
-        public function update(Order $order, ProductInOrder $productInOrder, Calculator $calculator) {
+        public function update(Order $order, ProductInOrder $productInOrder) {
             $productData = json_decode($productInOrder->data);
             $order->price -= $productData->main_price;
             $order->products_count -= $productInOrder->count;
@@ -47,13 +46,11 @@
             $order->update();
 
             addProductToOrder(
-                calculator: $calculator,
                 order: $order->refresh()
             );
 
             checkSalaryForMeasuringAndDelivery(
                 order: $order,
-                calculator: $calculator,
                 productInOrder: $productInOrder
             );
 
@@ -65,13 +62,5 @@
             // 2) если был монтаж, а стал без монтажа, то замер надо сделать снова не бесплатным
             // 3) отнять количество товара от общего количества всех товаров в заказе
             return redirect(route('order', ['order' => $order->id]));
-        }
-
-        public function test() {
-            $uri = new \stdClass();
-            $uri->uri = $_SERVER['REQUEST_URI'];
-            $uri->method = $_SERVER['REQUEST_METHOD'];
-            return view('pages.documents')
-                ->with(compact('uri'));
         }
     }

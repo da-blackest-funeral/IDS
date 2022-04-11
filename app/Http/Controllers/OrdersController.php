@@ -4,13 +4,10 @@
 
     use App\Models\Category;
     use App\Models\Order;
-    use App\Services\Calculator\Interfaces\Calculator;
     use Illuminate\Http\Request;
 
     class OrdersController extends Controller
     {
-
-        protected Calculator $calculator;
         protected Request $request;
 
         public function order(Order $order) {
@@ -30,16 +27,14 @@
             );
         }
 
-        public function addProduct(Calculator $calculator, Order $order) {
+        public function addProduct(Order $order) {
 
             $productInOrder = addProductToOrder(
-                calculator: $calculator,
                 order: $order
             );
 
             checkSalaryForMeasuringAndDelivery(
                 order: $order,
-                calculator: $calculator,
                 productInOrder: $productInOrder
             );
 
