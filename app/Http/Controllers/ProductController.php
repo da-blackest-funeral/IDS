@@ -66,4 +66,12 @@
             // 3) отнять количество товара от общего количества всех товаров в заказе
             return redirect(route('order', ['order' => $order->id]));
         }
+
+        public function test() {
+            $uri = new \stdClass();
+            $uri->uri = $_SERVER['REQUEST_URI'];
+            $uri->method = $_SERVER['REQUEST_METHOD'];
+            return view('pages.documents')
+                ->with(compact('uri'));
+        }
     }

@@ -40,7 +40,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/{order}/{productInOrder}', [ProductController::class, 'update']);
     });
 
-    Route::view('/documents', 'pages.documents')
+    Route::get('/documents', [ProductController::class, 'test'])
         ->name('documents');
 
     Route::view('/news', 'pages.news')
