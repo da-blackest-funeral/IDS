@@ -5,8 +5,8 @@
     use App\Models\MosquitoSystems\Profile;
     use App\Models\MosquitoSystems\Type;
     use App\Models\ProductInOrder;
-    use App\Services\Classes\MosquitoSystemsCalculator;
-    use App\Services\Interfaces\Calculator;
+    use App\Services\Calculator\Classes\MosquitoSystemsCalculator;
+    use App\Services\Calculator\Interfaces\Calculator;
     use Illuminate\Support\Collection;
 
     function updateOrCreateSalary(ProductInOrder $productInOrder, Calculator $calculator) {
@@ -74,6 +74,8 @@
         if (fromUpdatingProductPage() && oldProductHasInstallation()) {
             $count -= oldProductsCount();
         }
+
+        \Notifier::warning('test it works');
 
         $salary = $calculator->getInstallationSalary(
             installation: $installation ?? $productInOrder->installation_id,

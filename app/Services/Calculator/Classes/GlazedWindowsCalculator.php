@@ -1,10 +1,12 @@
 <?php
 
-    namespace App\Services\Classes;
+    namespace App\Services\Calculator\Classes;
 
     use App\Models\GlazedWindows\Additional;
     use App\Models\GlazedWindows\GlazedWindows;
+    use App\Models\ProductInOrder;
     use App\Models\SystemVariables;
+    use App\Services\Classes\HasSquare;
     use Illuminate\Http\Request;
     use Illuminate\Support\Collection;
 
@@ -127,5 +129,17 @@
 
         public function getNeedMeasuring(): bool {
             // TODO: Implement getNeedMeasuring() method.
+        }
+
+        public function getProduct() {
+            // TODO: Implement getProduct() method.
+        }
+
+        public function calculateInstallationSalary(): float|null {
+            // TODO: Implement calculateInstallationSalary() method.
+        }
+
+        public function calculateSalaryForCount(int $count, ProductInOrder $productInOrder, $installation = null) {
+            // TODO: Implement calculateSalaryForCount() method.
         }
     }

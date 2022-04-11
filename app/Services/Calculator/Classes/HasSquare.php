@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Classes;
+namespace App\Services\Calculator\Classes;
 
 trait HasSquare
 {

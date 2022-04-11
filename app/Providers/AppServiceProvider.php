@@ -3,11 +3,10 @@
     namespace App\Providers;
 
     use App\Http\Requests\SaveOrderRequest;
-    use App\Services\Classes\GlazedWindowsCalculator;
-    use App\Services\Classes\ItalianMosquitoSystemCalculator;
-    use App\Services\Classes\MosquitoSystemsCalculator;
-    use App\Services\Classes\Notifier;
-    use App\Services\Interfaces\Calculator;
+    use App\Services\Calculator\Classes\GlazedWindowsCalculator;
+    use App\Services\Calculator\Classes\ItalianMosquitoSystemCalculator;
+    use App\Services\Calculator\Classes\MosquitoSystemsCalculator;
+    use App\Services\Notifications\Notifier;
     use Illuminate\Support\ServiceProvider;
 
     class AppServiceProvider extends ServiceProvider
@@ -18,7 +17,7 @@
          * @return void
          */
         public function register() {
-            $this->app->bind(Calculator::class, function () {
+            $this->app->bind(\App\Services\Calculator\Interfaces\Calculator::class, function () {
                 $request = SaveOrderRequest::createFromBase(\request());
                 if (in_array(\request()->input('categories'), [15, 16, 17])) {
                     return new GlazedWindowsCalculator($request);
@@ -45,8 +44,8 @@
          */
         public function boot() {
             if (request()->method() == 'POST') {
-                \App\Services\Classes\NotifierFacade::setData();
-                \App\Services\Classes\NotifierFacade::displayWarnings();
+                \Notifier::setData();
+                \Notifier::displayWarnings();
             }
         }
     }

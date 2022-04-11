@@ -1,6 +1,6 @@
 <?php
 
-    namespace App\Services\Classes;
+    namespace App\Services\Calculator\Classes;
 
     use App\Models\MosquitoSystems\Product;
     use App\Models\MosquitoSystems\Type;

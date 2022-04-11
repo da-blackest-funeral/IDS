@@ -4,7 +4,7 @@
 
     use App\Models\Category;
     use App\Models\Order;
-    use App\Services\Interfaces\Calculator;
+    use App\Services\Calculator\Interfaces\Calculator;
     use Illuminate\Http\Request;
 
     class OrdersController extends Controller

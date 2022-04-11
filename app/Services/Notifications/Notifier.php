@@ -1,6 +1,6 @@
 <?php
 
-    namespace App\Services\Classes;
+    namespace App\Services\Notifications;
 
     // todo вывод warning'ов делать через этот класс и зарегестрировать его как фасад
     use Illuminate\Support\Collection;

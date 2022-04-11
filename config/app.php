@@ -231,7 +231,7 @@
             'Validator' => Illuminate\Support\Facades\Validator::class,
             'View' => Illuminate\Support\Facades\View::class,
             'Debugbar' => Barryvdh\Debugbar\Facades\Debugbar::class,
-            'Notifier' => \App\Services\Classes\NotifierFacade::class,
+            'Notifier' => \App\Services\Facades\Classes\NotifierFacade::class,
 
         ],
 

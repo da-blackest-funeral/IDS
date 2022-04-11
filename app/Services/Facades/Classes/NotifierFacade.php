@@ -1,7 +1,8 @@
 <?php
 
-    namespace App\Services\Classes;
+    namespace App\Services\Facades\Classes;
 
+    use App\Services\Notifications\Notifier;
     use Illuminate\Support\Facades\Facade;
 
     class NotifierFacade extends Facade

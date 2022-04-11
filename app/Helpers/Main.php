@@ -7,7 +7,7 @@
     use App\Models\ProductInOrder;
     use App\Models\Salaries\InstallerSalary;
     use App\Models\SystemVariables;
-    use App\Services\Interfaces\Calculator;
+    use App\Services\Calculator\Interfaces\Calculator;
 
     require_once 'MosquitoSystems.php';
 
