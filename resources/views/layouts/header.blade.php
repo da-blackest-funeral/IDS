@@ -9,7 +9,7 @@
         <div class="collapse navbar-collapse d-flex justify-content-between px-4" id="navbar1">
             <ul class="navbar-nav">
                 <li class="nav-item active">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="/">
                             <span style="font-size: 16px; font-weight: 600;">
                                 IDS
                             </span>
