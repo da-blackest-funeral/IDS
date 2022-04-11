@@ -15,7 +15,7 @@ $('#categories').change(function () {
             $('#fourth').hide(350);
             $('#additional').hide(350);
             $('#items').hide();
-            $('#items').html(data);
+            $('#items').html(data)
             $('#items').show(350);
         }
     })
