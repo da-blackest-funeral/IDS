@@ -137,7 +137,7 @@
 
             $order->delivery = max(
                 Calculator::getDeliveryPrice(),
-                oldProductData(['delivery', 'deliveryPrice'])
+                $order->delivery
             );
         }
 

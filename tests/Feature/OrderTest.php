@@ -26,13 +26,13 @@
 
             $this->assertDatabaseHas(
                 'orders',
-                $this->orderWithOneMosquitoSystemsProduct()
+                $this->defaultOrder()
             )->assertDatabaseHas(
                 'products',
-                $this->mosquitoSystemProductInOrder()
+                $this->defaultProductInOrder()
             )->assertDatabaseHas(
                 'installers_salaries',
-                $this->mosquitoSystemsInstallerSalaryForOneProduct(),
+                $this->defaultSalary(),
             )->assertDatabaseMissing('installers_salaries', ['id' => 2])
                 ->assertDatabaseMissing('products', ['id' => 2])
                 ->assertDatabaseMissing('orders', ['id' => 2]);
@@ -54,14 +54,14 @@
 
             $this->post('/', $inputs);
 
-            $resultOrder = $this->orderWithOneMosquitoSystemsProduct();
+            $resultOrder = $this->defaultOrder();
             $resultOrder['price'] = $resultOrder['discounted_price'] = 2376;
             $resultOrder['measuring_price'] = $resultOrder['discounted_measuring_price'] = 0;
 
-            $resultProduct = $this->mosquitoSystemProductInOrder();
+            $resultProduct = $this->defaultProductInOrder();
             $resultProduct['installation_id'] = 8;
 
-            $resultSalary = $this->mosquitoSystemsInstallerSalaryForOneProduct();
+            $resultSalary = $this->defaultSalary();
             $resultSalary['sum'] = 1050;
 
             // todo почему-то поле order.installation = 0 когда задаешь монтаж в товаре
@@ -81,10 +81,54 @@
                 ->assertDatabaseMissing('orders', ['id' => 2]);
         }
 
+        /**
+         * Test when creating two products with no installation
+         * salary accrues one time
+         *
+         * @test
+         * @return void
+         */
+        public function order_with_two_same_products_with_no_installation() {
+            $this->seed();
+            $this->actingAs(User::first());
+
+            $this->post('/', $this->exampleMosquitoSystemsInputs());
+            $this->post('/orders/1', $this->exampleMosquitoSystemsInputs());
+
+            $resultOrder = $this->defaultOrder();
+            $resultOrder['price'] = 3312;
+            $resultOrder['products_count'] = 2;
+
+            $resultProduct1 = $this->defaultProductInOrder();
+            $resultProduct1['id'] = 1;
+            $resultProduct2 = $this->defaultProductInOrder();
+            $resultProduct2['id'] = 2;
+
+            $resultSalary = $this->defaultSalary();
+
+            $this->assertDatabaseHas(
+                'orders',
+                $resultOrder
+            )->assertDatabaseHas(
+                'products',
+                $resultProduct1
+            )->assertDatabaseHas(
+                'products',
+                $resultProduct2
+            )->assertDatabaseHas(
+                'installers_salaries',
+                $resultSalary
+            )->assertDatabaseMissing(
+                // testing that salary creates single time
+                'installers_salaries',
+                ['id' => 2]
+            );
+        }
+
         /*
          * todo написать следующие тесты:
          * 1) когда создаем один товар с монтажом - готово
-         * 2) когда создаем несколько товаров одного типа без монтажа
+         * 2) когда создаем несколько товаров одного типа без монтажа - готово
          * 3) когда создаем несколько товаров одного типа, один с монтажом другой без
          * 4) когда создаем несколько товаров одного типа с одинаковым монтажом
          * 5) когда создаем несколько товаров одного типа с разным монтажом
@@ -94,6 +138,8 @@
          * 9) когда создаем несколько товаров одного типа с монтажом, один из них с коэффициентом сложности,
          * а другой без монтажа
          * 10) когда создаем несколько товаров разных типов с монтажом, один из них с коэффициентом сложности
+         * 11) тест что при добавлении товаров разных типов цена за доставку в order записывается максимальная
+         * 12) проверка назначения какому монтажнику присвоен заказ
          *
          * также, продумать тесты с:
          * 1) ремонтом сетки
@@ -123,7 +169,7 @@
             ];
         }
 
-        protected function orderWithOneMosquitoSystemsProduct() {
+        protected function defaultOrder() {
             return [
                 'user_id' => 1,
                 'delivery' => 600,
@@ -144,7 +190,7 @@
             ];
         }
 
-        protected function mosquitoSystemProductInOrder() {
+        protected function defaultProductInOrder() {
             return [
                 'order_id' => 1,
                 'user_id' => 1,
@@ -156,7 +202,7 @@
             ];
         }
 
-        protected function mosquitoSystemsInstallerSalaryForOneProduct() {
+        protected function defaultSalary() {
             return [
                 'installer_id' => 2,
                 'order_id' => 1,
