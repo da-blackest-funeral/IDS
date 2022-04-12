@@ -127,6 +127,10 @@
 
         if ($order->measuring_price) {
             $newProductPrice -= Calculator::getMeasuringPrice();
+            if (Calculator::productNeedInstallation()) {
+                $order->price -= $order->measuring_price;
+                $order->measuring_price = 0;
+            }
         }
 
         if ($order->delivery) {

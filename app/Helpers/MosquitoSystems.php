@@ -83,7 +83,7 @@
 
         foreach (productsWithInstallation($productInOrder) as $product) {
             // todo пропускать старый товар который еще не удален, колхоз, при рефакторинге избавиться от этого
-            if (oldProduct('id') == $product->id) {
+            if (fromUpdatingProductPage() && oldProduct('id') == $product->id) {
                 continue;
             }
 
