@@ -6,9 +6,9 @@
 
     return new class extends Migration {
 
-        protected function comment(string $table, string $comment) {
-            DB::statement("ALTER TABLE $table comment '$comment'");
-        }
+//        protected function comment(string $table, string $comment) {
+//            DB::statement("ALTER TABLE $table comment '$comment'");
+//        }
 
         /**
          * Run the migrations.
@@ -79,7 +79,7 @@
                     ->default(0);
                 $table->timestamps();
             });
-            $this->comment('types_windows', 'Типы окон - Алюминиевые, окна из ПВХ и т.д.');
+//            $this->comment('types_windows', 'Типы окон - Алюминиевые, окна из ПВХ и т.д.');
 
             Schema::create('category_has_method', function (Blueprint $table) {
                 $table->id();

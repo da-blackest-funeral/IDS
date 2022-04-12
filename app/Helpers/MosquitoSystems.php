@@ -159,7 +159,7 @@
             ->get();
     }
 
-    function profiles($product = null): Collection {
+    function profiles(ProductInOrder $product = null): Collection {
         $productData = null;
 
         if (!is_null($product)) {
@@ -173,7 +173,7 @@
             ->get(['id', 'name']);
     }
 
-    function tissues($categoryId) {
+    function tissues(int $categoryId) {
         // todo колхоз
         return \App\Models\Category::tissues($categoryId)
             ->get()
@@ -184,7 +184,7 @@
             ->unique();
     }
 
-    function additional($productInOrder = null) {
+    function additional(ProductInOrder $productInOrder = null) {
         $productData = null;
 
         if (isset($productInOrder->data)) {

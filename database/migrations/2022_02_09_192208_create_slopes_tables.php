@@ -9,9 +9,9 @@ return new class extends Migration
 
     protected $prefix = 'slopes';
 
-    protected function comment(string $table, string $comment) {
-        DB::statement("ALTER TABLE $table comment '$comment'");
-    }
+//    protected function comment(string $table, string $comment) {
+//        DB::statement("ALTER TABLE $table comment '$comment'");
+//    }
 
     /**
      * Run the migrations.
@@ -28,7 +28,7 @@ return new class extends Migration
             $table->foreignId('category_id');
             $table->timestamps();
         });
-        $this->comment("{$this->prefix}", 'Конфигурация откоса');
+//        $this->comment("{$this->prefix}", 'Конфигурация откоса');
 
         Schema::create("{$this->prefix}_colors", function (Blueprint $table) {
             $table->id();
@@ -60,7 +60,7 @@ return new class extends Migration
             $table->float('price');
             $table->timestamps();
         });
-        $this->comment("{$this->prefix}_prices", 'Цена определяется по ширине и цвету');
+//        $this->comment("{$this->prefix}_prices", 'Цена определяется по ширине и цвету');
     }
 
     /**

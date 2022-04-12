@@ -6,9 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
 
-    protected function comment(string $table, string $comment) {
-        DB::statement("ALTER TABLE $table comment '$comment'");
-    }
+//    protected function comment(string $table, string $comment) {
+//        DB::statement("ALTER TABLE $table comment '$comment'");
+//    }
 
     protected $prefix = 'glazed_windows';
 
@@ -23,7 +23,7 @@ return new class extends Migration {
             $table->string('name');
             $table->timestamps();
         });
-        $this->comment("{$this->prefix}_groups", 'Нагреваемое стекло, нагреваемое СПО и т.д.');
+//        $this->comment("{$this->prefix}_groups", 'Нагреваемое стекло, нагреваемое СПО и т.д.');
 
         Schema::create("{$this->prefix}_with_heating", function (Blueprint $table) {
             $table->id();
@@ -36,17 +36,17 @@ return new class extends Migration {
                 ->constrained('categories');
             $table->timestamps();
         });
-        $this->comment("{$this->prefix}_with_heating", 'Стеклопакет с подогревом');
+//        $this->comment("{$this->prefix}_with_heating", 'Стеклопакет с подогревом');
 
         Schema::create("{$this->prefix}_services", function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->timestamps();
         });
-        $this->comment(
-            "{$this->prefix}_services",
-            'Виды услуг, связанных со стеклопакетами - монтаж, демонтаж и т.д.'
-        );
+//        $this->comment(
+//            "{$this->prefix}_services",
+//            'Виды услуг, связанных со стеклопакетами - монтаж, демонтаж и т.д.'
+//        );
 
         Schema::create("{$this->prefix}_type_service", function (Blueprint $table) {
             $table->id();
@@ -59,17 +59,17 @@ return new class extends Migration {
             $table->float('price');
             $table->timestamps();
         });
-        $this->comment(
-            "{$this->prefix}_type_service",
-            'Цена определяется двумя параметрами - тип окна и вид услуги'
-        );
+//        $this->comment(
+//            "{$this->prefix}_type_service",
+//            'Цена определяется двумя параметрами - тип окна и вид услуги'
+//        );
 
         Schema::create("{$this->prefix}_layers", function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->timestamps();
         });
-        $this->comment("{$this->prefix}_layers", 'Камера или стекло');
+//        $this->comment("{$this->prefix}_layers", 'Камера или стекло');
 
 //        Schema::create("{$this->prefix}_cameras_width", function (Blueprint $table) {
 //            $table->id();
@@ -87,10 +87,10 @@ return new class extends Migration {
                 ->constrained("{$this->prefix}_layers");
             $table->timestamps();
         });
-        $this->comment(
-            "{$this->prefix}_additional",
-            'Дополнительные опции для стеклопакетов - если нужен аргон или алюминиевая рамка'
-        );
+//        $this->comment(
+//            "{$this->prefix}_additional",
+//            'Дополнительные опции для стеклопакетов - если нужен аргон или алюминиевая рамка'
+//        );
 
         Schema::create("{$this->prefix}", function (Blueprint $table) {
             $table->id();
@@ -103,7 +103,7 @@ return new class extends Migration {
             $table->integer('sort')->default(0);
             $table->timestamps();
         });
-        $this->comment("{$this->prefix}", 'Цена на стеклопакет определяется шириной камеры');
+//        $this->comment("{$this->prefix}", 'Цена на стеклопакет определяется шириной камеры');
 
         Schema::create("glass", function (Blueprint $table) {
             $table->id();
@@ -116,7 +116,7 @@ return new class extends Migration {
                 ->constrained('categories');
             $table->timestamps();
         });
-        $this->comment('glass', 'Стекло');
+//        $this->comment('glass', 'Стекло');
 
         Schema::create("temperature_controllers", function (Blueprint $table) {
             $table->id();

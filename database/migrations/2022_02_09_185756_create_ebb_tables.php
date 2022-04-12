@@ -8,9 +8,9 @@ return new class extends Migration {
 
     protected $prefix = 'ebb'; // Не знаю как это перевести)
 
-    protected function comment(string $table, string $comment) {
-        DB::statement("ALTER TABLE $table comment '$comment'");
-    }
+//    protected function comment(string $table, string $comment) {
+//        DB::statement("ALTER TABLE $table comment '$comment'");
+//    }
 
     /**
      * Run the migrations.
@@ -26,7 +26,7 @@ return new class extends Migration {
             $table->float('plug_price')->comment('Цена заглушки');
             $table->timestamps();
         });
-        $this->comment("{$this->prefix}", 'Таблица отливов');
+//        $this->comment("{$this->prefix}", 'Таблица отливов');
 
         Schema::create("{$this->prefix}_width", function (Blueprint $table) {
             $table->id();
@@ -43,7 +43,7 @@ return new class extends Migration {
             $table->float('price');
             $table->timestamps();
         });
-        $this->comment("{$this->prefix}_prices", 'Цена определяется типом отлива и шириной');
+//        $this->comment("{$this->prefix}_prices", 'Цена определяется типом отлива и шириной');
     }
 
     /**

@@ -8,9 +8,9 @@ return new class extends Migration {
 
     protected $prefix = 'wraps';
 
-    protected function comment(string $table, string $comment) {
-        DB::statement("ALTER TABLE $table comment '$comment'");
-    }
+//    protected function comment(string $table, string $comment) {
+//        DB::statement("ALTER TABLE $table comment '$comment'");
+//    }
 
     /**
      * Run the migrations.
@@ -30,7 +30,7 @@ return new class extends Migration {
             $table->float('dismantling_price');
             $table->timestamps();
         });
-        $this->comment("{$this->prefix}_services", 'Цены за монтаж\демонтаж пленок');
+//        $this->comment("{$this->prefix}_services", 'Цены за монтаж\демонтаж пленок');
 
         Schema::create("{$this->prefix}", function (Blueprint $table) {
             $table->id();
@@ -47,7 +47,7 @@ return new class extends Migration {
                 ->constrained('categories');
             $table->timestamps();
         });
-        $this->comment("{$this->prefix}", 'Основная информация о пленках');
+//        $this->comment("{$this->prefix}", 'Основная информация о пленках');
 
         Schema::create("{$this->prefix}_types", function (Blueprint $table) {
             $table->id();
