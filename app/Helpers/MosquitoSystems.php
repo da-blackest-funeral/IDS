@@ -44,9 +44,9 @@
     }
 
     function calculateInstallationSalary(
-        ProductInOrder            $productInOrder,
-        int                       $count,
-                                  $installation = null
+        ProductInOrder $productInOrder,
+        int            $count,
+                       $installation = null
     ): int {
 
         if (fromUpdatingProductPage() && oldProductHasInstallation()) {

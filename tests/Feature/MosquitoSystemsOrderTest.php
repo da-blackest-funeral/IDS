@@ -4,6 +4,7 @@
 
     use App\Models\Order;
     use App\Models\ProductInOrder;
+    use App\Models\Salaries\InstallerSalary;
     use App\Models\User;
     use Illuminate\Foundation\Testing\Concerns\InteractsWithSession;
     use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -18,8 +19,8 @@
          * mosquito systems product with no installation,
          * and it's price calculates properly
          *
-         * @test
          * @return void
+         * @test
          */
         public function order_with_mosquito_system_products_price_calculates_properly() {
             $this->seed();
@@ -45,8 +46,8 @@
          * Test if mosquito systems product with installation
          * calculates properly
          *
-         * @test
          * @return void
+         * @test
          */
         public function order_with_mosquito_system_product_with_installation_calculates_properly() {
             $this->seed();
@@ -88,8 +89,8 @@
          * Test when creating two products with no installation
          * salary accrues one time
          *
-         * @test
          * @return void
+         * @test
          */
         public function order_with_two_same_products_with_no_installation() {
             $this->seed();
@@ -137,6 +138,7 @@
          * ВОЗМОЖНОЕ РЕШЕНИЕ ПРОБЛЕМЫ:
          * заранее создать в тестовой базе заказ и товар, а запрос делать только когда создается второй товар
          *
+         *
          * @test
          */
         public function order_when_creating_one_product_with_installation_and_one_without_it() {
@@ -167,7 +169,7 @@
                 'taken_sum' => 0,
                 'installing_difficult' => 1, // todo зачем это поле в таблице заказов? по идее оно не нужно
                 'is_private_person' => 0,
-                'structure' => '123',
+                'structure' => 'not ready',
             ]);
 
             ProductInOrder::create([
@@ -177,7 +179,7 @@
                 'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
                 'count' => 1,
                 'installation_id' => 14,
-                'data' => '{}'
+                'data' => '{}',
             ]);
 
             $this->post('/orders/1', $inputsWithInstallation);
@@ -270,15 +272,11 @@
             $this->seed();
             $this->actingAs(User::first());
 
-//            $this->usingInMemoryDatabase();
-
             $inputsWithInstallation = $this->exampleMosquitoSystemsInputs();
             $inputsWithInstallation['group-3'] = 8;
             $inputsWithInstallation['coefficient'] = 1.5;
 
             $this->post('/', $inputsWithInstallation);
-
-            // order['price'] = 2736
 
             $resultOrder = $this->defaultOrder();
             $resultOrder['price'] = 2736;
@@ -291,29 +289,112 @@
             $resultSalary = $this->defaultSalary();
             $resultSalary['sum'] = 1230;
 
-            $this
-                ->assertDatabaseHas(
-                    'orders',
-                    $resultOrder
-                )
-                ->assertDatabaseHas(
-                    'products',
-                    $resultProduct
-                )->assertDatabaseHas(
-                    'installers_salaries',
-                    $resultSalary
-                )->assertDatabaseMissing(
-                // testing that salary creates single time
-                    'installers_salaries',
-                    ['id' => 2]
-                );
+            $this->assertDatabaseHas(
+                'orders',
+                $resultOrder
+            )->assertDatabaseHas(
+                'products',
+                $resultProduct
+            )->assertDatabaseHas(
+                'installers_salaries',
+                $resultSalary
+            )->assertDatabaseMissing(
+            // testing that salary creates single time
+                'installers_salaries',
+                ['id' => 2]
+            );
+        }
+
+        /**
+         * @test
+         * @return void
+         */
+        public function order_when_creating_two_products_with_different_installations() {
+            $this->seed();
+            $this->actingAs(User::first());
+
+            $this->withoutExceptionHandling();
+
+            Order::create([
+                'user_id' => 1,
+                'delivery' => 600,
+                'installation' => 0,
+                'price' => 2448,
+                'installer_id' => 2,
+                'discounted_price' => 2448,
+                'status' => 0,
+                'measuring' => 1,
+                'measuring_price' => 0,
+                'discounted_measuring_price' => 0,
+                'comment' => 'Test Comment!',
+                'service_price' => 0,
+                'sum_after' => 0,
+                'products_count' => 1,
+                'taken_sum' => 0,
+                'installing_difficult' => 1,
+                'is_private_person' => 0,
+                'structure' => '123',
+            ]);
+
+            InstallerSalary::create([
+                'installer_id' => 2,
+                'order_id' => 1,
+                'category_id' => 5,
+                'sum' => 1100,
+                'created_user_id' => 1,
+                'comment' => '123',
+                'status' => 1,
+                'changed_sum' => 1100,
+                'type' => '123'
+            ]);
+
+            ProductInOrder::create([
+                'order_id' => 1,
+                'user_id' => 1,
+                'category_id' => 5,
+                'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
+                'count' => 1,
+                'installation_id' => 9,
+                'data' => '{"coefficient": "1"}',
+            ]);
+
+            $inputsWithInstallation = $this->exampleMosquitoSystemsInputs();
+            $inputsWithInstallation['group-3'] = 8;
+
+            $this->post('/orders/1', $inputsWithInstallation);
+
+            $resultOrder = $this->defaultOrder();
+            $resultOrder['price'] = 4224;
+            $resultOrder['products_count'] = 2;
+            $resultOrder['measuring_price'] = 0;
+
+            $resultProduct = $this->defaultProductInOrder();
+            $resultProduct['installation_id'] = 8;
+
+            $resultSalary = $this->defaultSalary();
+            $resultSalary['sum'] = 1250;
+
+            $this->assertDatabaseHas(
+                'orders',
+                $resultOrder
+            )->assertDatabaseHas(
+                'products',
+                $resultProduct
+            )->assertDatabaseHas(
+                'installers_salaries',
+                $resultSalary
+            )->assertDatabaseMissing(
+                'installers_salaries',
+                ['id' => 2]
+            );
+
         }
 
         /*
          * todo написать следующие тесты:
          * 1) когда создаем один товар с монтажом - готово
          * 2) когда создаем несколько товаров одного типа без монтажа - готово
-         * 3) когда создаем несколько товаров одного типа, один с монтажом другой без - пофиксить
+         * 3) когда создаем несколько товаров одного типа, один с монтажом другой без - готово
          * 4) когда создаем несколько товаров одного типа с одинаковым монтажом - готово
          * 5) когда создаем несколько товаров одного типа с разным монтажом
          * 6) когда создаем несколько товаров разных типов без монтажа
