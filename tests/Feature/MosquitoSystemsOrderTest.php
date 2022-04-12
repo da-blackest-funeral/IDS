@@ -6,7 +6,7 @@
     use Illuminate\Foundation\Testing\RefreshDatabase;
     use Tests\TestCase;
 
-    class OrderTest extends TestCase
+    class MosquitoSystemsOrderTest extends TestCase
     {
         use RefreshDatabase;
 
