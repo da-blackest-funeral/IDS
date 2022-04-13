@@ -443,6 +443,71 @@
             );
         }
 
+        /**
+         * When creating order with two products of different types
+         * with installation, must be created 2 independent salaries
+         *
+         * @test
+         * @return void
+         */
+        public function order_when_creating_two_products_of_different_types_with_installation() {
+            $this->setUpDefaultActions();
+
+            $order = $this->defaultOrder();
+            $order['price'] = $order['discounted_price'] = 2376;
+            $order['measuring_price'] = $order['discounted_measuring_price'] = $order['measuring'] = 0;
+            $order['structure'] = '123';
+
+            $product = $this->defaultProductInOrder();
+            $product['installation_id'] = 8;
+            $product['data'] = '{"coefficient": "1"}';
+
+            $salary = $this->defaultSalary();
+            $salary['sum'] = $salary['changed_sum'] = 1050;
+            $salary['comment'] = $salary['type'] = '123';
+            $salary['status'] = 0;
+
+            Order::create($order);
+
+            ProductInOrder::create($product);
+
+            InstallerSalary::create($salary);
+
+            $inputs = $this->exampleMosquitoSystemsInputs();
+            $inputs['categories'] = 7;
+            $inputs['group-3'] = 10;
+
+            $this->post('/orders/1', $inputs);
+
+            $resultOrder = $this->defaultOrder();
+            $resultOrder['price'] = 5724;
+            $resultOrder['products_count'] = 2;
+            $resultOrder['delivery'] = 960;
+            $resultOrder['measuring_price'] = 0;
+
+            $resultProduct = $this->defaultProductInOrder();
+            $resultProduct['category_id'] = 7;
+            $resultProduct['name'] = 'Москитные двери, 25 профиль, полотно Антимоскит';
+            $resultProduct['installation_id'] = 10;
+
+            $resultSalary = $this->defaultSalary();
+            $resultSalary['sum'] = 2150;
+
+            $this->assertDatabaseHas(
+                'orders',
+                $resultOrder
+            )->assertDatabaseHas(
+                'products',
+                $resultProduct
+            )->assertDatabaseHas(
+                'installers_salaries',
+                ['sum' => 1050]
+            )->assertDatabaseHas(
+                'installers_salaries',
+                ['sum' => 1100]
+            );
+        }
+
         /*
          * todo написать следующие тесты:
          * 1) когда создаем один товар с монтажом - готово
@@ -450,8 +515,8 @@
          * 3) когда создаем несколько товаров одного типа, один с монтажом другой без - готово
          * 4) когда создаем несколько товаров одного типа с одинаковым монтажом - готово
          * 5) когда создаем несколько товаров одного типа с разным монтажом - готово
-         * 6) когда создаем несколько товаров разных типов без монтажа
-         * 7) когда создаем несколько товаров разных типов, и оба с монтажом
+         * 6) когда создаем несколько товаров разных типов без монтажа - готово
+         * 7) когда создаем несколько товаров разных типов, и оба с монтажом - готово
          * 8) когда создаем один товар с монтажом и коэффициентом сложности - готово
          * 9) когда создаем несколько товаров одного типа с монтажом, один из них с коэффициентом сложности,
          * а другой без монтажа

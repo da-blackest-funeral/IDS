@@ -16,7 +16,18 @@
         $countOfAllProducts = countOfProducts($productInOrder->order->products);
         $productsWithMaxInstallation = productsWithMaxInstallation($productInOrder);
 
-        if ($products->exists() && !is_null(salary($productInOrder))) {
+        $productsOfTheSameTypeExists =
+            /*
+             * Need to determine if products of the same type
+             * that current exists.
+             * Because new product had been already created,
+             * we need to skip them
+             */
+            $products->get()->reject(function ($product) use ($productInOrder) {
+                return $product->id == $productInOrder->id;
+            })->isNotEmpty();
+
+        if ($productsOfTheSameTypeExists && !is_null(salary($productInOrder))) {
             /*
              * Условие звучит так: если в заказе уже есть такой же товар с монтажом, и добалвяется
              * товар без монтажа, то зп не пересчитывается. Если в заказе уже есть товар с монтажом, кроме нынешнего,
