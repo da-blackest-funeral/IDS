@@ -8,8 +8,8 @@
     use App\Models\Salaries\InstallerSalary;
     use App\Models\SystemVariables;
     // this feature called real-time facades
+//    use Facades\App\Services\Calculator\Interfaces\Calculator;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
-
     require_once 'MosquitoSystems.php';
 
     function isOrderPage() {
@@ -95,9 +95,16 @@
     }
 
     function salary(ProductInOrder $productInOrder) {
-        return $productInOrder->order
+        $salary = $productInOrder->order
             ->salaries()
             ->where('category_id', $productInOrder->category_id);
+        if (!$salary->exists()) {
+            return $productInOrder->order
+                ->salaries()
+                ->first();
+        }
+
+        return $salary;
     }
 
     function updateSalary(int|float $sum, ProductInOrder $productInOrder) {
@@ -161,6 +168,10 @@
         return $order->products->contains(function ($product) {
             return productHasInstallation($product);
         });
+    }
+
+    function orderSalaries(Order $order) {
+        return $order->salaries->sum('sum');
     }
 
     // when updating products, we save

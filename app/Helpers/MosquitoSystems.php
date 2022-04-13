@@ -11,11 +11,12 @@
     function updateOrCreateSalary(ProductInOrder $productInOrder) {
         $products = ProductInOrder::whereCategoryId($productInOrder->category_id)
             ->whereOrderId($productInOrder->order_id);
-        if ($products->exists() && salary($productInOrder)->exists()) {
 
-            $count = countProductsWithInstallation($productInOrder);
-            $productsWithMaxInstallation = productsWithMaxInstallation($productInOrder);
+        $count = countProductsWithInstallation($productInOrder);
+        $countOfAllProducts = countOfProducts($productInOrder->order->products);
+        $productsWithMaxInstallation = productsWithMaxInstallation($productInOrder);
 
+        if ($products->exists() && !is_null(salary($productInOrder))) {
             /*
              * Условие звучит так: если в заказе уже есть такой же товар с монтажом, и добалвяется
              * товар без монтажа, то зп не пересчитывается. Если в заказе уже есть товар с монтажом, кроме нынешнего,
@@ -39,7 +40,12 @@
             );
 
         } else {
-            createSalary($productInOrder->order);
+            // todo баг когда создаешь товары разных типов без монтажа начисляется лишняя зарплата
+            // если в заказе нет товаров, создавать з\п
+            // или если есть товары, и есть товары с монтажом
+            if (!$countOfAllProducts || $count) {
+                createSalary($productInOrder->order);
+            }
         }
     }
 
@@ -71,6 +77,10 @@
                 installation: $installation ?? $productInOrder->installation_id,
                 typeId: $productInOrder->type_id
             );
+
+            if (is_null($salary)) {
+                return orderSalaries($productInOrder->order);
+            }
 
             $missingCount = countProductsWithInstallation($productInOrder) - $salary->count;
             // Если это страница обновления товара

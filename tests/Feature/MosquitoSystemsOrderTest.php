@@ -23,8 +23,7 @@
          * @test
          */
         public function order_with_mosquito_system_products_price_calculates_properly() {
-            $this->seed();
-            $this->actingAs(User::first());
+            $this->setUpDefaultActions();
 
             $this->post('/', $this->exampleMosquitoSystemsInputs());
 
@@ -50,8 +49,7 @@
          * @test
          */
         public function order_with_mosquito_system_product_with_installation_calculates_properly() {
-            $this->seed();
-            $this->actingAs(User::first());
+            $this->setUpDefaultActions();
 
             $inputs = $this->exampleMosquitoSystemsInputs();
             $inputs['group-3'] = 8;
@@ -93,8 +91,7 @@
          * @test
          */
         public function order_with_two_same_products_with_no_installation() {
-            $this->seed();
-            $this->actingAs(User::first());
+            $this->setUpDefaultActions();
 
             $this->post('/', $this->exampleMosquitoSystemsInputs());
             $this->post('/orders/1', $this->exampleMosquitoSystemsInputs());
@@ -142,10 +139,7 @@
          * @test
          */
         public function order_when_creating_one_product_with_installation_and_one_without_it() {
-            $this->seed();
-
-            $this->actingAs(User::first());
-            $this->withoutExceptionHandling();
+            $this->setUpDefaultActions();
 
             $inputsWithInstallation = $this->exampleMosquitoSystemsInputs();
             $inputsWithInstallation['group-3'] = 8;
@@ -220,8 +214,7 @@
          * @return void
          */
         public function order_when_creating_two_products_with_installation() {
-            $this->seed();
-            $this->actingAs(User::first());
+            $this->setUpDefaultActions();
 
             $inputsWithInstallation = $this->exampleMosquitoSystemsInputs();
             $inputsWithInstallation['group-3'] = 8;
@@ -265,12 +258,13 @@
         }
 
         /**
+         * Test if coefficient difficulty works
+         *
          * @test
          * @return void
          */
         public function order_with_one_product_with_coefficient_difficulty() {
-            $this->seed();
-            $this->actingAs(User::first());
+            $this->setUpDefaultActions();
 
             $inputsWithInstallation = $this->exampleMosquitoSystemsInputs();
             $inputsWithInstallation['group-3'] = 8;
@@ -306,14 +300,15 @@
         }
 
         /**
+         * Test if in order with 2 products of the same type:
+         * 1) When calculates salary takes max installation price
+         * 2) When calculates salary count of products equals count of all products that has installation
+         *
          * @test
          * @return void
          */
         public function order_when_creating_two_products_with_different_installations() {
-            $this->seed();
-            $this->actingAs(User::first());
-
-            $this->withoutExceptionHandling();
+            $this->setUpDefaultActions();
 
             Order::create([
                 'user_id' => 1,
@@ -387,7 +382,65 @@
                 'installers_salaries',
                 ['id' => 2]
             );
+        }
 
+        /**
+         * Test when creating order with two products of different types:
+         * 1) price calculates properly
+         * 2) setting max delivery price
+         * 3) salary calculates properly
+         *
+         * @test
+         * @return void
+         */
+        public function order_with_two_products_of_different_types_with_no_installation() {
+            $this->setUpDefaultActions();
+
+            $order = $this->defaultOrder();
+            $order['discounted_price'] = 2256;
+            $order['measuring'] = 0;
+            $order['structure'] = '123';
+
+            Order::create($order);
+
+            $product = $this->defaultProductInOrder();
+            $product['data'] = '{"coefficient": "1"}';
+            ProductInOrder::create($product);
+
+            $salary = $this->defaultSalary();
+            $salary['comment'] = 'Test comment!';
+            $salary['status'] = '123';
+            $salary['changed_sum'] = 960;
+            $salary['type'] = '123';
+            InstallerSalary::create($salary);
+
+            $inputs = $this->exampleMosquitoSystemsInputs();
+            $inputs['categories'] = 7;
+            $this->post('/orders/1', $inputs);
+
+            $resultSalary = $this->defaultSalary();
+            $resultOrder = $this->defaultOrder();
+            $resultOrder['price'] = 4236;
+            $resultOrder['products_count'] = 2;
+            $resultOrder['delivery'] = 960;
+
+            $resultProduct = $this->defaultProductInOrder();
+            $resultProduct['name'] = 'Москитные двери, 25 профиль, полотно Антимоскит';
+            $resultProduct['category_id'] = 7;
+
+            $this->assertDatabaseHas(
+                'orders',
+                $resultOrder
+            )->assertDatabaseHas(
+                'installers_salaries',
+                $resultSalary
+            )->assertDatabaseHas(
+                'products',
+                $resultProduct
+            )->assertDatabaseMissing(
+                'installers_salaries',
+                ['id' => 2]
+            );
         }
 
         /*
@@ -396,7 +449,7 @@
          * 2) когда создаем несколько товаров одного типа без монтажа - готово
          * 3) когда создаем несколько товаров одного типа, один с монтажом другой без - готово
          * 4) когда создаем несколько товаров одного типа с одинаковым монтажом - готово
-         * 5) когда создаем несколько товаров одного типа с разным монтажом
+         * 5) когда создаем несколько товаров одного типа с разным монтажом - готово
          * 6) когда создаем несколько товаров разных типов без монтажа
          * 7) когда создаем несколько товаров разных типов, и оба с монтажом
          * 8) когда создаем один товар с монтажом и коэффициентом сложности - готово
@@ -413,6 +466,12 @@
          * 4) настройкой всего заказа
          * 5) минимальной суммы заказа
          */
+
+        protected function setUpDefaultActions() {
+            $this->seed();
+            $this->actingAs(User::first());
+            $this->withoutExceptionHandling();
+        }
 
         protected function exampleMosquitoSystemsInputs(): array {
             return [
