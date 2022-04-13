@@ -516,6 +516,60 @@
             );
         }
 
+        /**
+         * When creating products of different types with difficulty
+         *
+         * @test
+         * @return void
+         */
+        public function order_when_creating_two_products_of_different_types_one_with_coefficient_difficulty() {
+            $this->setUpDefaultActions();
+
+            $order = $this->defaultOrder();
+            $order['price'] = 3096;
+            $order['measuring_price'] = 0;
+            $order['discounted_price'] = 0;
+            $order['measuring'] = 0;
+            $order['structure'] = '123';
+            Order::create($order);
+
+            $product = $this->defaultProductInOrder();
+            $product['installation_id'] = 8;
+            $product['data'] = '{"coefficient": "2"}';
+            ProductInOrder::create($product);
+
+            $salary = $this->defaultSalary();
+            $salary['sum'] = $salary['changed_sum'] = 1410;
+            $salary['comment'] = '123';
+            $salary['category_id'] = 5;
+            $salary['status'] = 0;
+            $salary['type'] = 0;
+            InstallerSalary::create($salary);
+
+            $inputs = $this->exampleMosquitoSystemsInputs();
+            $inputs['coefficient'] = 2;
+            $inputs['categories'] = 7;
+            $inputs['group-3'] = 10;
+            $this->post('/orders/1', $inputs);
+
+            $resultOrder = $this->defaultOrder();
+            $resultOrder['delivery'] = 960;
+            $resultOrder['price'] = 7812;
+            $resultOrder['measuring_price'] = 0;
+            $resultOrder['products_count'] = 2;
+
+            $this->assertDatabaseHas(
+                'orders',
+                $resultOrder
+            )->assertDatabaseHas(
+                'installers_salaries',
+                ['sum' => 1410]
+            )->assertDatabaseHas(
+                'installers_salaries',
+                ['sum' => 1784]
+            );
+        }
+
         /*
          * todo написать следующие тесты:
          * 1) когда создаем один товар с монтажом - готово
@@ -528,8 +582,10 @@
          * 8) когда создаем один товар с монтажом и коэффициентом сложности - готово
          * 9) когда создаем несколько товаров одного типа с монтажом, один из них с коэффициентом сложности,
          * а другой без монтажа - готово
-         * 10) когда создаем несколько товаров разных типов с монтажом, один из них с коэффициентом сложности
-         * 11) тест что при добавлении товаров разных типов цена за доставку в order записывается максимальная
+         * 10) когда создаем несколько товаров разных типов с монтажом, один из них с коэффициентом сложности - готово
+         * 11) то же самое как в 10, только оба с коэффициентом сложности
+         *
+         * на будущее:
          * 12) проверка назначения какому монтажнику присвоен заказ
          *
          * также, продумать тесты с:
