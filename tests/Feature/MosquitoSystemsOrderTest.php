@@ -145,36 +145,7 @@
             $inputsWithInstallation['group-3'] = 8;
 
             // создаем заранее заказ и один товар, чтобы сделать запрос на уже готовые данные
-            Order::create([
-                'user_id' => 1,
-                'delivery' => 600,
-                'installation' => 0,
-                'price' => 2256, // todo переписать с учетом минимальной суммы заказа
-                'installer_id' => 2,
-                'discounted_price' => 2256, // todo поменять когда я сделаю учет скидок
-                'status' => 0,
-                'measuring_price' => 600,
-                'measuring' => 0,
-                'discounted_measuring_price' => 600, // todo скидки
-                'comment' => 'Test Comment!',
-                'service_price' => 0,
-                'sum_after' => 0,
-                'products_count' => 1,
-                'taken_sum' => 0,
-                'installing_difficult' => 1, // todo зачем это поле в таблице заказов? по идее оно не нужно
-                'is_private_person' => 0,
-                'structure' => 'not ready',
-            ]);
-
-            ProductInOrder::create([
-                'order_id' => 1,
-                'user_id' => 1,
-                'category_id' => 5,
-                'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
-                'count' => 1,
-                'installation_id' => 14,
-                'data' => '{}',
-            ]);
+            $this->createDefaultOrderAndProduct();
 
             $this->post('/orders/1', $inputsWithInstallation);
 
@@ -508,6 +479,43 @@
             );
         }
 
+        /**
+         * When creating one product with no installation
+         * and one with installation and difficulty
+         *
+         * @test
+         * @return void
+         */
+        public function order_when_creating_one_product_with_difficulty_and_another_with_no_installation() {
+            $this->setUpDefaultActions();
+            $this->createDefaultOrderAndProduct();
+
+            $inputs = $this->exampleMosquitoSystemsInputs();
+            $inputs['group-3'] = 8;
+            $inputs['coefficient'] = 2;
+
+            $this->post('/orders/1', $inputs);
+
+            $resultSalary = $this->defaultSalary();
+            $resultSalary['sum'] = 1410;
+
+            $resultOrder = $this->defaultOrder();
+            $resultOrder['products_count'] = 2;
+            $resultOrder['price'] = 4152;
+            $resultOrder['measuring_price'] = 0;
+
+            $this->assertDatabaseHas(
+                'orders',
+                $resultOrder
+            )->assertDatabaseHas(
+                'installers_salaries',
+                $resultSalary
+            )->assertDatabaseMissing(
+                'installers_salaries',
+                ['id' => 2]
+            );
+        }
+
         /*
          * todo написать следующие тесты:
          * 1) когда создаем один товар с монтажом - готово
@@ -519,7 +527,7 @@
          * 7) когда создаем несколько товаров разных типов, и оба с монтажом - готово
          * 8) когда создаем один товар с монтажом и коэффициентом сложности - готово
          * 9) когда создаем несколько товаров одного типа с монтажом, один из них с коэффициентом сложности,
-         * а другой без монтажа
+         * а другой без монтажа - готово
          * 10) когда создаем несколько товаров разных типов с монтажом, один из них с коэффициентом сложности
          * 11) тест что при добавлении товаров разных типов цена за доставку в order записывается максимальная
          * 12) проверка назначения какому монтажнику присвоен заказ
@@ -531,6 +539,51 @@
          * 4) настройкой всего заказа
          * 5) минимальной суммы заказа
          */
+
+        protected function createDefaultOrderAndProduct() {
+            Order::create([
+                'user_id' => 1,
+                'delivery' => 600,
+                'installation' => 0,
+                'price' => 2256, // todo переписать с учетом минимальной суммы заказа
+                'installer_id' => 2,
+                'discounted_price' => 2256, // todo поменять когда я сделаю учет скидок
+                'status' => 0,
+                'measuring_price' => 600,
+                'measuring' => 0,
+                'discounted_measuring_price' => 600, // todo скидки
+                'comment' => 'Test Comment!',
+                'service_price' => 0,
+                'sum_after' => 0,
+                'products_count' => 1,
+                'taken_sum' => 0,
+                'installing_difficult' => 1, // todo зачем это поле в таблице заказов? по идее оно не нужно
+                'is_private_person' => 0,
+                'structure' => 'not ready',
+            ]);
+
+            ProductInOrder::create([
+                'order_id' => 1,
+                'user_id' => 1,
+                'category_id' => 5,
+                'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
+                'count' => 1,
+                'installation_id' => 14,
+                'data' => '{}',
+            ]);
+
+            InstallerSalary::create([
+                'installer_id' => 2,
+                'order_id' => 1,
+                'category_id' => 5,
+                'sum' => 960,
+                'created_user_id' => 1,
+                'comment' => '123',
+                'status' => 1,
+                'changed_sum' => 1100,
+                'type' => '123'
+            ]);
+        }
 
         protected function setUpDefaultActions() {
             $this->seed();
