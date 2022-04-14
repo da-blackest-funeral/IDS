@@ -1,7 +1,7 @@
 <template>
     <div class="mt-4">
         <h1 class="h3">
-            <strong> Добавить товар </strong>
+            <strong> Добавить товар</strong>
         </h1>
         <p class="h4 mt-3">Заказ</p>
         <div class="container-fluid bg-light mt-4 pb-5">
@@ -56,6 +56,11 @@
                     >
                         <order-form-product-type></order-form-product-type>
                     </div>
+                    <Transition>
+                        <order-form-second-select
+                            v-if="store.productOptions"
+                        ></order-form-second-select>
+                    </Transition>
                 </div>
             </form>
         </div>
@@ -65,12 +70,20 @@
 <script>
 import OrderFormProductType from "./OrderFormProductType";
 import OrderFormSecondSelect from "./OrderFormSecondSelect";
-import {provide} from "vue/dist/vue";
+import { orderFormStore } from "../store/store";
 
 export default {
     name: "OrderForm",
     components: {
+        OrderFormSecondSelect,
         OrderFormProductType,
+    },
+    setup() {
+        const store = orderFormStore();
+
+        return {
+            store,
+        };
     },
 };
 </script>
