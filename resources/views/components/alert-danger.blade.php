@@ -2,7 +2,7 @@
     <i class="fa-solid fa-triangle-exclamation" style="font-size: 18px;"></i>
     <span style="font-weight: bold; margin-left: 5px;">Внимание!</span>
     <div class="mt-1">
-        @yield('info')
+        {{ $text }}
     </div>
     @include('components.close')
 </div>

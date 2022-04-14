@@ -5,9 +5,9 @@
     use Illuminate\Support\Facades\Schema;
 
     return new class extends Migration {
-        protected function comment(string $table, string $comment) {
-            DB::statement("ALTER TABLE $table comment '$comment'");
-        }
+//        protected function comment(string $table, string $comment) {
+//            DB::statement("ALTER TABLE $table comment '$comment'");
+//        }
 
         protected $prefix = "mosquito_systems";
 
@@ -48,8 +48,7 @@
                     ->comment('Время замера в часах');
                 $table->timestamps();
             });
-            $this->comment("{$this->prefix}_types", 'Тип москитных систем');
-
+//            $this->comment("{$this->prefix}_types", 'Тип москитных систем');
             Schema::create("{$this->prefix}_tissues", function (Blueprint $table) {
                 $table->id();
                 $table->string('name');
@@ -59,7 +58,7 @@
                     ->comment('Ширина отреза, м.');
                 $table->timestamps();
             });
-            $this->comment("{$this->prefix}_tissues", 'Ткани');
+//            $this->comment("{$this->prefix}_tissues", 'Ткани');
 
             Schema::create("{$this->prefix}_profiles", function (Blueprint $table) {
                 $table->id();
@@ -68,7 +67,7 @@
                 $table->softDeletes();
                 $table->timestamps();
             });
-            $this->comment("{$this->prefix}_profiles", 'Профили москитных систем');
+//            $this->comment("{$this->prefix}_profiles", 'Профили москитных систем');
 
             Schema::create("{$this->prefix}_products", function (Blueprint $table) {
                 $table->id();
@@ -83,7 +82,7 @@
                     ->default(0);
                 $table->timestamps();
             });
-            $this->comment("{$this->prefix}_products", 'Москитная сетка. Цена характеризуется тремя полями: тип, профиль, ткань.');
+//            $this->comment("{$this->prefix}_products", 'Москитная сетка. Цена характеризуется тремя полями: тип, профиль, ткань.');
 
             Schema::create("{$this->prefix}_groups", function (Blueprint $table) {
                 $table->id();
@@ -99,7 +98,7 @@
                     ->constrained("{$this->prefix}_groups");
                 $table->timestamps();
             });
-            $this->comment("{$this->prefix}_additional", 'Обобщенная таблица с добавочными условиями');
+//            $this->comment("{$this->prefix}_additional", 'Обобщенная таблица с добавочными условиями');
 
             Schema::create("{$this->prefix}_type_group", function (Blueprint $table) {
                 $table->id();
@@ -120,7 +119,7 @@
                 $table->float('price');
                 $table->timestamps();
             });
-            $this->comment("{$this->prefix}_type_additional", 'Таблица, определяющая цены добавочных условий при определенном типе изделия');
+//            $this->comment("{$this->prefix}_type_additional", 'Таблица, определяющая цены добавочных условий при определенном типе изделия');
 
             Schema::create("{$this->prefix}_product_additional", function (Blueprint $table) {
                 $table->id();
@@ -130,7 +129,7 @@
                     ->constrained("{$this->prefix}_additional");
                 $table->timestamps();
             });
-            $this->comment("{$this->prefix}_product_additional", 'Таблица, определяющая, есть ли у товара добавочная опция');
+//            $this->comment("{$this->prefix}_product_additional", 'Таблица, определяющая, есть ли у товара добавочная опция');
 
             Schema::create("{$this->prefix}_type_salary", function (Blueprint $table) {
                 $table->id();

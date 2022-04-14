@@ -8,9 +8,9 @@ return new class extends Migration {
 
     protected $prefix = 'overlays';
 
-    protected function comment(string $table, string $comment) {
-        DB::statement("ALTER TABLE $table comment '$comment'");
-    }
+//    protected function comment(string $table, string $comment) {
+//        DB::statement("ALTER TABLE $table comment '$comment'");
+//    }
 
     /**
      * Run the migrations.
@@ -25,7 +25,7 @@ return new class extends Migration {
                 ->constrained('services');
             $table->timestamps();
         });
-        $this->comment("{$this->prefix}_plugs", 'Заглушки для накладок');
+//        $this->comment("{$this->prefix}_plugs", 'Заглушки для накладок');
 
         Schema::create("{$this->prefix}_sizes", function (Blueprint $table) {
             $table->id();
@@ -51,7 +51,7 @@ return new class extends Migration {
             $table->foreignId('service_id');
             $table->timestamps();
         });
-        $this->comment("{$this->prefix}", 'Цена определяется конфигурацией цвет-размер');
+//        $this->comment("{$this->prefix}", 'Цена определяется конфигурацией цвет-размер');
     }
 
     /**

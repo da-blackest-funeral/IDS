@@ -1,9 +1,9 @@
 <?php
 
-    namespace App\Services\Classes;
+    namespace App\Services\Calculator\Classes;
 
     use App\Models\SystemVariables;
-    use App\Services\Interfaces\Calculator;
+    use App\Services\Calculator\Interfaces\Calculator;
     use Illuminate\Http\Request;
     use Illuminate\Support\Collection;
 

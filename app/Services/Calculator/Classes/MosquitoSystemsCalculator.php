@@ -1,6 +1,6 @@
 <?php
 
-    namespace App\Services\Classes;
+    namespace App\Services\Calculator\Classes;
 
     use App\Models\MosquitoSystems\Product;
     use App\Models\MosquitoSystems\Type;
@@ -221,7 +221,7 @@
             if ($this->needInstallation) {
                 $this->price -= $this->measuringPrice;
                 $this->measuringPrice = 0;
-                warning('Замер бесплатный при заключении договора!');
+                \Notifier::warning('Замер бесплатный при заключении договора!');
                 $this->measuringSalary = 0;
             }
         }

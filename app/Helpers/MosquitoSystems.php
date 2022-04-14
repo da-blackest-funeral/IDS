@@ -5,18 +5,29 @@
     use App\Models\MosquitoSystems\Profile;
     use App\Models\MosquitoSystems\Type;
     use App\Models\ProductInOrder;
-    use App\Services\Classes\MosquitoSystemsCalculator;
-    use App\Services\Interfaces\Calculator;
+    use Facades\App\Services\Calculator\Interfaces\Calculator;
     use Illuminate\Support\Collection;
 
-    function updateOrCreateSalary(ProductInOrder $productInOrder, Calculator $calculator) {
+    function updateOrCreateSalary(ProductInOrder $productInOrder) {
         $products = ProductInOrder::whereCategoryId($productInOrder->category_id)
             ->whereOrderId($productInOrder->order_id);
-        if ($products->exists() && salary($productInOrder)->exists()) {
 
-            $count = countProductsWithInstallation($productInOrder);
-            $productsWithMaxInstallation = productsWithMaxInstallation($productInOrder);
+        $count = countProductsWithInstallation($productInOrder);
+        $countOfAllProducts = countOfProducts($productInOrder->order->products);
+        $productsWithMaxInstallation = productsWithMaxInstallation($productInOrder);
 
+        $productsOfTheSameTypeExists =
+            /*
+             * Need to determine if products of the same type
+             * that current exists.
+             * Because new product had been already created,
+             * we need to skip them
+             */
+            $products->get()->reject(function ($product) use ($productInOrder) {
+                return $product->id == $productInOrder->id;
+            })->isNotEmpty();
+
+        if ($productsOfTheSameTypeExists && !is_null(salary($productInOrder))) {
             /*
              * Условие звучит так: если в заказе уже есть такой же товар с монтажом, и добалвяется
              * товар без монтажа, то зп не пересчитывается. Если в заказе уже есть товар с монтажом, кроме нынешнего,
@@ -33,46 +44,33 @@
 
             updateSalary(
                 sum: calculateInstallationSalary(
-                    calculator: $calculator,
                     productInOrder: $productsWithMaxInstallation->first(),
                     count: $count,
                 ),
                 productInOrder: $productInOrder,
             );
 
-        } elseif (
-            // если в заказе есть товары
-            $productInOrder->order->products->isNotEmpty() &&
-            /*
-             * но нет товаров с монтажом, т.е. за
-             * доставку з\п уже начислена
-             */
-            productsWithMaxInstallation($productInOrder)->isEmpty() &&
-            // и нынешний товар не нуждается в монтаже
-            !$calculator->productNeedInstallation()
-        ) {
-            /*
-             * то не создавать новую з.п., т.к. за
-             * доставку и замер з\п уже должна быть начислена
-             */
-            return;
+        } else {
+            // todo баг когда создаешь товары разных типов без монтажа начисляется лишняя зарплата
+            // если в заказе нет товаров, создавать з\п
+            // или если есть товары, и есть товары с монтажом
+            if (!$countOfAllProducts || $count) {
+                createSalary($productInOrder->order);
+            }
         }
-
-        createSalary($productInOrder->order, $calculator);
     }
 
     function calculateInstallationSalary(
-        MosquitoSystemsCalculator $calculator,
-        ProductInOrder            $productInOrder,
-        int                       $count,
-                                  $installation = null
+        ProductInOrder $productInOrder,
+        int            $count,
+                       $installation = null
     ): int {
 
         if (fromUpdatingProductPage() && oldProductHasInstallation()) {
             $count -= oldProductsCount();
         }
 
-        $salary = $calculator->getInstallationSalary(
+        $salary = Calculator::getInstallationSalary(
             installation: $installation ?? $productInOrder->installation_id,
             count: $count,
             /*
@@ -86,10 +84,14 @@
         if ($salary != null) {
             $result = $salary->salary;
         } else {
-            $salary = $calculator->maxCountSalary(
+            $salary = Calculator::maxCountSalary(
                 installation: $installation ?? $productInOrder->installation_id,
                 typeId: $productInOrder->type_id
             );
+
+            if (is_null($salary)) {
+                return orderSalaries($productInOrder->order);
+            }
 
             $missingCount = countProductsWithInstallation($productInOrder) - $salary->count;
             // Если это страница обновления товара
@@ -102,14 +104,14 @@
 
         foreach (productsWithInstallation($productInOrder) as $product) {
             // todo пропускать старый товар который еще не удален, колхоз, при рефакторинге избавиться от этого
-            if (oldProduct('id') == $product->id) {
+            if (fromUpdatingProductPage() && oldProduct('id') == $product->id) {
                 continue;
             }
 
             if (productHasCoefficient($product)) {
                 $data = productData($product);
 
-                $result = $calculator->salaryForDifficulty(
+                $result = Calculator::salaryForDifficulty(
                     salary: $result,
                     price: $data->installationPrice,
                     coefficient: $data->coefficient,
@@ -178,7 +180,7 @@
             ->get();
     }
 
-    function profiles($product = null): Collection {
+    function profiles(ProductInOrder $product = null): Collection {
         $productData = null;
 
         if (!is_null($product)) {
@@ -192,7 +194,7 @@
             ->get(['id', 'name']);
     }
 
-    function tissues($categoryId) {
+    function tissues(int $categoryId) {
         // todo колхоз
         return \App\Models\Category::tissues($categoryId)
             ->get()
@@ -203,7 +205,7 @@
             ->unique();
     }
 
-    function additional($productInOrder = null) {
+    function additional(ProductInOrder $productInOrder = null) {
         $productData = null;
 
         if (isset($productInOrder->data)) {

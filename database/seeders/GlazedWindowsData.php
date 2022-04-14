@@ -144,10 +144,6 @@
 
             $glazed_windows = array_merge($newGlazedWindows2, $newGlazedWindows);
 
-            dump($glazed_windows);
-
-//        var_dump($glazedWindow);
-
             $all = [
                 'types_windows' => [
                     [

@@ -7,8 +7,9 @@
     use App\Models\ProductInOrder;
     use App\Models\Salaries\InstallerSalary;
     use App\Models\SystemVariables;
-    use App\Services\Interfaces\Calculator;
 
+    // this feature is called real-time facades
+    use Facades\App\Services\Calculator\Interfaces\Calculator;
     require_once 'MosquitoSystems.php';
 
     function isOrderPage() {
@@ -16,37 +17,43 @@
     }
 
     function fromUpdatingProductPage() {
-        return Route::getRoutes()->match(app('request')->create(url()->previous()))->getName() == 'product-in-order';
+        return Route::getRoutes()
+                ->match(
+                    app('request')
+                        ->create(
+                            url()->previous()
+                        )
+                )->getName() == 'product-in-order';
     }
 
     function notify($text) {
         session()->push('notifications', $text);
     }
 
-    function createOrder(Calculator $calculator) {
+    function createOrder() {
         return Order::create([
-            'delivery' => $calculator->getDeliveryPrice(),
+            'delivery' => Calculator::getDeliveryPrice(),
             'user_id' => auth()->user()->getAuthIdentifier(),
             'installer_id' => request()->input('installer') ?? 2,
-            'price' => $calculator->getPrice(),
-            'discounted_price' => $calculator->getPrice(), // todo сделать расчет с учетом скидок
-            'measuring' => $calculator->getNeedMeasuring(),
-            'measuring_price' => $calculator->getMeasuringPrice(),
-            'discounted_measuring_price' => $calculator->getMeasuringPrice(), // todo скидки
+            'price' => Calculator::getPrice(),
+            'discounted_price' => Calculator::getPrice(), // todo сделать расчет с учетом скидок
+            'measuring' => Calculator::getNeedMeasuring(),
+            'measuring_price' => Calculator::getMeasuringPrice(),
+            'discounted_measuring_price' => Calculator::getMeasuringPrice(), // todo скидки
             'comment' => request()->input('comment') ?? 'Комментарий отсутствует',
-            'products_count' => $calculator->getCount(),
+            'products_count' => Calculator::getCount(),
             'installing_difficult' => request()->input('coefficient'),
             'is_private_person' => request()->input('person') == 'physical',
             'structure' => 'Пока не готово',
         ]);
     }
 
-    function newProduct(Calculator $calculator, Order $order) {
+    function newProduct(Order $order) {
         return ProductInOrder::create([
-            'installation_id' => $calculator->getInstallation('additional_id'),
+            'installation_id' => Calculator::getInstallation('additional_id'),
             'order_id' => $order->id,
-            'name' => $calculator->getProduct()->name(),
-            'data' => $calculator->getOptions()->toJson(),
+            'name' => Calculator::getProduct()->name(),
+            'data' => Calculator::getOptions()->toJson(),
             'user_id' => auth()->user()->getAuthIdentifier(),
             'category_id' => request()->input('categories'),
             'count' => request()->input('count'),
@@ -73,24 +80,31 @@
         $product->update();
     }
 
-    function createSalary(Order $order, Calculator $calculator) {
+    function createSalary(Order $order) {
         return InstallerSalary::create([
             'installer_id' => $order->installer_id,
             'category_id' => request()->input('categories'),
             'order_id' => $order->id,
-            'sum' => $calculator->getInstallersWage(),
+            'sum' => Calculator::getInstallersWage(),
             'comment' => 'Пока не готово',
             'status' => false,
-            'changed_sum' => $calculator->getInstallersWage(),
+            'changed_sum' => Calculator::getInstallersWage(),
             'created_user_id' => auth()->user()->getAuthIdentifier(),
             'type' => 'Заказ', // todo сделать Enum для этого
         ]);
     }
 
     function salary(ProductInOrder $productInOrder) {
-        return $productInOrder->order
+        $salary = $productInOrder->order
             ->salaries()
             ->where('category_id', $productInOrder->category_id);
+        if (!$salary->exists()) {
+            return $productInOrder->order
+                ->salaries()
+                ->first();
+        }
+
+        return $salary;
     }
 
     function updateSalary(int|float $sum, ProductInOrder $productInOrder) {
@@ -105,43 +119,47 @@
         session()->push('warnings', $text);
     }
 
-    function checkSalaryForMeasuringAndDelivery(Order $order, Calculator $calculator, ProductInOrder $productInOrder) {
-        if (orderHasInstallation($order) || $calculator->productNeedInstallation()) {
+    function checkSalaryForMeasuringAndDelivery(Order $order, ProductInOrder $productInOrder) {
+        if (orderHasInstallation($order) || Calculator::productNeedInstallation()) {
             $order->measuring_price = 0;
         } else {
             $order->measuring_price = SystemVariables::value('measuring');
             // Прибавить к зп монтажника стоимости замера и доставки, если они заданы
-            updateSalary($calculator->getInstallersWage(), $productInOrder);
+            updateSalary(Calculator::getInstallersWage(), $productInOrder);
         }
     }
 
-    function addProductToOrder(Calculator $calculator, Order $order) {
-        $newProductPrice = $calculator->getPrice();
+    function addProductToOrder(Order $order) {
+        $newProductPrice = Calculator::getPrice();
 
         if ($order->measuring_price) {
-            $newProductPrice -= $calculator->getMeasuringPrice();
+            $newProductPrice -= Calculator::getMeasuringPrice();
+            if (Calculator::productNeedInstallation()) {
+                $order->price -= $order->measuring_price;
+                $order->measuring_price = 0;
+            }
         }
 
         if ($order->delivery) {
             $newProductPrice -= min(
                 $order->delivery,
-                $calculator->getDeliveryPrice()
+                Calculator::getDeliveryPrice()
             );
 
             $order->delivery = max(
-                $calculator->getDeliveryPrice(),
-                oldProductData(['delivery', 'deliveryPrice'])
+                Calculator::getDeliveryPrice(),
+                $order->delivery
             );
         }
 
         $order->price += $newProductPrice;
-        $order->products_count += $calculator->getCount();
+        $order->products_count += Calculator::getCount();
 
         $order->update();
 
-        $product = newProduct($calculator, $order->refresh());
+        $product = newProduct($order->refresh());
 
-        updateOrCreateSalary($product, $calculator);
+        updateOrCreateSalary($product);
 
         return $product;
     }
@@ -150,6 +168,10 @@
         return $order->products->contains(function ($product) {
             return productHasInstallation($product);
         });
+    }
+
+    function orderSalaries(Order $order) {
+        return $order->salaries->sum('sum');
     }
 
     // when updating products, we save

@@ -8,9 +8,9 @@ return new class extends Migration {
 
     protected $prefix = 'windowsills';
 
-    protected function comment(string $table, string $comment) {
-        DB::statement("ALTER TABLE $table comment '$comment'");
-    }
+//    protected function comment(string $table, string $comment) {
+//        DB::statement("ALTER TABLE $table comment '$comment'");
+//    }
 
     /**
      * Run the migrations.
@@ -24,7 +24,7 @@ return new class extends Migration {
             $table->string('link')->nullable();
             $table->timestamps();
         });
-        $this->comment("{$this->prefix}_materials", 'Материал(тип) подоконника');
+//        $this->comment("{$this->prefix}_materials", 'Материал(тип) подоконника');
 
         Schema::create("{$this->prefix}_colors", function (Blueprint $table) {
             $table->id();
@@ -43,7 +43,7 @@ return new class extends Migration {
             $table->string('link')->nullable();
             $table->timestamps();
         });
-        $this->comment("{$this->prefix}_material_color", 'Конфигурация цвет-материал');
+//        $this->comment("{$this->prefix}_material_color", 'Конфигурация цвет-материал');
 
         Schema::create("{$this->prefix}", function (Blueprint $table) {
             $table->id();
@@ -70,7 +70,7 @@ return new class extends Migration {
             $table->float('real_price')->comment('Не знаю что это');
             $table->timestamps();
         });
-        $this->comment("{$this->prefix}_prices", 'Цена конфигурации подоконника в зависимости от ширины');
+//        $this->comment("{$this->prefix}_prices", 'Цена конфигурации подоконника в зависимости от ширины');
     }
 
     /**
