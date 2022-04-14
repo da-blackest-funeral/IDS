@@ -1,5 +1,11 @@
 <?php
 
+use App\Http\Controllers\Api\CategoriesAction;
+use App\Http\Controllers\Api\GlazedWindowsController;
+use App\Http\Controllers\Api\MosquitoSystemsController;
+use App\Http\Controllers\Api\WindowsillController;
+use App\Http\Controllers\CalculationController;
+use App\Http\Controllers\OrdersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 

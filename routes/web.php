@@ -107,25 +107,6 @@ Route::middleware('auth')->group(function () {
         });
     });
 
-    Route::prefix('ajax')->group(function () {
-        Route::get('/get-items', CategoriesAction::class);
-
-        Route::prefix('mosquito-systems')->group(function () {
-            Route::get('/profile', [MosquitoSystemsController::class, 'profile']);
-            Route::get('/additional', [MosquitoSystemsController::class, 'additional']);
-        });
-
-        Route::prefix('glazed-windows')->group(function () {
-            Route::get('/last', [GlazedWindowsController::class, 'getLast']);
-            Route::get('/additional', [GlazedWindowsController::class, 'additional']);
-        });
-
-        Route::prefix('windowsills')->group(function () {
-            Route::get('/type', [WindowsillController::class, 'type']);
-            Route::get('/additional', [WindowsillController::class, 'additional']);
-        });
-    });
-
     Route::prefix('orders')->group(function () {
         Route::view('/add', 'pages.orders.add')
             ->name('add-order');

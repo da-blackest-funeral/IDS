@@ -78,7 +78,7 @@
                         @if(isset($needPreload, $product) && $needPreload)
                             @include('ajax.second-select', [
                                 'data' => tissues($product->category_id),
-                                'link' => '/ajax/mosquito-systems/profile',
+                                'link' => '/api/mosquito-systems/profile',
                                 'name' => 'tissues',
                                 'label' => 'Ткань',
                                 'selected' => $productData->tissueId

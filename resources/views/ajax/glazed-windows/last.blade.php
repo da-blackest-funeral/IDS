@@ -1,7 +1,7 @@
 <label for="{{ $name }}">{{ $label }}</label>
 <select class="form-control" name="{{ $name }}" id="{{ $name }}"
         onchange="getConfiguration(
-            '/ajax/glazed-windows/additional',
+            '/api/glazed-windows/additional',
             'additional',
             '{{ $name }}')">
     <option value="0">{{ $label }}</option>

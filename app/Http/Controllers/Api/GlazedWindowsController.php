@@ -24,9 +24,10 @@
         /**
          * Defines, how to display last field to user
          *
-         * @return \Illuminate\Contracts\View\View
+//         * @return \Illuminate\Contracts\View\View
          */
-        public function getLast() {
+        public function getLast(): JsonResponse
+        {
             $data = [];
             $name = 'cameras-count';
             $label = 'Кол-во камер';
@@ -44,16 +45,17 @@
                     ->get();
             }
 
-            return view('ajax.glazed-windows.last')
-                ->with(compact('data', 'name', 'label'));
+            return response()
+                ->json(compact('data', 'name', 'label'));
         }
 
         /**
          * Defines, how to display additional fields to user
          *
-         * @return \Illuminate\Contracts\View\View
+//         * @return \Illuminate\Contracts\View\View
          */
-        public function additional() {
+        public function additional()
+        {
             if ($this->isWithHeating()) {
                 return $this->withHeating();
             } elseif ($this->isGlass()) {
@@ -82,9 +84,10 @@
         /**
          * Returns view with data for glazed windows with heating
          *
-         * @return \Illuminate\Contracts\View\View
+//         * @return \Illuminate\Contracts\View\View
          */
-        protected function withHeating() {
+        protected function withHeating(): JsonResponse
+        {
             $camerasCount = WithHeating::with('group')
                 ->where('id', (int)$this->request->get('additional'))
                 ->first()
@@ -93,8 +96,8 @@
             $temperatureControllers = TemperatureController::all();
 
             \Debugbar::info((int)$this->request->get('additional'));
-            return view('ajax.glazed-windows.with-heating-additional')
-                ->with(
+            return response()
+                ->json(
                     compact(
                         'camerasCount',
                         'widthArray',
@@ -110,15 +113,14 @@
          * @return \Illuminate\Contracts\View\View
          */
         protected function glass() {
+            // todo тут сразу грузится html без данных
             return view('ajax.glazed-windows.glass-additional');
         }
 
         /**
          * Returns view with data for other categories of glazed windows
-         *
-         * @return \Illuminate\Contracts\View\View
          */
-        protected function glazedWindows() {
+        protected function glazedWindows(): JsonResponse {
             $camerasCount = (int)$this->request->get('additional');
             $additionalForCameras = $this->getAdditionalSelects('Камера');
             $additionalForGlass = $this->getAdditionalSelects('Стекло');
@@ -132,8 +134,8 @@
                 ->where('layer_id', 2)
                 ->get();
 
-            return view('ajax.glazed-windows.additional')
-                ->with(
+            return response()
+                ->json(
                     compact(
                         'camerasWidth',
                         'camerasCount',
