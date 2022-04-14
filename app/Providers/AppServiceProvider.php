@@ -36,6 +36,8 @@
             $this->app->bind(Notifier::class, function () {
                 return new Notifier();
             });
+
+//            $this->app->bind('');
         }
 
         /**

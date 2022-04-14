@@ -5,6 +5,9 @@
     use App\Models\MosquitoSystems\Profile;
     use App\Models\MosquitoSystems\Type;
     use App\Models\ProductInOrder;
+    use App\Services\Helpers\OrderHelper;
+    use App\Services\Helpers\ProductHelper;
+    use App\Services\Helpers\SalaryHelper;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
     use Illuminate\Support\Collection;
 
@@ -27,7 +30,7 @@
                 return $product->id == $productInOrder->id;
             })->isNotEmpty();
 
-        if ($productsOfTheSameTypeExists && !is_null(salary($productInOrder))) {
+        if ($productsOfTheSameTypeExists && !is_null(SalaryHelper::getSalary($productInOrder))) {
             /*
              * Условие звучит так: если в заказе уже есть такой же товар с монтажом, и добалвяется
              * товар без монтажа, то зп не пересчитывается. Если в заказе уже есть товар с монтажом, кроме нынешнего,
@@ -42,7 +45,7 @@
              * у которых задан монтаж, даже если он другой
              */
 
-            updateSalary(
+            SalaryHelper::updateSalary(
                 sum: calculateInstallationSalary(
                     productInOrder: $productsWithMaxInstallation->first(),
                     count: $count,
@@ -55,7 +58,7 @@
             // если в заказе нет товаров, создавать з\п
             // или если есть товары, и есть товары с монтажом
             if (!$countOfAllProducts || $count) {
-                createSalary($productInOrder->order);
+                SalaryHelper::make($productInOrder->order);
             }
         }
     }
@@ -66,7 +69,7 @@
                        $installation = null
     ): int {
 
-        if (fromUpdatingProductPage() && oldProductHasInstallation()) {
+        if (fromUpdatingProductPage() && ProductHelper::oldProductHasInstallation()) {
             $count -= oldProductsCount();
         }
 
@@ -90,12 +93,12 @@
             );
 
             if (is_null($salary)) {
-                return orderSalaries($productInOrder->order);
+                return OrderHelper::salaries($productInOrder->order);
             }
 
             $missingCount = countProductsWithInstallation($productInOrder) - $salary->count;
             // Если это страница обновления товара
-            if (fromUpdatingProductPage() && oldProductHasInstallation()) {
+            if (fromUpdatingProductPage() && ProductHelper::oldProductHasInstallation()) {
                 $missingCount -= oldProductsCount();
             }
 

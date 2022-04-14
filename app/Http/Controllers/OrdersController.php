@@ -5,6 +5,8 @@
     use App\Models\Category;
     use App\Models\Order;
     use App\Services\Calculator\Interfaces\Calculator;
+    use App\Services\Helpers\OrderHelper;
+    use App\Services\Helpers\SalaryHelper;
     use Illuminate\Http\Request;
 
     class OrdersController extends Controller
@@ -48,11 +50,11 @@
 
         public function addProduct(Order $order) {
 
-            $productInOrder = addProductToOrder(
+            $productInOrder = OrderHelper::addProduct(
                 order: $order
             );
 
-            checkSalaryForMeasuringAndDelivery(
+            SalaryHelper::checkSalaryForMeasuringAndDelivery(
                 order: $order,
                 productInOrder: $productInOrder
             );

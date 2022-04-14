@@ -79,7 +79,7 @@ class CategoriesAction extends Controller
              *
              * возможно, в json возвращать type - например, next или final
              */
-            return view("ajax.additional.category{$this->categoryId}-additional");
+            return view("ajax.additional.category$this->categoryId-additional");
         }
 
         if ($this->hasRelations($method)) {
