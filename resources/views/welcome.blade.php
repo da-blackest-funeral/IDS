@@ -1,11 +1,13 @@
 @extends('layouts.app')
 @section('title', 'Создание заказа')
 @section('content')
-    <div class="container mt-4" id="app" style="margin-bottom: 100px;">
+    <div class="container mt-4" style="margin-bottom: 100px;">
         <h1 class="h1">
             Заказ <span style="font-size: 30px">№{{ $orderNumber }}</span>
         </h1>
-        <app></app>
+        <order-form>
+            @csrf
+        </order-form>
         <div class="container-fluid mb-4" style="padding: 5px;">
             <a href="https://03-okna.ru/offer.php?num_rasch=34084" class="btn btn-secondary btn-sm">
                 Комм.предл.
@@ -149,6 +151,7 @@
 
         @include('pages.add-product-form', ['needPreload' => !isset($order)])
         @yield('add-product')
+
 
         <div class="mt-5">
             <h1 class="h3"><strong>Настройки всего заказа</strong></h1>

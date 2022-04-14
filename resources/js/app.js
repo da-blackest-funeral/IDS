@@ -1,8 +1,6 @@
 require("./bootstrap");
-require("./scripts/categoryIsChosen");
-
 import { createApp } from "vue";
-import App from "./App.vue";
+import OrderForm from "./components/OrderForm";
 const app = createApp({});
-app.component("App", App);
-// app.mount("#app");
+app.component("OrderForm", OrderForm);
+app.mount("#app");
