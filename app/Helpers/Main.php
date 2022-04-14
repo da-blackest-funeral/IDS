@@ -1,7 +1,5 @@
 <?php
 
-    require_once 'MosquitoSystems.php';
-
     function isOrderPage() {
         return Route::is('new-order', 'order');
     }

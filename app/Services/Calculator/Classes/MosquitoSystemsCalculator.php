@@ -425,7 +425,6 @@
             }
 
             $result = calculateInstallationSalary(
-                calculator: $this,
                 productInOrder: $productInOrder,
                 count: $count,
                 installation: $installation

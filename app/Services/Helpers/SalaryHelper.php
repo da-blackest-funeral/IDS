@@ -44,7 +44,7 @@
             $salary->sum = $sum;
             $salary->update();
         }
-        
+
         public static function checkSalaryForMeasuringAndDelivery(Order $order, ProductInOrder $productInOrder) {
             if (OrderHelper::hasInstallation($order) || Calculator::productNeedInstallation()) {
                 $order->measuring_price = 0;

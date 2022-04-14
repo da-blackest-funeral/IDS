@@ -17,18 +17,7 @@
 
         public function index()
         {
-//            return response()->json([
-//                'data' => Category::all(),
-//                'superCategories' => Category::whereIn(
-//                    'id', Category::select(['parent_id'])
-//                    ->whereNotNull('parent_id')
-//                    ->groupBy(['parent_id'])
-//                    ->get()
-//                    ->toArray()
-//                )->get(),
-//                'orderNumber' => Order::count() + 1,
-//                'installers' => User::role('installer')->get()
-//            ]);
+            //
         }
 
         public function order(Order $order) {

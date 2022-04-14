@@ -56,7 +56,14 @@
 
             $product = ProductHelper::make($order->refresh());
 
-            updateOrCreateSalary($product);
+            /*
+             * todo тут не универсально вызывается MosquitoSystemsHelper::updateOrCreateSalary()
+             * когда я сделаю
+             * 1) интерфейс для таких классов
+             * 2) бинд в сервис провайдере
+             * тогда исправить
+             */
+            MosquitoSystemsHelper::updateOrCreateSalary($product);
 
             return $product;
         }
