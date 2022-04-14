@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ProductConfigurationResource;
 use App\Models\Category;
 
 /**
@@ -75,6 +76,8 @@ class CategoriesAction extends Controller
             /*
              * todo  у некоторых категорий сразу грузятся все дополнительные поля(additional)
              * вместо второго селекта, придумать что с этим делать
+             *
+             * возможно, в json возвращать type - например, next или final
              */
             return view("ajax.additional.category{$this->categoryId}-additional");
         }
@@ -91,10 +94,10 @@ class CategoriesAction extends Controller
         }
 
         return response()->json([
-            'data' => $data->unique()->values(),
+            'data' => ProductConfigurationResource::collection($data),
             'link' => $this->category('link'),
             'name' => $this->category('name'),
-            'label' => $this->category('label')
+            'label' => $this->category('label'),
         ]);
     }
 
