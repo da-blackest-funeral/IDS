@@ -5,9 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use function additional;
-use function profiles;
-use function view;
 
 class MosquitoSystemsController extends Controller
 {

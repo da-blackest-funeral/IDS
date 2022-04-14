@@ -4,8 +4,7 @@
 
     use App\Models\Category;
     use App\Models\Order;
-    use App\Models\User;
-    use App\Services\Interfaces\Calculator;
+    use App\Services\Calculator\Interfaces\Calculator;
     use Illuminate\Http\Request;
 
     class OrdersController extends Controller
@@ -47,16 +46,14 @@
             );
         }
 
-        public function addProduct(Calculator $calculator, Order $order) {
+        public function addProduct(Order $order) {
 
             $productInOrder = addProductToOrder(
-                calculator: $calculator,
                 order: $order
             );
 
             checkSalaryForMeasuringAndDelivery(
                 order: $order,
-                calculator: $calculator,
                 productInOrder: $productInOrder
             );
 
