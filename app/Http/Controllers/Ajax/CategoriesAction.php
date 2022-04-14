@@ -11,7 +11,6 @@ use App\Models\Category;
  */
 class CategoriesAction extends Controller
 {
-
     /**
      * @var int
      */
