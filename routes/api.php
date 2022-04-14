@@ -1,7 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\CategoriesAction;
-use App\Http\Controllers\Api\GlazedWindowsController;
+    use App\Http\Controllers\Api\CategoriesController;
+    use App\Http\Controllers\Api\GlazedWindowsController;
 use App\Http\Controllers\Api\MosquitoSystemsController;
 use App\Http\Controllers\Api\WindowsillController;
 use App\Http\Controllers\CalculationController;
@@ -27,7 +28,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // todo нейминг маршрута говно
 Route::get('/product-options', CategoriesAction::class);
 
-Route::get('/categories', [OrdersController::class, 'index']);
+Route::get('/categories', [CategoriesController::class, 'index']);
 
 Route::prefix('mosquito-systems')->group(function () {
     Route::get('/profile', [MosquitoSystemsController::class, 'profile']);
