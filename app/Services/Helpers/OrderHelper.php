@@ -4,11 +4,21 @@
 
     use App\Models\Order;
     // this feature is called real-time facades
+    use App\Models\ProductInOrder;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
 
+    /*
+     * In this base class there are global methods,
+     * that are applies to all project
+     */
     class OrderHelper
     {
-        public static function make() {
+        /**
+         * Makes new order from request inputs and calculated prices
+         *
+         * @return Order
+         */
+        public static function make(): Order {
             return Order::create([
                 'delivery' => Calculator::getDeliveryPrice(),
                 'user_id' => auth()->user()->getAuthIdentifier(),
@@ -26,7 +36,13 @@
             ]);
         }
 
-        public static function addProduct(Order $order) {
+        /**
+         * Creates new product and adds it to the order
+         *
+         * @param Order $order
+         * @return ProductInOrder
+         */
+        public static function addProduct(Order $order): ProductInOrder {
             $newProductPrice = Calculator::getPrice();
 
             if ($order->measuring_price) {
@@ -62,19 +78,35 @@
              * 1) интерфейс для таких классов
              * 2) бинд в сервис провайдере
              * тогда исправить
+             *
+             * по сути, это единственный метод данного класса и подобных
+             * ему будущих классов, который вызывается из контроллеров
              */
             MosquitoSystemsHelper::updateOrCreateSalary($product);
 
             return $product;
         }
 
+        /**
+         * Determines if in all product exists at least
+         * one product with installation
+         *
+         * @param Order $order
+         * @return bool
+         */
         public static function hasInstallation(Order $order): bool {
             return $order->products->contains(function ($product) {
                 return ProductHelper::hasInstallation($product);
             });
         }
 
-        public static function salaries(Order $order) {
+        /**
+         * Calculates salary for all order
+         *
+         * @param Order $order
+         * @return float
+         */
+        public static function salaries(Order $order): float {
             return $order->salaries->sum('sum');
         }
     }

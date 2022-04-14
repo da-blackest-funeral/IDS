@@ -10,7 +10,13 @@
 
     class SalaryHelper
     {
-        public static function make(Order $order) {
+        /**
+         * Makes new salary for given order
+         *
+         * @param Order $order
+         * @return InstallerSalary
+         */
+        public static function make(Order $order): InstallerSalary{
             return InstallerSalary::create([
                 'installer_id' => $order->installer_id,
                 'category_id' => request()->input('categories'),
@@ -24,7 +30,13 @@
             ]);
         }
 
-        public static function getSalary(ProductInOrder $productInOrder) {
+        /**
+         * Getting salary query builder object to given order
+         *
+         * @param ProductInOrder $productInOrder
+         * @return object|null
+         */
+        public static function getSalary(ProductInOrder $productInOrder): object|null {
             $salary = $productInOrder->order
                 ->salaries()
                 ->where('category_id', $productInOrder->category_id);
@@ -37,15 +49,34 @@
             return $salary;
         }
 
-        public static function updateSalary(int|float $sum, ProductInOrder $productInOrder) {
+        /**
+         * Updates salary for specified order
+         *
+         * @param int|float $sum
+         * @param ProductInOrder $productInOrder
+         * @return InstallerSalary
+         */
+        public static function updateSalary(int|float $sum, ProductInOrder $productInOrder): InstallerSalary {
             $salary = static::getSalary($productInOrder)
                 ->first();
 
             $salary->sum = $sum;
             $salary->update();
+
+            return $salary;
         }
 
-        public static function checkSalaryForMeasuringAndDelivery(Order $order, ProductInOrder $productInOrder) {
+        /**
+         * Additional logic to calculating salary for delivery and measuring
+         *
+         * @param Order $order
+         * @param ProductInOrder $productInOrder
+         * @return void
+         */
+        public static function checkSalaryForMeasuringAndDelivery(
+            Order $order,
+            ProductInOrder $productInOrder
+        ) {
             if (OrderHelper::hasInstallation($order) || Calculator::productNeedInstallation()) {
                 $order->measuring_price = 0;
             } else {

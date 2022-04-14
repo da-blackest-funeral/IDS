@@ -2,7 +2,6 @@
 
     namespace App\Services\Helpers;
 
-    use App\Models\MosquitoSystems\Type;
     use App\Models\Order;
     use App\Models\ProductInOrder;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
@@ -10,7 +9,13 @@
 
     class ProductHelper
     {
-        public static function make(Order $order) {
+        /**
+         * Creates a new product
+         *
+         * @param Order $order
+         * @return ProductInOrder
+         */
+        public static function make(Order $order): ProductInOrder {
             return ProductInOrder::create([
                 'installation_id' => Calculator::getInstallation('additional_id'),
                 'order_id' => $order->id,
@@ -22,11 +27,23 @@
             ]);
         }
 
-        public static function countOfProducts(Collection $products) {
+        /**
+         * Gets count of products from collection
+         *
+         * @param Collection $products
+         * @return float
+         */
+        public static function countOfProducts(Collection $products): float {
             return $products->sum('count');
         }
 
-        public static function exists(ProductInOrder $product) {
+        /**
+         * Determines if same product already exists in order
+         *
+         * @param ProductInOrder $product
+         * @return bool
+         */
+        public static function exists(ProductInOrder $product): bool {
             return json_decode(
                     Calculator::getOptions()
                         ->except(['main_price', 'salary', 'measuring', 'delivery'])
@@ -38,30 +55,66 @@
                 );
         }
 
-        public static function update(ProductInOrder $product, int $mainPrice) {
+        /**
+         * Updates product
+         *
+         * @param ProductInOrder $product
+         * @param int $mainPrice
+         * @return ProductInOrder
+         */
+        public static function update(ProductInOrder $product, int $mainPrice): ProductInOrder {
             $product->count += (int)request()->input('count');
+
             $data = json_decode($product->data);
             $data->main_price += $mainPrice;
+
             $product->data = json_encode($data);
             $product->update();
+
+            return $product;
         }
 
-        public static function hasInstallation(ProductInOrder $productInOrder) {
+        /**
+         * Determines if product needs in installation
+         *
+         * @param ProductInOrder $productInOrder
+         * @return bool
+         */
+        public static function hasInstallation(ProductInOrder $productInOrder): bool {
             return
                 isset($productInOrder->installation_id) &&
                 $productInOrder->installation_id &&
                 $productInOrder->installation_id != 14;
         }
 
+        /**
+         * When product's updating occurs, determine if
+         * it had installation before it have been updated
+         *
+         * @return bool
+         */
         public static function oldProductHasInstallation(): bool {
             return static::hasInstallation(oldProduct());
         }
 
+        /**
+         * Determines of product has coefficient of difficulty
+         *
+         * @param ProductInOrder $productInOrder
+         * @return bool
+         */
         public static function productHasCoefficient(ProductInOrder $productInOrder) {
             return static::productData($productInOrder, 'coefficient') > 1;
         }
 
-        public static function productData(ProductInOrder $productInOrder, string $field = null) {
+        /**
+         * Getting product data from json format
+         *
+         * @param ProductInOrder $productInOrder
+         * @param string|null $field
+         * @return mixed
+         */
+        public static function productData(ProductInOrder $productInOrder, string $field = null): mixed {
             if (is_null($field)) {
                 return json_decode($productInOrder->data);
             }
@@ -69,14 +122,26 @@
             return json_decode($productInOrder->data)->$field;
         }
 
+        /**
+         * Getting count of products in current order
+         * that has installation
+         *
+         * @param ProductInOrder $productInOrder
+         * @return int
+         */
         public static function countProductsWithInstallation(ProductInOrder $productInOrder): int {
             return static::countOfProducts(
                 static::productsWithInstallation($productInOrder)
             );
         }
 
-        /*
-         * todo улучшение кода
+        /**
+         * Getting all products that has installation in current order
+         *
+         * @param ProductInOrder $productInOrder
+         * @return Collection
+         * @todo улучшение кода
+         *
          * когда буду рефакторить, надо сделать так, чтобы пропускался старый товар (при обновлении, который еще не удален)
          * во всех местах где используется этот метод нужно это учесть
          */

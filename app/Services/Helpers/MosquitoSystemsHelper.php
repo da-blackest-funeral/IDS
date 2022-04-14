@@ -24,6 +24,14 @@
 
     class MosquitoSystemsHelper extends ProductHelper
     {
+        /**
+         * This method determines the logic of
+         * how to make salary for new mosquito system product.
+         * This method is entry point of calculating salary for installer.
+         *
+         * @param ProductInOrder $productInOrder
+         * @return void
+         */
         public static function updateOrCreateSalary(ProductInOrder $productInOrder) {
             $products = ProductInOrder::whereCategoryId($productInOrder->category_id)
                 ->whereOrderId($productInOrder->order_id);
@@ -71,6 +79,18 @@
             }
         }
 
+        /**
+         * Calculates salary for specified product, count, and, if necessary,
+         * for specified installation.
+         *
+         * If $installation parameter equals to null,
+         * method uses installation_id from given product
+         *
+         * @param ProductInOrder $productInOrder
+         * @param int $count
+         * @param $installation
+         * @return int
+         */
         public static function calculateInstallationSalary(
             ProductInOrder $productInOrder,
             int            $count,
@@ -135,7 +155,18 @@
             return $result;
         }
 
-        public static function productsWithMaxInstallation(ProductInOrder $productInOrder) {
+        /**
+         * According to business logic, for calculating salary
+         * used installation of type that has max price and salary
+         *
+         * @todo дело в том, что тут используется выборка по максимальной цене монтажа
+         * а не зарплаты, поэтому нужно сделать отдельный метод для выборки максимальной зарплаты
+         * @param ProductInOrder $productInOrder
+         * @return Collection
+         */
+        public static function productsWithMaxInstallation(
+            ProductInOrder $productInOrder
+        ): Collection {
             $typeId = Type::byCategory($productInOrder->category_id)->id;
             $productsWithInstallation = $productInOrder->order
                 ->products()
@@ -156,6 +187,12 @@
             });
         }
 
+        /**
+         * Get profiles for mosquito systems
+         *
+         * @param ProductInOrder|null $product
+         * @return Collection
+         */
         public static function profiles(ProductInOrder $product = null): Collection {
             $productData = null;
 
@@ -170,6 +207,12 @@
                 ->get(['id', 'name']);
         }
 
+        /**
+         * Get tissues for mosquito systems
+         *
+         * @param int $categoryId
+         * @return Collection
+         */
         public static function tissues(int $categoryId) {
             // todo колхоз
             return \App\Models\Category::tissues($categoryId)
@@ -181,7 +224,15 @@
                 ->unique();
         }
 
-        public static function additional(ProductInOrder $productInOrder = null) {
+        /**
+         * Getting additional data for mosquito systems
+         *
+         * @param ProductInOrder|null $productInOrder
+         * @return array
+         */
+        public static function additional(
+            ProductInOrder $productInOrder = null
+        ): array {
             $productData = null;
 
             if (isset($productInOrder->data)) {
