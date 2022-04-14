@@ -1,6 +1,6 @@
 <?php
 
-    namespace App\Http\Controllers\Ajax;
+    namespace App\Http\Controllers\Api;
 
     use App\Http\Controllers\Controller;
     use App\Models\GlazedWindows\Additional;
@@ -9,7 +9,9 @@
     use App\Models\GlazedWindows\Layer;
     use App\Models\GlazedWindows\TemperatureController;
     use App\Models\GlazedWindows\WithHeating;
+    use Illuminate\Http\JsonResponse;
     use Illuminate\Http\Request;
+    use function view;
 
     class GlazedWindowsController extends Controller
     {

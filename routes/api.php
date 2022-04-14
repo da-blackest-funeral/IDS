@@ -17,3 +17,23 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+// todo нейминг маршрута говно
+Route::get('/product-options', CategoriesAction::class);
+
+Route::get('/categories', [OrdersController::class, 'index']);
+
+Route::prefix('mosquito-systems')->group(function () {
+    Route::get('/profile', [MosquitoSystemsController::class, 'profile']);
+    Route::get('/additional', [MosquitoSystemsController::class, 'additional']);
+});
+
+Route::prefix('glazed-windows')->group(function () {
+    Route::get('/last', [GlazedWindowsController::class, 'getLast']);
+    Route::get('/additional', [GlazedWindowsController::class, 'additional']);
+});
+
+Route::prefix('windowsills')->group(function () {
+    Route::get('/type', [WindowsillController::class, 'type']);
+    Route::get('/additional', [WindowsillController::class, 'additional']);
+});

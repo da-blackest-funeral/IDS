@@ -1,13 +1,13 @@
 <?php
 
-use App\Http\Controllers\Ajax\CategoriesAction;
-use App\Http\Controllers\Ajax\GlazedWindowsController;
-use App\Http\Controllers\Ajax\MosquitoSystemsController;
-use App\Http\Controllers\Ajax\WindowsillController;
+use App\Http\Controllers\Api\CategoriesAction;
+use App\Http\Controllers\Api\GlazedWindowsController;
+use App\Http\Controllers\Api\MosquitoSystemsController;
+use App\Http\Controllers\Api\WindowsillController;
 use App\Http\Controllers\CalculationController;
-    use App\Http\Controllers\ProductController;
-    use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OrdersController;
+use App\Http\Controllers\ProductController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -81,7 +81,7 @@ Route::middleware('auth')->group(function () {
             Route::view('/mosquito-doors', 'pages.installers.info.mosquito-doors')
                 ->name('info-mosquito-doors');
 
-            Route::view('/sliding-nets','pages.installers.info.sliding-nets')
+            Route::view('/sliding-nets', 'pages.installers.info.sliding-nets')
                 ->name('info-sliding-nets');
 
             Route::view('/rolled-nets', 'pages.installers.info.rolled-nets')

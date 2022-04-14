@@ -14,7 +14,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('css/app.css') }}"/>
 
 </head>
-<body>
+<body id="app">
 <header class="header">
     @include('layouts.header')
 </header>

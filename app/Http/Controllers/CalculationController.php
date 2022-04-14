@@ -16,6 +16,7 @@
         protected Calculator $calculator;
 
         public function index() {
+            // todo выборку этих данных вынести в отдельный метод т.к. она дублируется
             return view('welcome')->with([
                 'data' => Category::all(),
                 'superCategories' => Category::whereIn(
@@ -26,6 +27,7 @@
                     ->toArray()
                 )->get(),
                 'orderNumber' => Order::count() + 1,
+                // todo выделить отдельный роут для этого
                 'installers' => User::role('installer')->get()
             ]);
         }

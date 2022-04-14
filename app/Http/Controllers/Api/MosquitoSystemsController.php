@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Ajax;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\MosquitoSystems\Group;
-use App\Models\MosquitoSystems\Profile;
-use App\Models\MosquitoSystems\Type;
-use App\Models\Service;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use function additional;
+use function profiles;
+use function view;
 
 class MosquitoSystemsController extends Controller
 {

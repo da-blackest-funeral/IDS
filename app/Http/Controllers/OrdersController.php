@@ -4,6 +4,7 @@
 
     use App\Models\Category;
     use App\Models\Order;
+    use App\Models\User;
     use App\Services\Interfaces\Calculator;
     use Illuminate\Http\Request;
 
@@ -12,6 +13,22 @@
 
         protected Calculator $calculator;
         protected Request $request;
+
+        public function index()
+        {
+            return response()->json([
+                'data' => Category::all(),
+                'superCategories' => Category::whereIn(
+                    'id', Category::select(['parent_id'])
+                    ->whereNotNull('parent_id')
+                    ->groupBy(['parent_id'])
+                    ->get()
+                    ->toArray()
+                )->get(),
+                'orderNumber' => Order::count() + 1,
+                'installers' => User::role('installer')->get()
+            ]);
+        }
 
         public function order(Order $order) {
             $products = $order->products()->get();
