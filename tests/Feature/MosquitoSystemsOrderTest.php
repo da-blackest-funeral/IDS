@@ -311,7 +311,7 @@
                 'comment' => '123',
                 'status' => 1,
                 'changed_sum' => 1100,
-                'type' => '123'
+                'type' => '123',
             ]);
 
             ProductInOrder::create([
@@ -570,9 +570,16 @@
             );
         }
 
-        public function order_when_creating_two_products_and_one_with_coefficient_difficulty() {
+        /**
+         * @test
+         * @return void
+         */
+        public function updating_products_with_no_changes() {
             $this->setUpDefaultActions();
-            $order = $this->defaultOrder();
+            $this->createDefaultOrderAndProduct();
+
+            $this->post('/orders/1/products/1', $this->exampleMosquitoSystemsInputs());
+            $this->assertDatabaseHas('products', $this->defaultProductInOrder());
         }
 
         /*
@@ -589,6 +596,10 @@
          * а другой без монтажа - готово
          * 10) когда создаем несколько товаров разных типов с монтажом, один из них с коэффициентом сложности
          * 11) то же самое как в 10, только оба с коэффициентом сложности - готово
+         *
+         * Тесты на обновление товара:
+         * 1) когда обновляешь один товар, и ничего не меняешь, то и результат не должен измениться
+         * 2) когда меняешь количество товара
          *
          * на будущее:
          * 12) проверка назначения какому монтажнику присвоен заказ
@@ -630,7 +641,47 @@
                 'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
                 'count' => 1,
                 'installation_id' => 14,
-                'data' => '{}',
+                'data' => '{
+                    "size": {
+                        "width": "1000",
+                        "height": "1000"
+                    },
+                    "salary": 960,
+                    "group-1": 6,
+                    "group-2": 13,
+                    "group-3": 14,
+                    "group-4": 38,
+                    "category": 5,
+                    "delivery": {
+                        "additional": 0,
+                        "deliveryPrice": 600,
+                        "additionalSalary": "Нет"
+                    },
+                    "tissueId": 1,
+                    "measuring": 600,
+                    "profileId": 1,
+                    "additional": [
+                        {
+                            "text": "Доп. за Z-крепления пластик: 0",
+                            "price": 0
+                        },
+                        {
+                            "text": "Доп. за Белый цвет: 0",
+                            "price": 0
+                        },
+                        {
+                            "text": "Доп. за Без монтажа: 0",
+                            "price": 0
+                        },
+                        {
+                            "text": "Доп. за Пластиковые ручки: 0",
+                            "price": 0
+                        }
+                    ],
+                    "main_price": 1056,
+                    "coefficient": 1,
+                    "installationPrice": 0
+                }'
             ]);
 
             InstallerSalary::create([
@@ -642,7 +693,7 @@
                 'comment' => '123',
                 'status' => 1,
                 'changed_sum' => 1100,
-                'type' => '123'
+                'type' => '123',
             ]);
         }
 
