@@ -34,10 +34,10 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/{order}', [OrdersController::class, 'addProduct']);
 
-        Route::get('/{order}/{productInOrder}', [ProductController::class, 'index'])
+        Route::get('/{order}/products/{productInOrder}', [ProductController::class, 'index'])
             ->name('product-in-order');
 
-        Route::post('/{order}/{productInOrder}', [ProductController::class, 'update']);
+        Route::post('/{order}/products/{productInOrder}', [ProductController::class, 'update']);
     });
 
     Route::get('/documents', [ProductController::class, 'test'])
