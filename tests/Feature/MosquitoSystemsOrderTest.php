@@ -571,6 +571,9 @@
         }
 
         /**
+         * Test when updating product with no changes also
+         * order and this product mustn't have changes
+         *
          * @test
          * @return void
          */
@@ -579,7 +582,13 @@
             $this->createDefaultOrderAndProduct();
 
             $this->post('/orders/1/products/1', $this->exampleMosquitoSystemsInputs());
-            $this->assertDatabaseHas('products', $this->defaultProductInOrder());
+            $this->assertDatabaseHas(
+                'products',
+                $this->defaultProductInOrder()
+            )->assertDatabaseHas(
+                'orders',
+                $this->defaultOrder()
+            );
         }
 
         /*
