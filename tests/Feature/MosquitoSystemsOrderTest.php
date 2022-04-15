@@ -25,7 +25,7 @@
         public function order_with_mosquito_system_products_price_calculates_properly() {
             $this->setUpDefaultActions();
 
-            $this->post('/', $this->exampleMosquitoSystemsInputs());
+            $this->post(route('new-order'), $this->exampleMosquitoSystemsInputs());
 
             $this->assertDatabaseHas(
                 'orders',
@@ -54,7 +54,7 @@
             $inputs = $this->exampleMosquitoSystemsInputs();
             $inputs['group-3'] = 8;
 
-            $this->post('/', $inputs);
+            $this->post(route('new-order'), $inputs);
 
             $resultOrder = $this->defaultOrder();
             $resultOrder['price'] = $resultOrder['discounted_price'] = 2376;
@@ -93,8 +93,8 @@
         public function order_with_two_same_products_with_no_installation() {
             $this->setUpDefaultActions();
 
-            $this->post('/', $this->exampleMosquitoSystemsInputs());
-            $this->post('/orders/1', $this->exampleMosquitoSystemsInputs());
+            $this->post(route('new-order'), $this->exampleMosquitoSystemsInputs());
+            $this->post(route('order', ['order' => 1]), $this->exampleMosquitoSystemsInputs());
 
             $resultOrder = $this->defaultOrder();
             $resultOrder['price'] = 3312;
@@ -127,15 +127,9 @@
         }
 
         /**
+         * When creating one product with installation and one without it
+         *
          * @return void
-         * @todo этот функционал работает правильно но тест не проходит
-         * дело в том что при двух пост-запросах отправляются одинаковые данные, это не моя ошибка,
-         * найти способ как пофиксить
-         *
-         * ВОЗМОЖНОЕ РЕШЕНИЕ ПРОБЛЕМЫ:
-         * заранее создать в тестовой базе заказ и товар, а запрос делать только когда создается второй товар
-         *
-         *
          * @test
          */
         public function order_when_creating_one_product_with_installation_and_one_without_it() {
@@ -147,7 +141,7 @@
             // создаем заранее заказ и один товар, чтобы сделать запрос на уже готовые данные
             $this->createDefaultOrderAndProduct();
 
-            $this->post('/orders/1', $inputsWithInstallation);
+            $this->post(route('order', ['order' => 1]), $inputsWithInstallation);
 
             $resultOrder = $this->defaultOrder();
             $resultOrder['price'] = 3432;
@@ -190,8 +184,8 @@
             $inputsWithInstallation = $this->exampleMosquitoSystemsInputs();
             $inputsWithInstallation['group-3'] = 8;
 
-            $this->post('/', $inputsWithInstallation);
-            $this->post('/orders/1', $inputsWithInstallation);
+            $this->post(route('new-order'), $inputsWithInstallation);
+            $this->post(route('order', ['order' => 1]), $inputsWithInstallation);
 
             $resultOrder = $this->defaultOrder();
             $resultOrder['price'] = 4152;
@@ -241,7 +235,7 @@
             $inputsWithInstallation['group-3'] = 8;
             $inputsWithInstallation['coefficient'] = 1.5;
 
-            $this->post('/', $inputsWithInstallation);
+            $this->post(route('new-order'), $inputsWithInstallation);
 
             $resultOrder = $this->defaultOrder();
             $resultOrder['price'] = 2736;
@@ -327,7 +321,7 @@
             $inputsWithInstallation = $this->exampleMosquitoSystemsInputs();
             $inputsWithInstallation['group-3'] = 8;
 
-            $this->post('/orders/1', $inputsWithInstallation);
+            $this->post(route('order', ['order' => 1]), $inputsWithInstallation);
 
             $resultOrder = $this->defaultOrder();
             $resultOrder['price'] = 4224;
@@ -387,7 +381,7 @@
 
             $inputs = $this->exampleMosquitoSystemsInputs();
             $inputs['categories'] = 7;
-            $this->post('/orders/1', $inputs);
+            $this->post(route('order', ['order' => 1]), $inputs);
 
             $resultSalary = $this->defaultSalary();
             $resultOrder = $this->defaultOrder();
@@ -448,7 +442,7 @@
             $inputs['categories'] = 7;
             $inputs['group-3'] = 10;
 
-            $this->post('/orders/1', $inputs);
+            $this->post(route('order', ['order' => 1]), $inputs);
 
             $resultOrder = $this->defaultOrder();
             $resultOrder['price'] = 5724;
@@ -494,7 +488,7 @@
             $inputs['group-3'] = 8;
             $inputs['coefficient'] = 2;
 
-            $this->post('/orders/1', $inputs);
+            $this->post(route('order', ['order' => 1]), $inputs);
 
             $resultSalary = $this->defaultSalary();
             $resultSalary['sum'] = 1410;
@@ -550,7 +544,7 @@
             $inputs['coefficient'] = 2;
             $inputs['categories'] = 7;
             $inputs['group-3'] = 10;
-            $this->post('/orders/1', $inputs);
+            $this->post(route('order', ['order' => 1]), $inputs);
 
             $resultOrder = $this->defaultOrder();
             $resultOrder['delivery'] = 960;
@@ -581,13 +575,43 @@
             $this->setUpDefaultActions();
             $this->createDefaultOrderAndProduct();
 
-            $this->post('/orders/1/products/1', $this->exampleMosquitoSystemsInputs());
+            $this->post(
+                route('product-in-order', [
+                    'order' => 1, 'productInOrder' => 1
+                ]),
+                $this->exampleMosquitoSystemsInputs()
+            );
+
             $this->assertDatabaseHas(
                 'products',
                 $this->defaultProductInOrder()
             )->assertDatabaseHas(
                 'orders',
                 $this->defaultOrder()
+            );
+        }
+
+        /**
+         * When updating products and increasing its count
+         *
+         * @return void
+         * @test
+         */
+        public function updating_products_increasing_count() {
+            $this->setUpDefaultActions();
+            $this->createDefaultOrderAndProduct();
+
+            $inputs = $this->exampleMosquitoSystemsInputs();
+            $inputs['count'] = 2;
+
+            $this->post(route('product-in-order', ['order' => 1, 'productInOrder' => 1]), $inputs);
+
+            $this->assertDatabaseHas(
+                'orders',
+                ['price' => 3312, 'products_count' => 2]
+            )->assertDatabaseHas(
+                'products',
+                ['count' => 2]
             );
         }
 
@@ -607,8 +631,16 @@
          * 11) то же самое как в 10, только оба с коэффициентом сложности - готово
          *
          * Тесты на обновление товара:
-         * 1) когда обновляешь один товар, и ничего не меняешь, то и результат не должен измениться
-         * 2) когда меняешь количество товара
+         * 1) когда обновляешь один товар, и ничего не меняешь, то и результат не должен измениться - готово
+         * 2) когда увеличиваешь количество товара
+         *   2.1) без монтажа
+         *   2.2) с монтажом
+         * 3) когда уменьшаешь количество
+         *   3.1) без монтажа
+         *   3.2) с монтажом
+         * 4) когда не было монтажа, поставить монтаж, и при этом в заказе не было товаров с монтажом
+         * 5) как п.4, только были товары с монтажом того же типа
+         * 6) как п.4, только были товары с монтажом другого типа
          *
          * на будущее:
          * 12) проверка назначения какому монтажнику присвоен заказ
