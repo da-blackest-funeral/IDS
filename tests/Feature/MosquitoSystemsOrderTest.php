@@ -777,7 +777,7 @@
              * я думаю дело в замере\доставке, нужно продебажить во время всех таких действий
              * эти атрибуты у товара и заказа и записать на каком этапе это происходит
              *
-             * также, в тесте цена наоборот, почему-то, меньше на 600
+             * проверить я это смогу когда будет доступен функционал отображения
              */
 
             $this->createDefaultSalary(1050);
@@ -792,6 +792,88 @@
             )->assertDatabaseHas(
                 'products',
                 ['installation_id' => 14]
+            );
+        }
+
+        /**
+         * Test when decreasing count of products
+         * with installation
+         *
+         * @test
+         * @return void
+         */
+        public function updating_product_with_installation_decreasing_count() {
+            $this->setUpDefaultActions();
+            $this->createDefaultOrder(4152, 0, 2);
+
+            ProductInOrder::create([
+                'order_id' => 1,
+                'user_id' => 1,
+                'category_id' => 5,
+                'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
+                'count' => 2,
+                'installation_id' => 8,
+                'data' => '{
+                    "size": {
+                        "width": "1000",
+                        "height": "1000"
+                    },
+                    "salary": 1200,
+                    "group-1": 6,
+                    "group-2": 13,
+                    "group-3": 8,
+                    "group-4": 38,
+                    "category": 5,
+                    "delivery": {
+                        "additional": 0,
+                        "deliveryPrice": 600,
+                        "additionalSalary": "Нет"
+                    },
+                    "tissueId": 1,
+                    "measuring": 0,
+                    "profileId": 1,
+                    "additional": [
+                        {
+                            "text": "Доп. за Z-крепления пластик: 0",
+                            "price": 0
+                        },
+                        {
+                            "text": "Доп. за Белый цвет: 0",
+                            "price": 0
+                        },
+                        {
+                            "text": "Доп. за Монтаж на z-креплениях: 1440",
+                            "price": 1440
+                        },
+                        {
+                            "text": "Доп. за Пластиковые ручки: 0",
+                            "price": 0
+                        }
+                    ],
+                    "main_price": 2112,
+                    "coefficient": 1,
+                    "installationPrice": 720
+                }',
+            ]);
+
+            $this->createDefaultSalary(1200);
+
+            $inputs = $this->exampleMosquitoSystemsInputs();
+            $inputs['group-3'] = 8;
+
+            $this->from(
+                route('product-in-order', ['order' => 1, 'productInOrder' => 1])
+            )->post(
+                route('product-in-order', ['order' => 1, 'productInOrder' => 1]),
+                $inputs
+            );
+
+            $this->assertDatabaseHas(
+                'installers_salaries',
+                ['sum' => 1050]
+            )->assertDatabaseHas(
+                'orders',
+                ['price' => 2376, 'products_count' => 1, 'measuring_price' => 0]
             );
         }
 
@@ -815,9 +897,9 @@
          * 2) когда увеличиваешь количество товара
          *   2.1) без монтажа - готово
          *   2.2) с монтажом
-         * 3) когда уменьшаешь количество
+         * 3) когда уменьшаешь количество - готово
          *   3.1) без монтажа - готово
-         *   3.2) с монтажом
+         *   3.2) с монтажом - готово
          * 4) когда не было монтажа, поставить монтаж, и при этом в заказе не было товаров с монтажом
          * 5) как п.4, только были товары с монтажом того же типа
          * 6) как п.4, только были товары с монтажом другого типа
@@ -836,7 +918,11 @@
          * 5) минимальной суммы заказа
          */
 
-        protected function createDefaultOrder(int $price = 2256, int $measuringPrice = 600) {
+        protected function createDefaultOrder(
+            int $price = 2256,
+            int $measuringPrice = 600,
+            int $count = 1
+        ) {
             Order::create([
                 'user_id' => 1,
                 'delivery' => 600,
@@ -851,7 +937,7 @@
                 'comment' => 'Test Comment!',
                 'service_price' => 0,
                 'sum_after' => 0,
-                'products_count' => 1,
+                'products_count' => $count,
                 'taken_sum' => 0,
                 'installing_difficult' => 1, // todo зачем это поле в таблице заказов? по идее оно не нужно
                 'is_private_person' => 0,
