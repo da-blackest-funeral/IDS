@@ -36,6 +36,7 @@
         }
 
         public function update(Order $order, ProductInOrder $productInOrder) {
+            // todo вынести в отдельный метод, использовать для удаления товаров
             $productData = json_decode($productInOrder->data);
             $order->price -= $productData->main_price;
             $order->products_count -= $productInOrder->count;

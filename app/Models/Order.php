@@ -77,7 +77,12 @@ class Order extends Model
     use HasFactory;
 
     protected $hidden = [];
+
     protected $guarded = [];
+
+    protected $casts = [
+        'measuring_price' => 'integer'
+    ];
 
     public function products() {
         return $this->hasMany(ProductInOrder::class);

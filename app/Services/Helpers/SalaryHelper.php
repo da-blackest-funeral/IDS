@@ -69,6 +69,7 @@
         /**
          * Additional logic to calculating salary for delivery and measuring
          *
+         * @todo плохо что тут помимо зарплаты ставится еще и order->measuring_price
          * @param Order $order
          * @param ProductInOrder $productInOrder
          * @return void
