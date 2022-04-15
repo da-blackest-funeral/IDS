@@ -708,6 +708,90 @@
             );
         }
 
+        /**
+         * @return void
+         * @test
+         */
+        public function updating_products_set_with_no_installation() {
+            $this->setUpDefaultActions();
+
+            $this->createDefaultOrder(2376, 0);
+
+            ProductInOrder::create([
+                'order_id' => 1,
+                'user_id' => 1,
+                'category_id' => 5,
+                'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
+                'count' => 1,
+                'installation_id' => 8,
+                'data' => '{
+                    "size": {
+                        "width": "1000",
+                        "height": "1000"
+                    },
+                    "salary": 1050,
+                    "group-1": 6,
+                    "group-2": 13,
+                    "group-3": 8,
+                    "group-4": 38,
+                    "category": 5,
+                    "delivery": {
+                        "additional": 0,
+                        "deliveryPrice": 600,
+                        "additionalSalary": "Нет"
+                    },
+                    "tissueId": 1,
+                    "measuring": 0,
+                    "profileId": 1,
+                    "additional": [
+                        {
+                            "text": "Доп. за Z-крепления пластик: 0",
+                            "price": 0
+                        },
+                        {
+                            "text": "Доп. за Белый цвет: 0",
+                            "price": 0
+                        },
+                        {
+                            "text": "Доп. за Монтаж на z-креплениях: 720",
+                            "price": 720
+                        },
+                        {
+                            "text": "Доп. за Пластиковые ручки: 0",
+                            "price": 0
+                        }
+                    ],
+                    "main_price": 1056,
+                    "coefficient": 1,
+                    "installationPrice": 720
+                }',
+            ]);
+
+            /*
+             * todo баг
+             * если обновлять товар несколько раз, меняя туда-сюда монтаж\без монтажа,
+             * то в какой то момент цена заказа становится на 600 больше чем должна
+             * я думаю дело в замере\доставке, нужно продебажить во время всех таких действий
+             * эти атрибуты у товара и заказа и записать на каком этапе это происходит
+             *
+             * также, в тесте цена наоборот, почему-то, меньше на 600
+             */
+
+            $this->createDefaultSalary(1050);
+
+            $this->from(route('product-in-order', ['order' => 1, 'productInOrder' => 1]));
+
+            $this->post(route('product-in-order', ['order' => 1, 'productInOrder' => 1]), $this->exampleMosquitoSystemsInputs());
+
+            $this->assertDatabaseHas(
+                'orders',
+                ['price' => 2256]
+            )->assertDatabaseHas(
+                'products',
+                ['installation_id' => 14]
+            );
+        }
+
         /*
          * todo написать следующие тесты:
          * 1) когда создаем один товар с монтажом - готово
@@ -734,6 +818,9 @@
          * 4) когда не было монтажа, поставить монтаж, и при этом в заказе не было товаров с монтажом
          * 5) как п.4, только были товары с монтажом того же типа
          * 6) как п.4, только были товары с монтажом другого типа
+         * 7) когда был монтаж, поставить без монтажа
+         * 8) как п.7, только были товары с монтажом
+         * 9) как п.7, только были товары без монтажа
          *
          * на будущее:
          * 12) проверка назначения какому монтажнику присвоен заказ
@@ -746,18 +833,18 @@
          * 5) минимальной суммы заказа
          */
 
-        protected function createDefaultOrder() {
+        protected function createDefaultOrder(int $price = 2256, int $measuringPrice = 600) {
             Order::create([
                 'user_id' => 1,
                 'delivery' => 600,
                 'installation' => 0,
-                'price' => 2256, // todo переписать с учетом минимальной суммы заказа
+                'price' => $price, // todo переписать с учетом минимальной суммы заказа
                 'installer_id' => 2,
                 'discounted_price' => 2256, // todo поменять когда я сделаю учет скидок
                 'status' => 0,
-                'measuring_price' => 600,
-                'measuring' => 0,
-                'discounted_measuring_price' => 600, // todo скидки
+                'measuring_price' => $measuringPrice,
+                'measuring' => 1,
+                'discounted_measuring_price' => $measuringPrice, // todo скидки
                 'comment' => 'Test Comment!',
                 'service_price' => 0,
                 'sum_after' => 0,
@@ -778,14 +865,14 @@
             $this->createDefaultSalary();
         }
 
-        protected function createDefaultProduct() {
+        protected function createDefaultProduct(int $installationId = 14) {
             ProductInOrder::create([
                 'order_id' => 1,
                 'user_id' => 1,
                 'category_id' => 5,
                 'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
                 'count' => 1,
-                'installation_id' => 14,
+                'installation_id' => $installationId,
                 'data' => '{
                     "size": {
                         "width": "1000",
@@ -830,12 +917,12 @@
             ]);
         }
 
-        protected function createDefaultSalary() {
+        protected function createDefaultSalary(int $sum = 960) {
             InstallerSalary::create([
                 'installer_id' => 2,
                 'order_id' => 1,
                 'category_id' => 5,
-                'sum' => 960,
+                'sum' => $sum,
                 'created_user_id' => 1,
                 'comment' => '123',
                 'status' => 1,

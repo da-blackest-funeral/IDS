@@ -34,6 +34,7 @@
         }
 
         public function update(Order $order, ProductInOrder $productInOrder) {
+
             $productData = json_decode($productInOrder->data);
             $order->price -= $productData->main_price;
             $order->products_count -= $productInOrder->count;
