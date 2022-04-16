@@ -1,50 +1,75 @@
 @extends('layouts.app')
 @section('title', 'Создание заказа')
 @section('content')
-    <div class="container mt-4" style="margin-bottom: 100px;">
+    <div class="container mt-4 mb-5">
         <h1 class="h1">
             Заказ <span style="font-size: 30px">№{{ $orderNumber }}</span>
         </h1>
+        <div class="container mb-4">
+            <ul class="nav grid g-0 gap-1">
+                <li>
+                    <a href="https://03-okna.ru/offer.php?num_rasch=34084" class="btn btn-secondary btn-sm">
+                        Комм.предл.
+                    </a>
+                </li>
+                <li>
+                    <a href="https://03-okna.ru/offer.php?num_rasch=34084&nosign=no" class="btn btn-secondary btn-sm">
+                        Комм.предл БП
+                    </a>
+                </li>
+                <li>
+                    <a href="https://03-okna.ru/invoice.php?num_rasch=34084" class="btn btn-secondary btn-sm">
+                        Накладная
+                    </a>
+                </li>
+                <li>
+                    <a href="https://03-okna.ru/act.php?num_rasch=34084" class="btn btn-secondary btn-sm">
+                        Акт
+                    </a>
+                </li>
+                <li>
+                    <a href="https://03-okna.ru/pko.php?num_rasch=34084" class="btn btn-secondary btn-sm">
+                        Чек ПКО
+                    </a>
+                </li>
+                <li>
+                    <a href="https://03-okna.ru/exel.php?num_rasch=34084" class="btn btn-secondary btn-sm">
+                        Stis excel
+                    </a>
+                </li>
+                <li>
+                    <a href="https://03-okna.ru/moedelo.php?num_rasch=34084" class="btn btn-secondary btn-sm">
+                        Счет моедело
+                    </a>
+                </li>
+                <li>
+                    <a href="/load.php?route=admin/calc/history&num_rasch=34084" class="btn btn-secondary btn-sm">
+                        Логи
+                    </a>
+                </li>
+                <li>
+                    <a href="/load.php?route=admin/master/sebestoimost&num_rasch=34084"
+                       class="btn btn-secondary btn-sm">
+                        Себестоимость
+                    </a>
+                </li>
+                <li>
+                    <a href="/load.php?route=admin/sklad/order&num_rasch=34084" class="btn btn-danger btn-sm">
+                        Создать списание
+                    </a>
+                </li>
+                @if(isOrderPage())
+                    <li>
+                        <a href="/load.php?route=admin/sklad/order&num_rasch=34084" class="btn btn-success btn-sm">
+                            Создать перемещение
+                        </a>
+                    </li>
+                @endif
+            </ul>
+        </div>
         <order-form>
             @csrf
         </order-form>
-        <div class="container-fluid mb-4" style="padding: 5px;">
-            <a href="https://03-okna.ru/offer.php?num_rasch=34084" class="btn btn-secondary btn-sm">
-                Комм.предл.
-            </a>
-            <a href="https://03-okna.ru/offer.php?num_rasch=34084&nosign=no" class="btn btn-secondary btn-sm">
-                Комм.предл БП
-            </a>
-            <a href="https://03-okna.ru/invoice.php?num_rasch=34084" class="btn btn-secondary btn-sm">
-                Накладная
-            </a>
-            <a href="https://03-okna.ru/act.php?num_rasch=34084" class="btn btn-secondary btn-sm">
-                Акт
-            </a>
-            <a href="https://03-okna.ru/pko.php?num_rasch=34084" class="btn btn-secondary btn-sm">
-                Чек ПКО
-            </a>
-            <a href="https://03-okna.ru/exel.php?num_rasch=34084" class="btn btn-secondary btn-sm">
-                Stis excel
-            </a>
-            <a href="https://03-okna.ru/moedelo.php?num_rasch=34084" class="btn btn-secondary btn-sm">
-                Счет моедело
-            </a>
-            <a href="/load.php?route=admin/calc/history&num_rasch=34084" class="btn btn-secondary btn-sm">
-                Логи
-            </a>
-            <a href="/load.php?route=admin/master/sebestoimost&num_rasch=34084" class="btn btn-secondary btn-sm">
-                Себестоимость
-            </a>
-            <a href="/load.php?route=admin/sklad/order&num_rasch=34084" class="btn btn-danger btn-sm">
-                Создать списание
-            </a>
-            @if(isOrderPage())
-                <a href="/load.php?route=admin/sklad/order&num_rasch=34084" class="btn btn-success btn-sm">
-                    Создать перемещение
-                </a>
-            @endif
-        </div>
 
         @isset($products)
             {{-- todo Вова: колхозная кнопка --}}
@@ -148,11 +173,6 @@
                 </div>
             </div>
         @endif
-
-        @include('pages.add-product-form', ['needPreload' => !isset($order)])
-        @yield('add-product')
-
-
         <div class="mt-5">
             <h1 class="h3"><strong>Настройки всего заказа</strong></h1>
             <div class="bg-light p-3 pt-1">
