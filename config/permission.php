@@ -145,17 +145,17 @@ return [
         'expiration_time' => \DateInterval::createFromDateString('24 hours'),
 
         /*
-         * The cache key used to store all permissions.
+         * The cache key used to stores all permissions.
          */
 
         'key' => 'spatie.permission.cache',
 
         /*
          * You may optionally indicate a specific cache driver to use for permission and
-         * role caching using any of the `store` drivers listed in the cache.php config
+         * role caching using any of the `stores` drivers listed in the cache.php config
          * file. Using 'default' here means to use the `default` set in cache.php.
          */
 
-        'store' => 'default',
+        'stores' => 'default',
     ],
 ];

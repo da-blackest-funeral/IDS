@@ -28,7 +28,7 @@
 
 <script>
 import { computed, onMounted } from "vue";
-import { orderFormStore } from "../store/store";
+import { orderFormStore } from "../stores/store";
 
 export default {
     name: "OrderFormProductType",

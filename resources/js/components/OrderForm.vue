@@ -56,11 +56,22 @@
                     >
                         <order-form-product-type></order-form-product-type>
                     </div>
-                    <Transition>
-                        <order-form-second-select
-                            v-if="store.productOptions"
-                        ></order-form-second-select>
-                    </Transition>
+                    <transition name="fade">
+                        <div
+                            v-show="store.productOptions"
+                            id="items"
+                            class="col-10 col-md-3 mt-1"
+                        >
+                            <order-form-second-select></order-form-second-select>
+                        </div>
+                    </transition>
+                    <div
+                        v-show="store.profiles"
+                        id="third"
+                        class="col-10 col-md-3 mt-2 mt-md-0"
+                    >
+                        <order-form-third-select></order-form-third-select>
+                    </div>
                 </div>
             </form>
         </div>
@@ -70,11 +81,13 @@
 <script>
 import OrderFormProductType from "./OrderFormProductType";
 import OrderFormSecondSelect from "./OrderFormSecondSelect";
-import { orderFormStore } from "../store/store";
+import { orderFormStore } from "../stores/store";
+import OrderFormThirdSelect from "./OrderFormThirdSelect";
 
 export default {
     name: "OrderForm",
     components: {
+        OrderFormThirdSelect,
         OrderFormSecondSelect,
         OrderFormProductType,
     },
