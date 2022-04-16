@@ -1,8 +1,14 @@
 <template>
-    <div :id="name" class="col-10 col-md-3 mt-2 mt-md-0">
+    <div :id="name" class="mt-0 mb-3">
         <label :for="name">{{ label }} </label>
-        <select :id="name" :name="name" class="form-control">
-            <option value="0">Выберите</option>
+        <select
+            :id="name"
+            v-model="store.additional"
+            :name="name"
+            class="form-control"
+            @change="store.fetchProfiles"
+        >
+            <option disabled selected value="0">Выберите</option>
             <option v-for="item in productOptions" :key="item" :value="item.id">
                 {{ item.name }}
             </option>
@@ -11,7 +17,7 @@
 </template>
 
 <script>
-import { orderFormStore } from "../store/store";
+import { orderFormStore } from "../stores/store";
 import { computed } from "vue";
 
 export default {
@@ -29,6 +35,7 @@ export default {
         });
 
         return {
+            store,
             productOptions,
             name,
             label,

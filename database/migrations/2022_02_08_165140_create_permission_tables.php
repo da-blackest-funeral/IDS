@@ -116,7 +116,7 @@ return new class extends Migration
         });
 
         app('cache')
-            ->store(config('permission.cache.store') != 'default' ? config('permission.cache.store') : null)
+            ->store(config('permission.cache.stores') != 'default' ? config('permission.cache.stores') : null)
             ->forget(config('permission.cache.key'));
     }
 
