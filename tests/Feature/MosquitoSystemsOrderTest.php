@@ -223,27 +223,42 @@
         /**
          * Test if coefficient difficulty works
          *
+         * @test
          * @return void
          */
         public function order_with_one_product_with_coefficient_difficulty() {
             $this->setUpDefaultActions();
+            $coefficient = 1.5;
 
             $inputsWithInstallation = $this->exampleMosquitoSystemsInputs();
             $inputsWithInstallation['group-3'] = 8;
-            $inputsWithInstallation['coefficient'] = 1.5;
+            $inputsWithInstallation['coefficient'] = $coefficient;
 
             $this->post(route('new-order'), $inputsWithInstallation);
 
             $resultOrder = $this->defaultOrder();
-            $resultOrder['price'] = 2736;
-            $resultOrder['installing_difficult'] = 1.5;
+
+            $resultOrder['price'] = $this->productPrice() +
+                $this->defaultDeliverySum() +
+                $this->installationPrice() * $coefficient;
+
+            $resultOrder['installing_difficult'] = $coefficient;
             $resultOrder['measuring_price'] = 0;
 
             $resultProduct = $this->defaultProductInOrder();
             $resultProduct['installation_id'] = 8;
 
             $resultSalary = $this->defaultSalary();
-            $resultSalary['sum'] = 1230;
+
+            $resultSalary['sum'] = (int)round($this->defaultSalarySum(1) +
+                $this->installationPrice() *
+                /*
+                 * умножение на коэффициент идет потому что
+                 * цена на монтаж уже умножена на коэффициент в калькуляторе на этот момент
+                 */
+                $coefficient *
+                (1 - 1 / $coefficient) *
+                (float)SystemVariables::value('coefficientSalaryForDifficult'));
 
             $this->assertDatabaseHas(
                 'orders',
@@ -274,7 +289,7 @@
 
             $price = $this->productPrice() +
                 $this->defaultDeliverySum() +
-                $this->installationPrice(1,9);
+                $this->installationPrice(1, 9);
 
             Order::create([
                 'user_id' => 1,
@@ -498,6 +513,7 @@
          */
         public function order_when_creating_one_product_with_difficulty_and_another_with_no_installation() {
             $this->setUpDefaultActions();
+            $coefficient = 2;
 
             $price = $this->productPrice() + $this->defaultDeliverySum() + $this->measuringPrice();
             $salary = SystemVariables::value('measuringWage') + SystemVariables::value('delivery');
@@ -509,7 +525,7 @@
 
             $inputs = $this->exampleMosquitoSystemsInputs();
             $inputs['group-3'] = 8;
-            $inputs['coefficient'] = 2;
+            $inputs['coefficient'] = $coefficient;
 
             $this->post(route('order', ['order' => 1]), $inputs);
 
@@ -519,12 +535,12 @@
                 $this->installationPrice() *
                 (1 - 1 / 2) *
                 (float)SystemVariables::value('coefficientSalaryForDifficult')
-                * 2; // умножаем на количество товаров, даже если один из них без монтажа (если я правильно понял)
+                * $coefficient; // умножаем на коэффициент
 
             $resultOrder = $this->defaultOrder();
             $resultOrder['products_count'] = 2;
             $resultOrder['price'] = $price - $this->measuringPrice() + $this->productPrice() +
-                $this->installationPrice() * 2;
+                $this->installationPrice() * $coefficient;
             $resultOrder['measuring_price'] = 0;
 
             $this->assertDatabaseHas(
@@ -547,19 +563,20 @@
          */
         public function order_when_creating_two_products_of_different_types_one_with_coefficient_difficulty() {
             $this->setUpDefaultActions();
+            $coefficient = 2;
 
             $order = $this->defaultOrder();
-            $price = $this->defaultDeliverySum() + $this->productPrice() + $this->installationPrice() * 2;
+            $price = $this->defaultDeliverySum() + $this->productPrice() + $this->installationPrice() * $coefficient;
             $order['price'] = $price;
             $order['measuring_price'] = 0;
             $order['discounted_price'] = 0;
             $order['measuring'] = 0;
-            $order['structure'] = '123';
+            $order['structure'] = 'test';
             Order::create($order);
 
             $product = $this->defaultProductInOrder();
             $product['installation_id'] = 8;
-            $product['data'] = '{"coefficient": "2"}';
+            $product['data'] = '{"coefficient": ' . $coefficient . '}';
             ProductInOrder::create($product);
 
             $salary = $this->defaultSalary();
@@ -567,7 +584,7 @@
             $salary['changed_sum'] =
                 $this->defaultSalarySum(1) +
                 $this->installationPrice() *
-                (1 - 1 / 2) *
+                (1 - 1 / 2) * $coefficient *
                 (float)SystemVariables::value('coefficientSalaryForDifficult');
             $salary['comment'] = '123';
             $salary['category_id'] = 5;
@@ -582,7 +599,7 @@
             $this->post(route('order', ['order' => 1]), $inputs);
 
             $resultOrder = $this->defaultOrder();
-            $resultOrder['delivery'] = 960;
+            $resultOrder['delivery'] = $this->defaultDeliverySum(2);
 
             $resultOrder['price'] = $price -
                 $this->defaultDeliverySum() + $this->defaultDeliverySum(2) +

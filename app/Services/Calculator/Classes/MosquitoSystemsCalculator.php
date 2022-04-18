@@ -6,6 +6,7 @@
     use App\Models\MosquitoSystems\Type;
     use App\Models\ProductInOrder;
     use App\Models\SystemVariables;
+    use App\Services\Helpers\MosquitoSystemsHelper;
     use Illuminate\Database\Eloquent\Builder;
     use Illuminate\Http\Request;
     use Illuminate\Support\Collection;
@@ -424,7 +425,7 @@
                 return $this->installersWage;
             }
 
-            $result = calculateInstallationSalary(
+            $result = MosquitoSystemsHelper::calculateInstallationSalary(
                 productInOrder: $productInOrder,
                 count: $count,
                 installation: $installation
