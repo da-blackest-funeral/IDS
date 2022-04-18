@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Services\Helpers\MosquitoSystemsHelper;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -15,7 +16,7 @@ class MosquitoSystemsController extends Controller
      */
     public function profile(): JsonResponse
     {
-        $data = profiles();
+        $data = MosquitoSystemsHelper::profiles();
         return response()
             ->json(compact('data'));
     }
@@ -38,6 +39,6 @@ class MosquitoSystemsController extends Controller
         // в остальных первые 3 селекта не влияют на вывод дополнительных полей
 
         return response()
-            ->json(additional());
+            ->json(MosquitoSystemsHelper::additional());
     }
 }

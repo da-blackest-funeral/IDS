@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
             ServiceSeeder::class,
             TypesWindowsSeeder::class,
             MosquitoSystemsSeeder::class,
-            CategoryHasModelSeeder::class,
+            CategoryHasMethodSeeder::class,
             OtherCategoriesSeeder::class,
             GlassSeeder::class,
             WindowsillSeeder::class,

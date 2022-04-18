@@ -6,9 +6,10 @@ use App\Models\Category;
 use App\Models\Slopes\Slope;
 use App\Models\TypesWindows;
 use App\Models\Wraps\Wrap;
+use App\Services\Helpers\MosquitoSystemsHelper;
 use Illuminate\Database\Seeder;
 
-class CategoryHasModelSeeder extends Seeder
+class CategoryHasMethodSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -21,7 +22,7 @@ class CategoryHasModelSeeder extends Seeder
         $relations = [
             [
                 'category_ids' => range(5, 14),
-                'method' => Category::class . '::tissues',
+                'method' => MosquitoSystemsHelper::class . '::tissues',
             ],
             [
                 // [19, 21, 23]

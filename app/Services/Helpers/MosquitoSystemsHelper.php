@@ -221,7 +221,7 @@
                 ->pluck('products')
                 ->collapse()
                 ->pluck('tissue')
-                ->unique();
+                ->unique('id');
         }
 
         /**
