@@ -266,18 +266,23 @@
          * 1) When calculates salary takes max installation price
          * 2) When calculates salary count of products equals count of all products that has installation
          *
+         * @test
          * @return void
          */
         public function order_when_creating_two_products_with_different_installations() {
             $this->setUpDefaultActions();
 
+            $price = $this->productPrice() +
+                $this->defaultDeliverySum() +
+                $this->installationPrice(1,9);
+
             Order::create([
                 'user_id' => 1,
-                'delivery' => 600,
+                'delivery' => $this->defaultDeliverySum(),
                 'installation' => 0,
-                'price' => 2448,
+                'price' => $price,
                 'installer_id' => 2,
-                'discounted_price' => 2448,
+                'discounted_price' => $price,
                 'status' => 0,
                 'measuring' => 1,
                 'measuring_price' => 0,
@@ -289,19 +294,19 @@
                 'taken_sum' => 0,
                 'installing_difficult' => 1,
                 'is_private_person' => 0,
-                'structure' => '123',
+                'structure' => 'test',
             ]);
 
             InstallerSalary::create([
                 'installer_id' => 2,
                 'order_id' => 1,
                 'category_id' => 5,
-                'sum' => 1100,
+                'sum' => $this->defaultSalarySum(1, 1, 9),
                 'created_user_id' => 1,
-                'comment' => '123',
+                'comment' => 'test',
                 'status' => 1,
-                'changed_sum' => 1100,
-                'type' => '123',
+                'changed_sum' => $this->defaultSalarySum(1, 1, 9),
+                'type' => 'test',
             ]);
 
             ProductInOrder::create([
@@ -311,7 +316,7 @@
                 'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
                 'count' => 1,
                 'installation_id' => 9,
-                'data' => '{"coefficient": "1"}',
+                'data' => '{"coefficient": 1}',
             ]);
 
             $inputsWithInstallation = $this->exampleMosquitoSystemsInputs();
@@ -320,7 +325,7 @@
             $this->post(route('order', ['order' => 1]), $inputsWithInstallation);
 
             $resultOrder = $this->defaultOrder();
-            $resultOrder['price'] = 4224;
+            $resultOrder['price'] = $price + $this->productPrice() + $this->installationPrice();
             $resultOrder['products_count'] = 2;
             $resultOrder['measuring_price'] = 0;
 
@@ -328,7 +333,7 @@
             $resultProduct['installation_id'] = 8;
 
             $resultSalary = $this->defaultSalary();
-            $resultSalary['sum'] = 1250;
+            $resultSalary['sum'] = $this->defaultSalarySum(2, 1, 9);
 
             $this->assertDatabaseHas(
                 'orders',
