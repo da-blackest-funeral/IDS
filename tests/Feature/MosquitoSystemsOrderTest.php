@@ -351,27 +351,31 @@
          * 2) setting max delivery price
          * 3) salary calculates properly
          *
+         * @test
          * @return void
          */
         public function order_with_two_products_of_different_types_with_no_installation() {
             $this->setUpDefaultActions();
 
             $order = $this->defaultOrder();
-            $order['discounted_price'] = 2256;
+            $order['discounted_price'] = $this->measuringPrice() +
+                $this->defaultDeliverySum() +
+                $this->productPrice();
             $order['measuring'] = 0;
-            $order['structure'] = '123';
+            $order['structure'] = 'test';
 
             Order::create($order);
 
             $product = $this->defaultProductInOrder();
-            $product['data'] = '{"coefficient": "1"}';
+            $product['data'] = '{}';
             ProductInOrder::create($product);
 
             $salary = $this->defaultSalary();
             $salary['comment'] = 'Test comment!';
-            $salary['status'] = '123';
-            $salary['changed_sum'] = 960;
-            $salary['type'] = '123';
+            $salary['status'] = 'test';
+            $salary['changed_sum'] = SystemVariables::value('measuringWage')
+                + SystemVariables::value('delivery');
+            $salary['type'] = 'test';
             InstallerSalary::create($salary);
 
             $inputs = $this->exampleMosquitoSystemsInputs();
@@ -380,9 +384,12 @@
 
             $resultSalary = $this->defaultSalary();
             $resultOrder = $this->defaultOrder();
-            $resultOrder['price'] = 4236;
+            $resultOrder['price'] += $this->productPrice(1, 1, 2)
+                - $this->defaultDeliverySum()
+                + $this->defaultDeliverySum(2);
+
             $resultOrder['products_count'] = 2;
-            $resultOrder['delivery'] = 960;
+            $resultOrder['delivery'] = $this->defaultDeliverySum(2);
 
             $resultProduct = $this->defaultProductInOrder();
             $resultProduct['name'] = 'Москитные двери, 25 профиль, полотно Антимоскит';
@@ -407,23 +414,30 @@
          * When creating order with two products of different types
          * with installation, must be created 2 independent salaries
          *
+         * @test
          * @return void
          */
         public function order_when_creating_two_products_of_different_types_with_installation() {
             $this->setUpDefaultActions();
 
             $order = $this->defaultOrder();
-            $order['price'] = $order['discounted_price'] = 2376;
+
+            $order['price'] =
+            $order['discounted_price'] =
+                $this->productPrice() +
+                $this->installationPrice() +
+                $this->defaultDeliverySum();
+
             $order['measuring_price'] = $order['discounted_measuring_price'] = $order['measuring'] = 0;
-            $order['structure'] = '123';
+            $order['structure'] = 'test';
 
             $product = $this->defaultProductInOrder();
             $product['installation_id'] = 8;
             $product['data'] = '{"coefficient": "1"}';
 
             $salary = $this->defaultSalary();
-            $salary['sum'] = $salary['changed_sum'] = 1050;
-            $salary['comment'] = $salary['type'] = '123';
+            $salary['sum'] = $salary['changed_sum'] = $this->defaultSalarySum(1);
+            $salary['comment'] = $salary['type'] = 'test';
             $salary['status'] = 0;
 
             Order::create($order);
@@ -439,9 +453,15 @@
             $this->post(route('order', ['order' => 1]), $inputs);
 
             $resultOrder = $this->defaultOrder();
-            $resultOrder['price'] = 5724;
+
+            $resultOrder['price'] = $order['price'] +
+                $this->productPrice(1, 1, 2) +
+                $this->installationPrice(2, 10) -
+                $this->defaultDeliverySum() +
+                $this->defaultDeliverySum(2);
+
             $resultOrder['products_count'] = 2;
-            $resultOrder['delivery'] = 960;
+            $resultOrder['delivery'] = $this->defaultDeliverySum(2);
             $resultOrder['measuring_price'] = 0;
 
             $resultProduct = $this->defaultProductInOrder();
