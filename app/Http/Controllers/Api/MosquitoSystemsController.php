@@ -12,13 +12,14 @@ class MosquitoSystemsController extends Controller
     /**
      * Returns profiles for mosquito systems
      *
-//     * @return \Illuminate\Contracts\View\View
+     * @return JsonResponse
      */
     public function profile(): JsonResponse
     {
+        $label = 'Профиль';
         $data = MosquitoSystemsHelper::profiles();
         return response()
-            ->json(compact('data'));
+            ->json(compact('data', 'label'));
     }
 
     public function bracing() {
@@ -29,10 +30,9 @@ class MosquitoSystemsController extends Controller
     /**
      * Returns additional fields
      *
-     * @param Request $request
-//     * @return \Illuminate\Contracts\View\View
+     * @return JsonResponse
      */
-    public function additional(Request $request): JsonResponse
+    public function additional(): JsonResponse
     {
         // для москитных сеток в реквесте должны быть category_id, tissue_id, profile_id
         // а для стеклопакетов количество камер
