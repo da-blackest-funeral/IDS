@@ -48,5 +48,10 @@
                 \Notifier::setData();
                 \Notifier::displayWarnings();
             }
+
+            $this->callAfterResolving(Calculator::class, function (Calculator $calculator) {
+                $calculator->calculate();
+                $calculator->saveInfo();
+            });
         }
     }

@@ -86,7 +86,7 @@
          *
          * @return void
          */
-        protected function calculate(): void {
+        public function calculate(): void {
             if ($this->hasSquare()) {
                 $this->setSquareCoefficient();
             }

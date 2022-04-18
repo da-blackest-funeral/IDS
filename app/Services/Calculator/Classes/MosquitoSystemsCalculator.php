@@ -83,11 +83,11 @@
             }
 
             $this->additional = new Collection();
+        }
 
+        public function saveInfo() {
             $this->saveTissue();
             $this->saveProfile();
-
-            $this->calculate();
         }
 
         protected function saveTissue() {
@@ -98,7 +98,7 @@
             $this->options->put('profileId', $this->product->profile_id);
         }
 
-        protected function calculate(): void {
+        public function calculate(): void {
             // Making all preparations that are the same for all products
             parent::calculate();
 

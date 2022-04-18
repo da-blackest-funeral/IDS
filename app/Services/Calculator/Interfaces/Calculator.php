@@ -7,6 +7,8 @@ use Illuminate\Support\Collection;
 
 interface Calculator
 {
+    public function calculate();
+
     public function getPrice(): float;
 
     public function setPrice(float $price);
