@@ -16,21 +16,16 @@ export const orderFormStore = defineStore("orderForm", {
     }),
     actions: {
         async fetchProductTypes() {
-            try {
-                const {
-                    data: {
-                        data: { ...categories },
-                        superCategories: { ...superCategories },
-                    },
-                } = await axios.get("/api/categories");
-                this.categories = categories;
-                this.superCategories = superCategories;
-            } catch (err) {
-                console.log(err);
-            }
+            const {
+                data: { data: categories },
+            } = await axios.get("/api/categories");
+            this.categories = categories.filter(
+                (category) => category.parent_id
+            );
+            this.superCategories = categories.filter(
+                (category) => !category.parent_id
+            );
         },
-        // стандартизировать запросы что везде было const { data: dataInJSON
-        // : { ...array} }
         // categories with final component: 21 (накладка на подоконник)
         // categories with hided static selects : 22 (ремонт/аксессуары/услуги), подгрузить label
         // загрузить селект с типом пленки для 23 (пленка на окно)

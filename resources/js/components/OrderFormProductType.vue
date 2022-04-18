@@ -9,11 +9,11 @@
     >
         <option value="0" selected disabled>Тип изделия</option>
         <optgroup
-            v-for="category in superCategories"
+            v-for="category in store.superCategories"
             :key="category"
             :label="category.name"
         >
-            <template v-for="item in categories" :key="item">
+            <template v-for="item in store.categories" :key="item">
                 <option
                     v-if="item.parent_id === category.id"
                     selected
@@ -27,19 +27,13 @@
 </template>
 
 <script>
-import { computed, onMounted } from "vue";
-import { orderFormStore } from "../stores/store";
+import {onMounted} from "vue";
+import {orderFormStore} from "../stores/store";
 
 export default {
     name: "OrderFormProductType",
     setup() {
         const store = orderFormStore();
-        const categories = computed(() => {
-            return store.categories;
-        });
-        const superCategories = computed(() => {
-            return store.superCategories;
-        });
 
         onMounted(() => {
             store.fetchProductTypes();
@@ -47,8 +41,6 @@ export default {
 
         return {
             store,
-            categories,
-            superCategories,
         };
     },
 };
