@@ -31,11 +31,12 @@ export const orderFormStore = defineStore("orderForm", {
         },
         // стандартизировать запросы что везде было const { data: dataInJSON
         // : { ...array} }
-        // categories with final component: 21 (накладка на подоконник)
+        // categories with fina component: 21 (накладка на подоконник)
         // categories with hided static selects : 22 (ремонт/аксессуары/услуги), подгрузить label
         // загрузить селект с типом пленки для 23 (пленка на окно)
         // для category 24 (Отлив) загрузить label для селекта
         // для category 25 (Откос) загрузить select
+        // feature 1
         // вынести логику category 25 (Добавить позицию) в отдельную кнопку вне формы
         async fetchCategories() {
             this.productOptions = null;
