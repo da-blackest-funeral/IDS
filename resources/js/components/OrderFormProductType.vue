@@ -2,17 +2,18 @@
     <label class="mb-1 mt-2 mt-md-0" for="categories">Тип изделия</label>
     <select
         id="categories"
-        v-model="selected"
+        v-model="store.categoryId"
         name="categories"
         class="form-control"
+        @change="store.fetchCategories"
     >
-        <option>Тип изделия</option>
+        <option value="0" selected disabled>Тип изделия</option>
         <optgroup
-            v-for="category in groupCategories"
+            v-for="category in superCategories"
             :key="category"
             :label="category.name"
         >
-            <template v-for="item in categoriesItems" :key="item">
+            <template v-for="item in categories" :key="item">
                 <option
                     v-if="item.parent_id === category.id"
                     selected
@@ -26,30 +27,28 @@
 </template>
 
 <script>
-import { onMounted, ref } from "vue";
-import axios from "axios";
+import { computed, onMounted } from "vue";
+import { orderFormStore } from "../stores/store";
 
 export default {
     name: "OrderFormProductType",
     setup() {
-        const selected = ref("Тип изделия");
-        const categoriesItems = ref(null);
-        const groupCategories = ref(null);
-        onMounted(async () => {
-            const {
-                data: {
-                    data: { ...categories },
-                    superCategories: { ...superCategories },
-                },
-            } = await axios.get("/api/categories");
-            categoriesItems.value = categories;
-            groupCategories.value = superCategories;
+        const store = orderFormStore();
+        const categories = computed(() => {
+            return store.categories;
+        });
+        const superCategories = computed(() => {
+            return store.superCategories;
+        });
+
+        onMounted(() => {
+            store.fetchProductTypes();
         });
 
         return {
-            categoriesItems,
-            groupCategories,
-            selected,
+            store,
+            categories,
+            superCategories,
         };
     },
 };

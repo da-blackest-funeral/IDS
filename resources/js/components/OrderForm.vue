@@ -1,7 +1,7 @@
 <template>
     <div class="mt-4">
         <h1 class="h3">
-            <strong> Добавить товар </strong>
+            <strong> Добавить товар</strong>
         </h1>
         <p class="h4 mt-3">Заказ</p>
         <div class="container-fluid bg-light mt-4 pb-5">
@@ -56,6 +56,22 @@
                     >
                         <order-form-product-type></order-form-product-type>
                     </div>
+                    <transition name="fade">
+                        <div
+                            v-show="store.productOptions"
+                            id="items"
+                            class="col-10 col-md-3 mt-1"
+                        >
+                            <order-form-second-select></order-form-second-select>
+                        </div>
+                    </transition>
+                    <div
+                        v-show="store.profiles"
+                        id="third"
+                        class="col-10 col-md-3 mt-2 mt-md-0"
+                    >
+                        <order-form-third-select></order-form-third-select>
+                    </div>
                 </div>
             </form>
         </div>
@@ -65,12 +81,22 @@
 <script>
 import OrderFormProductType from "./OrderFormProductType";
 import OrderFormSecondSelect from "./OrderFormSecondSelect";
-import {provide} from "vue/dist/vue";
+import { orderFormStore } from "../stores/store";
+import OrderFormThirdSelect from "./OrderFormThirdSelect";
 
 export default {
     name: "OrderForm",
     components: {
+        OrderFormThirdSelect,
+        OrderFormSecondSelect,
         OrderFormProductType,
+    },
+    setup() {
+        const store = orderFormStore();
+
+        return {
+            store,
+        };
     },
 };
 </script>

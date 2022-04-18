@@ -111,7 +111,7 @@ return [
     | Redis Databases
     |--------------------------------------------------------------------------
     |
-    | Redis is an open source, fast, and advanced key-value store that also
+    | Redis is an open source, fast, and advanced key-value stores that also
     | provides a richer body of commands than a typical key-value system
     | such as APC or Memcached. Laravel makes it easy to dig right in.
     |
