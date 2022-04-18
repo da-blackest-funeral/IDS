@@ -7,6 +7,7 @@
     use App\Models\Order;
     use App\Models\ProductInOrder;
     use App\Models\Salaries\InstallerSalary;
+    use App\Models\SystemVariables;
     use App\Models\User;
     use Illuminate\Foundation\Testing\Concerns\InteractsWithSession;
     use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -448,9 +449,6 @@
             $resultProduct['name'] = 'Москитные двери, 25 профиль, полотно Антимоскит';
             $resultProduct['installation_id'] = 10;
 
-            $resultSalary = $this->defaultSalary();
-            $resultSalary['sum'] = 2150;
-
             $this->assertDatabaseHas(
                 'orders',
                 $resultOrder
@@ -470,11 +468,19 @@
          * When creating one product with no installation
          * and one with installation and difficulty
          *
+         * @test
          * @return void
          */
         public function order_when_creating_one_product_with_difficulty_and_another_with_no_installation() {
             $this->setUpDefaultActions();
-            $this->createDefaultOrderAndProduct();
+
+            $price = $this->productPrice() + $this->defaultDeliverySum() + $this->measuringPrice();
+            $salary = SystemVariables::value('measuringWage') + SystemVariables::value('delivery');
+
+            $this->createDefaultOrder($price);
+
+            $this->createDefaultProduct();
+            $this->createDefaultSalary($salary);
 
             $inputs = $this->exampleMosquitoSystemsInputs();
             $inputs['group-3'] = 8;
@@ -483,11 +489,17 @@
             $this->post(route('order', ['order' => 1]), $inputs);
 
             $resultSalary = $this->defaultSalary();
-            $resultSalary['sum'] = 1410;
+
+            $resultSalary['sum'] = $this->defaultSalarySum(1) +
+                $this->installationPrice() *
+                (1 - 1 / 2) *
+                (float)SystemVariables::value('coefficientSalaryForDifficult')
+                * 2; // умножаем на количество товаров, даже если один из них без монтажа (если я правильно понял)
 
             $resultOrder = $this->defaultOrder();
             $resultOrder['products_count'] = 2;
-            $resultOrder['price'] = 4152;
+            $resultOrder['price'] = $price - $this->measuringPrice() + $this->productPrice() +
+                $this->installationPrice() * 2;
             $resultOrder['measuring_price'] = 0;
 
             $this->assertDatabaseHas(
@@ -503,15 +515,17 @@
         }
 
         /**
-         * When creating products of different types with difficulty
+         * When creating products of different types and one with difficulty
          *
+         * @test
          * @return void
          */
         public function order_when_creating_two_products_of_different_types_one_with_coefficient_difficulty() {
             $this->setUpDefaultActions();
 
             $order = $this->defaultOrder();
-            $order['price'] = 3096;
+            $price = $this->defaultDeliverySum() + $this->productPrice() + $this->installationPrice() * 2;
+            $order['price'] = $price;
             $order['measuring_price'] = 0;
             $order['discounted_price'] = 0;
             $order['measuring'] = 0;
@@ -524,7 +538,12 @@
             ProductInOrder::create($product);
 
             $salary = $this->defaultSalary();
-            $salary['sum'] = $salary['changed_sum'] = 1410;
+            $salary['sum'] =
+            $salary['changed_sum'] =
+                $this->defaultSalarySum(1) +
+                $this->installationPrice() *
+                (1 - 1 / 2) *
+                (float)SystemVariables::value('coefficientSalaryForDifficult');
             $salary['comment'] = '123';
             $salary['category_id'] = 5;
             $salary['status'] = 0;
@@ -532,14 +551,19 @@
             InstallerSalary::create($salary);
 
             $inputs = $this->exampleMosquitoSystemsInputs();
-            $inputs['coefficient'] = 2;
             $inputs['categories'] = 7;
             $inputs['group-3'] = 10;
+
             $this->post(route('order', ['order' => 1]), $inputs);
 
             $resultOrder = $this->defaultOrder();
             $resultOrder['delivery'] = 960;
-            $resultOrder['price'] = 7812;
+
+            $resultOrder['price'] = $price -
+                $this->defaultDeliverySum() + $this->defaultDeliverySum(2) +
+                $this->productPrice(1, 1, 2) +
+                $this->installationPrice(2, 10);
+
             $resultOrder['measuring_price'] = 0;
             $resultOrder['products_count'] = 2;
 
@@ -548,10 +572,10 @@
                 $resultOrder
             )->assertDatabaseHas(
                 'installers_salaries',
-                ['sum' => 1410]
+                ['sum' => $salary['sum']]
             )->assertDatabaseHas(
                 'installers_salaries',
-                ['sum' => 1784]
+                ['sum' => $this->defaultSalarySum(1, 2, 10)]
             );
         }
 
@@ -559,11 +583,16 @@
          * Test when updating product with no changes also
          * order and this product mustn't have changes
          *
+         * @test
          * @return void
          */
         public function updating_products_with_no_changes() {
             $this->setUpDefaultActions();
-            $this->createDefaultOrderAndProduct();
+            $resultPrice = $this->defaultDeliverySum() + $this->productPrice() + $this->measuringPrice();
+
+            $this->createDefaultOrder($this->defaultDeliverySum() + $this->productPrice() + $this->measuringPrice());
+            $this->createDefaultProduct();
+            $this->createDefaultSalary(SystemVariables::value('measuringWage') + SystemVariables::value('delivery'));
 
             $this->post(
                 route('product-in-order', [
@@ -577,18 +606,24 @@
                 $this->defaultProductInOrder()
             )->assertDatabaseHas(
                 'orders',
-                $this->defaultOrder()
+                ['price' => $resultPrice]
             );
         }
 
         /**
          * When updating products and increasing its count
          *
+         * @test
          * @return void
          */
         public function updating_products_increasing_count() {
             $this->setUpDefaultActions();
-            $this->createDefaultOrderAndProduct();
+
+            $price = $this->defaultDeliverySum() + $this->productPrice() + $this->measuringPrice();
+            $resultPrice = $this->defaultDeliverySum() + 2 * $this->productPrice() + $this->measuringPrice();
+            $this->createDefaultOrder($price);
+            $this->createDefaultProduct();
+            $this->createDefaultSalary(SystemVariables::value('measuringWage') + SystemVariables::value('delivery'));
 
             $inputs = $this->exampleMosquitoSystemsInputs();
             $inputs['count'] = 2;
@@ -597,7 +632,7 @@
 
             $this->assertDatabaseHas(
                 'orders',
-                ['price' => 3312, 'products_count' => 2]
+                ['price' => $resultPrice, 'products_count' => 2]
             )->assertDatabaseHas(
                 'products',
                 ['count' => 2]
@@ -607,40 +642,37 @@
         /**
          * When decreasing count of products with no installation
          *
+         * @test
          * @return void
          */
         public function updating_products_decreasing_count() {
             $this->setUpDefaultActions();
 
+            $price = $this->defaultDeliverySum() + 2 * $this->productPrice() + $this->measuringPrice();
+            $resultPrice = $this->defaultDeliverySum() + $this->productPrice() + $this->measuringPrice();
+
             Order::create([
                 'user_id' => 1,
                 'delivery' => 600,
                 'installation' => 0,
-                'price' => 3312, // todo переписать с учетом минимальной суммы заказа
+                'price' => $price,
                 'installer_id' => 2,
-                'discounted_price' => 2256, // todo поменять когда я сделаю учет скидок
+                'discounted_price' => $price,
                 'status' => 0,
-                'measuring_price' => 600,
+                'measuring_price' => $this->measuringPrice(),
                 'measuring' => 0,
-                'discounted_measuring_price' => 600, // todo скидки
+                'discounted_measuring_price' => $this->measuringPrice(),
                 'comment' => 'Test Comment!',
                 'service_price' => 0,
                 'sum_after' => 0,
                 'products_count' => 2,
                 'taken_sum' => 0,
-                'installing_difficult' => 1, // todo зачем это поле в таблице заказов? по идее оно не нужно
+                'installing_difficult' => 1,
                 'is_private_person' => 0,
                 'structure' => 'not ready',
             ]);
 
-            ProductInOrder::create([
-                'order_id' => 1,
-                'user_id' => 1,
-                'category_id' => 5,
-                'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
-                'count' => 1,
-                'installation_id' => 14,
-                'data' => '{
+            $data = '{
                     "size": {
                         "width": "1000",
                         "height": "1000"
@@ -653,11 +685,11 @@
                     "category": 5,
                     "delivery": {
                         "additional": 0,
-                        "deliveryPrice": 600,
+                        "deliveryPrice": ' . $this->defaultDeliverySum() . ',
                         "additionalSalary": "Нет"
                     },
                     "tissueId": 1,
-                    "measuring": 600,
+                    "measuring": ' . $this->measuringPrice() . ',
                     "profileId": 1,
                     "additional": [
                         {
@@ -677,10 +709,19 @@
                             "price": 0
                         }
                     ],
-                    "main_price": 2112,
+                    "main_price": ' . 2 * $this->productPrice() . ',
                     "coefficient": 1,
                     "installationPrice": 0
-                }',
+                }';
+
+            ProductInOrder::create([
+                'order_id' => 1,
+                'user_id' => 1,
+                'category_id' => 5,
+                'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
+                'count' => 1,
+                'installation_id' => 14,
+                'data' => $data,
             ]);
 
             $this->createDefaultSalary();
@@ -689,7 +730,7 @@
 
             $this->assertDatabaseHas(
                 'orders',
-                ['price' => 2256]
+                ['price' => $resultPrice]
             )->assertDatabaseHas(
                 'products',
                 ['count' => 1]
@@ -700,21 +741,18 @@
          * When updating product that had installation and after user
          * sets it with no installation
          *
+         * @test
          * @return void
          */
         public function updating_products_set_with_no_installation() {
             $this->setUpDefaultActions();
 
-            $this->createDefaultOrder(2553, 0);
+            $price = $this->defaultDeliverySum() + $this->installationPrice() + $this->productPrice();
+            $resultPrice = $this->defaultDeliverySum() + $this->productPrice() + $this->measuringPrice();
 
-            ProductInOrder::create([
-                'order_id' => 1,
-                'user_id' => 1,
-                'category_id' => 5,
-                'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
-                'count' => 1,
-                'installation_id' => 8,
-                'data' => '{
+            $this->createDefaultOrder($price, 0);
+
+            $data = '{
                     "size": {
                         "width": "1000",
                         "height": "1000"
@@ -727,7 +765,7 @@
                     "category": 5,
                     "delivery": {
                         "additional": 0,
-                        "deliveryPrice": 600,
+                        "deliveryPrice": ' . $this->defaultDeliverySum() . ',
                         "additionalSalary": "Нет"
                     },
                     "tissueId": 1,
@@ -743,18 +781,27 @@
                             "price": 0
                         },
                         {
-                            "text": "Доп. за Монтаж на z-креплениях: 792",
-                            "price": 792
+                            "text": "Доп. за Монтаж на z-креплениях: ' . $this->installationPrice() . '",
+                            "price": ' . $this->installationPrice() . '
                         },
                         {
                             "text": "Доп. за Пластиковые ручки: 0",
                             "price": 0
                         }
                     ],
-                    "main_price": 1056,
+                    "main_price": ' . $this->productPrice() . ',
                     "coefficient": 1,
-                    "installationPrice": 720
-                }',
+                    "installationPrice": ' . $this->installationPrice() . '
+                }';
+
+            ProductInOrder::create([
+                'order_id' => 1,
+                'user_id' => 1,
+                'category_id' => 5,
+                'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
+                'count' => 1,
+                'installation_id' => 8,
+                'data' => $data,
             ]);
 
             /*
@@ -767,7 +814,7 @@
              * проверить я это смогу когда будет доступен функционал отображения
              */
 
-            $this->createDefaultSalary(1050);
+            $this->createDefaultSalary($this->defaultSalarySum(1));
 
             $this->from(route('product-in-order', ['order' => 1, 'productInOrder' => 1]));
 
@@ -775,7 +822,7 @@
 
             $this->assertDatabaseHas(
                 'orders',
-                ['price' => 2256]
+                ['price' => $resultPrice]
             )->assertDatabaseHas(
                 'products',
                 ['installation_id' => 14]
@@ -791,35 +838,15 @@
         public function updating_product_with_installation_decreasing_count() {
             $this->setUpDefaultActions();
 
-            $salary = \DB::table('mosquito_systems_type_salary')
-                ->where('type_id', 1)
-                ->where('additional_id', 8)
-                ->where('count', 2)
-                ->first()
-                ->salary;
+            $salary = $this->defaultSalarySum(2);
 
-            $resultSalary = \DB::table('mosquito_systems_type_salary')
-                ->where('type_id', 1)
-                ->where('additional_id', 8)
-                ->where('count', 1)
-                ->first()
-                ->salary;
+            $resultSalary = $this->defaultSalarySum(1);
 
-            $deliveryPrice = Type::where('id', 1)
-                ->first('delivery')
-                ->delivery;
+            $deliveryPrice = $this->defaultDeliverySum();
 
-            $mainPrice = Product::whereTissueId(1)
-                ->whereProfileId(1)
-                ->whereTypeId(1)
-                ->first('price')
-                ->price;
+            $mainPrice = $this->productPrice();
 
-            $installationPrice = \DB::table('mosquito_systems_type_additional')
-                ->where('additional_id', 8)
-                ->where('type_id', 1)
-                ->first()
-                ->price;
+            $installationPrice = $this->installationPrice();
 
             $price = $deliveryPrice + 2 * $mainPrice + 2 * $installationPrice;
 
@@ -941,6 +968,10 @@
          * 5) минимальной суммы заказа
          */
 
+        protected function measuringPrice() {
+            return SystemVariables::value('measuring');
+        }
+
         protected function createDefaultOrder(
             int $price = 2256,
             int $measuringPrice = 600,
@@ -968,6 +999,37 @@
             ]);
         }
 
+        protected function installationPrice($typeId = 1, $installationId = 8) {
+            return \DB::table('mosquito_systems_type_additional')
+                ->where('additional_id', $installationId)
+                ->where('type_id', $typeId)
+                ->first()
+                ->price;
+        }
+
+        protected function defaultSalarySum(int $count, $typeId = 1, $installationId = 8) {
+            return \DB::table('mosquito_systems_type_salary')
+                ->where('type_id', $typeId)
+                ->where('additional_id', $installationId)
+                ->where('count', $count)
+                ->first()
+                ->salary;
+        }
+
+        protected function productPrice($tissueId = 1, $profileId = 1, $typeId = 1) {
+            return Product::whereTissueId($tissueId)
+                ->whereProfileId($profileId)
+                ->whereTypeId($typeId)
+                ->first('price')
+                ->price;
+        }
+
+        protected function defaultDeliverySum($typeId = 1) {
+            return Type::where('id', $typeId)
+                ->first('delivery')
+                ->delivery;
+        }
+
         protected function createDefaultOrderAndProduct() {
 
             $this->createDefaultOrder();
@@ -977,15 +1039,8 @@
             $this->createDefaultSalary();
         }
 
-        protected function createDefaultProduct(int $installationId = 14) {
-            ProductInOrder::create([
-                'order_id' => 1,
-                'user_id' => 1,
-                'category_id' => 5,
-                'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
-                'count' => 1,
-                'installation_id' => $installationId,
-                'data' => '{
+        protected function createDefaultProduct(int $installationId = 14, $coefficient = 1) {
+            $data = '{
                     "size": {
                         "width": "1000",
                         "height": "1000"
@@ -998,11 +1053,11 @@
                     "category": 5,
                     "delivery": {
                         "additional": 0,
-                        "deliveryPrice": 600,
+                        "deliveryPrice": ' . $this->defaultDeliverySum() . ',
                         "additionalSalary": "Нет"
                     },
                     "tissueId": 1,
-                    "measuring": 600,
+                    "measuring": ' . $this->measuringPrice() . ',
                     "profileId": 1,
                     "additional": [
                         {
@@ -1022,10 +1077,19 @@
                             "price": 0
                         }
                     ],
-                    "main_price": 1056,
-                    "coefficient": 1,
+                    "main_price": ' . $this->productPrice() . ',
+                    "coefficient": ' . $coefficient . ',
                     "installationPrice": 0
-                }',
+                }';
+
+            ProductInOrder::create([
+                'order_id' => 1,
+                'user_id' => 1,
+                'category_id' => 5,
+                'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
+                'count' => 1,
+                'installation_id' => $installationId,
+                'data' => $data,
             ]);
         }
 
