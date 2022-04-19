@@ -6,6 +6,7 @@
     // this feature is called real-time facades
     use App\Models\ProductInOrder;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
+    use Illuminate\Support\Collection;
 
     /*
      * In this base class there are global methods,
@@ -53,6 +54,13 @@
                 }
             }
 
+            if (
+                static::hasInstallation($order)
+                && static::hasProducts($order)
+            ) {
+                $newProductPrice -= Calculator::getMeasuringPrice();
+            }
+
             if ($order->delivery) {
                 $newProductPrice -= min(
                     $order->delivery,
@@ -64,6 +72,13 @@
                     $order->delivery
                 );
             }
+
+            /*
+             * todo баг
+             * заключается в том, что при обновлении товара,
+             * если уже есть товары с монтажом в заказе, но у самого товара
+             * нет монтажа, начисляется лишняя цена за замер.
+             */
 
             $order->price += $newProductPrice;
             $order->products_count += Calculator::getCount();
@@ -108,5 +123,53 @@
          */
         public static function salaries(Order $order): float {
             return $order->salaries->sum('sum');
+        }
+
+        /**
+         * Returns products of order, except
+         * old product that are not deleted yet
+         *
+         * @param Order $order
+         * @return Collection
+         */
+        public static function products(Order $order): Collection {
+            return static::withoutOldProduct($order->products);
+        }
+
+        /**
+         * Rejects not deleted updated product
+         *
+         * @param Collection $products
+         * @return Collection
+         */
+        protected static function withoutOldProduct(Collection $products): Collection {
+            return $products->reject(function ($product) {
+                return $product->id == oldProduct('id');
+            });
+        }
+
+        /**
+         * Determines if order has products
+         *
+         * @param Order $order
+         * @return bool
+         */
+        public static function hasProducts(Order $order): bool {
+            return static::products($order)->isNotEmpty();
+        }
+
+        /**
+         * @param Collection $products
+         * @param ProductInOrder $productInOrder
+         * @return Collection
+         */
+        public static function productsWithout(
+            Collection $products,
+            ProductInOrder $productInOrder
+        ): Collection {
+            return static::withoutOldProduct($products)
+                ->reject(function ($product) use ($productInOrder) {
+                    return $product->id == $productInOrder->id;
+                });
         }
     }

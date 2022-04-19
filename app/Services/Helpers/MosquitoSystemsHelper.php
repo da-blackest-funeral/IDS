@@ -34,7 +34,8 @@
          */
         public static function updateOrCreateSalary(ProductInOrder $productInOrder) {
             $products = ProductInOrder::whereCategoryId($productInOrder->category_id)
-                ->whereOrderId($productInOrder->order_id);
+                ->whereOrderId($productInOrder->order_id)
+                ->get();
 
             $count = static::countProductsWithInstallation($productInOrder);
             $countOfAllProducts = static::countOfProducts($productInOrder->order->products);
@@ -47,10 +48,11 @@
                  * Because new product had been already created,
                  * we need to skip them
                  */
-                $products->get()->reject(function ($product) use ($productInOrder) {
-                    return $product->id == $productInOrder->id ||
-                        $product->id == oldProduct('id');
-                })->isNotEmpty();
+
+                OrderHelper::productsWithout(
+                    products: $products,
+                    productInOrder: $productInOrder
+                )->isNotEmpty();
 
             /*
              * сюда передается productInOrder с id=3, но при этом

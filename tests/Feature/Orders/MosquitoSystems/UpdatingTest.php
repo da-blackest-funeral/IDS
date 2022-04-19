@@ -514,7 +514,7 @@
                         $this->testHelper->productPrice() +
                         $this->testHelper->defaultDeliverySum() +
                         $this->testHelper->installationPrice(),
-                    'products_count' => 1
+                    'products_count' => 1,
                 ]
             )->assertDatabaseHas(
                 'products',
@@ -558,8 +558,8 @@
                 ->post(route('product-in-order', ['order' => 1, 'productInOrder' => 1]), $inputs);
 
             $this->assertDatabaseHas(
-              'installers_salaries',
-              ['sum' => $this->testHelper->defaultSalarySum(2)]
+                'installers_salaries',
+                ['sum' => $this->testHelper->defaultSalarySum(2)]
             )->assertDatabaseHas(
                 'products',
                 ['installation_id' => 8]
@@ -571,12 +571,16 @@
                         2 * $this->testHelper->productPrice() +
                         $this->testHelper->defaultDeliverySum(),
                     'measuring_price' => 0,
-                    'products_count' => 2
+                    'products_count' => 2,
                 ]
             );
         }
 
         /**
+         * When updating product with installation
+         * set with installation and in order already
+         * exists product of another type with installation
+         *
          * @test
          * @return void
          */
@@ -666,6 +670,117 @@
             )->assertDatabaseHas(
                 'orders',
                 ['price' => $price + $this->testHelper->installationPrice()]
+            );
+        }
+
+        /**
+         * When updating product set with no installation
+         * and already exists product with installation
+         *
+         * @test
+         * @return void
+         */
+        public function updating_product_set_with_no_installation_when_order_has_product_with_installation() {
+            $this->setUpDefaultActions();
+
+            $price = $this->testHelper->defaultDeliverySum() +
+                2 * $this->testHelper->installationPrice() +
+                2 * $this->testHelper->productPrice();
+
+            $resultPrice = $this->testHelper->defaultDeliverySum() +
+                $this->testHelper->installationPrice() +
+                2 * $this->testHelper->productPrice();
+
+            $this->testHelper->createDefaultOrder($price, 0, 2);
+
+            $data = '{
+                    "size": {
+                        "width": "1000",
+                        "height": "1000"
+                    },
+                    "salary": 1050,
+                    "group-1": 6,
+                    "group-2": 13,
+                    "group-3": 8,
+                    "group-4": 38,
+                    "category": 5,
+                    "delivery": {
+                        "additional": 0,
+                        "deliveryPrice": ' . $this->testHelper->defaultDeliverySum() . ',
+                        "additionalSalary": "Нет"
+                    },
+                    "tissueId": 1,
+                    "measuring": 0,
+                    "profileId": 1,
+                    "additional": [
+                        {
+                            "text": "Доп. за Z-крепления пластик: 0",
+                            "price": 0
+                        },
+                        {
+                            "text": "Доп. за Белый цвет: 0",
+                            "price": 0
+                        },
+                        {
+                            "text": "Доп. за Монтаж на z-креплениях: ' . $this->testHelper->installationPrice() . '",
+                            "price": ' . $this->testHelper->installationPrice() . '
+                        },
+                        {
+                            "text": "Доп. за Пластиковые ручки: 0",
+                            "price": 0
+                        }
+                    ],
+                    "main_price": ' . $this->testHelper->productPrice() . ',
+                    "coefficient": 1,
+                    "installationPrice": ' . $this->testHelper->installationPrice() . '
+                }';
+
+            ProductInOrder::create([
+                'order_id' => 1,
+                'user_id' => 1,
+                'category_id' => 5,
+                'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
+                'count' => 1,
+                'installation_id' => 8,
+                'data' => $data,
+            ]);
+
+            ProductInOrder::create([
+                'order_id' => 1,
+                'user_id' => 1,
+                'category_id' => 5,
+                'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
+                'count' => 1,
+                'installation_id' => 8,
+                'data' => $data,
+            ]);
+
+            /*
+             * todo баг
+             * если обновлять товар несколько раз, меняя туда-сюда монтаж\без монтажа,
+             * то в какой то момент цена заказа становится на 600 больше чем должна
+             * я думаю дело в замере\доставке, нужно продебажить во время всех таких действий
+             * эти атрибуты у товара и заказа и записать на каком этапе это происходит
+             *
+             * проверить я это смогу когда будет доступен функционал отображения
+             */
+
+            $this->testHelper->createDefaultSalary($this->testHelper->defaultSalarySum(2));
+
+            $this->from(route('product-in-order', ['order' => 1, 'productInOrder' => 1]))
+                ->post(
+                    route(
+                        'product-in-order', ['order' => 1, 'productInOrder' => 1]
+                    ),
+                    $this->testHelper->exampleMosquitoSystemsInputs()
+                );
+
+            $this->assertDatabaseHas(
+                'installers_salaries',
+                ['sum' => $this->testHelper->defaultSalarySum(1)]
+            )->assertDatabaseHas(
+                'orders',
+                ['price' => $resultPrice]
             );
         }
     }
