@@ -378,7 +378,7 @@
          */
 
         public function calculateInstallationSalary(): float|null {
-            // todo нарушение DRY, в этом классе есть похожий метод,
+            // todo нарушение DRY, в другом классе есть похожий метод,
             // надо "склеить" их в один
 
             if (!$this->needInstallation) {

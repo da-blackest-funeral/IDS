@@ -6,8 +6,10 @@
     use App\Models\Category;
     use App\Models\Order;
     use App\Models\ProductInOrder;
+    use App\Services\Helpers\MosquitoSystemsHelper;
     use App\Services\Helpers\OrderHelper;
     use App\Services\Helpers\SalaryHelper;
+    use Facades\App\Services\Calculator\Interfaces\Calculator;
 
     class ProductController extends Controller
     {
@@ -44,6 +46,15 @@
 
             foreach ($productData->additional as $additional) {
                 $order->price -= $additional->price;
+            }
+
+            if (
+                !OrderHelper::hasInstallation($order) &&
+                !Calculator::productNeedInstallation() &&
+                MosquitoSystemsHelper::oldProductHasInstallation()
+            ) {
+                $order->measuring_price = Calculator::getMeasuringPrice();
+                $order->price += $order->measuring_price;
             }
 
             $order->update();

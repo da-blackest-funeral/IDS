@@ -783,4 +783,144 @@
                 ['price' => $resultPrice]
             );
         }
+
+        /**
+         * @test
+         * @return void
+         */
+        public function updating_product_set_with_no_installation_when_order_has_product_with_no_installation() {
+            $this->setUpDefaultActions();
+
+            $price = $this->testHelper->defaultDeliverySum() +
+                $this->testHelper->installationPrice() +
+                2 * $this->testHelper->productPrice();
+
+            $resultPrice = $this->testHelper->defaultDeliverySum() +
+                $this->testHelper->measuringPrice() +
+                2 * $this->testHelper->productPrice();
+
+            $this->testHelper->createDefaultOrder($price, 0, 2);
+
+            $data = '{
+                    "size": {
+                        "width": "1000",
+                        "height": "1000"
+                    },
+                    "salary": 1050,
+                    "group-1": 6,
+                    "group-2": 13,
+                    "group-3": 8,
+                    "group-4": 38,
+                    "category": 5,
+                    "delivery": {
+                        "additional": 0,
+                        "deliveryPrice": ' . $this->testHelper->defaultDeliverySum() . ',
+                        "additionalSalary": "Нет"
+                    },
+                    "tissueId": 1,
+                    "measuring": 0,
+                    "profileId": 1,
+                    "additional": [
+                        {
+                            "text": "Доп. за Z-крепления пластик: 0",
+                            "price": 0
+                        },
+                        {
+                            "text": "Доп. за Белый цвет: 0",
+                            "price": 0
+                        },
+                        {
+                            "text": "Доп. за Монтаж на z-креплениях: ' . $this->testHelper->installationPrice() . '",
+                            "price": ' . $this->testHelper->installationPrice() . '
+                        },
+                        {
+                            "text": "Доп. за Пластиковые ручки: 0",
+                            "price": 0
+                        }
+                    ],
+                    "main_price": ' . $this->testHelper->productPrice() . ',
+                    "coefficient": 1,
+                    "installationPrice": ' . $this->testHelper->installationPrice() . '
+                }';
+
+            ProductInOrder::create([
+                'order_id' => 1,
+                'user_id' => 1,
+                'category_id' => 5,
+                'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
+                'count' => 1,
+                'installation_id' => 8,
+                'data' => $data,
+            ]);
+
+            $data = '{
+                    "size": {
+                        "width": "1000",
+                        "height": "1000"
+                    },
+                    "salary": 1050,
+                    "group-1": 6,
+                    "group-2": 13,
+                    "group-3": 8,
+                    "group-4": 38,
+                    "category": 5,
+                    "delivery": {
+                        "additional": 0,
+                        "deliveryPrice": ' . $this->testHelper->defaultDeliverySum() . ',
+                        "additionalSalary": "Нет"
+                    },
+                    "tissueId": 1,
+                    "measuring": 600,
+                    "profileId": 1,
+                    "additional": [
+                        {
+                            "text": "Доп. за Z-крепления пластик: 0",
+                            "price": 0
+                        },
+                        {
+                            "text": "Доп. за Белый цвет: 0",
+                            "price": 0
+                        },
+                        {
+                            "text": "Доп. за Монтаж : 0",
+                            "price": 0
+                        },
+                        {
+                            "text": "Доп. за Пластиковые ручки: 0",
+                            "price": 0
+                        }
+                    ],
+                    "main_price": ' . $this->testHelper->productPrice() . ',
+                    "coefficient": 1,
+                    "installationPrice": 0
+                }';
+
+            ProductInOrder::create([
+                'order_id' => 1,
+                'user_id' => 1,
+                'category_id' => 5,
+                'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
+                'count' => 1,
+                'installation_id' => 14,
+                'data' => $data,
+            ]);
+
+            $this->testHelper->createDefaultSalary($this->testHelper->defaultSalarySum(1));
+
+            $this->from(route('product-in-order', ['order' => 1, 'productInOrder' => 1]))
+                ->post(
+                    route(
+                        'product-in-order', ['order' => 1, 'productInOrder' => 1]
+                    ),
+                    $this->testHelper->exampleMosquitoSystemsInputs()
+                );
+
+            $this->assertDatabaseHas(
+                'installers_salaries',
+                ['sum' => $this->testHelper->salaryNoInstallation()]
+            )->assertDatabaseHas(
+                'orders',
+                ['price' => $resultPrice]
+            );
+        }
     }

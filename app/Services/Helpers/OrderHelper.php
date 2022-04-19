@@ -3,15 +3,11 @@
     namespace App\Services\Helpers;
 
     use App\Models\Order;
-    // this feature is called real-time facades
     use App\Models\ProductInOrder;
+    // this feature is called real-time facades
     use Facades\App\Services\Calculator\Interfaces\Calculator;
     use Illuminate\Support\Collection;
 
-    /*
-     * In this base class there are global methods,
-     * that are applies to all project
-     */
     class OrderHelper
     {
         /**
@@ -54,10 +50,7 @@
                 }
             }
 
-            if (
-                static::hasInstallation($order)
-                && static::hasProducts($order)
-            ) {
+            if (static::hasInstallation($order)) {
                 $newProductPrice -= Calculator::getMeasuringPrice();
             }
 
@@ -72,13 +65,6 @@
                     $order->delivery
                 );
             }
-
-            /*
-             * todo баг
-             * заключается в том, что при обновлении товара,
-             * если уже есть товары с монтажом в заказе, но у самого товара
-             * нет монтажа, начисляется лишняя цена за замер.
-             */
 
             $order->price += $newProductPrice;
             $order->products_count += Calculator::getCount();
@@ -103,16 +89,16 @@
         }
 
         /**
-         * Determines if in all product exists at least
+         * Determines if in all order exists at least
          * one product with installation
          *
          * @param Order $order
          * @return bool
          */
         public static function hasInstallation(Order $order): bool {
-            return $order->products->contains(function ($product) {
+            return static::products($order)->contains(function ($product) {
                 return ProductHelper::hasInstallation($product);
-            });
+            }) && static::hasProducts($order);
         }
 
         /**
@@ -142,7 +128,7 @@
          * @param Collection $products
          * @return Collection
          */
-        protected static function withoutOldProduct(Collection $products): Collection {
+        public static function withoutOldProduct(Collection $products): Collection {
             return $products->reject(function ($product) {
                 return $product->id == oldProduct('id');
             });
