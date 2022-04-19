@@ -1,5 +1,9 @@
 <?php
 
+    use App\Models\Category;
+    use App\Models\Order;
+    use App\Models\User;
+
     function isOrderPage() {
         return Route::is('new-order', 'order');
     }
@@ -89,4 +93,26 @@
                 )
             )
         );
+    }
+
+    function newOrderData(): array {
+        return [
+            'data' => Category::all(),
+            'superCategories' => Category::whereIn(
+                'id', Category::select(['parent_id'])
+                ->whereNotNull('parent_id')
+                ->groupBy(['parent_id'])
+                ->get()
+                ->toArray()
+            )->get(),
+            'orderNumber' => Order::count() + 1,
+            'installers' => User::role('installer')->get()
+        ];
+    }
+
+    function orderData(Order $order): array {
+        $result = newOrderData();
+        $result['products'] = $order->products;
+
+        return $result;
     }

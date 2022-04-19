@@ -3,7 +3,6 @@
     namespace App\Http\Controllers;
 
     use App\Http\Requests\SaveOrderRequest;
-    use App\Models\Category;
     use App\Models\Order;
     use App\Models\ProductInOrder;
     use App\Services\Helpers\MosquitoSystemsHelper;
@@ -13,28 +12,16 @@
 
     class ProductController extends Controller
     {
-        protected SaveOrderRequest $request;
-
-        public function __construct(SaveOrderRequest $request) {
-            $this->request = $request;
+        public function __construct(protected SaveOrderRequest $request) {
         }
 
         public function index(Order $order, ProductInOrder $productInOrder) {
-            return view('pages.add-product')->with([
-                // todo часть данных отсюда общая и ее можно вынести в отдельный метод
-                'data' => Category::all(),
-                'superCategories' => Category::whereIn(
-                    'id', Category::select(['parent_id'])
-                    ->whereNotNull('parent_id')
-                    ->groupBy(['parent_id'])
-                    ->get()
-                    ->toArray()
-                )->get(),
-                'orderNumber' => $order->id,
-                'product' => $productInOrder,
-                'productData' => json_decode($productInOrder->data),
-                'needPreload' => true,
-            ]);
+            $data = orderData($order);
+            $data['product'] = $productInOrder;
+            $data['productData'] = json_decode($productInOrder->data);
+            $data['needPreload'] = true;
+
+            return view('pages.add-product')->with($data);
         }
 
         public function update(Order $order, ProductInOrder $productInOrder) {
@@ -63,7 +50,7 @@
                 order: $order->refresh()
             );
 
-            SalaryHelper::checkSalaryForMeasuringAndDelivery(
+            SalaryHelper::measuringAndDelivery(
                 order: $order,
                 productInOrder: $productInOrder
             );

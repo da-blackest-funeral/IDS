@@ -29,7 +29,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/', [CalculationController::class, 'save']);
 
     Route::prefix('orders')->group(function () {
-        Route::get('/{order}', [OrdersController::class, 'order'])
+        Route::get('/{order}', [OrdersController::class, 'show'])
             ->name('order');
 
         Route::post('/{order}', [OrdersController::class, 'addProduct']);

@@ -74,7 +74,7 @@
          * @param ProductInOrder $productInOrder
          * @return void
          */
-        public static function checkSalaryForMeasuringAndDelivery(
+        public static function measuringAndDelivery(
             Order $order,
             ProductInOrder $productInOrder
         ) {

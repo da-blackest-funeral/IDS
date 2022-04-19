@@ -2,48 +2,28 @@
 
     namespace App\Http\Controllers;
 
-    use App\Models\Category;
     use App\Models\Order;
-    use App\Services\Calculator\Interfaces\Calculator;
     use App\Services\Helpers\OrderHelper;
     use App\Services\Helpers\SalaryHelper;
-    use Illuminate\Http\Request;
 
     class OrdersController extends Controller
     {
 
-        protected Calculator $calculator;
-        protected Request $request;
-
-        public function index()
-        {
+        // returns all orders
+        public function index() {
             //
         }
 
-        public function order(Order $order) {
-            $products = $order->products()->get();
-            $data = Category::all();
-            $superCategories = Category::whereIn(
-                'id', Category::select(['parent_id'])
-                ->whereNotNull('parent_id')
-                ->groupBy(['parent_id'])
-                ->get()
-                ->toArray()
-            )->get();
-            $orderNumber = $order->id;
-
+        public function show(Order $order) {
             return view('welcome')->with(
-                compact('data', 'order', 'products', 'superCategories', 'orderNumber')
+                orderData($order)
             );
         }
 
         public function addProduct(Order $order) {
+            $productInOrder = OrderHelper::addProduct(order: $order);
 
-            $productInOrder = OrderHelper::addProduct(
-                order: $order
-            );
-
-            SalaryHelper::checkSalaryForMeasuringAndDelivery(
+            SalaryHelper::measuringAndDelivery(
                 order: $order,
                 productInOrder: $productInOrder
             );
