@@ -9,17 +9,15 @@
     use App\Models\ProductInOrder;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
     use Illuminate\Support\Collection;
+    use PHPUnit\Exception;
 
     /*
-     * todo возможно сделать наследование от класса ProductHelper
-     *
-     * при этом сделать интерфейс, в сервис провайдере биндить в зависимости от категорий,
+     * todo сделать интерфейс
+     * в сервис провайдере биндить в зависимости от категорий,
      * и таким образом получится универсальные классы хелперов
      *
      * аналогично можно поступить с классами SalaryHelper и OrderHelper,
      * т.к. могут возникнуть проблемы с универсальностью
-     *
-     * тогда ко всем этим классам обращаться через интерфейс и биндить в сервис провайдере
      */
 
     class MosquitoSystemsHelper extends ProductHelper
@@ -27,41 +25,25 @@
         /**
          * This method determines the logic of
          * how to make salary for new mosquito system product.
-         * This method is entry point of calculating salary for installer.
          *
          * @param ProductInOrder $productInOrder
          * @return void
          */
         public static function updateOrCreateSalary(ProductInOrder $productInOrder) {
-            $products = ProductInOrder::whereCategoryId($productInOrder->category_id)
-                ->whereOrderId($productInOrder->order_id)
-                ->get();
-
-            $count = static::countProductsWithInstallation($productInOrder);
-            $countOfAllProducts = static::countOfProducts($productInOrder->order->products);
+            $products = static::sameCategoryProducts($productInOrder);
             $productsWithMaxInstallation = static::productsWithMaxInstallation($productInOrder);
+            $order = $productInOrder->order;
 
-            $productsOfTheSameTypeExists =
-                /*
-                 * Need to determine if products of the same type
-                 * that current exists.
-                 * Because new product had been already created,
-                 * we need to skip them
-                 */
-
-                OrderHelper::productsWithout(
-                    products: $products,
-                    productInOrder: $productInOrder
-                )->isNotEmpty();
+            $countWithInstallation = static::countProductsWithInstallation($productInOrder);
+            $countOfAllProducts = static::countOfProducts(OrderHelper::products($order));
 
             /*
-             * сюда передается productInOrder с id=3, но при этом
-             * в заказе уже существуют товары с id = 1 и с id = 3,
-             * являющиеся одним и тем же товаром, поэтому нужно пропускать старый
-             * (сохраненный в сессии) товар, при этом только со страницы обновления товара
+             * Need to determine if products of the same type
+             * that current exists.
+             * Because new product had been already created,
+             * we need to skip them
              */
-
-            if ($productsOfTheSameTypeExists && !is_null(SalaryHelper::getSalary($productInOrder))) {
+            if (static::needUpdateSalary($products, $productInOrder)) {
                 /*
                  * Условие звучит так: если в заказе уже есть такой же товар с монтажом, и добалвяется
                  * товар без монтажа, то зп не пересчитывается. Если в заказе уже есть товар с монтажом, кроме нынешнего,
@@ -79,13 +61,13 @@
                 SalaryHelper::updateSalary(
                     sum: static::calculateInstallationSalary(
                         productInOrder: $productsWithMaxInstallation->first(),
-                        count: $count,
+                        count: $countWithInstallation,
                     ),
                     productInOrder: $productInOrder,
                 );
 
-            } elseif (!$countOfAllProducts || $count) {
-                SalaryHelper::make($productInOrder->order);
+            } elseif (!$countOfAllProducts || $countWithInstallation) {
+                SalaryHelper::make($order);
             }
         }
 
@@ -111,23 +93,20 @@
                 $count -= oldProductsCount();
             }
 
-            $salary = Calculator::getInstallationSalary(
-                installation: $installation ?? $productInOrder->installation_id,
-                count: $count,
-                /*
-                 * todo подумать как это можно исправить
-                 * обычно, ProductInOrder не имеет поля type_id,
-                 * но в этот метод передается результат с left join
-                 */
-                typeId: $productInOrder->type_id
-            );
+            $typeId = Type::byCategory($productInOrder->category_id)->id;
 
-            if ($salary != null) {
+            try {
+                $salary = Calculator::getInstallationSalary(
+                    installation: $installation ?? $productInOrder->installation_id,
+                    count: $count,
+                    typeId: $typeId
+                );
+
                 $result = $salary->salary;
-            } else {
+            } catch (\Exception $exception) {
                 $salary = Calculator::maxCountSalary(
                     installation: $installation ?? $productInOrder->installation_id,
-                    typeId: $productInOrder->type_id
+                    typeId: $typeId
                 );
 
                 if (is_null($salary)) {
@@ -174,9 +153,7 @@
          * @todo дело в том, что тут используется выборка по максимальной цене монтажа
          * а не зарплаты, поэтому нужно сделать отдельный метод для выборки максимальной зарплаты
          */
-        public static function productsWithMaxInstallation(
-            ProductInOrder $productInOrder
-        ): Collection {
+        protected static function productsWithMaxInstallation(ProductInOrder $productInOrder): Collection {
             $typeId = Type::byCategory($productInOrder->category_id)->id;
             $productsWithInstallation = $productInOrder->order
                 ->products()
@@ -240,9 +217,7 @@
          * @param ProductInOrder|null $productInOrder
          * @return array
          */
-        public static function additional(
-            ProductInOrder $productInOrder = null
-        ): array {
+        public static function additional(ProductInOrder $productInOrder = null): array {
             $productData = null;
 
             if (isset($productInOrder->data)) {
@@ -270,5 +245,28 @@
                 });
 
             return compact('additional', 'groups', 'product');
+        }
+
+        /**
+         * @param Collection $products
+         * @param ProductInOrder $productInOrder
+         * @return bool
+         */
+        protected static function needUpdateSalary(Collection $products, ProductInOrder $productInOrder): bool {
+            return OrderHelper::productsWithout(
+                    products: $products,
+                    productInOrder: $productInOrder
+                )->isNotEmpty() &&
+                !is_null(SalaryHelper::getSalary($productInOrder));
+        }
+
+        /**
+         * @param ProductInOrder $productInOrder
+         * @return Collection
+         */
+        protected static function sameCategoryProducts(ProductInOrder $productInOrder): Collection {
+            return ProductInOrder::whereCategoryId($productInOrder->category_id)
+                ->whereOrderId($productInOrder->order_id)
+                ->get();
         }
     }

@@ -35,28 +35,42 @@
         }
 
         /**
-         * Creates new product and adds it to the order
-         *
          * @param Order $order
-         * @return ProductInOrder
+         * @return bool
          */
-        public static function addProduct(Order $order): ProductInOrder {
-            $newProductPrice = Calculator::getPrice();
+        protected static function notNeedMeasuring(Order $order): bool {
+            return $order->measuring_price || static::hasInstallation($order);
+        }
 
-            if ($order->measuring_price) {
-                $newProductPrice -= Calculator::getMeasuringPrice();
+        /**
+         * @param Order $order
+         * @return void
+         */
+        protected static function deductMeasuringPrice(Order $order) {
+            $order->price -= $order->measuring_price;
+            $order->measuring_price = 0;
+        }
+
+        /**
+         * @param Order $order
+         * @return void
+         */
+        protected static function calculateMeasuringOptions(Order $order) {
+            if (static::notNeedMeasuring($order)) {
+                $order->price -= Calculator::getMeasuringPrice();
                 if (Calculator::productNeedInstallation()) {
-                    $order->price -= $order->measuring_price;
-                    $order->measuring_price = 0;
+                    static::deductMeasuringPrice($order);
                 }
             }
+        }
 
-            if (static::hasInstallation($order)) {
-                $newProductPrice -= Calculator::getMeasuringPrice();
-            }
-
+        /**
+         * @param Order $order
+         * @return void
+         */
+        protected static function calculateDeliveryOptions(Order $order) {
             if ($order->delivery) {
-                $newProductPrice -= min(
+                $order->price -= min(
                     $order->delivery,
                     Calculator::getDeliveryPrice()
                 );
@@ -66,8 +80,21 @@
                     $order->delivery
                 );
             }
+        }
 
-            $order->price += $newProductPrice;
+        /**
+         * Creates new product and adds it to the order
+         *
+         * @param Order $order
+         * @return ProductInOrder
+         */
+        public static function addProduct(Order $order): ProductInOrder {
+            $order->price += Calculator::getPrice();
+
+            static::calculateMeasuringOptions($order);
+
+            static::calculateDeliveryOptions($order);
+
             $order->products_count += Calculator::getCount();
 
             $order->update();
