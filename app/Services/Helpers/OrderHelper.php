@@ -4,9 +4,10 @@
 
     use App\Models\Order;
     use App\Models\ProductInOrder;
-    // this feature is called real-time facades
     use Facades\App\Services\Calculator\Interfaces\Calculator;
     use Illuminate\Support\Collection;
+
+    // this feature is called real-time facades
 
     class OrderHelper
     {
@@ -97,8 +98,8 @@
          */
         public static function hasInstallation(Order $order): bool {
             return static::products($order)->contains(function ($product) {
-                return ProductHelper::hasInstallation($product);
-            }) && static::hasProducts($order);
+                    return ProductHelper::hasInstallation($product);
+                }) && static::hasProducts($order);
         }
 
         /**
@@ -150,12 +151,38 @@
          * @return Collection
          */
         public static function productsWithout(
-            Collection $products,
+            Collection     $products,
             ProductInOrder $productInOrder
         ): Collection {
             return static::withoutOldProduct($products)
                 ->reject(function ($product) use ($productInOrder) {
                     return $product->id == $productInOrder->id;
                 });
+        }
+
+        /**
+         * @param Order $order
+         * @param ProductInOrder $productInOrder
+         * @return void
+         */
+        public static function reducePrice(Order $order, ProductInOrder $productInOrder) {
+            $productData = json_decode($productInOrder->data);
+            $order->price -= $productData->main_price;
+            $order->products_count -= $productInOrder->count;
+
+            foreach ($productData->additional as $additional) {
+                $order->price -= $additional->price;
+            }
+        }
+
+        public static function addMeasuringPrice(Order $order) {
+            $order->measuring_price = Calculator::getMeasuringPrice();
+            $order->price += $order->measuring_price;
+        }
+
+        public static function needAddMeasuring(Order $order) {
+            return !static::hasInstallation($order) &&
+                !Calculator::productNeedInstallation() &&
+                MosquitoSystemsHelper::oldProductHasInstallation();
         }
     }
