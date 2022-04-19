@@ -10,6 +10,8 @@ abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
 
+    protected TestHelper $testHelper;
+
     public function setUpDefaultActions() {
         $this->seed();
         $this->actingAs(User::first());

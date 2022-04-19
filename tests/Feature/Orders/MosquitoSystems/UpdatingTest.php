@@ -524,4 +524,52 @@
                 ['sum' => $this->testHelper->defaultSalarySum(1)]
             );
         }
+
+        /**
+         * @test
+         * @return void
+         */
+        public function updating_product_set_with_installation_when_order_has_products_with_installation() {
+            $this->setUpDefaultActions();
+
+            // one product with installation and one without it
+            $this->testHelper->createDefaultOrder(
+                $this->testHelper->installationPrice() +
+                2 * $this->testHelper->productPrice() +
+                $this->testHelper->defaultDeliverySum(),
+                0,
+                2
+            );
+
+            $this->testHelper->createDefaultProduct();
+            $this->testHelper->createDefaultProduct(8);
+
+            $this->testHelper->createDefaultSalary(
+                $this->testHelper->defaultSalarySum(1)
+            );
+
+            $inputs = $this->testHelper->exampleMosquitoSystemsInputs();
+            $inputs['group-3'] = 8;
+
+            $this->from(route('product-in-order', ['order' => 1, 'productInOrder' => 1]))
+                ->post(route('product-in-order', ['order' => 1, 'productInOrder' => 1]), $inputs);
+
+            $this->assertDatabaseHas(
+              'installers_salaries',
+              ['sum' => $this->testHelper->defaultSalarySum(2)]
+            )->assertDatabaseHas(
+                'products',
+                ['installation_id' => 8]
+            )->assertDatabaseHas(
+                'orders',
+                [
+                    'price' =>
+                        2 * $this->testHelper->installationPrice() +
+                        2 * $this->testHelper->productPrice() +
+                        $this->testHelper->defaultDeliverySum(),
+                    'measuring_price' => 0,
+                    'products_count' => 2
+                ]
+            );
+        }
     }
