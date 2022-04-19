@@ -478,4 +478,50 @@
                 ['price' => $resultPrice, 'products_count' => 1, 'measuring_price' => 0]
             );
         }
+
+        /**
+         * Test when updating product with no installation
+         * and set installation to them
+         *
+         * @test
+         * @return void
+         */
+        public function updating_product_set_with_installation() {
+            $this->setUpDefaultActions();
+
+            $this->testHelper->createDefaultOrder(
+                $this->testHelper->measuringPrice() +
+                $this->testHelper->productPrice() +
+                $this->testHelper->defaultDeliverySum()
+            );
+
+            $this->testHelper->createDefaultProduct();
+
+            $this->testHelper->createDefaultSalary(
+                $this->testHelper->salaryNoInstallation()
+            );
+
+            $inputs = $this->testHelper->exampleMosquitoSystemsInputs();
+            $inputs['group-3'] = 8;
+
+            $this->from(route('product-in-order', ['order' => 1, 'productInOrder' => 1]))
+                ->post(route('product-in-order', ['order' => 1, 'productInOrder' => 1]), $inputs);
+
+            $this->assertDatabaseHas(
+                'orders',
+                [
+                    'price' =>
+                        $this->testHelper->productPrice() +
+                        $this->testHelper->defaultDeliverySum() +
+                        $this->testHelper->installationPrice(),
+                    'products_count' => 1
+                ]
+            )->assertDatabaseHas(
+                'products',
+                ['installation_id' => 8]
+            )->assertDatabaseHas(
+                'installers_salaries',
+                ['sum' => $this->testHelper->defaultSalarySum(1)]
+            );
+        }
     }

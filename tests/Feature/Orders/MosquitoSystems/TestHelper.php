@@ -16,6 +16,10 @@
             return SystemVariables::value('measuring');
         }
 
+        public function salaryNoInstallation() {
+            return SystemVariables::value('delivery') + SystemVariables::value('measuringWage');
+        }
+
         public function createDefaultOrder(
             int $price = 2256,
             int $measuringPrice = 600,
