@@ -53,7 +53,11 @@
             return session('oldProduct');
         }
 
-        return session('oldProduct')->$field;
+        try {
+            return session('oldProduct')->$field;
+        } catch (Exception $exception) {
+            return 0;
+        }
     }
 
     function isInstallation(object $additional): bool {

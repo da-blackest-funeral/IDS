@@ -526,6 +526,9 @@
         }
 
         /**
+         * When updating product and sets installation to it,
+         * in order that has another product with installation
+         *
          * @test
          * @return void
          */
@@ -570,6 +573,99 @@
                     'measuring_price' => 0,
                     'products_count' => 2
                 ]
+            );
+        }
+
+        /**
+         * @test
+         * @return void
+         */
+        public function updating_product_set_installation_when_order_has_product_of_another_type_with_installation() {
+            $this->setUpDefaultActions();
+
+            $price = $this->testHelper->installationPrice(2, 10) +
+                $this->testHelper->productPrice() +
+                $this->testHelper->productPrice(1, 1, 2) +
+                $this->testHelper->defaultDeliverySum(2);
+
+            // one product with installation and one without it
+            $this->testHelper->createDefaultOrder(
+                $price,
+                0,
+                2
+            );
+
+            $this->testHelper->createDefaultProduct();
+
+            $product = $this->testHelper->defaultProductInOrder();
+            $product['category_id'] = 7;
+            $product['name'] = 'Москитные двери, 25 профиль, полотно Антимоскит';
+            $product['installation_id'] = 10;
+            $data = '{
+                    "size": {
+                        "width": "1000",
+                        "height": "1000"
+                    },
+                    "salary": 1200,
+                    "group-1": 6,
+                    "group-2": 13,
+                    "group-3": 10,
+                    "group-4": 38,
+                    "category": 7,
+                    "delivery": {
+                        "additional": 0,
+                        "deliveryPrice": ' . $this->testHelper->defaultDeliverySum(2) . ',
+                        "additionalSalary": "Нет"
+                    },
+                    "tissueId": 1,
+                    "measuring": 0,
+                    "profileId": 1,
+                    "additional": [
+                        {
+                            "text": "Доп. за Z-крепления пластик: 0",
+                            "price": 0
+                        },
+                        {
+                            "text": "Доп. за Белый цвет: 0",
+                            "price": 0
+                        },
+                        {
+                            "text": "Доп. за Монтаж двери 25, 32, 42 профиль: '
+                . $this->testHelper->installationPrice(2, 10) . '",
+                            "price": ' . $this->testHelper->installationPrice(2, 10) . '
+                        },
+                        {
+                            "text": "Доп. за Пластиковые ручки: 0",
+                            "price": 0
+                        }
+                    ],
+                    "main_price": ' . $this->testHelper->productPrice(1, 1, 2) . ',
+                    "coefficient": 1,
+                    "installationPrice": ' . $this->testHelper->installationPrice(2, 10) . '
+                }';
+
+            $product['data'] = $data;
+            ProductInOrder::create($product);
+
+            $this->testHelper->createDefaultSalary(
+                $this->testHelper->defaultSalarySum(1, 2, 10)
+            );
+
+            $inputs = $this->testHelper->exampleMosquitoSystemsInputs();
+            $inputs['group-3'] = 8;
+
+            $this->from(route('product-in-order', ['order' => 1, 'productInOrder' => 1]))
+                ->post(route('product-in-order', ['order' => 1, 'productInOrder' => 1]), $inputs);
+
+            $this->assertDatabaseHas(
+                'installers_salaries',
+                ['sum' => $this->testHelper->defaultSalarySum(1)]
+            )->assertDatabaseHas(
+                'installers_salaries',
+                ['sum' => $this->testHelper->defaultSalarySum(1, 2, 10)]
+            )->assertDatabaseHas(
+                'orders',
+                ['price' => $price + $this->testHelper->installationPrice()]
             );
         }
     }

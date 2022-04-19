@@ -40,7 +40,7 @@
             $productData = json_decode($productInOrder->data);
             $order->price -= $productData->main_price;
             $order->products_count -= $productInOrder->count;
-            session()->put('oldProduct', $productInOrder);
+            session()->flash('oldProduct', $productInOrder);
 
             foreach ($productData->additional as $additional) {
                 $order->price -= $additional->price;

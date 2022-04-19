@@ -48,8 +48,16 @@
                  * we need to skip them
                  */
                 $products->get()->reject(function ($product) use ($productInOrder) {
-                    return $product->id == $productInOrder->id;
+                    return $product->id == $productInOrder->id ||
+                        $product->id == oldProduct('id');
                 })->isNotEmpty();
+
+            /*
+             * сюда передается productInOrder с id=3, но при этом
+             * в заказе уже существуют товары с id = 1 и с id = 3,
+             * являющиеся одним и тем же товаром, поэтому нужно пропускать старый
+             * (сохраненный в сессии) товар, при этом только со страницы обновления товара
+             */
 
             if ($productsOfTheSameTypeExists && !is_null(SalaryHelper::getSalary($productInOrder))) {
                 /*
@@ -159,10 +167,10 @@
          * According to business logic, for calculating salary
          * used installation of type that has max price and salary
          *
-         * @todo дело в том, что тут используется выборка по максимальной цене монтажа
-         * а не зарплаты, поэтому нужно сделать отдельный метод для выборки максимальной зарплаты
          * @param ProductInOrder $productInOrder
          * @return Collection
+         * @todo дело в том, что тут используется выборка по максимальной цене монтажа
+         * а не зарплаты, поэтому нужно сделать отдельный метод для выборки максимальной зарплаты
          */
         public static function productsWithMaxInstallation(
             ProductInOrder $productInOrder
