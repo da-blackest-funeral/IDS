@@ -9,7 +9,6 @@
     use App\Models\ProductInOrder;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
     use Illuminate\Support\Collection;
-    use PHPUnit\Exception;
 
     /*
      * todo сделать интерфейс
@@ -71,6 +70,10 @@
             }
         }
 
+        protected static function needDecreaseCount() {
+            return fromUpdatingProductPage() && ProductHelper::oldProductHasInstallation();
+        }
+
         /**
          * Calculates salary for specified product, count, and, if necessary,
          * for specified installation.
@@ -80,68 +83,113 @@
          *
          * @param ProductInOrder $productInOrder
          * @param int $count
-         * @param $installation
          * @return int
          */
-        public static function calculateInstallationSalary(
-            ProductInOrder $productInOrder,
-            int            $count,
-                           $installation = null
-        ): int {
-
-            if (fromUpdatingProductPage() && ProductHelper::oldProductHasInstallation()) {
+        public static function calculateInstallationSalary(ProductInOrder $productInOrder,int $count): int {
+            $typeId = Type::byCategory($productInOrder->category_id)->id;
+            if (static::needDecreaseCount()) {
                 $count -= oldProductsCount();
             }
 
-            $typeId = Type::byCategory($productInOrder->category_id)->id;
+            $result = static::salaryByCount(
+                productInOrder: $productInOrder,
+                count: $count,
+                typeId: $typeId
+            );
 
+            $result += static::checkDifficultySalary($productInOrder);
+
+            return $result;
+        }
+
+        /**
+         * @param ProductInOrder $productInOrder
+         * @param int $count
+         * @param int $typeId
+         * @return float|int|mixed
+         */
+        protected static function salaryByCount(ProductInOrder $productInOrder, int $count, int $typeId) {
             try {
-                $salary = Calculator::getInstallationSalary(
-                    installation: $installation ?? $productInOrder->installation_id,
+                $result = static::salaryForCount(
+                    productInOrder: $productInOrder,
                     count: $count,
                     typeId: $typeId
                 );
-
-                $result = $salary->salary;
-            } catch (\Exception $exception) {
-                $salary = Calculator::maxCountSalary(
-                    installation: $installation ?? $productInOrder->installation_id,
+            } catch (\Exception) {
+                $result = static::salaryForMaxCount(
+                    productInOrder: $productInOrder,
                     typeId: $typeId
                 );
-
-                if (is_null($salary)) {
-                    return OrderHelper::salaries($productInOrder->order);
-                }
-
-                $missingCount = static::countProductsWithInstallation($productInOrder) - $salary->count;
-                // Если это страница обновления товара
-                if (fromUpdatingProductPage() && ProductHelper::oldProductHasInstallation()) {
-                    $missingCount -= oldProductsCount();
-                }
-
-                $result = $salary->salary + $missingCount * $salary->salary_for_count;
             }
 
-            foreach (static::productsWithInstallation($productInOrder) as $product) {
-                // todo пропускать старый товар который еще не удален, колхоз, при рефакторинге избавиться от этого
-                if (fromUpdatingProductPage() && oldProduct('id') == $product->id) {
-                    continue;
-                }
+            return $result;
+        }
 
-                if (ProductHelper::productHasCoefficient($product)) {
-                    $data = ProductHelper::productData($product);
+        /**
+         * @param ProductInOrder $productInOrder
+         * @param int $count
+         * @param int $typeId
+         * @return mixed
+         */
+        protected static function salaryForCount(ProductInOrder $productInOrder, int $count, int $typeId) {
+            $salary = Calculator::getInstallationSalary(
+                installation: $installation ?? $productInOrder->installation_id,
+                count: $count,
+                typeId: $typeId
+            );
 
-                    $result = Calculator::salaryForDifficulty(
-                        salary: $result,
+            return $salary->salary;
+        }
+
+        /**
+         * @param ProductInOrder $productInOrder
+         * @param int $typeId
+         * @return float|int
+         */
+        protected static function salaryForMaxCount(ProductInOrder $productInOrder, int $typeId) {
+            $salary = Calculator::maxCountSalary(
+                installation: $productInOrder->installation_id,
+                typeId: $typeId
+            );
+
+            if (is_null($salary)) {
+                return OrderHelper::salaries($productInOrder->order);
+            }
+
+            $missingCount = static::countProductsWithInstallation($productInOrder) - $salary->count;
+            if (static::needDecreaseCount()) {
+                $missingCount -= oldProductsCount();
+            }
+
+            return (int) (
+                $salary->salary + $missingCount * $salary->salary_for_count
+            );
+        }
+
+        /**
+         * @param ProductInOrder $productInOrder
+         * @return int
+         */
+        protected static function checkDifficultySalary(ProductInOrder $productInOrder) {
+            $salary = 0;
+
+            $products = OrderHelper::withoutOldProduct(
+                static::productsWithInstallation($productInOrder)
+            );
+
+            foreach ($products as $product) {
+                if (static::productHasCoefficient($product)) {
+                    $data = static::productData($product);
+
+                    $salary += Calculator::salaryForDifficulty(
                         price: $data->installationPrice,
                         coefficient: $data->coefficient,
                         count: $product->count
                     );
-
                 }
             }
 
-            return $result;
+            return $salary;
         }
 
         /**
@@ -150,8 +198,6 @@
          *
          * @param ProductInOrder $productInOrder
          * @return Collection
-         * @todo дело в том, что тут используется выборка по максимальной цене монтажа
-         * а не зарплаты, поэтому нужно сделать отдельный метод для выборки максимальной зарплаты
          */
         protected static function productsWithMaxInstallation(ProductInOrder $productInOrder): Collection {
             $typeId = Type::byCategory($productInOrder->category_id)->id;
@@ -265,8 +311,10 @@
          * @return Collection
          */
         protected static function sameCategoryProducts(ProductInOrder $productInOrder): Collection {
-            return ProductInOrder::whereCategoryId($productInOrder->category_id)
-                ->whereOrderId($productInOrder->order_id)
-                ->get();
+            return OrderHelper::withoutOldProduct(
+                ProductInOrder::whereCategoryId($productInOrder->category_id)
+                    ->whereOrderId($productInOrder->order_id)
+                    ->get()
+            );
         }
     }

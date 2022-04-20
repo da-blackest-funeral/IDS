@@ -147,8 +147,8 @@
             return $this->request->has('coefficient') && $this->request->get('coefficient') != 1;
         }
 
-        public function salaryForDifficulty($salary = null, $price = null, $coefficient = null, $count = null) {
-            if (is_null($salary) || is_null($price) || is_null($coefficient) || is_null($count)) {
+        public function salaryForDifficulty($price = null, $coefficient = null, $count = null) {
+            if (is_null($price) || is_null($coefficient) || is_null($count)) {
                 $price = $this->installationPrice;
                 $coefficient = $this->coefficient;
                 $count = $this->count;
@@ -161,14 +161,12 @@
                 * $count
             );
 
-            if (!is_null($salary)) {
-                return $salary + $additionalSalary;
-            }
-
             $this->installersWage += $additionalSalary;
 
             $this->options->put('coefficient', $this->coefficient)
                 ->put('salaryForCoefficient', "Доп. зарплата за коэффициент сложности: $additionalSalary");
+
+            return $additionalSalary;
         }
 
         /**
@@ -427,8 +425,7 @@
 
             $result = MosquitoSystemsHelper::calculateInstallationSalary(
                 productInOrder: $productInOrder,
-                count: $count,
-                installation: $installation
+                count: $count
             );
 
             if ($this->hasCoefficient()) {
