@@ -2,6 +2,7 @@
 
     namespace App\Services\Helpers;
 
+    use App\Models\Category;
     use App\Models\MosquitoSystems\Group;
     use App\Models\MosquitoSystems\Product;
     use App\Models\MosquitoSystems\Profile;
@@ -75,18 +76,13 @@
         }
 
         /**
-         * Calculates salary for specified product, count, and, if necessary,
-         * for specified installation.
-         *
-         * If $installation parameter equals to null,
-         * method uses installation_id from given product
+         * Calculates salary for specified product and count
          *
          * @param ProductInOrder $productInOrder
          * @param int $count
          * @return int
          */
-        public static function calculateInstallationSalary(ProductInOrder $productInOrder,int $count): int {
-            $typeId = Type::byCategory($productInOrder->category_id)->id;
+        public static function calculateInstallationSalary(ProductInOrder $productInOrder, int $count): int {
             if (static::needDecreaseCount()) {
                 $count -= oldProductsCount();
             }
@@ -94,7 +90,7 @@
             $result = static::salaryByCount(
                 productInOrder: $productInOrder,
                 count: $count,
-                typeId: $typeId
+                typeId: Type::byCategory($productInOrder->category_id)->id
             );
 
             $result += static::checkDifficultySalary($productInOrder);
@@ -161,7 +157,7 @@
                 $missingCount -= oldProductsCount();
             }
 
-            return (int) (
+            return (int)(
                 $salary->salary + $missingCount * $salary->salary_for_count
             );
         }
@@ -200,8 +196,28 @@
          * @return Collection
          */
         protected static function productsWithMaxInstallation(ProductInOrder $productInOrder): Collection {
-            $typeId = Type::byCategory($productInOrder->category_id)->id;
-            $productsWithInstallation = $productInOrder->order
+            $productsWithInstallation = static::joinInstallation(
+                productInOrder: $productInOrder,
+                typeId: Type::byCategory($productInOrder->category_id)->id
+            );
+
+            $maxInstallationPrice = $productsWithInstallation->max('installation_price');
+
+            return $productsWithInstallation->filter(function ($product) use ($maxInstallationPrice) {
+                return $product->installation_price == $maxInstallationPrice;
+            });
+        }
+
+        /**
+         * Logic of joining installation to products
+         * by product's installation_id
+         *
+         * @param ProductInOrder $productInOrder
+         * @param int $typeId
+         * @return Collection
+         */
+        protected static function joinInstallation(ProductInOrder $productInOrder, int $typeId): Collection {
+            return $productInOrder->order
                 ->products()
                 ->leftJoin(
                     'mosquito_systems_type_additional',
@@ -212,32 +228,29 @@
                 ->where('mosquito_systems_type_additional.type_id', $typeId)
                 // todo оставить только те поля которые нужны
                 ->get(['*', 'price as installation_price']);
-
-            $maxInstallationPrice = $productsWithInstallation->max('installation_price');
-
-            return $productsWithInstallation->filter(function ($product) use ($maxInstallationPrice) {
-                return $product->installation_price == $maxInstallationPrice;
-            });
         }
 
         /**
          * Get profiles for mosquito systems
          *
-         * @param ProductInOrder|null $product
+         * @param ProductInOrder|null $productInOrder
          * @return Collection
          */
-        public static function profiles(ProductInOrder $product = null): Collection {
-            $productData = null;
+        public static function profiles(ProductInOrder $productInOrder = null): Collection {
+            $productData = static::productData($productInOrder);
 
-            if (!is_null($product)) {
-                $productData = json_decode($product->data);
-            }
-
-            return Profile::whereHas('products.type', function ($query) use ($product, $productData) {
-                return $query->where('category_id', $product->category_id ?? request()->input('categoryId'))
-                    ->where('tissue_id', $productData->tissueId ?? request()->input('additional'));
-            })
-                ->get(['id', 'name']);
+            return Profile::whereHas(
+                'products.type',
+                function ($query) use ($productInOrder, $productData) {
+                    return $query->where(
+                        'category_id',
+                        $productInOrder->category_id ?? request()->input('categoryId')
+                    )->where(
+                        'tissue_id',
+                        $productData->tissueId ?? request()->input('additional')
+                    );
+                }
+            )->get(['id', 'name']);
         }
 
         /**
@@ -247,8 +260,21 @@
          * @return Collection
          */
         public static function tissues(int $categoryId) {
-            // todo колхоз
-            return \App\Models\Category::tissues($categoryId)
+            /* todo
+             *  Метод scopeTissues больше нигде не используется, можно по нормальному переписать логику
+             *  выборки полотна
+             */
+
+            /*
+             * Category::find($id)
+             *     ->type()
+             *     ->products()
+             *     ->tissue()
+             *     ->get(['id', 'name'])
+             *     ->unique('id');
+             */
+
+            return Category::tissues($categoryId)
                 ->get()
                 ->pluck('type')
                 ->pluck('products')
@@ -261,39 +287,65 @@
          * Getting additional data for mosquito systems
          *
          * @param ProductInOrder|null $productInOrder
-         * @return array
          */
-        public static function additional(ProductInOrder $productInOrder = null): array {
-            $productData = null;
+        public static function additional(ProductInOrder $productInOrder = null) {
+            $productData = static::productData($productInOrder);
 
-            if (isset($productInOrder->data)) {
-                $productData = json_decode($productInOrder->data);
+            try {
+                $product = static::product($productData);
+            } catch (\Exception) {
+                return back()->withErrors([
+                    'not_found' => 'Товар не найден',
+                ]);
             }
-
-            $product = Product::whereTissueId($productData->tissueId ?? request()->input
-                ('nextAdditional'))
-                ->whereProfileId($productData->profileId ?? request()->input('additional'))
-                ->whereHas('type', function ($query) use ($productData) {
-                    $query->where('category_id', $productData->category ?? request()->input('categoryId'));
-                })->first();
 
             $additional = $product->additional;
 
-            $groups = Group::whereHas('additional', function ($query) use ($additional) {
-                $query->whereIn('id', $additional->pluck('id'));
-            })->get()
-                // Заполняем для каждой группы выбранное в заказе значение
-                ->each(function ($item) use ($productData) {
-                    $name = "group-$item->id";
-                    if (isset($productData) && $productData->$name !== null) {
-                        $item->selected = $productData->$name;
-                    }
-                });
+            $groups = static::groupsByAdditional($additional, $productData);
 
             return compact('additional', 'groups', 'product');
         }
 
         /**
+         * Gets groups by additional items
+         *
+         * @param Collection $additional
+         * @param array $productData
+         * @return Collection
+         */
+        protected static function groupsByAdditional(Collection $additional, array $productData): Collection {
+            return Group::whereHas('additional', function ($query) use ($additional) {
+                $query->whereIn('id', $additional->pluck('id'));
+            })->get()
+                // Заполняем для каждой группы выбранное в заказе значение
+                ->each(function ($item) use ($productData) {
+                    $name = "group-$item->id";
+                    if (!is_null($productData) && !is_null($productData->$name)) {
+                        $item->selected = $productData->$name;
+                    }
+                });
+        }
+
+        /**
+         * Gets product by tissue, type and profile
+         *
+         * @param array $productData
+         * @return Product|null
+         */
+        protected static function product(array $productData) {
+            return Product::whereTissueId(
+                $productData->tissueId ?? request()->input('nextAdditional')
+            )->whereProfileId(
+                $productData->profileId ?? request()->input('additional')
+            )->whereHas('type', function ($query) use ($productData) {
+                $query->where('category_id', $productData->category ?? request()->input('categoryId'));
+            })->firstOrFail();
+        }
+
+        /**
+         * Determines if salary need to be updated,
+         * or needs to create new salary
+         *
          * @param Collection $products
          * @param ProductInOrder $productInOrder
          * @return bool
@@ -307,6 +359,9 @@
         }
 
         /**
+         * Get products of the same type from
+         * order, to which the product belongs
+         *
          * @param ProductInOrder $productInOrder
          * @return Collection
          */

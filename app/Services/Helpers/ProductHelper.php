@@ -116,7 +116,11 @@
          */
         public static function productData(ProductInOrder $productInOrder, string $field = null): mixed {
             if (is_null($field)) {
-                return json_decode($productInOrder->data);
+                try {
+                    return json_decode($productInOrder->data);
+                } catch (\Exception) {
+                    return new \stdClass();
+                }
             }
 
             return json_decode($productInOrder->data)->$field;
@@ -140,10 +144,6 @@
          *
          * @param ProductInOrder $productInOrder
          * @return Collection
-         * @todo улучшение кода
-         *
-         * когда буду рефакторить, надо сделать так, чтобы пропускался старый товар (при обновлении, который еще не удален)
-         * во всех местах где используется этот метод нужно это учесть
          */
         public static function productsWithInstallation(ProductInOrder $productInOrder): Collection {
             return $productInOrder->order
