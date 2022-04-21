@@ -115,41 +115,42 @@
          * @return mixed
          */
         public static function productData(ProductInOrder $productInOrder, string $field = null): mixed {
-            if (is_null($field)) {
-                try {
+            try {
+                if (is_null($field)) {
                     return json_decode($productInOrder->data);
-                } catch (\Exception) {
-                    return new \stdClass();
                 }
+                return json_decode($productInOrder->data)->$field;
+            } catch (\Exception) {
+                return new \stdClass();
+            }
+        }
+
+            /**
+             * Getting count of products in current order
+             * that has installation
+             *
+             * @param ProductInOrder $productInOrder
+             * @return int
+             */
+            public
+            static function countProductsWithInstallation(ProductInOrder $productInOrder): int {
+                return static::countOfProducts(
+                    static::productsWithInstallation($productInOrder)
+                );
             }
 
-            return json_decode($productInOrder->data)->$field;
+            /**
+             * Getting all products that has installation in current order
+             *
+             * @param ProductInOrder $productInOrder
+             * @return Collection
+             */
+            public
+            static function productsWithInstallation(ProductInOrder $productInOrder): Collection {
+                return $productInOrder->order
+                    ->products()
+                    ->where('category_id', request()->input('categories'))
+                    ->whereNotIn('installation_id', [0, 14])
+                    ->get();
+            }
         }
-
-        /**
-         * Getting count of products in current order
-         * that has installation
-         *
-         * @param ProductInOrder $productInOrder
-         * @return int
-         */
-        public static function countProductsWithInstallation(ProductInOrder $productInOrder): int {
-            return static::countOfProducts(
-                static::productsWithInstallation($productInOrder)
-            );
-        }
-
-        /**
-         * Getting all products that has installation in current order
-         *
-         * @param ProductInOrder $productInOrder
-         * @return Collection
-         */
-        public static function productsWithInstallation(ProductInOrder $productInOrder): Collection {
-            return $productInOrder->order
-                ->products()
-                ->where('category_id', request()->input('categories'))
-                ->whereNotIn('installation_id', [0, 14])
-                ->get();
-        }
-    }

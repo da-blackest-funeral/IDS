@@ -237,7 +237,10 @@
          * @return Collection
          */
         public static function profiles(ProductInOrder $productInOrder = null): Collection {
-            $productData = static::productData($productInOrder);
+            $productData = new \stdClass();
+            if (!is_null($productInOrder)) {
+                $productData = static::productData($productInOrder);
+            }
 
             return Profile::whereHas(
                 'products.type',
@@ -289,7 +292,10 @@
          * @param ProductInOrder|null $productInOrder
          */
         public static function additional(ProductInOrder $productInOrder = null) {
-            $productData = static::productData($productInOrder);
+            $productData = new \stdClass();
+            if (!is_null($productInOrder)) {
+                $productData = static::productData($productInOrder);
+            }
 
             try {
                 $product = static::product($productData);
@@ -313,14 +319,14 @@
          * @param array $productData
          * @return Collection
          */
-        protected static function groupsByAdditional(Collection $additional, array $productData): Collection {
+        protected static function groupsByAdditional(Collection $additional, object $productData): Collection {
             return Group::whereHas('additional', function ($query) use ($additional) {
                 $query->whereIn('id', $additional->pluck('id'));
             })->get()
                 // Заполняем для каждой группы выбранное в заказе значение
                 ->each(function ($item) use ($productData) {
                     $name = "group-$item->id";
-                    if (!is_null($productData) && !is_null($productData->$name)) {
+                    if (isset($productData, $productData->$name)) {
                         $item->selected = $productData->$name;
                     }
                 });
@@ -329,10 +335,10 @@
         /**
          * Gets product by tissue, type and profile
          *
-         * @param array $productData
+         * @param object $productData
          * @return Product|null
          */
-        protected static function product(array $productData) {
+        protected static function product(object $productData) {
             return Product::whereTissueId(
                 $productData->tissueId ?? request()->input('nextAdditional')
             )->whereProfileId(

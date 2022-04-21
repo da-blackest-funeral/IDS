@@ -4,22 +4,20 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Services\Helpers\MosquitoSystemsHelper;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use Illuminate\Contracts\View\View;
 
 class MosquitoSystemsController extends Controller
 {
     /**
      * Returns profiles for mosquito systems
      *
-     * @return JsonResponse
+     * @return View
      */
-    public function profile(): JsonResponse
+    public function profile(): View
     {
         $label = 'Профиль';
         $data = MosquitoSystemsHelper::profiles();
-        return response()
-            ->json(compact('data', 'label'));
+        return view('ajax.mosquito-systems.profiles')->with(compact('data', 'label'));
     }
 
     public function bracing() {
@@ -30,15 +28,15 @@ class MosquitoSystemsController extends Controller
     /**
      * Returns additional fields
      *
-     * @return JsonResponse
+     * @return View
      */
-    public function additional(): JsonResponse
+    public function additional(): View
     {
         // для москитных сеток в реквесте должны быть category_id, tissue_id, profile_id
         // а для стеклопакетов количество камер
         // в остальных первые 3 селекта не влияют на вывод дополнительных полей
 
-        return response()
-            ->json(MosquitoSystemsHelper::additional());
+        return view('ajax.mosquito-systems.additional')
+            ->with(MosquitoSystemsHelper::additional());
     }
 }

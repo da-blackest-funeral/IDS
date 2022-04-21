@@ -41,19 +41,19 @@
             // todo перенести это в json файл
             $this->categories = [
                 [
-                    'link' => '/api/mosquito-systems/profile',
+                    'link' => '/ajax/mosquito-systems/profile',
                     'name' => 'tissues',
                     'ids' => range(5, 14),
                     'label' => 'Ткань',
                 ],
                 [
-                    'link' => '/api/glazed-windows/last',
+                    'link' => '/ajax/glazed-windows/last',
                     'name' => 'types_window',
                     'ids' => range(15, 19),
                     'label' => 'Тип окна',
                 ],
                 [
-                    'link' => '/api/windowsills/type',
+                    'link' => '/ajax/windowsills/type',
                     'name' => 'windowsills',
                     'ids' => [20],
                     'label' => 'Тип окна',
@@ -91,7 +91,7 @@
                 }
             }
 
-            return response()->json([
+            return view('ajax.second-select')->with([
                 'data' => ProductConfigurationResource::collection($data),
                 'link' => $this->category('link'),
                 'name' => $this->category('name'),

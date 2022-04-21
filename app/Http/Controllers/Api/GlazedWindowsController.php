@@ -11,7 +11,6 @@
     use App\Models\GlazedWindows\WithHeating;
     use Illuminate\Http\JsonResponse;
     use Illuminate\Http\Request;
-    use function view;
 
     class GlazedWindowsController extends Controller
     {
@@ -24,7 +23,7 @@
         /**
          * Defines, how to display last field to user
          *
-//         * @return \Illuminate\Contracts\View\View
+         * @return \Illuminate\Contracts\View\View
          */
         public function getLast(): JsonResponse
         {
@@ -45,8 +44,10 @@
                     ->get();
             }
 
-            return response()
-                ->json(compact('data', 'name', 'label'));
+            return view('ajax.glazed-windows.last')
+                ->with(
+                    compact('data', 'name', 'label')
+                );
         }
 
         /**
