@@ -7,14 +7,11 @@
     use App\Models\Order;
     use App\Models\User;
     use App\Services\Calculator\Interfaces\Calculator;
+    use App\Services\Helpers\Classes\OrderHelper;
     use Illuminate\Http\Request;
 
     class CalculationController extends Controller
     {
-
-        protected Request $request;
-        protected Calculator $calculator;
-
         public function index() {
             return view('welcome')->with([
                 'data' => Category::all(),
@@ -30,19 +27,16 @@
             ]);
         }
 
-        public function save(SaveOrderRequest $request) {
-            $this->request = $request;
-
+        public function save() {
             // todo сделать логику с "была ли взята машина компании"
             // todo соответствующее поле в таблице order
             // todo сделать учет ручного изменения цены заказа
             // todo сделать вывод всевозможных сообщений
-            $order = createOrder();
+            $order = \OrderHelper::make();
 
-            createSalary($order);
+            \SalaryHelper::make($order);
 
-            // todo тут сделано только для москитных систем (возможно, удастся сделать это реюзабельным)
-            newProduct($order);
+            \ProductHelper::make($order);
 
             session()->flash('success', ['Заказ успешно создан!']);
 

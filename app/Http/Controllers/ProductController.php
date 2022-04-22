@@ -6,6 +6,7 @@
     use App\Models\Category;
     use App\Models\Order;
     use App\Models\ProductInOrder;
+    use App\Services\Helpers\Classes\SalaryHelper;
 
     class ProductController extends Controller
     {
@@ -46,11 +47,9 @@
 
             $order->update();
 
-            addProductToOrder(
-                order: $order->refresh()
-            );
+            \OrderHelper::addProductTo($order->refresh());
 
-            checkSalaryForMeasuringAndDelivery(
+            \SalaryHelper::checkMeasuringAndDelivery(
                 order: $order,
                 productInOrder: $productInOrder
             );

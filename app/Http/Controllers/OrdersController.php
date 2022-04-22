@@ -28,12 +28,9 @@
         }
 
         public function addProduct(Order $order) {
+            $productInOrder = \OrderHelper::addProductTo($order);
 
-            $productInOrder = addProductToOrder(
-                order: $order
-            );
-
-            checkSalaryForMeasuringAndDelivery(
+            \SalaryHelper::checkMeasuringAndDelivery(
                 order: $order,
                 productInOrder: $productInOrder
             );

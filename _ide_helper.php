@@ -16700,6 +16700,90 @@
         }
          
     }
+            /**
+     * 
+     *
+     */ 
+        class OrderHelperFacade {
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function make()
+        {
+                        /** @var \App\Services\Helpers\Classes\OrderHelper $instance */
+                        return $instance->make();
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function addProductTo($order)
+        {
+                        /** @var \App\Services\Helpers\Classes\OrderHelper $instance */
+                        return $instance->addProductTo($order);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function hasInstallation($order)
+        {
+                        /** @var \App\Services\Helpers\Classes\OrderHelper $instance */
+                        return $instance->hasInstallation($order);
+        }
+         
+    }
+            /**
+     * 
+     *
+     */ 
+        class SalaryHelperFacade {
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function update($sum, $productInOrder)
+        {
+                        /** @var \App\Services\Helpers\Classes\SalaryHelper $instance */
+                        return $instance->update($sum, $productInOrder);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function make($order)
+        {
+                        /** @var \App\Services\Helpers\Classes\SalaryHelper $instance */
+                        return $instance->make($order);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function salary($productInOrder)
+        {
+                        /** @var \App\Services\Helpers\Classes\SalaryHelper $instance */
+                        return $instance->salary($productInOrder);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function checkMeasuringAndDelivery($order, $productInOrder)
+        {
+                        /** @var \App\Services\Helpers\Classes\SalaryHelper $instance */
+                        return $instance->checkMeasuringAndDelivery($order, $productInOrder);
+        }
+         
+    }
      
 }
 
@@ -20614,6 +20698,8 @@ namespace  {
             class View extends \Illuminate\Support\Facades\View {}
             class Debugbar extends \Barryvdh\Debugbar\Facades\Debugbar {}
             class Notifier extends \App\Services\Facades\Classes\NotifierFacade {}
+            class OrderHelper extends \App\Services\Facades\Classes\OrderHelperFacade {}
+            class SalaryHelper extends \App\Services\Facades\Classes\SalaryHelperFacade {}
             class Flare extends \Facade\Ignition\Facades\Flare {}
      
 }

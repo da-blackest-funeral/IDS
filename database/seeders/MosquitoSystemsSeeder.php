@@ -27,7 +27,13 @@ class MosquitoSystemsSeeder extends Seeder
 
         foreach (MosquitoSystemsData::all($configKey) as $item) {
             if ($configKey == 'products' && isset($item['price'])) {
-                $item['price'] *= 1.2;
+                $item['price'] *= 1.2 * 1.1;
+                $item['price'] = ceil($item['price']);
+            }
+
+            if ($configKey == 'type_additional' && isset($item['price'])) {
+                $item['price'] *= 1.1;
+                $item['price'] = ceil($item['price']);
             }
 
             if ($configKey == 'types' && isset($item['delivery'])) {

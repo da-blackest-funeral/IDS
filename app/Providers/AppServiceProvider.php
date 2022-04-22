@@ -7,6 +7,11 @@
     use App\Services\Calculator\Classes\ItalianMosquitoSystemCalculator;
     use App\Services\Calculator\Classes\MosquitoSystemsCalculator;
     use App\Services\Calculator\Interfaces\Calculator;
+    use App\Services\Helpers\Classes\AbstractProductHelper;
+    use App\Services\Helpers\Classes\MosquitoSystemsHelper;
+    use App\Services\Helpers\Classes\OrderHelper;
+    use App\Services\Helpers\Classes\SalaryHelper;
+    use App\Services\Helpers\Interfaces\ProductHelper;
     use App\Services\Notifications\Notifier;
     use Illuminate\Support\ServiceProvider;
 
@@ -36,6 +41,20 @@
             $this->app->bind(Notifier::class, function () {
                 return new Notifier();
             });
+
+            $this->app->singleton(AbstractProductHelper::class, function () {
+                if (
+                    in_array(\request()->input('categories'), [5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
+                    || in_array(\request()->input('categoryId'), [5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
+                    || in_array(\request()->productInOrder->category_id, [5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
+                ) {
+                    return new MosquitoSystemsHelper();
+                }
+            });
+
+            // todo сделать интерфейсы
+            $this->app->bind(OrderHelper::class, OrderHelper::class);
+            $this->app->bind(SalaryHelper::class, SalaryHelper::class);
         }
 
         /**
