@@ -3,7 +3,7 @@
 @section('content')
     <div class="container mt-4" style="margin-bottom: 100px;">
         <h1 class="h1">
-            Заказ <span style="font-size: 30px">№{{ $orderNumber }}</span>
+            Новый заказ
         </h1>
         <div class="container-fluid mb-4" style="padding: 5px;">
             <a href="https://03-okna.ru/offer.php?num_rasch=34084" class="btn btn-secondary btn-sm">
@@ -66,12 +66,12 @@
                             </thead>
                             <tbody>
                             @foreach($products as $product)
+                                {{-- todo колхоз --}}
                                 @php($productData = json_decode($product->data))
                                 <tr style="cursor:pointer;" onclick="
-                                    {{-- todo Вова: вот таблица и вот как реализован переход на страницу редактирования товара --}}
                                     window.location ='{{ route('product-in-order', [
-                                        'order' => $orderNumber,
-                                        'productInOrder' => $product
+                                        'order' => $order->id,
+                                        'productInOrder' => $product->id
                                         ])
                                     }}';">
 

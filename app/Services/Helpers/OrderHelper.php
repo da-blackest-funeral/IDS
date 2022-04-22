@@ -181,8 +181,7 @@
             Collection     $products,
             ProductInOrder $productInOrder
         ): Collection {
-            return static::withoutOldProduct($products)
-                ->reject(function ($product) use ($productInOrder) {
+            return static::withoutOldProduct($products)->reject(function ($product) use ($productInOrder) {
                     return $product->id == $productInOrder->id;
                 });
         }
@@ -210,6 +209,7 @@
         public static function needAddMeasuring(Order $order) {
             return !static::hasInstallation($order) &&
                 !Calculator::productNeedInstallation() &&
+                // todo заменить на интерфейс
                 MosquitoSystemsHelper::oldProductHasInstallation();
         }
     }

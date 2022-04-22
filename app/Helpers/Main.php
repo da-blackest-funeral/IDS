@@ -105,13 +105,13 @@
                 ->get()
                 ->toArray()
             )->get(),
-            'orderNumber' => Order::count() + 1,
             'installers' => User::role('installer')->get()
         ];
     }
 
     function orderData(Order $order): array {
         $result = newOrderData();
+        $result['order'] = $order;
         $result['products'] = $order->products;
 
         return $result;

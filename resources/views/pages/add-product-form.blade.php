@@ -6,12 +6,11 @@
             </strong>
         </h1>
         @if(!isOrderPage())
-            <p class="h4 mt-3">Заказ №{{ $orderNumber }}</p>
+            <p class="h4 mt-3">Заказ №{{ $order->id }}</p>
         @endif
         <div class="container-fluid bg-light mt-4" style="min-height: 250px;">
             <form method="POST" class="form-group pt-1">
                 @csrf
-                <input type="hidden" value="{{ $orderNumber }}" name="order_id">
                 @isset($product)
                     <input type="hidden" value="{{ $product->id }}" name="product_id">
                 @endisset
@@ -75,9 +74,16 @@
                     </div>
                     <div class="col-10 col-md-3 mt-1" id="items">
                         {{-- Сюда грузится второй селект --}}
+                        {{--
+                            todo колхоз
+                            нужно сделать все хелпер классы не статическими,
+                            и зарегистрировать фасады для них
+                            Для ProductHelper сделать интерфейс и обращаться к нему,
+                            бинд в сервис провайдере аналогично
+                        --}}
                         @if(isset($needPreload, $product) && $needPreload)
                             @include('ajax.second-select', [
-                                'data' => tissues($product->category_id),
+                                'data' => \App\Services\Helpers\MosquitoSystemsHelper::tissues($product->category_id),
                                 'link' => '/api/mosquito-systems/profile',
                                 'name' => 'tissues',
                                 'label' => 'Ткань',
@@ -89,7 +95,7 @@
                         {{-- Место для третьего селекта --}}
                         @if(isset($needPreload, $product) && $needPreload)
                             @include('ajax.mosquito-systems.profiles', [
-                                'data' => profiles($product),
+                                'data' => \App\Services\Helpers\MosquitoSystemsHelper::profiles($product),
                                 'selected' => $productData->profileId
                             ])
                         @endif
@@ -101,7 +107,7 @@
                 <div class="mt-4 pb-3" id="additional">
                     {{-- Место для дополнительных опций --}}
                     @if(isset($needPreload, $product) && $needPreload)
-                        @include('ajax.mosquito-systems.additional', additional($product))
+                        @include('ajax.mosquito-systems.additional', \App\Services\Helpers\MosquitoSystemsHelper::additional($product))
                     @endif
                 </div>
                 <div class="mt-4 pb-3" id="bracing">

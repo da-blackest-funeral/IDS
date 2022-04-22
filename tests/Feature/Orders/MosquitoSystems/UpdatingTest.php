@@ -4,6 +4,7 @@
 
     use App\Models\Order;
     use App\Models\ProductInOrder;
+    use App\Models\Salaries\InstallerSalary;
     use App\Models\SystemVariables;
     use Illuminate\Foundation\Testing\Concerns\InteractsWithSession;
     use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -281,6 +282,12 @@
             )->assertDatabaseHas(
                 'products',
                 ['installation_id' => 14]
+            )->assertDatabaseMissing(
+                'installers_salaries',
+                ['sum' => 1050]
+            )->assertDatabaseHas(
+                'installers_salaries',
+                ['sum' => 960]
             );
         }
 
@@ -522,13 +529,15 @@
             )->assertDatabaseHas(
                 'installers_salaries',
                 ['sum' => $this->testHelper->defaultSalarySum(1)]
+            )->assertDatabaseMissing(
+                'installers_salaries',
+                ['sum' => $this->testHelper->salaryNoInstallation()]
             );
         }
 
         /**
          * When updating product and sets installation to it,
          * in order that has another product with installation
-         *
          * @test
          * @return void
          */

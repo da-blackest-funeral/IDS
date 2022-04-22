@@ -7,6 +7,8 @@
     use App\Services\Calculator\Classes\ItalianMosquitoSystemCalculator;
     use App\Services\Calculator\Classes\MosquitoSystemsCalculator;
     use App\Services\Calculator\Interfaces\Calculator;
+    use App\Services\Helpers\MosquitoSystemsHelper;
+    use App\Services\Helpers\ProductHelper;
     use App\Services\Notifications\Notifier;
     use Illuminate\Support\ServiceProvider;
 
@@ -35,6 +37,12 @@
 
             $this->app->bind(Notifier::class, function () {
                 return new Notifier();
+            });
+
+            $this->app->singleton(ProductHelper::class, function () {
+                if (in_array(\request()->input('categories'), [5, 6, 7, 8, 9, 10, 11, 12, 13, 14])) {
+                    return new MosquitoSystemsHelper();
+                }
             });
         }
 

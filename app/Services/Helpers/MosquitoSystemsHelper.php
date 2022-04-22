@@ -30,11 +30,17 @@
          * @return void
          */
         public static function updateOrCreateSalary(ProductInOrder $productInOrder) {
+            /*
+             * Если нет товаров этой же категории, то не нужно обновлять зарплату, нужно начислять новую
+             *
+             */
             $products = static::sameCategoryProducts($productInOrder);
             $productsWithMaxInstallation = static::productsWithMaxInstallation($productInOrder);
             $order = $productInOrder->order;
 
+            // количество товаров данного типа с монтажом
             $countWithInstallation = static::countProductsWithInstallation($productInOrder);
+
             $countOfAllProducts = static::countOfProducts(OrderHelper::products($order));
 
             /*
@@ -43,7 +49,22 @@
              * Because new product had been already created,
              * we need to skip them
              */
-            if (static::needUpdateSalary($products, $productInOrder)) {
+            $productsWithInstallation = OrderHelper::withoutOldProduct(OrderHelper::products($productInOrder->order)
+                ->filter(function ($product) {
+                    return static::hasInstallation($product);
+                })
+            );
+
+//            dump($countWithInstallation, static::countOfProducts($productsWithInstallation));
+
+            if (
+                // если в заказе есть товары того же типа с монтажом
+                static::needUpdateSalary($products, $productInOrder) &&
+                // и нет товаров других типов с монтажом
+                static::countOfProducts($productsWithInstallation) - $countWithInstallation == 0
+                || !Calculator::productNeedInstallation() && self::oldProductHasInstallation()
+            ) {
+                warning('here');
                 /*
                  * Условие звучит так: если в заказе уже есть такой же товар с монтажом, и добалвяется
                  * товар без монтажа, то зп не пересчитывается. Если в заказе уже есть товар с монтажом, кроме нынешнего,
@@ -66,7 +87,17 @@
                     productInOrder: $productInOrder,
                 );
 
-            } elseif (!$countOfAllProducts || $countWithInstallation) {
+                /*
+                 * иначе - если в заказе нет товаров с монтажом, кроме старого
+                 * ИЛИ товару не нужен монтаж
+                 */
+            } elseif (
+                $countOfAllProducts == 0
+                && !Calculator::productNeedInstallation()
+                ||
+                static::countOfProducts($productsWithInstallation) - $countWithInstallation > 0
+                && Calculator::productNeedInstallation()
+            ) {
                 SalaryHelper::make($order);
             }
         }
@@ -316,7 +347,7 @@
          * Gets groups by additional items
          *
          * @param Collection $additional
-         * @param array $productData
+         * @param object $productData
          * @return Collection
          */
         protected static function groupsByAdditional(Collection $additional, object $productData): Collection {
@@ -357,11 +388,32 @@
          * @return bool
          */
         protected static function needUpdateSalary(Collection $products, ProductInOrder $productInOrder): bool {
-            return OrderHelper::productsWithout(
-                    products: $products,
-                    productInOrder: $productInOrder
-                )->isNotEmpty() &&
-                !is_null(SalaryHelper::getSalary($productInOrder));
+            /*
+             * нужно обновлять зарплату, когда кроме нынешнего есть другие товары данного типа с монтажом,
+             * иначе, когда нынешний товар с монтажом и у него не было монтажа
+             * и уже есть зарплата
+             */
+
+            $orderHasSameTypeProducts = $products
+                ->isNotEmpty();
+
+            $productHasSalary = !is_null(SalaryHelper::getSalary($productInOrder));
+//            $productHadInstallation = false;
+//            // todo ощущение что oldProduct() и $productInOrder это один и тот же объект
+//            if (!is_null(oldProduct())) {
+//                $productHadInstallation = static::hasInstallation(oldProduct());
+//            }
+//            $productNowHasInstallation = static::hasInstallation($productInOrder);
+
+            /*
+             * todo теперь обновляет, когда не надо, а именно:
+             * когда есть товары с монтажом ДРУГОГО типа
+             *
+             * То есть, зарплата НЕ ДОЛЖНА обновляться когда есть товары с монтажом другого типа
+             * можно это определить с помощью разницы между количеством
+             * товаров с монтажом и количеством товаров данного типа с монтажом
+             */
+            return $orderHasSameTypeProducts && $productHasSalary;
         }
 
         /**
@@ -372,10 +424,19 @@
          * @return Collection
          */
         protected static function sameCategoryProducts(ProductInOrder $productInOrder): Collection {
-            return OrderHelper::withoutOldProduct(
+            return
                 ProductInOrder::whereCategoryId($productInOrder->category_id)
                     ->whereOrderId($productInOrder->order_id)
-                    ->get()
-            );
+                    ->get();
+        }
+
+        /**
+         * @param ProductInOrder $productInOrder
+         * @return Collection
+         */
+        protected static function anotherCategoryProducts(ProductInOrder $productInOrder): Collection {
+            return ProductInOrder::where('category_id', '<>', $productInOrder->category_id)
+                ->whereOrderId($productInOrder->order_id)
+                ->get();
         }
     }
