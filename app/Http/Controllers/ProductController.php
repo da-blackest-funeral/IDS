@@ -36,6 +36,10 @@
 
         public function update(Order $order, ProductInOrder $productInOrder) {
 
+            // todo баги
+            // разные баги с зарплатой возникают когда меняешь монтаж у товара с одного на другой
+            // думаю дело в старом товаре который еще не удален
+
             $productData = json_decode($productInOrder->data);
             $order->price -= $productData->main_price;
             $order->products_count -= $productInOrder->count;
