@@ -37,14 +37,6 @@
                 }
             }
 
-//            if (!($order->measuring_price) && !Calculator::productNeedInstallation()) {
-//                $order->price += $order->measuring_price;
-//            }
-
-//            if (!Calculator::productNeedInstallation() && oldProductHasInstallation()) {
-//                $order->price += Calculator::getMeasuringPrice();
-//            }
-
             if ($order->delivery) {
                 $order->price -= min(
                     $order->delivery,
@@ -63,8 +55,11 @@
 
             $product = \ProductHelper::make($order->refresh());
 
+            // todo возможно адаптировать этот метод под то, чтобы вызывать его в цикле по всем товарам
+//            foreach ($this->withoutOldProduct($order->products) as $productInOrder) {
+//                \ProductHelper::updateOrCreateSalary($productInOrder);
+//            }
             \ProductHelper::updateOrCreateSalary($product);
-
             return $product;
         }
 

@@ -16735,6 +16735,26 @@
                         /** @var \App\Services\Helpers\Classes\OrderHelper $instance */
                         return $instance->hasInstallation($order);
         }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function hasProducts($order)
+        {
+                        /** @var \App\Services\Helpers\Classes\OrderHelper $instance */
+                        return $instance->hasProducts($order);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function withoutOldProduct($products)
+        {
+                        /** @var \App\Services\Helpers\Classes\OrderHelper $instance */
+                        return $instance->withoutOldProduct($products);
+        }
          
     }
             /**

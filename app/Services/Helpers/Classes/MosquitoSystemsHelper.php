@@ -7,35 +7,41 @@
     use App\Models\MosquitoSystems\Profile;
     use App\Models\MosquitoSystems\Type;
     use App\Models\ProductInOrder;
-    // real-time facade
     use Facades\App\Services\Calculator\Interfaces\Calculator;
     use Illuminate\Support\Collection;
+
+    // real-time facade
 
     class MosquitoSystemsHelper extends AbstractProductHelper
     {
         public function updateOrCreateSalary(ProductInOrder $productInOrder) {
             $products = ProductInOrder::whereCategoryId($productInOrder->category_id)
-                ->whereOrderId($productInOrder->order_id);
+                ->whereOrderId($productInOrder->order_id)
+                ->get()
+                ->reject(function ($product) use ($productInOrder) {
+                    return $product->id == $productInOrder->id;
+                });
 
             $count = $this->countProductsWithInstallation($productInOrder);
-            $countOfAllProducts = $this->countOfProducts($productInOrder->order->products);
+
+            $countOfAllProducts = $this->countOfProducts(
+                \OrderHelper::withoutOldProduct($productInOrder->order->products)
+            );
+
             $productsWithMaxInstallation = $this->productsWithMaxInstallation($productInOrder);
 
-            $productsOfTheSameTypeExists =
-                /*
-                 * Need to determine if products of the same type
-                 * that current exists.
-                 * Because new product had been already created,
-                 * we need to skip them
-                 */
-//                \OrderHelper::withoutOldProduct(
-                    $products->get()->reject(function ($product) use ($productInOrder) {
-                        return $product->id == $productInOrder->id;
-                })
-//                )
-                    ->isNotEmpty();
+            /*
+             * Need to determine if products of the same type
+             * that current exists.
+             * Because new product had been already created,
+             * we need to skip them
+             */
+            $productsOfTheSameTypeExists = $products->isNotEmpty();
 
-            if ($productsOfTheSameTypeExists && !is_null(\SalaryHelper::salary($productInOrder))) {
+            if (
+                $productsOfTheSameTypeExists &&
+                !is_null(\SalaryHelper::salary($productInOrder)) || !$countOfAllProducts && fromUpdatingProductPage()
+            ) {
                 /*
                  * Условие звучит так: если в заказе уже есть такой же товар с монтажом, и добалвяется
                  * товар без монтажа, то зп не пересчитывается. Если в заказе уже есть товар с монтажом, кроме нынешнего,
@@ -59,12 +65,14 @@
                 );
 
             } else {
-                // todo баг когда создаешь товары разных типов без монтажа начисляется лишняя зарплата
-                // если в заказе нет товаров, создавать з\п
-                // или если есть товары, и есть товары с монтажом
-                if (!$countOfAllProducts || $count) {
+                // todo учесть если зарплата создается за монтаж товара другого типа, чтобы не создавалась
+                //  зарплата за доставку и монтаж
+                // todo баг
+                // когда есть товар другого типа в заказе и меняешь с "нужен монтаж" на без монтажа,
+                // зарплата считается криво, при втором обновлении того же товара без изменений все нормализуется
+//                if () {
                     \SalaryHelper::make($productInOrder->order);
-                }
+//                }
             }
         }
 
@@ -78,13 +86,14 @@
                 $count -= oldProductsCount();
             }
 
+            $result = 0;
+
             $salary = Calculator::getInstallationSalary(
                 installation: $installation ?? $productInOrder->installation_id,
                 count: $count,
                 /*
-                 * todo подумать как это можно исправить
-                 * обычно, ProductInOrder не имеет поля type_id,
-                 * но в этот метод передается результат с left join
+                 * todo исправить
+                 * вытаскивать typeId по $productInOrder->category_id
                  */
                 typeId: $productInOrder->type_id
             );
@@ -119,6 +128,9 @@
                 if ($this->productHasCoefficient($product)) {
                     $data = $this->productData($product);
 
+                    // todo баг с этим
+                    // тут возвращается null, сделать как в прошлый раз я суммировал
+                    // доп з\п за сложность
                     $result = Calculator::salaryForDifficulty(
                         price: $data->installationPrice,
                         coefficient: $data->coefficient,
@@ -128,7 +140,7 @@
                 }
             }
 
-            return $result;
+            return $result ?? 0;
         }
 
         public function countOfProducts(Collection $products) {
