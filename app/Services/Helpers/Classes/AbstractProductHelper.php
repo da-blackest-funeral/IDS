@@ -9,7 +9,7 @@
 
     abstract class AbstractProductHelper implements ProductHelper
     {
-        public function hasInstallation(ProductInOrder $productInOrder) {
+        public function hasInstallation(object $productInOrder) {
             return
                 isset($productInOrder->installation_id) &&
                 $productInOrder->installation_id &&

@@ -88,10 +88,13 @@
 
     function oldProduct(string $field = null) {
         if (is_null($field)) {
-            return session('oldProduct');
+            return session('oldProduct', new stdClass());
         }
-
-        return session('oldProduct')->$field;
+        try {
+            return session('oldProduct')->$field;
+        } catch (Exception) {
+            return 0;
+        }
     }
 
     function oldProductHasInstallation(): bool {

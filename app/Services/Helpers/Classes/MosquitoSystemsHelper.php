@@ -28,9 +28,12 @@
                  * Because new product had been already created,
                  * we need to skip them
                  */
-                $products->get()->reject(function ($product) use ($productInOrder) {
-                    return $product->id == $productInOrder->id;
-                })->isNotEmpty();
+//                \OrderHelper::withoutOldProduct(
+                    $products->get()->reject(function ($product) use ($productInOrder) {
+                        return $product->id == $productInOrder->id;
+                })
+//                )
+                    ->isNotEmpty();
 
             if ($productsOfTheSameTypeExists && !is_null(\SalaryHelper::salary($productInOrder))) {
                 /*

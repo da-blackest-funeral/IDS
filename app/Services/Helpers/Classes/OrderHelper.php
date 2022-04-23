@@ -27,21 +27,26 @@
         }
 
         public function addProductTo(Order $order) {
-            $newProductPrice = Calculator::getPrice();
+            $order->price += Calculator::getPrice();
 
             if ($order->measuring_price || $this->hasInstallation($order)) {
-                dump('here1');
-                $newProductPrice -= Calculator::getMeasuringPrice();
+                $order->price -= Calculator::getMeasuringPrice();
                 if (Calculator::productNeedInstallation()) {
-                    dump('here2');
                     $order->price -= $order->measuring_price;
                     $order->measuring_price = 0;
                 }
             }
 
+//            if (!($order->measuring_price) && !Calculator::productNeedInstallation()) {
+//                $order->price += $order->measuring_price;
+//            }
+
+//            if (!Calculator::productNeedInstallation() && oldProductHasInstallation()) {
+//                $order->price += Calculator::getMeasuringPrice();
+//            }
+
             if ($order->delivery) {
-                dump('here3');
-                $newProductPrice -= min(
+                $order->price -= min(
                     $order->delivery,
                     Calculator::getDeliveryPrice()
                 );
@@ -52,7 +57,6 @@
                 );
             }
 
-            $order->price += $newProductPrice;
             $order->products_count += Calculator::getCount();
 
             $order->update();
@@ -65,7 +69,7 @@
         }
 
         public function hasInstallation(Order $order): bool {
-            return $order->products->contains(function ($product) {
+            return $this->withoutOldProduct($order->products)->contains(function ($product) {
                 return \ProductHelper::hasInstallation($product);
             }) && $this->hasProducts($order);
         }
