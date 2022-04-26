@@ -614,13 +614,12 @@
             $product = $this->testHelper->defaultProductInOrder();
             $product['category_id'] = 7;
             $product['name'] = 'Москитные двери, 25 профиль, полотно Антимоскит';
-            $product['installation_id'] = 10;
+            $product['installation_id'] = 14;
             $data = '{
                     "size": {
                         "width": "1000",
                         "height": "1000"
                     },
-                    "salary": 1200,
                     "group-1": 6,
                     "group-2": 13,
                     "group-3": 10,
@@ -644,26 +643,21 @@
                             "price": 0
                         },
                         {
-                            "text": "Доп. за Монтаж двери 25, 32, 42 профиль: '
-                . $this->testHelper->installationPrice(2, 10) . '",
-                            "price": ' . $this->testHelper->installationPrice(2, 10) . '
-                        },
-                        {
                             "text": "Доп. за Пластиковые ручки: 0",
                             "price": 0
                         }
                     ],
                     "main_price": ' . $this->testHelper->productPrice(1, 1, 2) . ',
                     "coefficient": 1,
-                    "installationPrice": ' . $this->testHelper->installationPrice(2, 10) . '
+                    "installationPrice": 0
                 }';
 
             $product['data'] = $data;
             ProductInOrder::create($product);
 
-            $this->testHelper->createDefaultSalary(
-                $this->testHelper->defaultSalarySum(1, 2, 10)
-            )->createDefaultSalary(0, 7);
+            $this->testHelper
+                ->createDefaultSalary()
+                ->createDefaultSalary(0, 7);
 
             $inputs = $this->testHelper->exampleMosquitoSystemsInputs();
             $inputs['group-3'] = 8;
@@ -676,10 +670,13 @@
                 ['sum' => $this->testHelper->defaultSalarySum(1)]
             )->assertDatabaseHas(
                 'installers_salaries',
+                ['sum' => $this->testHelper->defaultSalarySum(1)]
+            )->assertDatabaseMissing(
+                'installers_salaries',
+                ['sum' => 960]
+            )->assertDatabaseMissing(
+                'installers_salaries',
                 ['sum' => $this->testHelper->defaultSalarySum(1, 2, 10)]
-            )->assertDatabaseHas(
-                'orders',
-                ['price' => $price + $this->testHelper->installationPrice()]
             );
         }
 
