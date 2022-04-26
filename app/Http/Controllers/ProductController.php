@@ -6,7 +6,7 @@
     use App\Models\Category;
     use App\Models\Order;
     use App\Models\ProductInOrder;
-    use App\Services\Helpers\Classes\SalaryHelper;
+    use Facades\App\Services\Calculator\Interfaces\Calculator;
 
     class ProductController extends Controller
     {
@@ -53,10 +53,19 @@
 
             \OrderHelper::addProductTo($order->refresh());
 
-            \SalaryHelper::checkMeasuringAndDelivery(
-                order: $order,
-                productInOrder: $productInOrder
-            );
+            // todo если в заказе есть товары, но нет монтажа и товару не нужен монтаж, то не вызывать этот метод
+            if (
+                !(
+                    \OrderHelper::hasProducts($order) &&
+                    !\OrderHelper::hasInstallation($order) &&
+                    !Calculator::productNeedInstallation()
+                )
+            ) {
+                \SalaryHelper::checkMeasuringAndDelivery(
+                    order: $productInOrder->order,
+                    productInOrder: $productInOrder
+                );
+            }
 
             $productInOrder->delete();
             $order->update();

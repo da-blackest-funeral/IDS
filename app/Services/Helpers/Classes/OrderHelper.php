@@ -55,10 +55,6 @@
 
             $product = \ProductHelper::make($order->refresh());
 
-            // todo возможно адаптировать этот метод под то, чтобы вызывать его в цикле по всем товарам
-//            foreach ($this->withoutOldProduct($order->products) as $productInOrder) {
-//                \ProductHelper::updateOrCreateSalary($productInOrder);
-//            }
             \ProductHelper::updateOrCreateSalary($product);
             return $product;
         }

@@ -590,6 +590,7 @@
          * set with installation and in order already
          * exists product of another type with installation
          *
+         * @todo переделать этот тест, он кривой в плане создания заранее товаров и зарплат
          * @test
          * @return void
          */
@@ -662,7 +663,7 @@
 
             $this->testHelper->createDefaultSalary(
                 $this->testHelper->defaultSalarySum(1, 2, 10)
-            );
+            )->createDefaultSalary(0, 7);
 
             $inputs = $this->testHelper->exampleMosquitoSystemsInputs();
             $inputs['group-3'] = 8;

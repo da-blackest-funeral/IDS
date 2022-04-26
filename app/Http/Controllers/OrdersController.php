@@ -4,6 +4,7 @@
 
     use App\Models\Category;
     use App\Models\Order;
+    use Facades\App\Services\Calculator\Interfaces\Calculator;
     use Illuminate\Http\Request;
 
     class OrdersController extends Controller
@@ -30,10 +31,18 @@
         public function addProduct(Order $order) {
             $productInOrder = \OrderHelper::addProductTo($order);
 
-            \SalaryHelper::checkMeasuringAndDelivery(
-                order: $order,
-                productInOrder: $productInOrder
-            );
+            if (
+                !(
+                    \OrderHelper::hasProducts($order) &&
+                    !\OrderHelper::hasInstallation($order) &&
+                    !Calculator::productNeedInstallation()
+                )
+            ) {
+                \SalaryHelper::checkMeasuringAndDelivery(
+                    order: $order,
+                    productInOrder: $productInOrder
+                );
+            }
 
             return redirect(route('order', ['order' => $order->id]));
         }

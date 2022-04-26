@@ -141,11 +141,11 @@
             ]);
         }
 
-        public function createDefaultSalary(int $sum = 960) {
+        public function createDefaultSalary(int $sum = 960, int $categoryId = 5) {
             InstallerSalary::create([
                 'installer_id' => 2,
                 'order_id' => 1,
-                'category_id' => 5,
+                'category_id' => $categoryId,
                 'sum' => $sum,
                 'created_user_id' => 1,
                 'comment' => '123',
@@ -153,6 +153,8 @@
                 'changed_sum' => 1100,
                 'type' => '123',
             ]);
+
+            return $this;
         }
 
         public function exampleMosquitoSystemsInputs(): array {

@@ -16777,10 +16777,10 @@
          *
          * @static 
          */ 
-        public static function make($order)
+        public static function make($order, $sum = null)
         {
                         /** @var \App\Services\Helpers\Classes\SalaryHelper $instance */
-                        return $instance->make($order);
+                        return $instance->make($order, $sum);
         }
                     /**
          * 

@@ -22,7 +22,7 @@
 
             $count = $this->countProductsWithInstallation($productInOrder);
 
-            $countOfAllProducts = $this->countOfProducts(
+            $countOfAllProducts = $this->countOf(
                 \OrderHelper::withoutOldProduct($productInOrder->order->products)
             );
 
@@ -35,9 +35,12 @@
                  * Because new product had been already created,
                  * we need to skip them
                  */
+
+                // todo условие что нужно создать, а не обновлять зарплату когда есть товары другого типа с монтажом
+                //  и при этом у нынешнего товара не было монтажа но он появился
                 $products->isNotEmpty() &&
-                !is_null(\SalaryHelper::salary($productInOrder))
-                || !$countOfAllProducts && fromUpdatingProductPage()
+                !is_null(\SalaryHelper::salary($productInOrder)) ||
+                !$countOfAllProducts && fromUpdatingProductPage()
             ) {
                 /*
                  * Условие звучит так: если в заказе уже есть такой же товар с монтажом, и добалвяется
@@ -61,18 +64,21 @@
                     productInOrder: $productInOrder,
                 );
 
+                \SalaryHelper::checkMeasuringAndDelivery(
+                    order: $productInOrder->order,
+                    productInOrder: $productInOrder
+                );
+
             } else {
                 // todo баг
                 // когда есть товар другого типа в заказе и меняешь с "нужен монтаж" на без монтажа,
                 // зарплата считается криво, при втором обновлении того же товара без изменений все нормализуется
 
-
-                // todo учесть если зарплата создается за монтаж товара другого типа, чтобы не создавалась
-                //  зарплата за доставку и монтаж
                 /*
                  * условие: если в заказе есть товары с монтажом и нынешнему товару не нужен монтаж, то не создавать зп
                  */
                 if (\OrderHelper::hasProducts($productInOrder->order) && !Calculator::productNeedInstallation()) {
+                    \SalaryHelper::make($productInOrder->order, 0);
                     return;
                 }
 
@@ -147,7 +153,7 @@
             return $result ?? 0;
         }
 
-        public function countOfProducts(Collection $products) {
+        public function countOf(Collection $products) {
             return $products->sum('count');
         }
 
@@ -185,7 +191,7 @@
         }
 
         public function countProductsWithInstallation(ProductInOrder $productInOrder): int {
-            return $this->countOfProducts(
+            return $this->countOf(
                 $this->productsWithInstallation($productInOrder)
             );
         }

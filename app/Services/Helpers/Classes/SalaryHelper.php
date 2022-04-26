@@ -18,12 +18,12 @@
             $salary->update();
         }
 
-        public function make(Order $order) {
+        public function make(Order $order, $sum = null) {
             return InstallerSalary::create([
                 'installer_id' => $order->installer_id,
                 'category_id' => request()->input('categories'),
                 'order_id' => $order->id,
-                'sum' => Calculator::getInstallersWage(),
+                'sum' => $sum ?? Calculator::getInstallersWage(),
                 'comment' => 'Пока не готово',
                 'status' => false,
                 'changed_sum' => Calculator::getInstallersWage(),
