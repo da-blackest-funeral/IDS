@@ -157,7 +157,7 @@
                 $resultProduct
             )->assertDatabaseMissing(
                 'installers_salaries',
-                ['id' => 2]
+                ['sum' => 960, 'id' => 2]
             );
         }
 
