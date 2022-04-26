@@ -26,6 +26,12 @@
             ]);
         }
 
+        public function orderOrProductHasInstallation(Order $order) {
+            return !\OrderHelper::hasProducts($order) ||
+                \OrderHelper::hasInstallation($order) ||
+                Calculator::productNeedInstallation();
+        }
+
         public function addProductTo(Order $order) {
             $order->price += Calculator::getPrice();
 

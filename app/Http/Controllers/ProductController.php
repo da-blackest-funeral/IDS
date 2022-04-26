@@ -53,14 +53,7 @@
 
             \OrderHelper::addProductTo($order->refresh());
 
-            // todo если в заказе есть товары, но нет монтажа и товару не нужен монтаж, то не вызывать этот метод
-            if (
-                !(
-                    \OrderHelper::hasProducts($order) &&
-                    !\OrderHelper::hasInstallation($order) &&
-                    !Calculator::productNeedInstallation()
-                )
-            ) {
+            if (\OrderHelper::orderOrProductHasInstallation($order)) {
                 \SalaryHelper::checkMeasuringAndDelivery(
                     order: $productInOrder->order,
                     productInOrder: $productInOrder

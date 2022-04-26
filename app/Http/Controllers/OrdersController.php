@@ -31,13 +31,8 @@
         public function addProduct(Order $order) {
             $productInOrder = \OrderHelper::addProductTo($order);
 
-            if (
-                !(
-                    \OrderHelper::hasProducts($order) &&
-                    !\OrderHelper::hasInstallation($order) &&
-                    !Calculator::productNeedInstallation()
-                )
-            ) {
+            // todo бардак
+            if (\OrderHelper::orderOrProductHasInstallation($order)) {
                 \SalaryHelper::checkMeasuringAndDelivery(
                     order: $order,
                     productInOrder: $productInOrder
