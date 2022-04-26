@@ -65,6 +65,16 @@
             return $product;
         }
 
+        /**
+         * Calculates salary for all order
+         *
+         * @param Order $order
+         * @return float
+         */
+        public function salaries(Order $order): float {
+            return $order->salaries->sum('sum');
+        }
+
         public function hasInstallation(Order $order): bool {
             return $this->withoutOldProduct($order->products)->contains(function ($product) {
                 return \ProductHelper::hasInstallation($product);

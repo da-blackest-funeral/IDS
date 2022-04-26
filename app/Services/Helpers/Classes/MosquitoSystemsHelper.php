@@ -89,71 +89,121 @@
             }
         }
 
-        public function calculateInstallationSalary(
-            ProductInOrder $productInOrder,
-            int            $count,
-                           $installation = null
-        ): int {
+        protected function needDecreaseCount() {
+            return fromUpdatingProductPage() && oldProductHasInstallation();
+        }
 
-            if (fromUpdatingProductPage() && oldProductHasInstallation()) {
+        /**
+         * Calculates salary for specified product and count
+         *
+         * @param ProductInOrder $productInOrder
+         * @param int $count
+         * @return int
+         */
+        public function calculateInstallationSalary(ProductInOrder $productInOrder, int $count): int {
+            if ($this->needDecreaseCount()) {
                 $count -= oldProductsCount();
             }
 
-            $result = 0;
+            $result = $this->salaryByCount(
+                productInOrder: $productInOrder,
+                count: $count,
+                typeId: Type::byCategory($productInOrder->category_id)->id
+            );
 
+            $result += $this->checkDifficultySalary($productInOrder);
+
+            return $result;
+        }
+
+        /**
+         * @param ProductInOrder $productInOrder
+         * @param int $count
+         * @param int $typeId
+         * @return float|int|mixed
+         */
+        protected function salaryByCount(ProductInOrder $productInOrder, int $count, int $typeId) {
+            try {
+                $result = $this->salaryForCount(
+                    productInOrder: $productInOrder,
+                    count: $count,
+                    typeId: $typeId
+                );
+            } catch (\Exception) {
+                $result = $this->salaryForMaxCount(
+                    productInOrder: $productInOrder,
+                    typeId: $typeId
+                );
+            }
+
+            return $result;
+        }
+
+        /**
+         * @param ProductInOrder $productInOrder
+         * @param int $count
+         * @param int $typeId
+         * @return mixed
+         */
+        protected function salaryForCount(ProductInOrder $productInOrder, int $count, int $typeId) {
             $salary = Calculator::getInstallationSalary(
                 installation: $installation ?? $productInOrder->installation_id,
                 count: $count,
-                /*
-                 * todo исправить
-                 * вытаскивать typeId по $productInOrder->category_id
-                 */
-                typeId: $productInOrder->type_id
+                typeId: $typeId
             );
 
-            if ($salary != null) {
-                $result = $salary->salary;
-            } else {
-                $salary = Calculator::maxCountSalary(
-                    installation: $installation ?? $productInOrder->installation_id,
-                    typeId: $productInOrder->type_id
-                );
+            return $salary->salary;
+        }
 
-                if (is_null($salary)) {
-                    return orderSalaries($productInOrder->order);
-                }
+        /**
+         * @param ProductInOrder $productInOrder
+         * @param int $typeId
+         * @return float|int
+         */
+        protected function salaryForMaxCount(ProductInOrder $productInOrder, int $typeId) {
+            $salary = Calculator::maxCountSalary(
+                installation: $productInOrder->installation_id,
+                typeId: $typeId
+            );
 
-                $missingCount = $this->countProductsWithInstallation($productInOrder) - $salary->count;
-                // Если это страница обновления товара
-                if (fromUpdatingProductPage() && oldProductHasInstallation()) {
-                    $missingCount -= oldProductsCount();
-                }
-
-                $result = $salary->salary + $missingCount * $salary->salary_for_count;
+            if (is_null($salary)) {
+                return \OrderHelper::salaries($productInOrder->order);
             }
 
-            foreach ($this->productsWithInstallation($productInOrder) as $product) {
-                // todo пропускать старый товар который еще не удален, колхоз, при рефакторинге избавиться от этого
-                if (fromUpdatingProductPage() && oldProduct('id') == $product->id) {
-                    continue;
-                }
+            $missingCount = $this->countProductsWithInstallation($productInOrder) - $salary->count;
+            if ($this->needDecreaseCount()) {
+                $missingCount -= oldProductsCount();
+            }
 
+            return (int)(
+                $salary->salary + $missingCount * $salary->salary_for_count
+            );
+        }
+
+        /**
+         * @param ProductInOrder $productInOrder
+         * @return int
+         */
+        protected function checkDifficultySalary(ProductInOrder $productInOrder) {
+            $salary = 0;
+
+            $products = \OrderHelper::withoutOldProduct(
+                $this->productsWithInstallation($productInOrder)
+            );
+
+            foreach ($products as $product) {
                 if ($this->productHasCoefficient($product)) {
                     $data = $this->productData($product);
 
-                    // todo баг с этим
-                    // тут возвращается null, сделать как в прошлый раз я суммировал
-                    // доп з\п за сложность
-                    $result = Calculator::salaryForDifficulty(
+                    $salary += Calculator::salaryForDifficulty(
                         price: $data->installationPrice,
                         coefficient: $data->coefficient,
                         count: $product->count
                     );
-
                 }
             }
 
-            return $result ?? 0;
+            return $salary;
         }
 
         public function countOf(Collection $products) {
