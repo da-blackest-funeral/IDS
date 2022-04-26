@@ -10,8 +10,6 @@
     use Facades\App\Services\Calculator\Interfaces\Calculator;
     use Illuminate\Support\Collection;
 
-    // real-time facade
-
     class MosquitoSystemsHelper extends AbstractProductHelper
     {
         public function updateOrCreateSalary(ProductInOrder $productInOrder) {
@@ -30,17 +28,16 @@
 
             $productsWithMaxInstallation = $this->productsWithMaxInstallation($productInOrder);
 
-            /*
-             * Need to determine if products of the same type
-             * that current exists.
-             * Because new product had been already created,
-             * we need to skip them
-             */
-            $productsOfTheSameTypeExists = $products->isNotEmpty();
-
             if (
-                $productsOfTheSameTypeExists &&
-                !is_null(\SalaryHelper::salary($productInOrder)) || !$countOfAllProducts && fromUpdatingProductPage()
+                /*
+                 * Need to determine if products of the same type
+                 * that current exists.
+                 * Because new product had been already created,
+                 * we need to skip them
+                 */
+                $products->isNotEmpty() &&
+                !is_null(\SalaryHelper::salary($productInOrder))
+                || !$countOfAllProducts && fromUpdatingProductPage()
             ) {
                 /*
                  * Условие звучит так: если в заказе уже есть такой же товар с монтажом, и добалвяется
@@ -65,14 +62,21 @@
                 );
 
             } else {
-                // todo учесть если зарплата создается за монтаж товара другого типа, чтобы не создавалась
-                //  зарплата за доставку и монтаж
                 // todo баг
                 // когда есть товар другого типа в заказе и меняешь с "нужен монтаж" на без монтажа,
                 // зарплата считается криво, при втором обновлении того же товара без изменений все нормализуется
-//                if () {
-                    \SalaryHelper::make($productInOrder->order);
-//                }
+
+
+                // todo учесть если зарплата создается за монтаж товара другого типа, чтобы не создавалась
+                //  зарплата за доставку и монтаж
+                /*
+                 * условие: если в заказе есть товары с монтажом и нынешнему товару не нужен монтаж, то не создавать зп
+                 */
+                if (\OrderHelper::hasProducts($productInOrder->order) && !Calculator::productNeedInstallation()) {
+                    return;
+                }
+
+                \SalaryHelper::make($productInOrder->order);
             }
         }
 
