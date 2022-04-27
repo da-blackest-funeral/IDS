@@ -1,15 +1,6 @@
 <?php
 
-    // todo возможно вообще сделать фасады для всех своих хелперов
-    // чтобы определить четкий интерфейс для их использования
-    // тем более что они не реюзабельны, можно сделать фасад для москитных систем, для стеклопакетов и т.д.
     use App\Models\Order;
-    use App\Models\ProductInOrder;
-    use App\Models\Salaries\InstallerSalary;
-    use App\Models\SystemVariables;
-
-    // this feature is called real-time facades
-    use Facades\App\Services\Calculator\Interfaces\Calculator;
     use Illuminate\Support\Facades\Route;
 
     require_once 'MosquitoSystems.php';

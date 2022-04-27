@@ -3,6 +3,8 @@
     namespace App\Services\Helpers\Classes;
 
     use App\Models\Order;
+    use App\Models\ProductInOrder;
+    use App\Models\SystemVariables;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
     use Illuminate\Support\Collection;
 
@@ -32,17 +34,78 @@
                 Calculator::productNeedInstallation();
         }
 
-        public function addProductTo(Order $order) {
-            $order->price += Calculator::getPrice();
+//        public function addProductTo(Order $order) {
+//            $order->price += Calculator::getPrice();
+//
+//            if ($order->measuring_price || $this->hasInstallation($order)) {
+//                $order->price -= Calculator::getMeasuringPrice();
+//                if (Calculator::productNeedInstallation()) {
+//                    $order->price -= $order->measuring_price;
+//                    $order->measuring_price = 0;
+//                }
+//            }
+//
+//            if ($order->delivery) {
+//                $order->price -= min(
+//                    $order->delivery,
+//                    Calculator::getDeliveryPrice()
+//                );
+//
+//                $order->delivery = max(
+//                    Calculator::getDeliveryPrice(),
+//                    $order->delivery
+//                );
+//            }
+//
+//            $order->products_count += Calculator::getCount();
+//
+//            $order->update();
+//
+//            $product = \ProductHelper::make($order->refresh());
+//
+//            \ProductHelper::updateOrCreateSalary($product);
+//            return $product;
+//        }
 
-            if ($order->measuring_price || $this->hasInstallation($order)) {
+
+        /**
+         * @param Order $order
+         * @return bool
+         */
+        protected function notNeedMeasuring(Order $order): bool {
+            return $order->measuring_price || $this->hasInstallation($order);
+        }
+
+        /**
+         * @param Order $order
+         * @return void
+         */
+        protected function deductMeasuringPrice(Order $order) {
+            $order->price -= $order->measuring_price;
+            $order->measuring_price = 0;
+        }
+
+        /**
+         * @param Order $order
+         * @return void
+         */
+        protected function calculateMeasuringOptions(Order $order) {
+            if ($this->notNeedMeasuring($order)) {
                 $order->price -= Calculator::getMeasuringPrice();
                 if (Calculator::productNeedInstallation()) {
-                    $order->price -= $order->measuring_price;
-                    $order->measuring_price = 0;
+                    $this->deductMeasuringPrice($order);
                 }
+                // todo бардак, условие можно написать лучше, уже есть методы для этого
+            } elseif (!Calculator::productNeedInstallation()) {
+                $order->measuring_price = SystemVariables::value('measuring');
             }
+        }
 
+        /**
+         * @param Order $order
+         * @return void
+         */
+        protected function calculateDeliveryOptions(Order $order) {
             if ($order->delivery) {
                 $order->price -= min(
                     $order->delivery,
@@ -54,6 +117,20 @@
                     $order->delivery
                 );
             }
+        }
+
+        /**
+         * Creates new product and adds it to the order
+         *
+         * @param Order $order
+         * @return ProductInOrder
+         */
+        public function addProductTo(Order $order): ProductInOrder {
+            $order->price += Calculator::getPrice();
+
+            $this->calculateMeasuringOptions($order);
+
+            $this->calculateDeliveryOptions($order);
 
             $order->products_count += Calculator::getCount();
 
@@ -61,7 +138,18 @@
 
             $product = \ProductHelper::make($order->refresh());
 
+            /*
+             * todo тут не универсально вызывается MosquitoSystemsHelper::updateOrCreateSalary()
+             * когда я сделаю
+             * 1) интерфейс для таких классов
+             * 2) бинд в сервис провайдере
+             * тогда исправить
+             *
+             * по сути, это единственный метод данного класса и подобных
+             * ему будущих классов, который вызывается из контроллеров
+             */
             \ProductHelper::updateOrCreateSalary($product);
+
             return $product;
         }
 
@@ -77,8 +165,8 @@
 
         public function hasInstallation(Order $order): bool {
             return $this->withoutOldProduct($order->products)->contains(function ($product) {
-                return \ProductHelper::hasInstallation($product);
-            }) && $this->hasProducts($order);
+                    return \ProductHelper::hasInstallation($product);
+                }) && $this->hasProducts($order);
         }
 
         public function hasProducts(Order $order): bool {

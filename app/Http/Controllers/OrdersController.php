@@ -31,7 +31,6 @@
         public function addProduct(Order $order) {
             $productInOrder = \OrderHelper::addProductTo($order);
 
-            // todo бардак
             if (\OrderHelper::orderOrProductHasInstallation($order)) {
                 \SalaryHelper::checkMeasuringAndDelivery(
                     order: $order,

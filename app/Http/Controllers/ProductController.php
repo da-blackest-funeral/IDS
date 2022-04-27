@@ -6,6 +6,7 @@
     use App\Models\Category;
     use App\Models\Order;
     use App\Models\ProductInOrder;
+    use App\Models\SystemVariables;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
 
     class ProductController extends Controller
@@ -51,14 +52,14 @@
 
             $order->update();
 
-            \OrderHelper::addProductTo($order->refresh());
-
             if (\OrderHelper::orderOrProductHasInstallation($order)) {
                 \SalaryHelper::checkMeasuringAndDelivery(
                     order: $productInOrder->order,
                     productInOrder: $productInOrder
                 );
             }
+
+            \OrderHelper::addProductTo($order->refresh());
 
             $productInOrder->delete();
             $order->update();

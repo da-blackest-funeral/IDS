@@ -422,10 +422,9 @@
                 return $this->installersWage;
             }
 
-            $result = calculateInstallationSalary(
+            $result = \ProductHelper::calculateInstallationSalary(
                 productInOrder: $productInOrder,
-                count: $count,
-                installation: $installation
+                count: $count
             );
 
             if ($this->hasCoefficient()) {
@@ -470,13 +469,14 @@
          * @return bool
          */
         protected function additionalIsInstallation($additional): bool {
-            if ($additional->name != 'Без монтажа' && $additional->group_name == 'Монтаж') {
+            // todo правили определения что это монтаж вынести в отдельный метод
+            if ($additional->additional_id != 14 && $additional->group_name == 'Монтаж') {
                 $this->needInstallation = true;
                 $this->installation = $additional;
                 return true;
             }
 
-            if ($additional->name == 'Без монтажа') {
+            if ($additional->additional_id == 14) {
                 $this->needInstallation = false;
                 $this->installation = $additional;
                 return false;

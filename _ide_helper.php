@@ -16720,10 +16720,32 @@
          *
          * @static 
          */ 
+        public static function orderOrProductHasInstallation($order)
+        {
+                        /** @var \App\Services\Helpers\Classes\OrderHelper $instance */
+                        return $instance->orderOrProductHasInstallation($order);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
         public static function addProductTo($order)
         {
                         /** @var \App\Services\Helpers\Classes\OrderHelper $instance */
                         return $instance->addProductTo($order);
+        }
+                    /**
+         * Calculates salary for all order
+         *
+         * @param \App\Models\Order $order
+         * @return float 
+         * @static 
+         */ 
+        public static function salaries($order)
+        {
+                        /** @var \App\Services\Helpers\Classes\OrderHelper $instance */
+                        return $instance->salaries($order);
         }
                     /**
          * 
