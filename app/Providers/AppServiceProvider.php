@@ -11,7 +11,10 @@
     use App\Services\Helpers\Classes\MosquitoSystemsHelper;
     use App\Services\Helpers\Classes\OrderHelper;
     use App\Services\Helpers\Classes\SalaryHelper;
+    use App\Services\Helpers\Interfaces\OrderHelperInterface;
     use App\Services\Helpers\Interfaces\ProductHelper;
+    use App\Services\Helpers\Interfaces\ProductHelperInterface;
+    use App\Services\Helpers\Interfaces\SalaryHelperInterface;
     use App\Services\Notifications\Notifier;
     use Illuminate\Support\ServiceProvider;
 
@@ -42,7 +45,7 @@
                 return new Notifier();
             });
 
-            $this->app->singleton(AbstractProductHelper::class, function () {
+            $this->app->singleton(ProductHelperInterface::class, function () {
                 if (
                     in_array(\request()->input('categories'), [5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
                     || in_array(\request()->input('categoryId'), [5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
@@ -52,9 +55,8 @@
                 }
             });
 
-            // todo сделать интерфейсы
-            $this->app->bind(OrderHelper::class, OrderHelper::class);
-            $this->app->bind(SalaryHelper::class, SalaryHelper::class);
+            $this->app->bind(OrderHelperInterface::class, OrderHelper::class);
+            $this->app->bind(SalaryHelperInterface::class, SalaryHelper::class);
         }
 
         /**

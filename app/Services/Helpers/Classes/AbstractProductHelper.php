@@ -4,10 +4,10 @@
 
     use App\Models\Order;
     use App\Models\ProductInOrder;
-    use App\Services\Helpers\Interfaces\ProductHelper;
+    use App\Services\Helpers\Interfaces\ProductHelperInterface;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
 
-    abstract class AbstractProductHelper implements ProductHelper
+    abstract class AbstractProductHelper implements ProductHelperInterface
     {
         public function hasInstallation(object $productInOrder) {
             return

@@ -7,8 +7,9 @@
     use App\Models\SystemVariables;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
     use Illuminate\Support\Collection;
+    use App\Services\Helpers\Interfaces\OrderHelperInterface;
 
-    class OrderHelper
+    class OrderHelper implements OrderHelperInterface
     {
         public function make() {
             return Order::create([
@@ -119,16 +120,28 @@
             return $order->salaries->sum('sum');
         }
 
+        /**
+         * @param Order $order
+         * @return bool
+         */
         public function hasInstallation(Order $order): bool {
             return $this->withoutOldProduct($order->products)->contains(function ($product) {
                     return \ProductHelper::hasInstallation($product);
                 }) && $this->hasProducts($order);
         }
 
+        /**
+         * @param Order $order
+         * @return bool
+         */
         public function hasProducts(Order $order): bool {
             return $this->withoutOldProduct($order->products)->isNotEmpty();
         }
 
+        /**
+         * @param Collection $products
+         * @return Collection
+         */
         public function withoutOldProduct(Collection $products): Collection {
             return $products->reject(function ($product) {
                 return $product->id == oldProduct('id');

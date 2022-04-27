@@ -6,9 +6,10 @@
     use App\Models\ProductInOrder;
     use App\Models\Salaries\InstallerSalary;
     use App\Models\SystemVariables;
+    use App\Services\Helpers\Interfaces\SalaryHelperInterface;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
 
-    class SalaryHelper
+    class SalaryHelper implements SalaryHelperInterface
     {
         public function update(int|float $sum, ProductInOrder $productInOrder) {
             $salary = $this->salary($productInOrder)

@@ -7,10 +7,11 @@
     use App\Models\MosquitoSystems\Profile;
     use App\Models\MosquitoSystems\Type;
     use App\Models\ProductInOrder;
+    use App\Services\Helpers\Interfaces\ProductHelperInterface;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
     use Illuminate\Support\Collection;
 
-    class MosquitoSystemsHelper extends AbstractProductHelper
+    class MosquitoSystemsHelper extends AbstractProductHelper implements ProductHelperInterface
     {
         public function updateOrCreateSalary(ProductInOrder $productInOrder) {
             $products = ProductInOrder::whereCategoryId($productInOrder->category_id)
