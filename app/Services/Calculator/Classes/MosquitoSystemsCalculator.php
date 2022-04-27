@@ -146,8 +146,8 @@
             return $this->request->has('coefficient') && $this->request->get('coefficient') != 1;
         }
 
-        public function salaryForDifficulty($salary = null, $price = null, $coefficient = null, $count = null) {
-            if (is_null($salary) || is_null($price) || is_null($coefficient) || is_null($count)) {
+        public function salaryForDifficulty($price = null, $coefficient = null, $count = null) {
+            if (is_null($price) || is_null($coefficient) || is_null($count)) {
                 $price = $this->installationPrice;
                 $coefficient = $this->coefficient;
                 $count = $this->count;
@@ -160,14 +160,12 @@
                 * $count
             );
 
-            if (!is_null($salary)) {
-                return $salary + $additionalSalary;
-            }
-
             $this->installersWage += $additionalSalary;
 
             $this->options->put('coefficient', $this->coefficient)
                 ->put('salaryForCoefficient', "Доп. зарплата за коэффициент сложности: $additionalSalary");
+
+            return $additionalSalary;
         }
 
         /**
@@ -424,10 +422,9 @@
                 return $this->installersWage;
             }
 
-            $result = calculateInstallationSalary(
+            $result = \ProductHelper::calculateInstallationSalary(
                 productInOrder: $productInOrder,
-                count: $count,
-                installation: $installation
+                count: $count
             );
 
             if ($this->hasCoefficient()) {
@@ -472,13 +469,14 @@
          * @return bool
          */
         protected function additionalIsInstallation($additional): bool {
-            if ($additional->name != 'Без монтажа' && $additional->group_name == 'Монтаж') {
+            // todo правило определения того факта, что это монтаж вынести в отдельный метод, т.к. есть дублирование
+            if ($additional->additional_id != 14 && $additional->group_name == 'Монтаж') {
                 $this->needInstallation = true;
                 $this->installation = $additional;
                 return true;
             }
 
-            if ($additional->name == 'Без монтажа') {
+            if ($additional->additional_id == 14) {
                 $this->needInstallation = false;
                 $this->installation = $additional;
                 return false;

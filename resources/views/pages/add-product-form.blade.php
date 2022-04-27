@@ -77,7 +77,8 @@
                         {{-- Сюда грузится второй селект --}}
                         @if(isset($needPreload, $product) && $needPreload)
                             @include('ajax.second-select', [
-                                'data' => tissues($product->category_id),
+                            // todo переименовать метод в secondSelect
+                                'data' => \ProductHelper::tissues($product->category_id),
                                 'link' => '/ajax/mosquito-systems/profile',
                                 'name' => 'tissues',
                                 'label' => 'Ткань',
@@ -89,7 +90,8 @@
                         {{-- Место для третьего селекта --}}
                         @if(isset($needPreload, $product) && $needPreload)
                             @include('ajax.mosquito-systems.profiles', [
-                                'data' => profiles($product),
+                            // todo переименовать метод в thirdSelect
+                                'data' => \ProductHelper::profiles($product),
                                 'selected' => $productData->profileId
                             ])
                         @endif
@@ -101,7 +103,7 @@
                 <div class="mt-4 pb-3" id="additional">
                     {{-- Место для дополнительных опций --}}
                     @if(isset($needPreload, $product) && $needPreload)
-                        @include('ajax.mosquito-systems.additional', additional($product))
+                        @include('ajax.mosquito-systems.additional', \ProductHelper::additional($product))
                     @endif
                 </div>
                 <div class="mt-4 pb-3" id="bracing">

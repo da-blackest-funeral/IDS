@@ -16700,6 +16700,132 @@
         }
          
     }
+            /**
+     * 
+     *
+     */ 
+        class OrderHelperFacade {
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function make()
+        {
+                        /** @var \App\Services\Helpers\Classes\OrderHelper $instance */
+                        return $instance->make();
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function orderOrProductHasInstallation($order)
+        {
+                        /** @var \App\Services\Helpers\Classes\OrderHelper $instance */
+                        return $instance->orderOrProductHasInstallation($order);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function addProductTo($order)
+        {
+                        /** @var \App\Services\Helpers\Classes\OrderHelper $instance */
+                        return $instance->addProductTo($order);
+        }
+                    /**
+         * Calculates salary for all order
+         *
+         * @param \App\Models\Order $order
+         * @return float 
+         * @static 
+         */ 
+        public static function salaries($order)
+        {
+                        /** @var \App\Services\Helpers\Classes\OrderHelper $instance */
+                        return $instance->salaries($order);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function hasInstallation($order)
+        {
+                        /** @var \App\Services\Helpers\Classes\OrderHelper $instance */
+                        return $instance->hasInstallation($order);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function hasProducts($order)
+        {
+                        /** @var \App\Services\Helpers\Classes\OrderHelper $instance */
+                        return $instance->hasProducts($order);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function withoutOldProduct($products)
+        {
+                        /** @var \App\Services\Helpers\Classes\OrderHelper $instance */
+                        return $instance->withoutOldProduct($products);
+        }
+         
+    }
+            /**
+     * 
+     *
+     */ 
+        class SalaryHelperFacade {
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function update($sum, $productInOrder)
+        {
+                        /** @var \App\Services\Helpers\Classes\SalaryHelper $instance */
+                        return $instance->update($sum, $productInOrder);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function make($order, $sum = null)
+        {
+                        /** @var \App\Services\Helpers\Classes\SalaryHelper $instance */
+                        return $instance->make($order, $sum);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function salary($productInOrder)
+        {
+                        /** @var \App\Services\Helpers\Classes\SalaryHelper $instance */
+                        return $instance->salary($productInOrder);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function checkMeasuringAndDelivery($order, $productInOrder)
+        {
+                        /** @var \App\Services\Helpers\Classes\SalaryHelper $instance */
+                        return $instance->checkMeasuringAndDelivery($order, $productInOrder);
+        }
+         
+    }
      
 }
 
@@ -20614,6 +20740,8 @@ namespace  {
             class View extends \Illuminate\Support\Facades\View {}
             class Debugbar extends \Barryvdh\Debugbar\Facades\Debugbar {}
             class Notifier extends \App\Services\Facades\Classes\NotifierFacade {}
+            class OrderHelper extends \App\Services\Facades\Classes\OrderHelperFacade {}
+            class SalaryHelper extends \App\Services\Facades\Classes\SalaryHelperFacade {}
             class Flare extends \Facade\Ignition\Facades\Flare {}
      
 }

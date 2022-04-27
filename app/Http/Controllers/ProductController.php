@@ -6,6 +6,8 @@
     use App\Models\Category;
     use App\Models\Order;
     use App\Models\ProductInOrder;
+    use App\Models\SystemVariables;
+    use Facades\App\Services\Calculator\Interfaces\Calculator;
 
     class ProductController extends Controller
     {
@@ -35,6 +37,10 @@
 
         public function update(Order $order, ProductInOrder $productInOrder) {
 
+            // todo баги
+            // разные баги с зарплатой возникают когда меняешь монтаж у товара с одного на другой
+            // думаю дело в старом товаре который еще не удален
+
             $productData = json_decode($productInOrder->data);
             $order->price -= $productData->main_price;
             $order->products_count -= $productInOrder->count;
@@ -46,14 +52,14 @@
 
             $order->update();
 
-            addProductToOrder(
-                order: $order->refresh()
-            );
+            if (\OrderHelper::orderOrProductHasInstallation($order)) {
+                \SalaryHelper::checkMeasuringAndDelivery(
+                    order: $productInOrder->order,
+                    productInOrder: $productInOrder
+                );
+            }
 
-            checkSalaryForMeasuringAndDelivery(
-                order: $order,
-                productInOrder: $productInOrder
-            );
+            \OrderHelper::addProductTo($order->refresh());
 
             $productInOrder->delete();
             $order->update();

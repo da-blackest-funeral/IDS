@@ -17,7 +17,7 @@ class MosquitoSystemsController extends Controller
      * @return \Illuminate\Contracts\View\View
      */
     public function profile() {
-        $data = profiles();
+        $data = \ProductHelper::profiles();
         return view('ajax.mosquito-systems.profiles')
             ->with(compact('data'));
     }
@@ -39,6 +39,6 @@ class MosquitoSystemsController extends Controller
         // в остальных первые 3 селекта не влияют на вывод дополнительных полей
 
         return view('ajax.mosquito-systems.additional')
-            ->with(additional());
+            ->with(\ProductHelper::additional());
     }
 }

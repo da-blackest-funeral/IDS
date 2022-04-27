@@ -28,17 +28,17 @@
             <a href="https://03-okna.ru/moedelo.php?num_rasch=34084" class="btn btn-secondary btn-sm">
                 Счет моедело
             </a>
-            <a href="/load.php?route=admin/calc/history&num_rasch=34084" class="btn btn-secondary btn-sm">
+            <a href="/" class="btn btn-secondary btn-sm">
                 Логи
             </a>
-            <a href="/load.php?route=admin/master/sebestoimost&num_rasch=34084" class="btn btn-secondary btn-sm">
+            <a href="/" class="btn btn-secondary btn-sm">
                 Себестоимость
             </a>
-            <a href="/load.php?route=admin/sklad/order&num_rasch=34084" class="btn btn-danger btn-sm">
+            <a href="/" class="btn btn-danger btn-sm">
                 Создать списание
             </a>
             @if(isOrderPage())
-                <a href="/load.php?route=admin/sklad/order&num_rasch=34084" class="btn btn-success btn-sm">
+                <a href="/" class="btn btn-success btn-sm">
                     Создать перемещение
                 </a>
             @endif
