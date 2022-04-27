@@ -34,40 +34,6 @@
                 Calculator::productNeedInstallation();
         }
 
-//        public function addProductTo(Order $order) {
-//            $order->price += Calculator::getPrice();
-//
-//            if ($order->measuring_price || $this->hasInstallation($order)) {
-//                $order->price -= Calculator::getMeasuringPrice();
-//                if (Calculator::productNeedInstallation()) {
-//                    $order->price -= $order->measuring_price;
-//                    $order->measuring_price = 0;
-//                }
-//            }
-//
-//            if ($order->delivery) {
-//                $order->price -= min(
-//                    $order->delivery,
-//                    Calculator::getDeliveryPrice()
-//                );
-//
-//                $order->delivery = max(
-//                    Calculator::getDeliveryPrice(),
-//                    $order->delivery
-//                );
-//            }
-//
-//            $order->products_count += Calculator::getCount();
-//
-//            $order->update();
-//
-//            $product = \ProductHelper::make($order->refresh());
-//
-//            \ProductHelper::updateOrCreateSalary($product);
-//            return $product;
-//        }
-
-
         /**
          * @param Order $order
          * @return bool
@@ -138,16 +104,6 @@
 
             $product = \ProductHelper::make($order->refresh());
 
-            /*
-             * todo тут не универсально вызывается MosquitoSystemsHelper::updateOrCreateSalary()
-             * когда я сделаю
-             * 1) интерфейс для таких классов
-             * 2) бинд в сервис провайдере
-             * тогда исправить
-             *
-             * по сути, это единственный метод данного класса и подобных
-             * ему будущих классов, который вызывается из контроллеров
-             */
             \ProductHelper::updateOrCreateSalary($product);
 
             return $product;

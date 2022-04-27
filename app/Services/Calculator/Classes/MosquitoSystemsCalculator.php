@@ -469,7 +469,7 @@
          * @return bool
          */
         protected function additionalIsInstallation($additional): bool {
-            // todo правили определения что это монтаж вынести в отдельный метод
+            // todo правило определения того факта, что это монтаж вынести в отдельный метод, т.к. есть дублирование
             if ($additional->additional_id != 14 && $additional->group_name == 'Монтаж') {
                 $this->needInstallation = true;
                 $this->installation = $additional;
