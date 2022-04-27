@@ -16704,7 +16704,139 @@
      * 
      *
      */ 
+        class ProductHelperFacade {
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function updateOrCreateSalary($productInOrder)
+        {
+                        /** @var \App\Services\Helpers\Classes\MosquitoSystemsHelper $instance */
+                        return $instance->updateOrCreateSalary($productInOrder);
+        }
+                    /**
+         * Calculates salary for specified product and count
+         *
+         * @param \App\Models\ProductInOrder $productInOrder
+         * @param int $count
+         * @return int 
+         * @static 
+         */ 
+        public static function calculateInstallationSalary($productInOrder, $count)
+        {
+                        /** @var \App\Services\Helpers\Classes\MosquitoSystemsHelper $instance */
+                        return $instance->calculateInstallationSalary($productInOrder, $count);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function profiles($product = null)
+        {
+                        /** @var \App\Services\Helpers\Classes\MosquitoSystemsHelper $instance */
+                        return $instance->profiles($product);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function tissues($categoryId)
+        {
+                        /** @var \App\Services\Helpers\Classes\MosquitoSystemsHelper $instance */
+                        return $instance->tissues($categoryId);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function additional($productInOrder = null)
+        {
+                        /** @var \App\Services\Helpers\Classes\MosquitoSystemsHelper $instance */
+                        return $instance->additional($productInOrder);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function hasInstallation($productInOrder)
+        {            //Method inherited from \App\Services\Helpers\Classes\AbstractProductHelper         
+                        /** @var \App\Services\Helpers\Classes\MosquitoSystemsHelper $instance */
+                        return $instance->hasInstallation($productInOrder);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function make($order)
+        {            //Method inherited from \App\Services\Helpers\Classes\AbstractProductHelper         
+                        /** @var \App\Services\Helpers\Classes\MosquitoSystemsHelper $instance */
+                        return $instance->make($order);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function countProductsWithInstallation($productInOrder)
+        {            //Method inherited from \App\Services\Helpers\Classes\AbstractProductHelper         
+                        /** @var \App\Services\Helpers\Classes\MosquitoSystemsHelper $instance */
+                        return $instance->countProductsWithInstallation($productInOrder);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function countOf($products)
+        {            //Method inherited from \App\Services\Helpers\Classes\AbstractProductHelper         
+                        /** @var \App\Services\Helpers\Classes\MosquitoSystemsHelper $instance */
+                        return $instance->countOf($products);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function productHasCoefficient($productInOrder)
+        {            //Method inherited from \App\Services\Helpers\Classes\AbstractProductHelper         
+                        /** @var \App\Services\Helpers\Classes\MosquitoSystemsHelper $instance */
+                        return $instance->productHasCoefficient($productInOrder);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function productData($productInOrder, $field = null)
+        {            //Method inherited from \App\Services\Helpers\Classes\AbstractProductHelper         
+                        /** @var \App\Services\Helpers\Classes\MosquitoSystemsHelper $instance */
+                        return $instance->productData($productInOrder, $field);
+        }
+         
+    }
+            /**
+     * 
+     *
+     */ 
         class OrderHelperFacade {
+                    /**
+         * 
+         *
+         * @param \App\Models\Order $order
+         * @return \App\Services\Helpers\Interfaces\OrderHelperInterface 
+         * @static 
+         */ 
+        public static function use($order)
+        {
+                        /** @var \App\Services\Helpers\Classes\OrderHelper $instance */
+                        return $instance->use($order);
+        }
                     /**
          * 
          *
@@ -16720,56 +16852,60 @@
          *
          * @static 
          */ 
-        public static function orderOrProductHasInstallation($order)
+        public static function orderOrProductHasInstallation()
         {
                         /** @var \App\Services\Helpers\Classes\OrderHelper $instance */
-                        return $instance->orderOrProductHasInstallation($order);
+                        return $instance->orderOrProductHasInstallation();
         }
                     /**
-         * 
+         * Creates new product and adds it to the order
          *
+         * @return \App\Models\ProductInOrder 
          * @static 
          */ 
-        public static function addProductTo($order)
+        public static function addProduct()
         {
                         /** @var \App\Services\Helpers\Classes\OrderHelper $instance */
-                        return $instance->addProductTo($order);
+                        return $instance->addProduct();
         }
                     /**
          * Calculates salary for all order
          *
-         * @param \App\Models\Order $order
          * @return float 
          * @static 
          */ 
-        public static function salaries($order)
+        public static function salaries()
         {
                         /** @var \App\Services\Helpers\Classes\OrderHelper $instance */
-                        return $instance->salaries($order);
+                        return $instance->salaries();
         }
                     /**
          * 
          *
+         * @return bool 
          * @static 
          */ 
-        public static function hasInstallation($order)
+        public static function hasInstallation()
         {
                         /** @var \App\Services\Helpers\Classes\OrderHelper $instance */
-                        return $instance->hasInstallation($order);
+                        return $instance->hasInstallation();
         }
                     /**
          * 
          *
+         * @return bool 
          * @static 
          */ 
-        public static function hasProducts($order)
+        public static function hasProducts()
         {
                         /** @var \App\Services\Helpers\Classes\OrderHelper $instance */
-                        return $instance->hasProducts($order);
+                        return $instance->hasProducts();
         }
                     /**
          * 
          *
+         * @param \Illuminate\Support\Collection $products
+         * @return \Illuminate\Support\Collection 
          * @static 
          */ 
         public static function withoutOldProduct($products)
@@ -20740,6 +20876,7 @@ namespace  {
             class View extends \Illuminate\Support\Facades\View {}
             class Debugbar extends \Barryvdh\Debugbar\Facades\Debugbar {}
             class Notifier extends \App\Services\Facades\Classes\NotifierFacade {}
+            class ProductHelper extends \App\Services\Facades\Classes\ProductHelperFacade {}
             class OrderHelper extends \App\Services\Facades\Classes\OrderHelperFacade {}
             class SalaryHelper extends \App\Services\Facades\Classes\SalaryHelperFacade {}
             class Flare extends \Facade\Ignition\Facades\Flare {}

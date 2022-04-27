@@ -33,6 +33,7 @@
             // todo сделать учет ручного изменения цены заказа
             // todo сделать вывод всевозможных сообщений
             $order = \OrderHelper::make();
+            \OrderHelper::use($order);
 
             \SalaryHelper::make($order);
 

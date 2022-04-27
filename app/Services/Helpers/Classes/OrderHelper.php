@@ -11,7 +11,20 @@
 
     class OrderHelper implements OrderHelperInterface
     {
-        public function make() {
+        public function __construct(protected Order $order) {
+        }
+
+        /**
+         * @param Order $order
+         * @return OrderHelperInterface
+         */
+        public function use(Order $order): OrderHelperInterface {
+            $this->order = $order;
+
+            return $this;
+        }
+
+        public function make(): Order {
             return Order::create([
                 'delivery' => Calculator::getDeliveryPrice(),
                 'user_id' => auth()->user()->getAuthIdentifier(),
@@ -29,59 +42,43 @@
             ]);
         }
 
-        public function orderOrProductHasInstallation(Order $order) {
-            return !\OrderHelper::hasProducts($order) ||
-                \OrderHelper::hasInstallation($order) ||
+        public function orderOrProductHasInstallation(): bool {
+            return !\OrderHelper::hasProducts($this->order) ||
+                \OrderHelper::hasInstallation($this->order) ||
                 Calculator::productNeedInstallation();
         }
 
-        /**
-         * @param Order $order
-         * @return bool
-         */
-        protected function notNeedMeasuring(Order $order): bool {
-            return $order->measuring_price || $this->hasInstallation($order);
+        protected function notNeedMeasuring(): bool {
+            return $this->order->measuring_price || $this->hasInstallation();
         }
 
-        /**
-         * @param Order $order
-         * @return void
-         */
-        protected function deductMeasuringPrice(Order $order) {
-            $order->price -= $order->measuring_price;
-            $order->measuring_price = 0;
+        protected function deductMeasuringPrice() {
+            $this->order->price -= $this->order->measuring_price;
+            $this->order->measuring_price = 0;
         }
 
-        /**
-         * @param Order $order
-         * @return void
-         */
-        protected function calculateMeasuringOptions(Order $order) {
-            if ($this->notNeedMeasuring($order)) {
-                $order->price -= Calculator::getMeasuringPrice();
+        protected function calculateMeasuringOptions() {
+            if ($this->notNeedMeasuring()) {
+                $this->order->price -= Calculator::getMeasuringPrice();
                 if (Calculator::productNeedInstallation()) {
-                    $this->deductMeasuringPrice($order);
+                    $this->deductMeasuringPrice();
                 }
                 // todo бардак, условие можно написать лучше, уже есть методы для этого
             } elseif (!Calculator::productNeedInstallation()) {
-                $order->measuring_price = SystemVariables::value('measuring');
+                $this->order->measuring_price = SystemVariables::value('measuring');
             }
         }
 
-        /**
-         * @param Order $order
-         * @return void
-         */
-        protected function calculateDeliveryOptions(Order $order) {
-            if ($order->delivery) {
-                $order->price -= min(
-                    $order->delivery,
+        protected function calculateDeliveryOptions() {
+            if ($this->order->delivery) {
+                $this->order->price -= min(
+                    $this->order->delivery,
                     Calculator::getDeliveryPrice()
                 );
 
-                $order->delivery = max(
+                $this->order->delivery = max(
                     Calculator::getDeliveryPrice(),
-                    $order->delivery
+                    $this->order->delivery
                 );
             }
         }
@@ -89,21 +86,20 @@
         /**
          * Creates new product and adds it to the order
          *
-         * @param Order $order
          * @return ProductInOrder
          */
-        public function addProductTo(Order $order): ProductInOrder {
-            $order->price += Calculator::getPrice();
+        public function addProduct(): ProductInOrder {
+            $this->order->price += Calculator::getPrice();
 
-            $this->calculateMeasuringOptions($order);
+            $this->calculateMeasuringOptions();
 
-            $this->calculateDeliveryOptions($order);
+            $this->calculateDeliveryOptions();
 
-            $order->products_count += Calculator::getCount();
+            $this->order->products_count += Calculator::getCount();
 
-            $order->update();
+            $this->order->update();
 
-            $product = \ProductHelper::make($order->refresh());
+            $product = \ProductHelper::make($this->order->refresh());
 
             \ProductHelper::updateOrCreateSalary($product);
 
@@ -113,29 +109,26 @@
         /**
          * Calculates salary for all order
          *
-         * @param Order $order
          * @return float
          */
-        public function salaries(Order $order): float {
-            return $order->salaries->sum('sum');
+        public function salaries(): float {
+            return $this->order->salaries->sum('sum');
         }
 
         /**
-         * @param Order $order
          * @return bool
          */
-        public function hasInstallation(Order $order): bool {
-            return $this->withoutOldProduct($order->products)->contains(function ($product) {
+        public function hasInstallation(): bool {
+            return $this->withoutOldProduct($this->order->products)->contains(function ($product) {
                     return \ProductHelper::hasInstallation($product);
-                }) && $this->hasProducts($order);
+                }) && $this->hasProducts();
         }
 
         /**
-         * @param Order $order
          * @return bool
          */
-        public function hasProducts(Order $order): bool {
-            return $this->withoutOldProduct($order->products)->isNotEmpty();
+        public function hasProducts(): bool {
+            return $this->withoutOldProduct($this->order->products)->isNotEmpty();
         }
 
         /**

@@ -8,41 +8,50 @@
 
     interface OrderHelperInterface
     {
-        public function make();
+        /**
+         * @param Order $order
+         * @return OrderHelperInterface
+         */
+        public function use(Order $order): OrderHelperInterface;
 
-        public function orderOrProductHasInstallation(Order $order);
+        /**
+         * @return Order
+         */
+        public function make(): Order;
+
+        /**
+         * @return bool
+         */
+        public function orderOrProductHasInstallation(): bool;
 
         /**
          * Creates new product and adds it to the order
          *
-         * @param Order $order
          * @return ProductInOrder
          */
-        public function addProductTo(Order $order): ProductInOrder;
+        public function addProduct(): ProductInOrder;
 
         /**
          * Calculates salary for all order
          *
-         * @param Order $order
          * @return float
          */
-        public function salaries(Order $order): float;
+        public function salaries(): float;
 
         /**
-         * @param Order $order
          * @return bool
          */
-        public function hasInstallation(Order $order): bool;
+        public function hasInstallation(): bool;
 
         /**
-         * @param Order $order
          * @return bool
          */
-        public function hasProducts(Order $order): bool;
+        public function hasProducts(): bool;
 
         /**
          * @param Collection $products
          * @return Collection
+         * @todo убрать в отдельный класс ProductRepository
          */
         public function withoutOldProduct(Collection $products): Collection;
     }

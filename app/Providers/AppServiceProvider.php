@@ -3,6 +3,7 @@
     namespace App\Providers;
 
     use App\Http\Requests\SaveOrderRequest;
+    use App\Models\Order;
     use App\Services\Calculator\Classes\GlazedWindowsCalculator;
     use App\Services\Calculator\Classes\ItalianMosquitoSystemCalculator;
     use App\Services\Calculator\Classes\MosquitoSystemsCalculator;
@@ -55,7 +56,9 @@
                 }
             });
 
-            $this->app->bind(OrderHelperInterface::class, OrderHelper::class);
+            $this->app->bind(OrderHelperInterface::class, function () {
+                return new OrderHelper(\request()->order ?? new Order());
+            });
             $this->app->bind(SalaryHelperInterface::class, SalaryHelper::class);
         }
 
@@ -69,5 +72,7 @@
                 \Notifier::setData();
                 \Notifier::displayWarnings();
             }
+
+            //todo сделать вызов Calculator::calculate отсюда
         }
     }

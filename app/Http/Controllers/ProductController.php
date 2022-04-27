@@ -11,10 +11,8 @@
 
     class ProductController extends Controller
     {
-        protected SaveOrderRequest $request;
 
         public function __construct(SaveOrderRequest $request) {
-            $this->request = $request;
         }
 
         public function index(Order $order, ProductInOrder $productInOrder) {
@@ -52,14 +50,14 @@
 
             $order->update();
 
-            if (\OrderHelper::orderOrProductHasInstallation($order)) {
+            if (\OrderHelper::orderOrProductHasInstallation()) {
                 \SalaryHelper::checkMeasuringAndDelivery(
                     order: $productInOrder->order,
                     productInOrder: $productInOrder
                 );
             }
 
-            \OrderHelper::addProductTo($order->refresh());
+            \OrderHelper::addProduct();
 
             $productInOrder->delete();
             $order->update();

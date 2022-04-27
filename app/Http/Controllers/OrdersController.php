@@ -29,9 +29,9 @@
         }
 
         public function addProduct(Order $order) {
-            $productInOrder = \OrderHelper::addProductTo($order);
+            $productInOrder = \OrderHelper::addProduct();
 
-            if (\OrderHelper::orderOrProductHasInstallation($order)) {
+            if (\OrderHelper::orderOrProductHasInstallation()) {
                 \SalaryHelper::checkMeasuringAndDelivery(
                     order: $order,
                     productInOrder: $productInOrder
