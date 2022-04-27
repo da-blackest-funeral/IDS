@@ -18,21 +18,62 @@
          */
         public function calculateInstallationSalary(ProductInOrder $productInOrder, int $count): int;
 
-        public function countOf(Collection $products);
+        /**
+         * Calculates count by collection of products
+         *
+         * @param Collection $products
+         * @return int
+         */
+        public function countOf(Collection $products): int;
 
-        public function productHasCoefficient(ProductInOrder $productInOrder);
+        /**
+         * Determines if product has coefficient difficulty
+         *
+         * @param ProductInOrder $productInOrder
+         * @return bool
+         */
+        public function productHasCoefficient(ProductInOrder $productInOrder): bool;
 
-        public function productData(ProductInOrder $productInOrder, string $field = null);
+        /**
+         * Getting product's data from json
+         *
+         * @param ProductInOrder $productInOrder
+         * @param string|null $field
+         * @return mixed
+         */
+        public function productData(ProductInOrder $productInOrder, string $field = null): mixed;
 
-        public function productsWithMaxInstallation(ProductInOrder $productInOrder);
-
+        /**
+         * Calculates count of products that need installation
+         *
+         * @param ProductInOrder $productInOrder
+         * @return int
+         */
         public function countProductsWithInstallation(ProductInOrder $productInOrder): int;
 
-        public function productsWithInstallation(ProductInOrder $productInOrder): Collection;
-
+        /**
+         * Getting second select data for ajax displaying
+         *
+         * @param ProductInOrder|null $product
+         * @return Collection
+         * @todo rename to secondSelect()
+         */
         public function profiles(ProductInOrder $product = null): Collection;
 
-        public function tissues(int $categoryId);
+        /**
+         * Getting third select data for ajax displaying
+         *
+         * @param int $categoryId
+         * @return Collection
+         * @todo rename to thirdSelect()
+         */
+        public function tissues(int $categoryId): Collection;
 
-        public function additional(ProductInOrder $productInOrder = null);
+        /**
+         * Getting last selects for ajax
+         *
+         * @param ProductInOrder|null $productInOrder
+         * @return array
+         */
+        public function additional(ProductInOrder $productInOrder = null): array;
     }

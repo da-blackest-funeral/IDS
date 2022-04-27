@@ -11,9 +11,10 @@
     use Facades\App\Services\Calculator\Interfaces\Calculator;
     use Illuminate\Support\Collection;
 
-    class MosquitoSystemsHelper extends AbstractProductHelper implements ProductHelperInterface
+    class MosquitoSystemsHelper extends AbstractProductHelper
     {
         public function updateOrCreateSalary(ProductInOrder $productInOrder) {
+
             $products = ProductInOrder::whereCategoryId($productInOrder->category_id)
                 ->whereOrderId($productInOrder->order_id)
                 ->get()
@@ -30,29 +31,10 @@
             $productsWithMaxInstallation = $this->productsWithMaxInstallation($productInOrder);
 
             if (
-                /*
-                 * Need to determine if products of the same type
-                 * that current exists.
-                 * Because new product had been already created,
-                 * we need to skip them
-                 */
                 $products->isNotEmpty() &&
                 !is_null(\SalaryHelper::salary($productInOrder)) ||
                 !$countOfAllProducts && fromUpdatingProductPage()
             ) {
-                /*
-                 * Условие звучит так: если в заказе уже есть такой же товар с монтажом, и добалвяется
-                 * товар без монтажа, то зп не пересчитывается. Если в заказе уже есть товар с монтажом, кроме нынешнего,
-                 * у которого монтаж убирается, то зп тоже не пересчитывается
-                 *
-                 * НО, если в заказе уже есть монтаж, а в нынешнем продукте его нет, то з\п должна пересчитываться
-                 * можно брать $count - request->count()
-                 *
-                 * расчет зарплаты при добавлении товаров одинакового типа
-                 * если добавлено несколько товаров одинакового типа, то при расчете з\п
-                 * берется монтаж с максимальной ценой, а количество равняется всем товарам данного типа,
-                 * у которых задан монтаж, даже если он другой
-                 */
 
                 \SalaryHelper::update(
                     sum: $this->calculateInstallationSalary(
@@ -78,9 +60,6 @@
                 // есть товар другого типа без монтажа, за который есть зп в 960, то зарплата складывается из
                 // 960 за один и за монтаж за другой, надо обнулять зарплату которая равна 960
 
-                /*
-                 * условие: если в заказе есть товары с монтажом и нынешнему товару не нужен монтаж, то не создавать зп
-                 */
                 if (\OrderHelper::hasProducts($productInOrder->order) && !Calculator::productNeedInstallation()) {
                     \SalaryHelper::make($productInOrder->order, 0);
                     return;
@@ -148,7 +127,7 @@
          */
         protected function salaryForCount(ProductInOrder $productInOrder, int $count, int $typeId) {
             $salary = Calculator::getInstallationSalary(
-                installation: $installation ?? $productInOrder->installation_id,
+                installation: $productInOrder->installation_id,
                 count: $count,
                 typeId: $typeId
             );
@@ -207,23 +186,7 @@
             return $salary;
         }
 
-        public function countOf(Collection $products) {
-            return $products->sum('count');
-        }
-
-        public function productHasCoefficient(ProductInOrder $productInOrder) {
-            return $this->productData($productInOrder, 'coefficient') > 1;
-        }
-
-        public function productData(ProductInOrder $productInOrder, string $field = null) {
-            if (is_null($field)) {
-                return json_decode($productInOrder->data);
-            }
-
-            return json_decode($productInOrder->data)->$field;
-        }
-
-        public function productsWithMaxInstallation(ProductInOrder $productInOrder) {
+        protected function productsWithMaxInstallation(ProductInOrder $productInOrder) {
             $typeId = Type::byCategory($productInOrder->category_id)->id;
             $productsWithInstallation = $productInOrder->order
                 ->products()
@@ -244,25 +207,6 @@
             });
         }
 
-        public function countProductsWithInstallation(ProductInOrder $productInOrder): int {
-            return $this->countOf(
-                $this->productsWithInstallation($productInOrder)
-            );
-        }
-
-        /*
-         * todo улучшение кода
-         * когда буду рефакторить, надо сделать так, чтобы пропускался старый товар (при обновлении, который еще не удален)
-         * во всех местах где используется этот метод нужно это учесть
-         */
-        public function productsWithInstallation(ProductInOrder $productInOrder): Collection {
-            return $productInOrder->order
-                ->products()
-                ->where('category_id', request()->input('categories'))
-                ->whereNotIn('installation_id', [0, 14])
-                ->get();
-        }
-
         public function profiles(ProductInOrder $product = null): Collection {
             $productData = null;
 
@@ -277,7 +221,7 @@
                 ->get(['id', 'name']);
         }
 
-        public function tissues(int $categoryId) {
+        public function tissues(int $categoryId): Collection {
             // todo колхоз
             return \App\Models\Category::tissues($categoryId)
                 ->get()
@@ -288,7 +232,7 @@
                 ->unique();
         }
 
-        public function additional(ProductInOrder $productInOrder = null) {
+        public function additional(ProductInOrder $productInOrder = null): array {
             $productData = null;
 
             if (isset($productInOrder->data)) {
