@@ -238,10 +238,10 @@
                 $query->whereIn('id', $additional->pluck('id'));
             })->get()
                 // Заполняем для каждой группы выбранное в заказе значение
-                ->each(function ($item) {
+                ->each(function ($item) use ($productInOrder) {
                     $name = "group-$item->id";
-                    if (isset($product->data) && $product->data->$name !== null) {
-                        $item->selected = $product->data->$name;
+                    if (isset($productInOrder->data) && $productInOrder->data->$name !== null) {
+                        $item->selected = $productInOrder->data->$name;
                     }
                 });
 
