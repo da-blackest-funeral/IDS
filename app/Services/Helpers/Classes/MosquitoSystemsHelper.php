@@ -173,11 +173,10 @@
 
             foreach ($products as $product) {
                 if ($this->productHasCoefficient($product)) {
-                    $data = $this->productData($product);
 
                     $salary += Calculator::salaryForDifficulty(
-                        price: $data->installationPrice,
-                        coefficient: $data->coefficient,
+                        price: $product->data->installationPrice,
+                        coefficient: $product->data->coefficient,
                         count: $product->count
                     );
                 }
@@ -208,15 +207,9 @@
         }
 
         public function profiles(ProductInOrder $product = null): Collection {
-            $productData = null;
-
-            if (!is_null($product)) {
-                $productData = json_decode($product->data);
-            }
-
-            return Profile::whereHas('products.type', function ($query) use ($product, $productData) {
+            return Profile::whereHas('products.type', function ($query) use ($product) {
                 return $query->where('category_id', $product->category_id ?? request()->input('categoryId'))
-                    ->where('tissue_id', $productData->tissueId ?? request()->input('additional'));
+                    ->where('tissue_id', $product->data->tissueId ?? request()->input('additional'));
             })
                 ->get(['id', 'name']);
         }
@@ -233,16 +226,10 @@
         }
 
         public function additional(ProductInOrder $productInOrder = null): array {
-            $productData = null;
-
-            if (isset($productInOrder->data)) {
-                $productData = json_decode($productInOrder->data);
-            }
-
-            $product = Product::whereTissueId($productData->tissueId ?? request()->input('nextAdditional'))
-                ->whereProfileId($productData->profileId ?? request()->input('additional'))
-                ->whereHas('type', function ($query) use ($productData) {
-                    $query->where('category_id', $productData->category ?? request()->input('categoryId'));
+            $product = Product::whereTissueId($productInOrder->data->tissueId ?? request()->input('nextAdditional'))
+                ->whereProfileId($productInOrder->data->profileId ?? request()->input('additional'))
+                ->whereHas('type', function ($query) use ($productInOrder) {
+                    $query->where('category_id', $productInOrder->data->category ?? request()->input('categoryId'));
                 })->first();
 
             $additional = $product->additional;
@@ -251,10 +238,10 @@
                 $query->whereIn('id', $additional->pluck('id'));
             })->get()
                 // Заполняем для каждой группы выбранное в заказе значение
-                ->each(function ($item) use ($productData) {
+                ->each(function ($item) {
                     $name = "group-$item->id";
-                    if (isset($productData) && $productData->$name !== null) {
-                        $item->selected = $productData->$name;
+                    if (isset($product->data) && $product->data->$name !== null) {
+                        $item->selected = $product->data->$name;
                     }
                 });
 

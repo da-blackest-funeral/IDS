@@ -35,15 +35,6 @@
         public function productHasCoefficient(ProductInOrder $productInOrder): bool;
 
         /**
-         * Getting product's data from json
-         *
-         * @param ProductInOrder $productInOrder
-         * @param string|null $field
-         * @return mixed
-         */
-        public function productData(ProductInOrder $productInOrder, string $field = null): mixed;
-
-        /**
          * Calculates count of products that need installation
          *
          * @param ProductInOrder $productInOrder

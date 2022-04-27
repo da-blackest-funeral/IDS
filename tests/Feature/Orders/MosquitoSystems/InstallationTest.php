@@ -207,6 +207,9 @@ class InstallationTest extends TestCase
             'type' => 'test',
         ]);
 
+        $data = new \stdClass();
+        $data->coefficient = 1;
+
         ProductInOrder::create([
             'order_id' => 1,
             'user_id' => 1,
@@ -214,7 +217,7 @@ class InstallationTest extends TestCase
             'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
             'count' => 1,
             'installation_id' => 9,
-            'data' => '{"coefficient": 1}',
+            'data' => $data,
         ]);
 
         $inputsWithInstallation = $this->testHelper->exampleMosquitoSystemsInputs();

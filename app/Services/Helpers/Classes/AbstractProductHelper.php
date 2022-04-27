@@ -22,7 +22,7 @@
                 'installation_id' => Calculator::getInstallation('additional_id'),
                 'order_id' => $order->id,
                 'name' => Calculator::getProduct()->name(),
-                'data' => Calculator::getOptions()->toJson(),
+                'data' => Calculator::getOptions(),
                 'user_id' => auth()->user()->getAuthIdentifier(),
                 'category_id' => request()->input('categories'),
                 'count' => request()->input('count'),
@@ -48,15 +48,15 @@
         }
 
         public function productHasCoefficient(ProductInOrder $productInOrder): bool {
-            return $this->productData($productInOrder, 'coefficient') > 1;
+            return $productInOrder->data->coefficient > 1;
         }
 
         // todo прочитать статью про json в ларавел, возможно сделать автоматическое приведение из Json
-        public function productData(ProductInOrder $productInOrder, string $field = null): mixed {
-            if (is_null($field)) {
-                return json_decode($productInOrder->data);
-            }
-
-            return json_decode($productInOrder->data)->$field;
-        }
+//        public function productData(ProductInOrder $productInOrder, string $field = null): mixed {
+//            if (is_null($field)) {
+//                return json_decode($productInOrder->data);
+//            }
+//
+//            return json_decode($productInOrder->data)->$field;
+//        }
     }

@@ -28,7 +28,6 @@
                 )->get(),
                 'orderNumber' => $order->id,
                 'product' => $productInOrder,
-                'productData' => json_decode($productInOrder->data),
                 'needPreload' => true,
             ]);
         }
@@ -39,12 +38,11 @@
             // разные баги с зарплатой возникают когда меняешь монтаж у товара с одного на другой
             // думаю дело в старом товаре который еще не удален
 
-            $productData = json_decode($productInOrder->data);
-            $order->price -= $productData->main_price;
+            $order->price -= $productInOrder->data->main_price;
             $order->products_count -= $productInOrder->count;
             session()->put('oldProduct', $productInOrder);
 
-            foreach ($productData->additional as $additional) {
+            foreach ($productInOrder->data->additional as $additional) {
                 $order->price -= $additional->price;
             }
 

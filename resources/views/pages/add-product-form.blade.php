@@ -24,7 +24,7 @@
                                type="text"
                                class="form-control"
                                @if($needPreload ?? false)
-                               value="{{ $productData->size->height ?? '' }}"
+                               value="{{ $product->data->size->height ?? '' }}"
                                @endif
                                required>
                     </div>
@@ -36,7 +36,7 @@
                                type="text"
                                class="form-control"
                                @if($needPreload ?? false)
-                               value="{{ $productData->size->width ?? '' }}"
+                               value="{{ $product->data->size->width ?? '' }}"
                                @endif
                                required>
                     </div>
@@ -78,11 +78,11 @@
                         @if(isset($needPreload, $product) && $needPreload)
                             @include('ajax.second-select', [
                             // todo переименовать метод в secondSelect
-                                'data' => \ProductHelper::tissues($product->category_id),
+                                'data' => ProductHelper::tissues($product->category_id),
                                 'link' => '/ajax/mosquito-systems/profile',
                                 'name' => 'tissues',
                                 'label' => 'Ткань',
-                                'selected' => $productData->tissueId
+                                'selected' => $product->data->tissueId
                             ])
                         @endif
                     </div>
@@ -91,8 +91,8 @@
                         @if(isset($needPreload, $product) && $needPreload)
                             @include('ajax.mosquito-systems.profiles', [
                             // todo переименовать метод в thirdSelect
-                                'data' => \ProductHelper::profiles($product),
-                                'selected' => $productData->profileId
+                                'data' => ProductHelper::profiles($product),
+                                'selected' => $product->data->profileId
                             ])
                         @endif
                     </div>
@@ -103,7 +103,7 @@
                 <div class="mt-4 pb-3" id="additional">
                     {{-- Место для дополнительных опций --}}
                     @if(isset($needPreload, $product) && $needPreload)
-                        @include('ajax.mosquito-systems.additional', \ProductHelper::additional($product))
+                        @include('ajax.mosquito-systems.additional', ProductHelper::additional($product))
                     @endif
                 </div>
                 <div class="mt-4 pb-3" id="bracing">

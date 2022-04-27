@@ -137,7 +137,7 @@
                 'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
                 'count' => 1,
                 'installation_id' => $installationId,
-                'data' => $data,
+                'data' => json_decode($data),
             ]);
         }
 

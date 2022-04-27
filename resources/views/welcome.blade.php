@@ -68,7 +68,6 @@
                             </thead>
                             <tbody>
                             @foreach($products as $product)
-                                @php($productData = json_decode($product->data))
                                 <tr style="cursor:pointer;" onclick="
                                 {{-- todo Вова: вот таблица и вот как реализован переход на страницу редактирования товара --}}
                                     window.location ='{{ route('product-in-order', [
@@ -80,21 +79,21 @@
                                     <th scope="row" class="text-center"><strong>{{ $loop->iteration }}</strong></th>
                                     <td class="text-center" style="max-width: 200px;">{{ $product->name }}</td>
                                     <td class="text-center text-success">
-                                        <div>Высота: {{ $productData->size->height }} мм.</div>
+                                        <div>Высота: {{ $product->data->size->height }} мм.</div>
                                         <br>
-                                        <div>Ширина: {{ $productData->size->width }} мм.</div>
+                                        <div>Ширина: {{ $product->data->size->width }} мм.</div>
                                     </td>
                                     <td class="text-center"><strong>{{ $product->count }} шт.</strong></td>
                                     <td class="text-center">
-                                        <strong>{{ $productData->main_price }}</strong>
+                                        <strong>{{ $product->data->main_price }}</strong>
                                         @if($product->count > 1)
                                             <p class="mt-3 ml-3">
-                                                <em>{{ ceil($productData->main_price / $product->count) }} за
+                                                <em>{{ ceil($product->data->main_price / $product->count) }} за
                                                     шт.</em></p>
                                         @endif
                                     </td>
                                     <td class="text-center">
-                                        @foreach($productData->additional as $additional)
+                                        @foreach($product->data->additional as $additional)
                                             <div class="p-1 text-decoration-underline">
                                                 {{ $additional->text }}
                                             </div>
@@ -104,9 +103,9 @@
                                                         шт.)</em></p>
                                             @endif
                                         @endforeach
-                                        @isset($productData->salaryForCoefficient)
+                                        @isset($product->data->salaryForCoefficient)
                                             <div class="p-1">
-                                                <strong>{{ $productData->salaryForCoefficient }}</strong>
+                                                <strong>{{ $product->data->salaryForCoefficient }}</strong>
                                             </div>
                                         @endisset
                                         {{-- todo сделать вывод поля "Итого", Вова: тут же будет кнопка "Удалить" --}}

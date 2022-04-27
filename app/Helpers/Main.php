@@ -62,20 +62,20 @@
         }
     }
 
-    function oldProductData(string|array $field = null) {
-        if (is_null($field)) {
-            return json_decode(oldProduct('data'));
-        } elseif (is_string($field)) {
-            return json_decode(oldProduct('data'))->$field;
-        } elseif (is_array($field)) {
-            $result = json_decode(oldProduct('data'));
-            foreach ($field as $item) {
-                $result = $result->$item;
-            }
-
-            return $result;
-        }
-    }
+//    function oldProductData(string|array $field = null) {
+//        if (is_null($field)) {
+//            return json_decode(oldProduct('data'));
+//        } elseif (is_string($field)) {
+//            return json_decode(oldProduct('data'))->$field;
+//        } elseif (is_array($field)) {
+//            $result = json_decode(oldProduct('data'));
+//            foreach ($field as $item) {
+//                $result = $result->$item;
+//            }
+//
+//            return $result;
+//        }
+//    }
 
     function oldProduct(string $field = null) {
         if (is_null($field)) {
