@@ -8,12 +8,10 @@
     use App\Services\Calculator\Classes\ItalianMosquitoSystemCalculator;
     use App\Services\Calculator\Classes\MosquitoSystemsCalculator;
     use App\Services\Calculator\Interfaces\Calculator;
-    use App\Services\Helpers\Classes\AbstractProductHelper;
     use App\Services\Helpers\Classes\MosquitoSystemsHelper;
     use App\Services\Helpers\Classes\OrderHelper;
     use App\Services\Helpers\Classes\SalaryHelper;
     use App\Services\Helpers\Interfaces\OrderHelperInterface;
-    use App\Services\Helpers\Interfaces\ProductHelper;
     use App\Services\Helpers\Interfaces\ProductHelperInterface;
     use App\Services\Helpers\Interfaces\SalaryHelperInterface;
     use App\Services\Notifications\Notifier;
@@ -73,6 +71,9 @@
                 \Notifier::displayWarnings();
             }
 
-            //todo сделать вызов Calculator::calculate отсюда
+            $this->callAfterResolving(Calculator::class, function (Calculator $calculator) {
+                $calculator->calculate();
+                $calculator->saveInfo();
+            });
         }
     }

@@ -82,11 +82,11 @@
             }
 
             $this->additional = new Collection();
+        }
 
+        public function saveInfo() {
             $this->saveTissue();
             $this->saveProfile();
-
-            $this->calculate();
         }
 
         protected function saveTissue() {
@@ -97,7 +97,7 @@
             $this->options->put('profileId', $this->product->profile_id);
         }
 
-        protected function calculate(): void {
+        public function calculate(): void {
             // Making all preparations that are the same for all products
             parent::calculate();
 
@@ -153,7 +153,7 @@
                 $count = $this->count;
             }
 
-            $additionalSalary = (int) round(
+            $additionalSalary = (int)round(
                 $price *
                 (1 - 1 / $coefficient) *
                 (float)SystemVariables::value('coefficientSalaryForDifficult')
@@ -338,7 +338,7 @@
             if ($this->hasCoefficient()) {
                 $items->push([
                     'text' => 'Доп. цена за сложность монтажа: ' . ($this->installationPrice -
-                        $this->installationPrice / $this->coefficient) * $this->count,
+                            $this->installationPrice / $this->coefficient) * $this->count,
                     'price' => 0,
                 ]);
             }
