@@ -50,13 +50,4 @@
         public function productHasCoefficient(ProductInOrder $productInOrder): bool {
             return $productInOrder->data->coefficient > 1;
         }
-
-        // todo прочитать статью про json в ларавел, возможно сделать автоматическое приведение из Json
-//        public function productData(ProductInOrder $productInOrder, string $field = null): mixed {
-//            if (is_null($field)) {
-//                return json_decode($productInOrder->data);
-//            }
-//
-//            return json_decode($productInOrder->data)->$field;
-//        }
     }

@@ -7,20 +7,17 @@
     use App\Models\MosquitoSystems\Profile;
     use App\Models\MosquitoSystems\Type;
     use App\Models\ProductInOrder;
-    use App\Services\Helpers\Interfaces\ProductHelperInterface;
+    use App\Services\Repositories\Classes\ProductRepository;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
     use Illuminate\Support\Collection;
 
     class MosquitoSystemsHelper extends AbstractProductHelper
     {
         public function updateOrCreateSalary(ProductInOrder $productInOrder) {
-
-            $products = ProductInOrder::whereCategoryId($productInOrder->category_id)
-                ->whereOrderId($productInOrder->order_id)
-                ->get()
-                ->reject(function ($product) use ($productInOrder) {
-                    return $product->id == $productInOrder->id;
-                });
+             $sameCategoryProducts = new ProductRepository();
+             $sameCategoryProducts->byCategory($productInOrder)
+                ->without($productInOrder)
+                ->get();
 
             $count = $this->countProductsWithInstallation($productInOrder);
 
@@ -31,7 +28,7 @@
             $productsWithMaxInstallation = $this->productsWithMaxInstallation($productInOrder);
 
             if (
-                $products->isNotEmpty() &&
+                $sameCategoryProducts->isNotEmpty() &&
                 !is_null(\SalaryHelper::salary($productInOrder)) ||
                 !$countOfAllProducts && fromUpdatingProductPage()
             ) {
