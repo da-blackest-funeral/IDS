@@ -236,6 +236,7 @@
             'ProductHelper' => \App\Services\Facades\Classes\ProductHelperFacade::class,
             'OrderHelper' => \App\Services\Facades\Classes\OrderHelperFacade::class,
             'SalaryHelper' => \App\Services\Facades\Classes\SalaryHelperFacade::class,
+            'SelectData' => \App\Services\Facades\Classes\SelectDataFacade::class,
         ],
 
     ];

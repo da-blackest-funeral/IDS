@@ -78,7 +78,7 @@
                         @if(isset($product) && needPreload())
                             @include('ajax.second-select', [
                             // todo переименовать метод в secondSelect
-                                'data' => ProductHelper::tissues($product->category_id),
+                                'data' => SelectData::secondSelect(),
                                 'link' => '/ajax/mosquito-systems/profile',
                                 'name' => 'tissues',
                                 'label' => 'Ткань',
@@ -91,7 +91,7 @@
                         @if(isset($product) && needPreload())
                             @include('ajax.mosquito-systems.profiles', [
                             // todo переименовать метод в thirdSelect
-                                'data' => ProductHelper::profiles($product),
+                                'data' => SelectData::thirdSelect(),
                                 'selected' => $product->data->profileId
                             ])
                         @endif
@@ -103,7 +103,7 @@
                 <div class="mt-4 pb-3" id="additional">
                     {{-- Место для дополнительных опций --}}
                     @if(isset($product) && needPreload())
-                        @include('ajax.mosquito-systems.additional', ProductHelper::additional($product))
+                        @include('ajax.mosquito-systems.additional', SelectData::additional())
                     @endif
                 </div>
                 <div class="mt-4 pb-3" id="bracing">

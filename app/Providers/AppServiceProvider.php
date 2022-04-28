@@ -4,6 +4,7 @@
 
     use App\Http\Requests\SaveOrderRequest;
     use App\Models\Order;
+    use App\Models\ProductInOrder;
     use App\Services\Calculator\Classes\GlazedWindowsCalculator;
     use App\Services\Calculator\Classes\ItalianMosquitoSystemCalculator;
     use App\Services\Calculator\Classes\MosquitoSystemsCalculator;
@@ -15,6 +16,8 @@
     use App\Services\Helpers\Interfaces\ProductHelperInterface;
     use App\Services\Helpers\Interfaces\SalaryHelperInterface;
     use App\Services\Notifications\Notifier;
+    use App\Services\Renderer\Classes\MosquitoSelectData;
+    use App\Services\Renderer\Interfaces\SelectDataInterface;
     use Illuminate\Support\ServiceProvider;
 
     class AppServiceProvider extends ServiceProvider
@@ -31,7 +34,7 @@
                     return new GlazedWindowsCalculator($request);
                 }
 
-                if (in_array(\request()->input('categories'), [5, 6, 7, 8, 9, 10, 11, 12, 13, 14])) {
+                if (isMosquitoSystemProduct()) {
                     return new MosquitoSystemsCalculator($request);
                 }
 
@@ -45,11 +48,7 @@
             });
 
             $this->app->singleton(ProductHelperInterface::class, function () {
-                if (
-                    in_array(\request()->input('categories'), [5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
-                    || in_array(\request()->input('categoryId'), [5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
-                    || in_array(\request()->productInOrder->category_id, [5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
-                ) {
+                if (isMosquitoSystemProduct()) {
                     return new MosquitoSystemsHelper();
                 }
             });
@@ -59,6 +58,12 @@
             });
 
             $this->app->bind(SalaryHelperInterface::class, SalaryHelper::class);
+
+            $this->app->bind(SelectDataInterface::class, function () {
+                if (isMosquitoSystemProduct()) {
+                    return new MosquitoSelectData(\request()->productInOrder);
+                }
+            });
         }
 
         /**

@@ -3,15 +3,15 @@
     use App\Models\Order;
     use Illuminate\Support\Facades\Route;
 
-    function isOrderPage() {
+    function isOrderPage(): bool {
         return Route::is('new-order', 'order');
     }
 
-    function needPreload() {
+    function needPreload(): bool {
         return Route::is('product-in-order');
     }
 
-    function fromUpdatingProductPage() {
+    function fromUpdatingProductPage(): bool {
         return Route::getRoutes()
                 ->match(
                     app('request')
@@ -19,6 +19,12 @@
                             url()->previous()
                         )
                 )->getName() == 'product-in-order';
+    }
+
+    function isMosquitoSystemProduct(): bool {
+        return in_array(request()->input('categories'), [5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
+        || in_array(request()->input('categoryId'), [5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
+        || in_array(request()->productInOrder->category_id, [5, 6, 7, 8, 9, 10, 11, 12, 13, 14]);
     }
 
     function notify($text) {

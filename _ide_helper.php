@@ -16808,16 +16808,6 @@
                         /** @var \App\Services\Helpers\Classes\MosquitoSystemsHelper $instance */
                         return $instance->productHasCoefficient($productInOrder);
         }
-                    /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function productData($productInOrder, $field = null)
-        {            //Method inherited from \App\Services\Helpers\Classes\AbstractProductHelper         
-                        /** @var \App\Services\Helpers\Classes\MosquitoSystemsHelper $instance */
-                        return $instance->productData($productInOrder, $field);
-        }
          
     }
             /**
@@ -16959,6 +16949,53 @@
         {
                         /** @var \App\Services\Helpers\Classes\SalaryHelper $instance */
                         return $instance->checkMeasuringAndDelivery($order, $productInOrder);
+        }
+         
+    }
+            /**
+     * 
+     *
+     */ 
+        class SelectDataFacade {
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function secondSelect()
+        {
+                        /** @var \App\Services\Renderer\Classes\MosquitoSelectData $instance */
+                        return $instance->secondSelect();
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function thirdSelect()
+        {
+                        /** @var \App\Services\Renderer\Classes\MosquitoSelectData $instance */
+                        return $instance->thirdSelect();
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function additional()
+        {
+                        /** @var \App\Services\Renderer\Classes\MosquitoSelectData $instance */
+                        return $instance->additional();
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function use($productInOrder)
+        {            //Method inherited from \App\Services\Renderer\Classes\SelectData         
+                        /** @var \App\Services\Renderer\Classes\MosquitoSelectData $instance */
+                        return $instance->use($productInOrder);
         }
          
     }
@@ -20879,6 +20916,7 @@ namespace  {
             class ProductHelper extends \App\Services\Facades\Classes\ProductHelperFacade {}
             class OrderHelper extends \App\Services\Facades\Classes\OrderHelperFacade {}
             class SalaryHelper extends \App\Services\Facades\Classes\SalaryHelperFacade {}
+            class SelectData extends \App\Services\Facades\Classes\SelectDataFacade {}
             class Flare extends \Facade\Ignition\Facades\Flare {}
      
 }
