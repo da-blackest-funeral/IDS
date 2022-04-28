@@ -98,7 +98,7 @@
     }
 
     function equals(float|int $first, float|int $second) {
-        return strval($first) === strval($second);
+        return strval((float)$first) === strval((float)$second);
     }
 
     function selectedGroups() {

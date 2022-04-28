@@ -13,19 +13,24 @@
 
     class MosquitoSystemsHelper extends AbstractProductHelper
     {
+        /**
+         * @param ProductInOrder $productInOrder
+         * @return void
+         */
         public function updateOrCreateSalary(ProductInOrder $productInOrder) {
-             $sameCategoryProducts = new ProductRepository();
-             $sameCategoryProducts->byCategory($productInOrder)
-                ->without($productInOrder)
-                ->get();
 
-            $count = $this->countProductsWithInstallation($productInOrder);
+            $sameCategoryProducts = ProductRepository::byCategory($productInOrder)
+                ->without($productInOrder);
 
-            $countOfAllProducts = $this->countOf(
-                \OrderHelper::withoutOldProduct($productInOrder->order->products)
-            );
+            $countWithInstallation = ProductRepository::withInstallation($productInOrder->order)
+                ->count();
 
-            $productsWithMaxInstallation = $this->productsWithMaxInstallation($productInOrder);
+            $countOfAllProducts = ProductRepository::use($productInOrder->order->products)
+                ->without(oldProduct())
+                ->count();
+
+            $productWithMaxInstallation = $this->productsWithMaxInstallation($productInOrder)
+                ->first();
 
             if (
                 $sameCategoryProducts->isNotEmpty() &&
@@ -35,8 +40,8 @@
 
                 \SalaryHelper::update(
                     sum: $this->calculateInstallationSalary(
-                        productInOrder: $productsWithMaxInstallation->first(),
-                        count: $count,
+                        productInOrder: $productWithMaxInstallation,
+                        count: $countWithInstallation,
                     ),
                     productInOrder: $productInOrder,
                 );
@@ -57,7 +62,11 @@
                 // есть товар другого типа без монтажа, за который есть зп в 960, то зарплата складывается из
                 // 960 за один и за монтаж за другой, надо обнулять зарплату которая равна 960
 
-                if (\OrderHelper::hasProducts($productInOrder->order) && !Calculator::productNeedInstallation()) {
+                // todo возможное решение проблемы с зарплатой за доставку и замер - хранить ее прямо в заказе
+                // или хранить данные о типе зарплаты, т.е. за что она была начислена, и при необходимости
+                // находить такую зарплату по типу и обнулять ее
+
+                if (\OrderHelper::hasProducts() && !Calculator::productNeedInstallation()) {
                     \SalaryHelper::make($productInOrder->order, 0);
                     return;
                 }
@@ -66,7 +75,10 @@
             }
         }
 
-        protected function needDecreaseCount() {
+        /**
+         * @return bool
+         */
+        protected function needDecreaseCount(): bool {
             return fromUpdatingProductPage() && oldProductHasInstallation();
         }
 
@@ -88,7 +100,7 @@
                 typeId: Type::byCategory($productInOrder->category_id)->id
             );
 
-            $result += $this->checkDifficultySalary($productInOrder);
+            $result += $this->difficultySalary($productInOrder);
 
             return $result;
         }
@@ -144,10 +156,11 @@
             );
 
             if (is_null($salary)) {
-                return \OrderHelper::salaries($productInOrder->order);
+                return \OrderHelper::salaries();
             }
 
-            $missingCount = $this->countProductsWithInstallation($productInOrder) - $salary->count;
+            $missingCount = ProductRepository::withInstallation($productInOrder->order)
+                    ->count() - $salary->count;
             if ($this->needDecreaseCount()) {
                 $missingCount -= oldProductsCount();
             }
@@ -161,14 +174,13 @@
          * @param ProductInOrder $productInOrder
          * @return int
          */
-        protected function checkDifficultySalary(ProductInOrder $productInOrder) {
+        protected function difficultySalary(ProductInOrder $productInOrder) {
             $salary = 0;
 
-            $products = \OrderHelper::withoutOldProduct(
-                $this->productsWithInstallation($productInOrder)
-            );
+            $products = ProductRepository::withInstallation($productInOrder->order)
+                ->without(oldProduct());
 
-            foreach ($products as $product) {
+            foreach ($products->get() as $product) {
                 if ($this->productHasCoefficient($product)) {
 
                     $salary += Calculator::salaryForDifficulty(
@@ -182,7 +194,11 @@
             return $salary;
         }
 
-        protected function productsWithMaxInstallation(ProductInOrder $productInOrder) {
+        /**
+         * @param ProductInOrder $productInOrder
+         * @return Collection
+         */
+        protected function productsWithMaxInstallation(ProductInOrder $productInOrder): Collection {
             $typeId = Type::byCategory($productInOrder->category_id)->id;
             $productsWithInstallation = $productInOrder->order
                 ->products()
@@ -194,15 +210,19 @@
                 )
                 ->where('mosquito_systems_type_additional.type_id', $typeId)
                 // todo оставить только те поля которые нужны
-                ->get(['*', 'price as installation_price']);
+                ->get();
 
-            $maxInstallationPrice = $productsWithInstallation->max('installation_price');
+            $maxInstallationPrice = $productsWithInstallation->max('price');
 
             return $productsWithInstallation->filter(function ($product) use ($maxInstallationPrice) {
-                return $product->installation_price == $maxInstallationPrice;
+                return equals($product->price, $maxInstallationPrice);
             });
         }
 
+        /**
+         * @param ProductInOrder|null $product
+         * @return Collection
+         */
         public function profiles(ProductInOrder $product = null): Collection {
             return Profile::whereHas('products.type', function ($query) use ($product) {
                 return $query->where('category_id', $product->category_id ?? request()->input('categoryId'))
@@ -211,6 +231,10 @@
                 ->get(['id', 'name']);
         }
 
+        /**
+         * @param int $categoryId
+         * @return Collection
+         */
         public function tissues(int $categoryId): Collection {
             // todo колхоз
             return \App\Models\Category::tissues($categoryId)
@@ -222,6 +246,10 @@
                 ->unique();
         }
 
+        /**
+         * @param ProductInOrder|null $productInOrder
+         * @return array
+         */
         public function additional(ProductInOrder $productInOrder = null): array {
             $product = Product::whereTissueId($productInOrder->data->tissueId ?? request()->input('nextAdditional'))
                 ->whereProfileId($productInOrder->data->profileId ?? request()->input('additional'))

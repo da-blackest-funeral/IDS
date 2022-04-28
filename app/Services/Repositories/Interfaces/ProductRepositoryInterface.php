@@ -8,13 +8,15 @@
     // todo сделать как real-time facade
     interface ProductRepositoryInterface
     {
-        public function use(Collection $products): ProductRepositoryInterface;
+        public static function use(Collection $products): ProductRepositoryInterface;
 
-        public function without(ProductInOrder $productInOrder): ProductRepositoryInterface;
+        public function without(object $productToReject): ProductRepositoryInterface;
 
         public function count(): int;
 
-        public function byCategory(ProductInOrder $productInOrder): ProductRepositoryInterface;
+        public static function byCategory(ProductInOrder $productInOrder): ProductRepositoryInterface;
 
         public function isNotEmpty(): bool;
+
+        public function get(): Collection;
     }

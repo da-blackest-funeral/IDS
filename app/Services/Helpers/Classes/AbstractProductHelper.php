@@ -29,24 +29,6 @@
             ]);
         }
 
-        protected function productsWithInstallation(ProductInOrder $productInOrder): Collection {
-            return $productInOrder->order
-                ->products()
-                ->where('category_id', request()->input('categories'))
-                ->whereNotIn('installation_id', [0, 14])
-                ->get();
-        }
-
-        public function countProductsWithInstallation(ProductInOrder $productInOrder): int {
-            return $this->countOf(
-                $this->productsWithInstallation($productInOrder)
-            );
-        }
-
-        public function countOf(Collection $products): int {
-            return $products->sum('count');
-        }
-
         public function productHasCoefficient(ProductInOrder $productInOrder): bool {
             return $productInOrder->data->coefficient > 1;
         }

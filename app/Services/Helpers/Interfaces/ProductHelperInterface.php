@@ -19,28 +19,12 @@
         public function calculateInstallationSalary(ProductInOrder $productInOrder, int $count): int;
 
         /**
-         * Calculates count by collection of products
-         *
-         * @param Collection $products
-         * @return int
-         */
-        public function countOf(Collection $products): int;
-
-        /**
          * Determines if product has coefficient difficulty
          *
          * @param ProductInOrder $productInOrder
          * @return bool
          */
         public function productHasCoefficient(ProductInOrder $productInOrder): bool;
-
-        /**
-         * Calculates count of products that need installation
-         *
-         * @param ProductInOrder $productInOrder
-         * @return int
-         */
-        public function countProductsWithInstallation(ProductInOrder $productInOrder): int;
 
         /**
          * Getting second select data for ajax displaying
