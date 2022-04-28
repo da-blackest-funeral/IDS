@@ -6,8 +6,6 @@
     use App\Models\Category;
     use App\Models\Order;
     use App\Models\ProductInOrder;
-    use App\Models\SystemVariables;
-    use Facades\App\Services\Calculator\Interfaces\Calculator;
 
     class ProductController extends Controller
     {
@@ -28,7 +26,6 @@
                 )->get(),
                 'orderNumber' => $order->id,
                 'product' => $productInOrder,
-                'needPreload' => true,
             ]);
         }
 

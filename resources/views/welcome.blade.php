@@ -146,7 +146,7 @@
             </div>
         @endif
 
-        @include('pages.add-product-form', ['needPreload' => !isset($order)])
+        @include('pages.add-product-form')
         @yield('add-product')
 
         <div class="mt-5">
