@@ -2,8 +2,9 @@
 
     namespace App\Services\Helpers\Config;
 
-    // todo потом сделаю когда можно будет нормально обновиться до php 8.1
-//    enum SalaryType: string
-//    {
-//        case TEST = 'test';
-//    }
+    // todo потом сделаю enum когда можно будет нормально обновиться до php 8.1
+    class SalaryType {
+        const INSTALLATION = 'Монтаж';
+
+        const NO_INSTALLATION = 'Без монтажа';
+    }

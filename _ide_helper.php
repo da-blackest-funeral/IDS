@@ -4,7 +4,7 @@
 
 /**
  * A helper file for Laravel, to provide autocomplete information to your IDE
- * Generated for Laravel 8.83.0.
+ * Generated for Laravel 8.83.10.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -8947,7 +8947,7 @@
                     /**
          * Push a new job onto the queue.
          *
-         * @param string $job
+         * @param string|object $job
          * @param mixed $data
          * @param string|null $queue
          * @return mixed 
@@ -8976,7 +8976,7 @@
          * Push a new job onto the queue after a delay.
          *
          * @param \DateTimeInterface|\DateInterval|int $delay
-         * @param string $job
+         * @param string|object $job
          * @param mixed $data
          * @param string|null $queue
          * @return mixed 
@@ -8991,7 +8991,7 @@
          * Push a new job onto the queue.
          *
          * @param string $queue
-         * @param string $job
+         * @param string|object $job
          * @param mixed $data
          * @return mixed 
          * @static 
@@ -9006,7 +9006,7 @@
          *
          * @param string $queue
          * @param \DateTimeInterface|\DateInterval|int $delay
-         * @param string $job
+         * @param string|object $job
          * @param mixed $data
          * @return mixed 
          * @static 
@@ -16708,12 +16708,14 @@
                     /**
          * 
          *
+         * @param \App\Models\ProductInOrder $productInOrder
+         * @return void 
          * @static 
          */ 
         public static function updateOrCreateSalary($productInOrder)
         {
                         /** @var \App\Services\Helpers\Classes\MosquitoSystemsHelper $instance */
-                        return $instance->updateOrCreateSalary($productInOrder);
+                        $instance->updateOrCreateSalary($productInOrder);
         }
                     /**
          * Calculates salary for specified product and count
@@ -16731,6 +16733,8 @@
                     /**
          * 
          *
+         * @param \App\Models\ProductInOrder|null $product
+         * @return \Illuminate\Support\Collection 
          * @static 
          */ 
         public static function profiles($product = null)
@@ -16741,6 +16745,8 @@
                     /**
          * 
          *
+         * @param int $categoryId
+         * @return \Illuminate\Support\Collection 
          * @static 
          */ 
         public static function tissues($categoryId)
@@ -16751,6 +16757,8 @@
                     /**
          * 
          *
+         * @param \App\Models\ProductInOrder|null $productInOrder
+         * @return array 
          * @static 
          */ 
         public static function additional($productInOrder = null)
@@ -16761,6 +16769,8 @@
                     /**
          * 
          *
+         * @param object $productInOrder
+         * @return bool 
          * @static 
          */ 
         public static function hasInstallation($productInOrder)
@@ -16771,6 +16781,8 @@
                     /**
          * 
          *
+         * @param \App\Services\Helpers\Classes\Order $order
+         * @return \App\Models\ProductInOrder 
          * @static 
          */ 
         public static function make($order)
@@ -16781,32 +16793,25 @@
                     /**
          * 
          *
-         * @static 
-         */ 
-        public static function countProductsWithInstallation($productInOrder)
-        {            //Method inherited from \App\Services\Helpers\Classes\AbstractProductHelper         
-                        /** @var \App\Services\Helpers\Classes\MosquitoSystemsHelper $instance */
-                        return $instance->countProductsWithInstallation($productInOrder);
-        }
-                    /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function countOf($products)
-        {            //Method inherited from \App\Services\Helpers\Classes\AbstractProductHelper         
-                        /** @var \App\Services\Helpers\Classes\MosquitoSystemsHelper $instance */
-                        return $instance->countOf($products);
-        }
-                    /**
-         * 
-         *
+         * @param \App\Models\ProductInOrder $productInOrder
+         * @return bool 
          * @static 
          */ 
         public static function productHasCoefficient($productInOrder)
         {            //Method inherited from \App\Services\Helpers\Classes\AbstractProductHelper         
                         /** @var \App\Services\Helpers\Classes\MosquitoSystemsHelper $instance */
                         return $instance->productHasCoefficient($productInOrder);
+        }
+                    /**
+         * 
+         *
+         * @return bool 
+         * @static 
+         */ 
+        public static function noInstallation()
+        {            //Method inherited from \App\Services\Helpers\Classes\AbstractProductHelper         
+                        /** @var \App\Services\Helpers\Classes\MosquitoSystemsHelper $instance */
+                        return $instance->noInstallation();
         }
          
     }

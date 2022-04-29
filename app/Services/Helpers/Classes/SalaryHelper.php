@@ -6,6 +6,7 @@
     use App\Models\ProductInOrder;
     use App\Models\Salaries\InstallerSalary;
     use App\Models\SystemVariables;
+    use App\Services\Helpers\Config\SalaryType;
     use App\Services\Helpers\Interfaces\SalaryHelperInterface;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
 
@@ -17,14 +18,15 @@
 
             $salary->sum = $sum;
 
-            // todo условие немного некорректное
-            // тип зарплаты должен определяться за конкретный товар, а не
-            // есть ли в заказе товары с монтажом
-            if (\ProductHelper::hasInstallation($productInOrder)) {
-                $salary->type = 'Монтаж';
-            } else {
-                $salary->type = 'Без монтажа';
-            }
+//            if (\ProductHelper::hasInstallation($productInOrder)) {
+//                $salary->type = SalaryType::INSTALLATION;
+//            } else {
+//                $salary->type = SalaryType::NO_INSTALLATION;
+//            }
+            \ProductHelper::hasInstallation($productInOrder) ?
+                $salary->type = SalaryType::INSTALLATION :
+                $salary->type = SalaryType::NO_INSTALLATION;
+
             $salary->update();
         }
 
@@ -39,7 +41,7 @@
                 'changed_sum' => Calculator::getInstallersWage(),
                 'created_user_id' => auth()->user()->getAuthIdentifier(),
                 'type' => Calculator::productNeedInstallation() ?
-                    'Монтаж' : 'Без монтажа', // todo сделать Enum для этого
+                    SalaryType::INSTALLATION : SalaryType::NO_INSTALLATION, // todo сделать Enum для этого
             ]);
         }
 
