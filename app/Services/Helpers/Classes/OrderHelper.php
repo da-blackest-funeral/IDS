@@ -43,8 +43,8 @@
         }
 
         public function orderOrProductHasInstallation(): bool {
-            return !\OrderHelper::hasProducts($this->order) ||
-                \OrderHelper::hasInstallation($this->order) ||
+            return !\OrderHelper::hasProducts() ||
+                \OrderHelper::hasInstallation() ||
                 Calculator::productNeedInstallation();
         }
 

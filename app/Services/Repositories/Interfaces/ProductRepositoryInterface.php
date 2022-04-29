@@ -5,7 +5,6 @@
     use App\Models\ProductInOrder;
     use Illuminate\Support\Collection;
 
-    // todo сделать как real-time facade
     interface ProductRepositoryInterface
     {
         public static function use(Collection $products): ProductRepositoryInterface;

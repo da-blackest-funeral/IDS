@@ -16,6 +16,15 @@
                 ->first();
 
             $salary->sum = $sum;
+
+            // todo условие немного некорректное
+            // тип зарплаты должен определяться за конкретный товар, а не
+            // есть ли в заказе товары с монтажом
+            if (\ProductHelper::hasInstallation($productInOrder)) {
+                $salary->type = 'Монтаж';
+            } else {
+                $salary->type = 'Без монтажа';
+            }
             $salary->update();
         }
 
@@ -29,7 +38,8 @@
                 'status' => false,
                 'changed_sum' => Calculator::getInstallersWage(),
                 'created_user_id' => auth()->user()->getAuthIdentifier(),
-                'type' => 'Заказ', // todo сделать Enum для этого
+                'type' => Calculator::productNeedInstallation() ?
+                    'Монтаж' : 'Без монтажа', // todo сделать Enum для этого
             ]);
         }
 

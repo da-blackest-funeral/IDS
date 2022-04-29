@@ -10,14 +10,22 @@
 
     abstract class AbstractProductHelper implements ProductHelperInterface
     {
-        public function hasInstallation(object $productInOrder) {
+        /**
+         * @param object $productInOrder
+         * @return bool
+         */
+        public function hasInstallation(object $productInOrder): bool {
             return
                 isset($productInOrder->installation_id) &&
                 $productInOrder->installation_id &&
                 $productInOrder->installation_id != 14;
         }
 
-        function make(Order $order) {
+        /**
+         * @param Order $order
+         * @return ProductInOrder
+         */
+        function make(Order $order): ProductInOrder {
             return ProductInOrder::create([
                 'installation_id' => Calculator::getInstallation('additional_id'),
                 'order_id' => $order->id,
@@ -29,7 +37,19 @@
             ]);
         }
 
+        /**
+         * @param ProductInOrder $productInOrder
+         * @return bool
+         */
         public function productHasCoefficient(ProductInOrder $productInOrder): bool {
             return $productInOrder->data->coefficient > 1;
+        }
+
+        /**
+         * @return bool
+         */
+        public function noInstallation(): bool {
+            return !\OrderHelper::hasInstallation() &&
+                !Calculator::productNeedInstallation();
         }
     }
