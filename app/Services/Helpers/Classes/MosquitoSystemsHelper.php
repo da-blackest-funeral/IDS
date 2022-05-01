@@ -249,7 +249,7 @@
          * @return Collection
          */
         public function tissues(int $categoryId): Collection {
-            return Category::find($categoryId)
+            return Category::findOrFail($categoryId)
                 ->type
                 ->products()
                 ->with('tissue', function ($query) {
