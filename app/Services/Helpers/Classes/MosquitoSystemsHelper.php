@@ -2,6 +2,7 @@
 
     namespace App\Services\Helpers\Classes;
 
+    use App\Exceptions\SalaryCalculationException;
     use App\Models\MosquitoSystems\Group;
     use App\Models\MosquitoSystems\Product;
     use App\Models\MosquitoSystems\Profile;
@@ -64,8 +65,8 @@
          * @return bool
          */
         protected function salariesForNoInstallationMustBeRemoved(): bool {
-            return ! \OrderHelper::hasInstallation() && \OrderHelper::hasProducts() &&
-                ! Calculator::productNeedInstallation() &&
+            return !\OrderHelper::hasInstallation() && \OrderHelper::hasProducts() &&
+                !Calculator::productNeedInstallation() &&
                 fromUpdatingProductPage() &&
                 static::hasInstallation(oldProduct());
         }
@@ -82,8 +83,8 @@
                 ->count();
 
             return $sameCategoryProducts->isNotEmpty() &&
-            !is_null(\SalaryHelper::salary()) ||
-            !$countOfAllProducts && fromUpdatingProductPage();
+                !is_null(\SalaryHelper::salary()) ||
+                !$countOfAllProducts && fromUpdatingProductPage();
         }
 
         /**
@@ -105,7 +106,7 @@
                 $count -= oldProductsCount();
             }
 
-            $result = $this->salaryByCount(
+            $result = $this->salary(
                 productInOrder: $productInOrder,
                 count: $count,
                 typeId: Type::byCategory($productInOrder->category_id)->id
@@ -122,7 +123,7 @@
          * @param int $typeId
          * @return float|int|mixed
          */
-        protected function salaryByCount(ProductInOrder $productInOrder, int $count, int $typeId) {
+        protected function salary(ProductInOrder $productInOrder, int $count, int $typeId) {
             try {
                 $result = $this->salaryForCount(
                     productInOrder: $productInOrder,
@@ -144,7 +145,6 @@
          * @param int $count
          * @param int $typeId
          * @return mixed
-         * @todo переименовать т.к. уже есть метод salaryByCount
          */
         protected function salaryForCount(ProductInOrder $productInOrder, int $count, int $typeId) {
             $salary = Calculator::getInstallationSalary(
@@ -160,6 +160,7 @@
          * @param ProductInOrder $productInOrder
          * @param int $typeId
          * @return float|int
+         * @throws SalaryCalculationException
          */
         protected function salaryForMaxCount(ProductInOrder $productInOrder, int $typeId) {
             $salary = Calculator::maxCountSalary(
@@ -168,7 +169,7 @@
             );
 
             if (is_null($salary)) {
-                return \OrderHelper::salaries();
+                throw new SalaryCalculationException('Зарплата за данный тип не найдена!');
             }
 
             $missingCount = ProductRepository::withInstallation($productInOrder->order)
