@@ -15,18 +15,7 @@ class CategoriesAction extends Controller
      * @var int
      */
     protected int $categoryId;
-    /**
-     * For getting only related collections, we need to specify all relations
-     *
-     * @var string[][]
-     */
-    protected array $relations = [
-        Category::class => [
-            'type',
-            'products',
-            'tissue',
-        ],
-    ];
+
     /**
      * All concrete information about categories groups
      *
@@ -71,19 +60,19 @@ class CategoriesAction extends Controller
         if ($method) {
             $data = $this->execute($method);
         } else {
-            return view("ajax.additional.category{$this->categoryId}-additional");
+            return view("ajax.additional.category$this->categoryId-additional");
         }
 
-        if ($this->hasRelations($method)) {
-            $relationsCount = count($this->relations[strtok($method, '::')]);
-            for ($i = 0; $i < $relationsCount; $i++) {
-                $relation = $this->relations[strtok($method, '::')][$i];
-                $data = $data->pluck($relation);
-                if ($this->uselessCollection($data)) {
-                    $data = $data[0];
-                }
-            }
-        }
+//        if ($this->hasRelations($method)) {
+//            $relationsCount = count($this->relations[strtok($method, '::')]);
+//            for ($i = 0; $i < $relationsCount; $i++) {
+//                $relation = $this->relations[strtok($method, '::')][$i];
+//                $data = $data->pluck($relation);
+//                if ($this->uselessCollection($data)) {
+//                    $data = $data[0];
+//                }
+//            }
+//        }
 
         return view('ajax.second-select')->with([
                 'data' => $data->unique(),
@@ -101,8 +90,7 @@ class CategoriesAction extends Controller
      */
     protected function execute($method) {
         if (!$this->methodIsAll($method)) {
-            return call_user_func($method, $this->categoryId)
-                ->get();
+            return call_user_func($method, $this->categoryId);
         } else {
             return call_user_func($method);
         }

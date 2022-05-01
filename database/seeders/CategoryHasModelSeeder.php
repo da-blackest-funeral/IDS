@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Slopes\Slope;
 use App\Models\TypesWindows;
 use App\Models\Wraps\Wrap;
+use App\Services\Renderer\Classes\SelectData;
 use Illuminate\Database\Seeder;
 
 class CategoryHasModelSeeder extends Seeder
@@ -21,7 +22,7 @@ class CategoryHasModelSeeder extends Seeder
         $relations = [
             [
                 'category_ids' => range(5, 14),
-                'method' => Category::class . '::tissues',
+                'method' => '\ProductHelper::tissues',
             ],
             [
                 // [19, 21, 23]

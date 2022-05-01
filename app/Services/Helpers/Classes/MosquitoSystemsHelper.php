@@ -3,6 +3,7 @@
     namespace App\Services\Helpers\Classes;
 
     use App\Exceptions\SalaryCalculationException;
+    use App\Models\Category;
     use App\Models\MosquitoSystems\Group;
     use App\Models\MosquitoSystems\Product;
     use App\Models\MosquitoSystems\Profile;
@@ -10,6 +11,7 @@
     use App\Models\ProductInOrder;
     use App\Services\Repositories\Classes\ProductRepository;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
+    use Illuminate\Database\Query\Builder;
     use Illuminate\Support\Collection;
 
     class MosquitoSystemsHelper extends AbstractProductHelper
@@ -122,6 +124,7 @@
          * @param int $count
          * @param int $typeId
          * @return float|int|mixed
+         * @throws SalaryCalculationException
          */
         protected function salary(ProductInOrder $productInOrder, int $count, int $typeId) {
             try {
@@ -191,11 +194,11 @@
             $salary = 0;
 
             $products = ProductRepository::withInstallation($productInOrder->order)
-                ->without(oldProduct());
+                ->without(oldProduct())
+                ->get();
 
-            foreach ($products->get() as $product) {
+            foreach ($products as $product) {
                 if ($this->productHasCoefficient($product)) {
-
                     $salary += Calculator::salaryForDifficulty(
                         price: $product->data->installationPrice,
                         coefficient: $product->data->coefficient,
@@ -221,7 +224,6 @@
                     'products.installation_id'
                 )
                 ->where('mosquito_systems_type_additional.type_id', $typeId)
-                // todo оставить только те поля которые нужны
                 ->get();
 
             $maxInstallationPrice = $productsWithInstallation->max('price');
@@ -247,14 +249,14 @@
          * @return Collection
          */
         public function tissues(int $categoryId): Collection {
-            // todo колхоз, переделать и убрать этот метод из Category
-            return \App\Models\Category::tissues($categoryId)
-                ->get()
-                ->pluck('type')
-                ->pluck('products')
-                ->collapse()
-                ->pluck('tissue')
-                ->unique();
+            return Category::find($categoryId)
+                ->type
+                ->products()
+                ->with('tissue', function ($query) {
+                    $query->select(['id', 'name'])->distinct();
+                })
+                ->get(['tissue_id'])
+                ->pluck('tissue');
         }
 
         /**
