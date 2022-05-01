@@ -17,15 +17,7 @@
                 ->first();
 
             $salary->sum = $sum;
-
-//            if (\ProductHelper::hasInstallation($productInOrder)) {
-//                $salary->type = SalaryType::INSTALLATION;
-//            } else {
-//                $salary->type = SalaryType::NO_INSTALLATION;
-//            }
-            \ProductHelper::hasInstallation($productInOrder) ?
-                $salary->type = SalaryType::INSTALLATION :
-                $salary->type = SalaryType::NO_INSTALLATION;
+            $salary->type = SalaryType::determine($productInOrder);
 
             $salary->update();
         }
@@ -40,8 +32,7 @@
                 'status' => false,
                 'changed_sum' => Calculator::getInstallersWage(),
                 'created_user_id' => auth()->user()->getAuthIdentifier(),
-                'type' => Calculator::productNeedInstallation() ?
-                    SalaryType::INSTALLATION : SalaryType::NO_INSTALLATION, // todo сделать Enum для этого
+                'type' => SalaryType::determine(),
             ]);
         }
 
@@ -59,7 +50,7 @@
         }
 
         function checkMeasuringAndDelivery(Order $order, ProductInOrder $productInOrder) {
-            if (\OrderHelper::hasInstallation($order) || Calculator::productNeedInstallation()) {
+            if (\OrderHelper::hasInstallation() || Calculator::productNeedInstallation()) {
                 $order->measuring_price = 0;
             } else {
                 $order->measuring_price = SystemVariables::value('measuring');

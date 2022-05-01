@@ -7,6 +7,8 @@
     use App\Models\MosquitoSystems\Profile;
     use App\Models\MosquitoSystems\Type;
     use App\Models\ProductInOrder;
+    use App\Models\Salaries\InstallerSalary;
+    use App\Services\Helpers\Config\SalaryType;
     use App\Services\Repositories\Classes\ProductRepository;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
     use Illuminate\Support\Collection;
@@ -45,6 +47,25 @@
                     ),
                     productInOrder: $productInOrder,
                 );
+
+                // todo проверить, нужно ли делать обратное
+                // todo отрефакторить
+                // когда убирается монтаж сделать возвращение зарплат за замер и доставку
+                if (
+                    ! \OrderHelper::hasInstallation() && \OrderHelper::hasProducts() &&
+                    ! Calculator::productNeedInstallation() &&
+                    fromUpdatingProductPage() &&
+                    \ProductHelper::hasInstallation(oldProduct())
+                ) {
+                    $productInOrder->order
+                        ->salaries()
+                        ->where('type', SalaryType::NO_INSTALLATION)
+                        ->get()
+                        ->each(function (InstallerSalary $salary) {
+                            $salary->sum = 0;
+                            $salary->update();
+                        });
+                }
 
                 \SalaryHelper::checkMeasuringAndDelivery(
                     order: $productInOrder->order,
