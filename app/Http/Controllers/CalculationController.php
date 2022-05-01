@@ -13,18 +13,8 @@
     class CalculationController extends Controller
     {
         public function index() {
-            return view('welcome')->with([
-                'data' => Category::all(),
-                'superCategories' => Category::whereIn(
-                    'id', Category::select(['parent_id'])
-                    ->whereNotNull('parent_id')
-                    ->groupBy(['parent_id'])
-                    ->get()
-                    ->toArray()
-                )->get(),
-                'orderNumber' => Order::count() + 1,
-                'installers' => User::role('installer')->get()
-            ]);
+            return view('welcome')
+                ->with(dataForOrderPage());
         }
 
         public function save() {

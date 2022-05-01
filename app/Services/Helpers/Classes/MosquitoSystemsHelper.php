@@ -7,8 +7,6 @@
     use App\Models\MosquitoSystems\Profile;
     use App\Models\MosquitoSystems\Type;
     use App\Models\ProductInOrder;
-    use App\Models\Salaries\InstallerSalary;
-    use App\Services\Helpers\Config\SalaryType;
     use App\Services\Repositories\Classes\ProductRepository;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
     use Illuminate\Support\Collection;
@@ -21,29 +19,14 @@
          */
         public function updateOrCreateSalary(ProductInOrder $productInOrder) {
 
-            $sameCategoryProducts = ProductRepository::byCategory($productInOrder)
-                ->without($productInOrder);
-
-            $countWithInstallation = ProductRepository::withInstallation($productInOrder->order)
-                ->count();
-
-            $countOfAllProducts = ProductRepository::use($productInOrder->order->products)
-                ->without(oldProduct())
-                ->count();
-
-            $productWithMaxInstallation = $this->productsWithMaxInstallation($productInOrder)
-                ->first();
-
-            if (
-                $sameCategoryProducts->isNotEmpty() &&
-                !is_null(\SalaryHelper::salary($productInOrder)) ||
-                !$countOfAllProducts && fromUpdatingProductPage()
-            ) {
+            if ($this->needUpdateSalary($productInOrder)) {
 
                 \SalaryHelper::update(
                     sum: $this->calculateInstallationSalary(
-                        productInOrder: $productWithMaxInstallation,
-                        count: $countWithInstallation,
+                        productInOrder: $this->productsWithMaxInstallation($productInOrder)
+                            ->first(),
+                        count: ProductRepository::withInstallation($productInOrder->order)
+                            ->count(),
                     ),
                     productInOrder: $productInOrder,
                 );
@@ -51,26 +34,11 @@
                 // todo проверить, нужно ли делать обратное
                 // todo отрефакторить
                 // когда убирается монтаж сделать возвращение зарплат за замер и доставку
-                if (
-                    ! \OrderHelper::hasInstallation() && \OrderHelper::hasProducts() &&
-                    ! Calculator::productNeedInstallation() &&
-                    fromUpdatingProductPage() &&
-                    \ProductHelper::hasInstallation(oldProduct())
-                ) {
-                    $productInOrder->order
-                        ->salaries()
-                        ->where('type', SalaryType::NO_INSTALLATION)
-                        ->get()
-                        ->each(function (InstallerSalary $salary) {
-                            $salary->sum = 0;
-                            $salary->update();
-                        });
+                if ($this->salariesForNoInstallationMustBeRemoved()) {
+                    \SalaryHelper::removeNoInstallation($productInOrder);
                 }
 
-                \SalaryHelper::checkMeasuringAndDelivery(
-                    order: $productInOrder->order,
-                    productInOrder: $productInOrder
-                );
+                \SalaryHelper::checkMeasuringAndDelivery($productInOrder);
 
             } else {
                 // todo баг
@@ -94,6 +62,33 @@
 
                 \SalaryHelper::make($productInOrder->order);
             }
+        }
+
+        /**
+         * @return bool
+         */
+        protected function salariesForNoInstallationMustBeRemoved(): bool {
+            return ! \OrderHelper::hasInstallation() && \OrderHelper::hasProducts() &&
+                ! Calculator::productNeedInstallation() &&
+                fromUpdatingProductPage() &&
+                static::hasInstallation(oldProduct());
+        }
+
+        /**
+         * @param ProductInOrder $productInOrder
+         * @return bool
+         */
+        protected function needUpdateSalary(ProductInOrder $productInOrder): bool {
+            $sameCategoryProducts = ProductRepository::byCategory($productInOrder)
+                ->without($productInOrder);
+
+            $countOfAllProducts = ProductRepository::use($productInOrder->order->products)
+                ->without(oldProduct())
+                ->count();
+
+            return $sameCategoryProducts->isNotEmpty() &&
+            !is_null(\SalaryHelper::salary($productInOrder)) ||
+            !$countOfAllProducts && fromUpdatingProductPage();
         }
 
         /**

@@ -16704,121 +16704,6 @@
      * 
      *
      */ 
-        class ProductHelperFacade {
-                    /**
-         * 
-         *
-         * @param \App\Models\ProductInOrder $productInOrder
-         * @return void 
-         * @static 
-         */ 
-        public static function updateOrCreateSalary($productInOrder)
-        {
-                        /** @var \App\Services\Helpers\Classes\MosquitoSystemsHelper $instance */
-                        $instance->updateOrCreateSalary($productInOrder);
-        }
-                    /**
-         * Calculates salary for specified product and count
-         *
-         * @param \App\Models\ProductInOrder $productInOrder
-         * @param int $count
-         * @return int 
-         * @static 
-         */ 
-        public static function calculateInstallationSalary($productInOrder, $count)
-        {
-                        /** @var \App\Services\Helpers\Classes\MosquitoSystemsHelper $instance */
-                        return $instance->calculateInstallationSalary($productInOrder, $count);
-        }
-                    /**
-         * 
-         *
-         * @param \App\Models\ProductInOrder|null $product
-         * @return \Illuminate\Support\Collection 
-         * @static 
-         */ 
-        public static function profiles($product = null)
-        {
-                        /** @var \App\Services\Helpers\Classes\MosquitoSystemsHelper $instance */
-                        return $instance->profiles($product);
-        }
-                    /**
-         * 
-         *
-         * @param int $categoryId
-         * @return \Illuminate\Support\Collection 
-         * @static 
-         */ 
-        public static function tissues($categoryId)
-        {
-                        /** @var \App\Services\Helpers\Classes\MosquitoSystemsHelper $instance */
-                        return $instance->tissues($categoryId);
-        }
-                    /**
-         * 
-         *
-         * @param \App\Models\ProductInOrder|null $productInOrder
-         * @return array 
-         * @static 
-         */ 
-        public static function additional($productInOrder = null)
-        {
-                        /** @var \App\Services\Helpers\Classes\MosquitoSystemsHelper $instance */
-                        return $instance->additional($productInOrder);
-        }
-                    /**
-         * 
-         *
-         * @param object $productInOrder
-         * @return bool 
-         * @static 
-         */ 
-        public static function hasInstallation($productInOrder)
-        {            //Method inherited from \App\Services\Helpers\Classes\AbstractProductHelper         
-                        /** @var \App\Services\Helpers\Classes\MosquitoSystemsHelper $instance */
-                        return $instance->hasInstallation($productInOrder);
-        }
-                    /**
-         * 
-         *
-         * @param \App\Services\Helpers\Classes\Order $order
-         * @return \App\Models\ProductInOrder 
-         * @static 
-         */ 
-        public static function make($order)
-        {            //Method inherited from \App\Services\Helpers\Classes\AbstractProductHelper         
-                        /** @var \App\Services\Helpers\Classes\MosquitoSystemsHelper $instance */
-                        return $instance->make($order);
-        }
-                    /**
-         * 
-         *
-         * @param \App\Models\ProductInOrder $productInOrder
-         * @return bool 
-         * @static 
-         */ 
-        public static function productHasCoefficient($productInOrder)
-        {            //Method inherited from \App\Services\Helpers\Classes\AbstractProductHelper         
-                        /** @var \App\Services\Helpers\Classes\MosquitoSystemsHelper $instance */
-                        return $instance->productHasCoefficient($productInOrder);
-        }
-                    /**
-         * 
-         *
-         * @return bool 
-         * @static 
-         */ 
-        public static function noInstallation()
-        {            //Method inherited from \App\Services\Helpers\Classes\AbstractProductHelper         
-                        /** @var \App\Services\Helpers\Classes\MosquitoSystemsHelper $instance */
-                        return $instance->noInstallation();
-        }
-         
-    }
-            /**
-     * 
-     *
-     */ 
         class OrderHelperFacade {
                     /**
          * 
@@ -16940,6 +16825,16 @@
          *
          * @static 
          */ 
+        public static function removeNoInstallation($productInOrder)
+        {
+                        /** @var \App\Services\Helpers\Classes\SalaryHelper $instance */
+                        return $instance->removeNoInstallation($productInOrder);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
         public static function salary($productInOrder)
         {
                         /** @var \App\Services\Helpers\Classes\SalaryHelper $instance */
@@ -16950,57 +16845,10 @@
          *
          * @static 
          */ 
-        public static function checkMeasuringAndDelivery($order, $productInOrder)
+        public static function checkMeasuringAndDelivery($productInOrder)
         {
                         /** @var \App\Services\Helpers\Classes\SalaryHelper $instance */
-                        return $instance->checkMeasuringAndDelivery($order, $productInOrder);
-        }
-         
-    }
-            /**
-     * 
-     *
-     */ 
-        class SelectDataFacade {
-                    /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function secondSelect()
-        {
-                        /** @var \App\Services\Renderer\Classes\MosquitoSelectData $instance */
-                        return $instance->secondSelect();
-        }
-                    /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function thirdSelect()
-        {
-                        /** @var \App\Services\Renderer\Classes\MosquitoSelectData $instance */
-                        return $instance->thirdSelect();
-        }
-                    /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function additional()
-        {
-                        /** @var \App\Services\Renderer\Classes\MosquitoSelectData $instance */
-                        return $instance->additional();
-        }
-                    /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function use($productInOrder)
-        {            //Method inherited from \App\Services\Renderer\Classes\SelectData         
-                        /** @var \App\Services\Renderer\Classes\MosquitoSelectData $instance */
-                        return $instance->use($productInOrder);
+                        return $instance->checkMeasuringAndDelivery($productInOrder);
         }
          
     }
@@ -20918,10 +20766,8 @@ namespace  {
             class View extends \Illuminate\Support\Facades\View {}
             class Debugbar extends \Barryvdh\Debugbar\Facades\Debugbar {}
             class Notifier extends \App\Services\Facades\Classes\NotifierFacade {}
-            class ProductHelper extends \App\Services\Facades\Classes\ProductHelperFacade {}
             class OrderHelper extends \App\Services\Facades\Classes\OrderHelperFacade {}
             class SalaryHelper extends \App\Services\Facades\Classes\SalaryHelperFacade {}
-            class SelectData extends \App\Services\Facades\Classes\SelectDataFacade {}
             class Flare extends \Facade\Ignition\Facades\Flare {}
      
 }

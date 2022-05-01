@@ -28,9 +28,8 @@
         public function salary(ProductInOrder $productInOrder);
 
         /**
-         * @param Order $order
          * @param ProductInOrder $productInOrder
          * @return mixed
          */
-        function checkMeasuringAndDelivery(Order $order, ProductInOrder $productInOrder);
+        function checkMeasuringAndDelivery(ProductInOrder $productInOrder);
     }

@@ -36,6 +36,17 @@
             ]);
         }
 
+        public function removeNoInstallation(ProductInOrder $productInOrder) {
+            $productInOrder->order
+                ->salaries()
+                ->where('type', SalaryType::NO_INSTALLATION)
+                ->get()
+                ->each(function (InstallerSalary $salary) {
+                    $salary->sum = 0;
+                    $salary->update();
+                });
+        }
+
         public function salary(ProductInOrder $productInOrder) {
             $salary = $productInOrder->order
                 ->salaries()
@@ -49,11 +60,11 @@
             return $salary;
         }
 
-        function checkMeasuringAndDelivery(Order $order, ProductInOrder $productInOrder) {
+        function checkMeasuringAndDelivery(ProductInOrder $productInOrder) {
             if (\OrderHelper::hasInstallation() || Calculator::productNeedInstallation()) {
-                $order->measuring_price = 0;
+                $productInOrder->order->measuring_price = 0;
             } else {
-                $order->measuring_price = SystemVariables::value('measuring');
+                $productInOrder->order->measuring_price = SystemVariables::value('measuring');
                 // Прибавить к зп монтажника стоимости замера и доставки, если они заданы
                 $this->update(Calculator::getInstallersWage(), $productInOrder);
             }

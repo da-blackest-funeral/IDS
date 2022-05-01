@@ -34,6 +34,7 @@
             // todo баги
             // разные баги с зарплатой возникают когда меняешь монтаж у товара с одного на другой
             // думаю дело в старом товаре который еще не удален
+            // более того, здесь $productInOrder и является этим старым неудаленным товаром
 
             $order->price -= $productInOrder->data->main_price;
             $order->products_count -= $productInOrder->count;
@@ -46,21 +47,13 @@
             $order->update();
 
             if (\OrderHelper::orderOrProductHasInstallation()) {
-                \SalaryHelper::checkMeasuringAndDelivery(
-                    order: $productInOrder->order,
-                    productInOrder: $productInOrder
-                );
+                \SalaryHelper::checkMeasuringAndDelivery($productInOrder);
             }
 
             \OrderHelper::addProduct();
-
             $productInOrder->delete();
             $order->update();
 
-            // при обновлении уже существующего товара нужно
-            // 1) отнять стоимость старого товара
-            // 2) если был монтаж, а стал без монтажа, то замер надо сделать снова не бесплатным
-            // 3) отнять количество товара от общего количества всех товаров в заказе
             return redirect(route('order', ['order' => $order->id]));
         }
     }

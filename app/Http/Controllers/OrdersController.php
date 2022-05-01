@@ -32,10 +32,7 @@
             $productInOrder = \OrderHelper::addProduct();
 
             if (\OrderHelper::orderOrProductHasInstallation()) {
-                \SalaryHelper::checkMeasuringAndDelivery(
-                    order: $order,
-                    productInOrder: $productInOrder
-                );
+                \SalaryHelper::checkMeasuringAndDelivery($productInOrder);
             }
 
             return redirect(route('order', ['order' => $order->id]));
