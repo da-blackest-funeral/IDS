@@ -49,7 +49,10 @@
 
             $this->app->singleton(ProductHelperInterface::class, function () {
                 if (isMosquitoSystemProduct()) {
-                    return new MosquitoSystemsHelper();
+                    return new MosquitoSystemsHelper(
+                        request()->productInOrder ?? new ProductInOrder(),
+                        request()->order ?? new Order()
+                    );
                 }
             });
 

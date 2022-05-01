@@ -9,27 +9,23 @@
     {
         /**
          * @param int|float $sum
-         * @param ProductInOrder $productInOrder
          * @return mixed
          */
-        public function update(int|float $sum, ProductInOrder $productInOrder);
+        public function update(int|float $sum);
 
         /**
-         * @param Order $order
-         * @param $sum
+         * @param float|null $sum
          * @return mixed
          */
-        public function make(Order $order, $sum = null);
+        public function make(float $sum = null);
 
         /**
-         * @param ProductInOrder $productInOrder
          * @return mixed
          */
-        public function salary(ProductInOrder $productInOrder);
+        public function salary();
 
         /**
-         * @param ProductInOrder $productInOrder
          * @return mixed
          */
-        function checkMeasuringAndDelivery(ProductInOrder $productInOrder);
+        function checkMeasuringAndDelivery();
     }

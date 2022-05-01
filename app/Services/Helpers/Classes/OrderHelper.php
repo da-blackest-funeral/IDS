@@ -11,7 +11,17 @@
 
     class OrderHelper implements OrderHelperInterface
     {
+        /**
+         * @param Order $order
+         */
         public function __construct(protected Order $order) {
+        }
+
+        /**
+         * @return Order
+         */
+        public function getOrder(): Order {
+            return $this->order;
         }
 
         /**
@@ -101,7 +111,8 @@
 
             $product = \ProductHelper::make($this->order->refresh());
 
-            \ProductHelper::updateOrCreateSalary($product);
+            \ProductHelper::use($product)
+                ->updateOrCreateSalary();
 
             return $product;
         }

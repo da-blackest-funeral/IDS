@@ -25,9 +25,8 @@
             $order = \OrderHelper::make();
             \OrderHelper::use($order);
 
-            \SalaryHelper::make($order);
-
-            \ProductHelper::make($order);
+            \SalaryHelper::make();
+            \ProductHelper::make();
 
             session()->flash('success', ['Заказ успешно создан!']);
 

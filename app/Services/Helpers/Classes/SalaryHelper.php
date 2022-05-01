@@ -2,8 +2,6 @@
 
     namespace App\Services\Helpers\Classes;
 
-    use App\Models\Order;
-    use App\Models\ProductInOrder;
     use App\Models\Salaries\InstallerSalary;
     use App\Models\SystemVariables;
     use App\Services\Helpers\Config\SalaryType;
@@ -12,17 +10,26 @@
 
     class SalaryHelper implements SalaryHelperInterface
     {
-        public function update(int|float $sum, ProductInOrder $productInOrder) {
-            $salary = $this->salary($productInOrder)
+        /**
+         * @param int|float $sum
+         * @return void
+         */
+        public function update(int|float $sum) {
+            $salary = $this->salary()
                 ->first();
 
             $salary->sum = $sum;
-            $salary->type = SalaryType::determine($productInOrder);
+            $salary->type = SalaryType::determine(\ProductHelper::getProduct());
 
             $salary->update();
         }
 
-        public function make(Order $order, $sum = null) {
+        /**
+         * @param float|null $sum
+         * @return InstallerSalary
+         */
+        public function make(float $sum = null): InstallerSalary {
+            $order = \OrderHelper::getOrder();
             return InstallerSalary::create([
                 'installer_id' => $order->installer_id,
                 'category_id' => request()->input('categories'),
@@ -36,8 +43,9 @@
             ]);
         }
 
-        public function removeNoInstallation(ProductInOrder $productInOrder) {
-            $productInOrder->order
+        public function removeNoInstallation() {
+            \ProductHelper::getProduct()
+                ->order
                 ->salaries()
                 ->where('type', SalaryType::NO_INSTALLATION)
                 ->get()
@@ -47,7 +55,8 @@
                 });
         }
 
-        public function salary(ProductInOrder $productInOrder) {
+        public function salary() {
+            $productInOrder = \ProductHelper::getProduct();
             $salary = $productInOrder->order
                 ->salaries()
                 ->where('category_id', $productInOrder->category_id);
@@ -60,13 +69,14 @@
             return $salary;
         }
 
-        function checkMeasuringAndDelivery(ProductInOrder $productInOrder) {
+        function checkMeasuringAndDelivery() {
+            $productInOrder = \ProductHelper::getProduct();
             if (\OrderHelper::hasInstallation() || Calculator::productNeedInstallation()) {
                 $productInOrder->order->measuring_price = 0;
             } else {
                 $productInOrder->order->measuring_price = SystemVariables::value('measuring');
                 // Прибавить к зп монтажника стоимости замера и доставки, если они заданы
-                $this->update(Calculator::getInstallersWage(), $productInOrder);
+                $this->update(Calculator::getInstallersWage());
             }
         }
     }

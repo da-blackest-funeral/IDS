@@ -11,6 +11,39 @@
     abstract class AbstractProductHelper implements ProductHelperInterface
     {
         /**
+         * @var Collection
+         */
+        protected Collection $products;
+
+        /**
+         * @param ProductInOrder $productInOrder
+         * @param Order $order
+         */
+        public function __construct(
+            protected ProductInOrder $productInOrder,
+            protected Order $order,
+        ) {}
+
+        /**
+         * @return ProductInOrder
+         */
+        public function getProduct(): ProductInOrder {
+            return $this->productInOrder;
+        }
+
+        /**
+         * @param ProductInOrder $productInOrder
+         * @return ProductHelperInterface
+         */
+        public function use(ProductInOrder $productInOrder): ProductHelperInterface {
+            $this->productInOrder = $productInOrder;
+            $this->order = $productInOrder->order;
+            $this->products = $this->order->products;
+
+            return $this;
+        }
+
+        /**
          * @param object $productInOrder
          * @return bool
          */
@@ -22,10 +55,10 @@
         }
 
         /**
-         * @param Order $order
          * @return ProductInOrder
          */
-        function make(Order $order): ProductInOrder {
+        function make(): ProductInOrder {
+            $order = \OrderHelper::getOrder();
             return ProductInOrder::create([
                 'installation_id' => Calculator::getInstallation('additional_id'),
                 'order_id' => $order->id,

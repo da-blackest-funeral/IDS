@@ -7,7 +7,16 @@
 
     interface ProductHelperInterface
     {
-        public function updateOrCreateSalary(ProductInOrder $productInOrder);
+        /**
+         * @return void
+         */
+        public function updateOrCreateSalary(): void;
+
+        /**
+         * @param ProductInOrder $productInOrder
+         * @return ProductHelperInterface
+         */
+        public function use(ProductInOrder $productInOrder): ProductHelperInterface;
 
         /**
          * Calculates salary for specified product and count
