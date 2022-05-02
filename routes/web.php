@@ -29,6 +29,9 @@
         Route::post('/', [CalculationController::class, 'save']);
 
         Route::prefix('orders')->group(function () {
+            Route::get('/', [OrdersController::class, 'index'])
+                ->name('all-orders');
+
             Route::get('/{order}', [OrdersController::class, 'order'])
                 ->name('order');
 
@@ -127,11 +130,8 @@
         });
 
         Route::prefix('orders')->group(function () {
-            Route::view('/add', 'pages.orders.add')
-                ->name('add-order');
 
-            Route::view('/all', 'pages.orders.all')
-                ->name('all-orders');
+            Route::delete('/{order}', [OrdersController::class, 'delete']);
 
             Route::view('/windowsills', 'pages.orders.windowsills')
                 ->name('windowsills-orders');

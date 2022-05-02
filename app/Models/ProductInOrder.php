@@ -4,6 +4,7 @@
 
     use Illuminate\Database\Eloquent\Factories\HasFactory;
     use Illuminate\Database\Eloquent\Model;
+    use Illuminate\Database\Eloquent\SoftDeletes;
 
     /**
      * App\Models\ProductinOrder
@@ -40,7 +41,7 @@
      */
     class ProductInOrder extends Model
     {
-        use HasFactory;
+        use HasFactory, SoftDeletes;
 
         protected $table = 'products';
 

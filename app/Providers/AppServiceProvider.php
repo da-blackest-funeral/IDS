@@ -18,6 +18,7 @@
     use App\Services\Notifications\Notifier;
     use App\Services\Renderer\Classes\MosquitoSelectData;
     use App\Services\Renderer\Interfaces\SelectDataInterface;
+    use Illuminate\Pagination\Paginator;
     use Illuminate\Support\ServiceProvider;
 
     class AppServiceProvider extends ServiceProvider
@@ -75,6 +76,8 @@
          * @return void
          */
         public function boot() {
+            Paginator::useBootstrap();
+
             if (request()->method() == 'POST') {
                 \Notifier::setData();
                 \Notifier::displayWarnings();

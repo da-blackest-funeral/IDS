@@ -39,7 +39,7 @@
                             @can('addOrders')
                                 <li>
                                     <a class="dropdown-item"
-                                       href="{{ route('add-order') }}">Добавить
+                                       href="{{ route('new-order') }}">Добавить
                                         заказ
                                     </a>
                                 </li>

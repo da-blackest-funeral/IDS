@@ -56,6 +56,7 @@
                 $table->enum('type', ['Монтаж', 'Без монтажа'])
 //                $table->string('type')
                     ->comment('Тип выплаты - за монтаж, за бензин и т.д.');
+                $table->softDeletes();
                 $table->timestamps();
             });
 

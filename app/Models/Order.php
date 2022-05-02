@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Salaries\InstallerSalary;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * App\Models\Order
@@ -74,7 +75,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Order extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $hidden = [];
     protected $guarded = [];
