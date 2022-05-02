@@ -73,7 +73,6 @@
                 if (Calculator::productNeedInstallation()) {
                     $this->deductMeasuringPrice();
                 }
-                // todo бардак, условие можно написать лучше, уже есть методы для этого
             } elseif (!Calculator::productNeedInstallation()) {
                 $this->order->measuring_price = SystemVariables::value('measuring');
             }

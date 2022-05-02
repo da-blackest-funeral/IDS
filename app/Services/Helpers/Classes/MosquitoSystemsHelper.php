@@ -82,7 +82,7 @@
          * @return bool
          */
         protected function needDecreaseCount(): bool {
-            return fromUpdatingProductPage() && oldProductHasInstallation();
+            return fromUpdatingProductPage() && $this->hasInstallation(oldProduct());
         }
 
         /**

@@ -33,50 +33,20 @@
         session()->push('notifications', $text);
     }
 
-    // todo перенести это в класс
-    function productAlreadyExists($calculator, $product) {
-        return json_decode(
-                $calculator->getOptions()
-                    ->except(['main_price', 'salary', 'measuring', 'delivery'])
-                    ->toJson()
-            ) == json_decode(
-                collect(json_decode($product->data))
-                    ->except(['main_price', 'salary', 'measuring', 'delivery'])
-                    ->toJson()
-            );
-    }
-
-    // todo перенести это в класс
-    function updateProductInOrder($product, $mainPrice) {
-        $product->count += (int)request()->input('count');
-        $data = json_decode($product->data);
-        $data->main_price += $mainPrice;
-        $product->data = json_encode($data);
-        $product->update();
-    }
-
     function warning(string $text) {
         session()->push('warnings', $text);
     }
 
-    // todo перенести это в класс
-    function orderSalaries(Order $order) {
-        return $order->salaries->sum('sum');
-    }
-
     // when updating products, we save
     // count of products that was before update
-    // todo перенести это в класс
     function oldProductsCount() {
         try {
             return oldProduct()->count;
-        } catch (Exception $e) {
-            Debugbar::info($e->getMessage());
+        } catch (Exception) {
             return 0;
         }
     }
 
-    // todo перенести это в класс
     function oldProduct(string $field = null) {
         if (is_null($field)) {
             return session('oldProduct', new stdClass());
@@ -88,11 +58,7 @@
         }
     }
 
-    // todo перенести это в класс
-    function oldProductHasInstallation(): bool {
-        return ProductHelper::hasInstallation(oldProduct());
-    }
-
+    // todo посмотреть во всех местах где определяется монтаж и сделать единое условие во избежание нарушения DRY
     function isInstallation(object $additional): bool {
         return
             str_contains(strtolower($additional->text), 'монтаж') &&
@@ -132,9 +98,7 @@
     function jsonData(string $file) {
         return collect(
             json_decode(
-                file_get_contents(
-                    app_path("Services/Config/$file.json")
-                )
+                file_get_contents(app_path("Services/Config/$file.json"))
             )
         );
     }
