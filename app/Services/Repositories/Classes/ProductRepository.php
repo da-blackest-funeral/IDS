@@ -49,6 +49,12 @@
             return $this;
         }
 
+        public static function reject(Collection $products, object $productToReject): Collection {
+            return static::use($products)
+                ->without($productToReject)
+                ->get();
+        }
+
         public function count(): int {
             return $this->products->sum('count');
         }

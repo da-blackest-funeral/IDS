@@ -40,8 +40,15 @@
             } else {
 
                 // todo баг
-                // когда есть товар другого типа в заказе и меняешь с "нужен монтаж" на без монтажа,
-                // зарплата считается криво, при втором обновлении того же товара без изменений все нормализуется
+                /*
+                 * case:
+                 * 1) есть два товара одинакового типа.
+                 * 2) один монтаж на z, другой монтаж на штоках, зарплата верная - 1250
+                 * 3) когда меняешь с монтажа на штоках на монтаж на z, то з\п не меняется
+                 *
+                 * думаю дело в том что при расчете товара с максимальным монтажом учитывается
+                 * oldProduct (необновленный)
+                 */
 
                 if (\OrderHelper::hasProducts() && !Calculator::productNeedInstallation()) {
                     \SalaryHelper::make(0);
@@ -220,12 +227,21 @@
                     'products.installation_id'
                 )
                 ->where('mosquito_systems_type_additional.type_id', $typeId)
-                ->get();
+                ->get([
+                    'category_id',
+                    'order_id',
+                    'price as installation_price',
+                    'products.id as id',
+                    'mosquito_systems_type_additional.additional_id as installation_id',
+                ]);
 
-            $maxInstallationPrice = $productsWithInstallation->max('price');
+            $productsWithInstallation =
+                ProductRepository::reject($productsWithInstallation, oldProduct());
+
+            $maxInstallationPrice = $productsWithInstallation->max('installation_price');
 
             return $productsWithInstallation->filter(function ($product) use ($maxInstallationPrice) {
-                return equals($product->price, $maxInstallationPrice);
+                return equals($product->installation_price, $maxInstallationPrice);
             });
         }
 
