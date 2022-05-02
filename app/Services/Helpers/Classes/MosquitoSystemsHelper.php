@@ -11,13 +11,13 @@
     use App\Models\ProductInOrder;
     use App\Services\Repositories\Classes\ProductRepository;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
-    use Illuminate\Database\Query\Builder;
     use Illuminate\Support\Collection;
 
     class MosquitoSystemsHelper extends AbstractProductHelper
     {
         /**
          * @return void
+         * @throws SalaryCalculationException
          */
         public function updateOrCreateSalary(): void {
 
@@ -31,8 +31,6 @@
                     ),
                 );
 
-                // todo проверить, нужно ли делать обратное
-                // когда убирается монтаж сделать возвращение зарплат за замер и доставку
                 if ($this->salariesForNoInstallationMustBeRemoved()) {
                     \SalaryHelper::removeNoInstallation();
                 }
@@ -40,19 +38,10 @@
                 \SalaryHelper::checkMeasuringAndDelivery();
 
             } else {
+
                 // todo баг
                 // когда есть товар другого типа в заказе и меняешь с "нужен монтаж" на без монтажа,
                 // зарплата считается криво, при втором обновлении того же товара без изменений все нормализуется
-                // todo баг когда в заказе несколько товаров без монтажа и при обновлении одного из них
-                //  даже если ничего не поменять то зарплата из 0 становится 960
-
-                // todo когда обновляешь товар без монтажа, которому создается пустая зарплата с суммой 0, и в заказе
-                // есть товар другого типа без монтажа, за который есть зп в 960, то зарплата складывается из
-                // 960 за один и за монтаж за другой, надо обнулять зарплату которая равна 960
-
-                // todo возможное решение проблемы с зарплатой за доставку и замер - хранить ее прямо в заказе
-                // или хранить данные о типе зарплаты, т.е. за что она была начислена, и при необходимости
-                // находить такую зарплату по типу и обнулять ее
 
                 if (\OrderHelper::hasProducts() && !Calculator::productNeedInstallation()) {
                     \SalaryHelper::make(0);
@@ -102,6 +91,7 @@
          * @param ProductInOrder $productInOrder
          * @param int $count
          * @return int
+         * @throws SalaryCalculationException
          */
         public function calculateInstallationSalary(ProductInOrder $productInOrder, int $count): int {
             if ($this->needDecreaseCount()) {

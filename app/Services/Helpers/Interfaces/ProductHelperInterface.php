@@ -40,7 +40,6 @@
          *
          * @param ProductInOrder|null $product
          * @return Collection
-         * @todo rename to secondSelect()
          */
         public function profiles(ProductInOrder $product = null): Collection;
 
@@ -49,7 +48,6 @@
          *
          * @param int $categoryId
          * @return Collection
-         * @todo rename to thirdSelect()
          */
         public function tissues(int $categoryId): Collection;
 
