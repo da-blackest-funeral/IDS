@@ -53,7 +53,7 @@
                 @include('components.close', ['closeText' => 'Свернуть'])
                 <div class="mt-4 w-75">
                     <h1 class="h2"><strong>Список товаров</strong></h1>
-                    <div style="border-radius: 8px;overflow: hidden;">
+                    <div class="table-wrapper">
                         {{-- todo Вова: надо сделать таблицу адаптивной --}}
                         <table class="table table-light table-hover table-bordered align-middle rounded">
                             <thead class="table-dark">

@@ -6,16 +6,6 @@
     }
 }
 
-//.errors {
-//    box-shadow: 0 5px 10px rgba(255,0,0,0.15);
-//    //transition: all 1s ease-in-out;
-//}
-//
-//.errors :hover {
-//    box-shadow: 0 10px 20px rgba(255,0,0,0.5);
-//    transform: scale(1.02);
-//}
-
 .cards-notification {
     transition: all 0.25s ease-in-out;
     cursor: pointer;
@@ -66,4 +56,9 @@
 
 #success :hover {
     box-shadow: none;
+}
+
+.table-wrapper {
+    border-radius: 6px;
+    overflow: hidden;
 }

@@ -4,13 +4,21 @@
 
     use App\Models\Category;
     use App\Models\Order;
-    use Facades\App\Services\Calculator\Interfaces\Calculator;
     use Illuminate\Http\Request;
 
     class OrdersController extends Controller
     {
         protected Request $request;
 
+        public function index() {
+            return view('pages.orders.all')
+                ->with([
+                    'orders' => Order::orderByDesc('created_at')
+                        ->paginate(),
+                ]);
+        }
+
+        // todo rename in 'show'
         public function order(Order $order) {
             $products = $order->products()->get();
             $data = Category::all();
