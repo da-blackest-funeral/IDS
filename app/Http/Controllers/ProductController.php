@@ -47,7 +47,7 @@
             $order->update();
 
             if (\OrderHelper::orderOrProductHasInstallation()) {
-                \SalaryHelper::checkMeasuringAndDelivery($productInOrder);
+                \SalaryHelper::checkMeasuringAndDelivery();
             }
 
             \OrderHelper::addProduct();

@@ -60,11 +60,11 @@
          */
         protected function salariesForNoInstallationMustBeRemoved(): bool {
 
-            return !\OrderHelper::hasInstallation() &&
+            return
+                !\OrderHelper::hasInstallation() &&
                 \OrderHelper::hasProducts() &&
-                !Calculator::productNeedInstallation()
-                ||
-//                \OrderHelper::hasInstallation() ||
+                !Calculator::productNeedInstallation() ||
+                \OrderHelper::hasInstallation() ||
                 Calculator::productNeedInstallation();
         }
 
