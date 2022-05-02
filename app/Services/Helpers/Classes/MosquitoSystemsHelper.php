@@ -46,7 +46,10 @@
                 if (\OrderHelper::hasProducts() && !Calculator::productNeedInstallation()) {
                     \SalaryHelper::make(0);
                     return;
+                } elseif ($this->salariesForNoInstallationMustBeRemoved()) {
+                    \SalaryHelper::removeNoInstallation();
                 }
+
 
                 \SalaryHelper::make();
             }
@@ -56,10 +59,13 @@
          * @return bool
          */
         protected function salariesForNoInstallationMustBeRemoved(): bool {
-            return !\OrderHelper::hasInstallation() && \OrderHelper::hasProducts() &&
-                !Calculator::productNeedInstallation() &&
-                fromUpdatingProductPage() &&
-                static::hasInstallation(oldProduct());
+
+            return !\OrderHelper::hasInstallation() &&
+                \OrderHelper::hasProducts() &&
+                !Calculator::productNeedInstallation()
+                ||
+//                \OrderHelper::hasInstallation() ||
+                Calculator::productNeedInstallation();
         }
 
         /**
