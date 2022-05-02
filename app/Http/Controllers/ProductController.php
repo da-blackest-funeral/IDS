@@ -14,27 +14,14 @@
         }
 
         public function index(Order $order, ProductInOrder $productInOrder) {
-            return view('pages.add-product')->with([
-                // todo часть данных отсюда общая и ее можно вынести в отдельный метод
-                'data' => Category::all(),
-                'superCategories' => Category::whereIn(
-                    'id', Category::select(['parent_id'])
-                    ->whereNotNull('parent_id')
-                    ->groupBy(['parent_id'])
-                    ->get()
-                    ->toArray()
-                )->get(),
-                'orderNumber' => $order->id,
-                'product' => $productInOrder,
-            ]);
+            $data = dataForOrderPage();
+            $data['product'] = $productInOrder;
+
+            return view('pages.add-product')
+                ->with($data);
         }
 
         public function update(Order $order, ProductInOrder $productInOrder) {
-
-            // todo баги
-            // разные баги с зарплатой возникают когда меняешь монтаж у товара с одного на другой
-            // думаю дело в старом товаре который еще не удален
-            // более того, здесь $productInOrder и является этим старым неудаленным товаром
 
             $order->price -= $productInOrder->data->main_price;
             $order->products_count -= $productInOrder->count;

@@ -58,7 +58,6 @@
         }
     }
 
-    // todo посмотреть во всех местах где определяется монтаж и сделать единое условие во избежание нарушения DRY
     function isInstallation(object $additional): bool {
         return
             str_contains(strtolower($additional->text), 'монтаж') &&

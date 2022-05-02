@@ -39,24 +39,14 @@
 
             } else {
 
-                // todo баг
-                /*
-                 * case:
-                 * 1) есть два товара одинакового типа.
-                 * 2) один монтаж на z, другой монтаж на штоках, зарплата верная - 1250
-                 * 3) когда меняешь с монтажа на штоках на монтаж на z, то з\п не меняется
-                 *
-                 * думаю дело в том что при расчете товара с максимальным монтажом учитывается
-                 * oldProduct (необновленный)
-                 */
-
                 if (\OrderHelper::hasProducts() && !Calculator::productNeedInstallation()) {
                     \SalaryHelper::make(0);
                     return;
-                } elseif ($this->salariesForNoInstallationMustBeRemoved()) {
-                    \SalaryHelper::removeNoInstallation();
                 }
 
+                if ($this->salariesForNoInstallationMustBeRemoved()) {
+                    \SalaryHelper::removeNoInstallation();
+                }
 
                 \SalaryHelper::make();
             }
@@ -225,8 +215,7 @@
                     'mosquito_systems_type_additional.additional_id',
                     '=',
                     'products.installation_id'
-                )
-                ->where('mosquito_systems_type_additional.type_id', $typeId)
+                )->where('mosquito_systems_type_additional.type_id', $typeId)
                 ->get([
                     'category_id',
                     'order_id',
