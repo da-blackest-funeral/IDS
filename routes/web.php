@@ -131,6 +131,8 @@
 
         Route::prefix('orders')->group(function () {
 
+            Route::delete('/{order}', [OrdersController::class, 'delete']);
+
             Route::view('/windowsills', 'pages.orders.windowsills')
                 ->name('windowsills-orders');
 

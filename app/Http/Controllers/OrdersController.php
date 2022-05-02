@@ -46,5 +46,27 @@
             return redirect(route('order', ['order' => $order->id]));
         }
 
+        public function delete(Order $order) {
+            /*
+             * 1) удалить все товары связанные с заказом
+             * 2) удалить все зарплаты
+             * 3) удалить сам заказ
+             * 4) отобразить сообщение об успешном удалении
+             * 5) вернуть редирект на страницу со всеми заказами
+             */
+
+            $order->products->each(function ($product) {
+               $product->delete();
+            });
+
+            $order->salaries->each(function ($salary) {
+               $salary->delete();
+            });
+
+            $order->delete();
+
+            return redirect(route('all-orders'));
+        }
+
         // todo функция которая обновляет общие данные о заказе
     }

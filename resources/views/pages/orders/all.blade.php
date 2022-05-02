@@ -20,35 +20,50 @@
                 Перейти
             </button>
         </div>
-        <div class="table-wrapper mt-3">
-            <table class="table table-bordered table-light table-hover table-striped align-middle rounded">
-                <thead class="table-dark">
-                <tr class="text-center">
-                    <th scope="col">Дата создания</th>
-                    <th scope="col">Номер заказа</th>
-                    <th scope="col">Создал</th>
-                    <th scope="col">Предоплата</th>
-                    <th scope="col">Осталось</th>
-                    <th scope="col">Статус</th>
-                </tr>
-                </thead>
-                <tbody>
-                @forelse($orders as $order)
-                    <tr class="text-center" style="cursor: pointer" onclick="window.location = '{{
+        @if($orders->isNotEmpty())
+            <div class="table-wrapper mt-3">
+                <table class="table table-bordered table-light table-hover table-striped align-middle rounded">
+                    <thead class="table-dark">
+                    <tr class="text-center">
+                        <th scope="col">Дата создания</th>
+                        <th scope="col">Номер заказа</th>
+                        <th scope="col">Создал</th>
+                        <th scope="col">Предоплата</th>
+                        <th scope="col">Осталось</th>
+                        <th scope="col">Статус</th>
+                        <th scope="col"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach($orders as $order)
+                        <tr class="text-center" style="cursor: pointer" onclick="window.location = '{{
                         route('order', ['order' => $order->id])
                     }}'">
-                        <td>{{ carbon($order->created_at, 'd.m.Y H:i:s') }}</td>
-                        <td>{{ $order->id }}</td>
-                        <td>{{ userName($order->user_id) }}</td>
-                        <td>{{ 'Не готово' }}</td>
-                        <td>{{ $order->price }} руб.</td>
-                        <td>{{ 'Не готово' }}</td>
-                    </tr>
-                @empty
-                    <h1 class="h3">Заказов пока нет.</h1>
-                @endforelse
-                </tbody>
-            </table>
-        </div>
+                            <td>{{ carbon($order->created_at, 'd.m.Y H:i:s') }}</td>
+                            <td>{{ $order->id }}</td>
+                            <td>{{ userName($order->user_id) }}</td>
+                            <td>{{ 'Не готово' }}</td>
+                            <td>{{ $order->price }} руб.</td>
+                            <td>{{ 'Не готово' }}</td>
+                            <td>
+                                <form action="{{ route('order', ['order' => $order->id]) }}" method="post" id="delete">
+                                    @method('delete')
+                                    @csrf
+                                    <button
+                                        type="submit"
+                                        onclick="return confirm('Вы уверены?')"
+                                        class="btn btn-outline-danger">
+                                        Удалить
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @else
+            <h1 class="h3">Заказов пока нет.</h1>
+        @endif
     </div>
 @endsection
