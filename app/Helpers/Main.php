@@ -101,3 +101,23 @@
             )
         );
     }
+
+    function carbon(string $time, string $format): string {
+        return \Carbon\Carbon::make($time)->format($format);
+    }
+
+    /**
+     * @param int $id
+     * @return User
+     */
+    function user(int $id): User {
+        return User::findOrFail($id);
+    }
+
+    /**
+     * @param int $id
+     * @return string
+     */
+    function userName(int $id): string {
+        return \user($id)->name;
+    }
