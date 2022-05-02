@@ -778,6 +778,9 @@
             )->assertDatabaseHas(
                 'orders',
                 ['price' => $resultPrice]
+            )->assertDatabaseMissing(
+                'installers_salaries',
+                ['sum' => $this->testHelper->salaryNoInstallation()]
             );
         }
 

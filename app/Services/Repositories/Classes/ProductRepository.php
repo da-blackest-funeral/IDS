@@ -6,6 +6,7 @@
     use App\Models\ProductInOrder;
     use App\Services\Repositories\Interfaces\ProductRepositoryInterface;
     use Illuminate\Support\Collection;
+    use phpDocumentor\Reflection\Types\Callable_;
 
     class ProductRepository implements ProductRepositoryInterface
     {
@@ -31,6 +32,14 @@
             return $instance;
         }
 
+        public static function byCategoryWithout(ProductInOrder $productInOrder): ProductRepositoryInterface {
+            return static::byCategory($productInOrder)->without($productInOrder);
+        }
+
+        public function has(Callable $callback) {
+            return $this->products->contains($callback);
+        }
+
         public function without(object $productToReject): ProductRepositoryInterface {
             $this->products =
                 $this->products->reject(function ($product) use ($productToReject) {
@@ -38,6 +47,12 @@
                 });
 
             return $this;
+        }
+
+        public static function reject(Collection $products, object $productToReject): Collection {
+            return static::use($products)
+                ->without($productToReject)
+                ->get();
         }
 
         public function count(): int {

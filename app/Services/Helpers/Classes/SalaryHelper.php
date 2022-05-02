@@ -25,6 +25,17 @@
         }
 
         /**
+         * @param bool $condition
+         * @param int|float $sum
+         * @return void
+         */
+        public function updateIf(bool $condition, int|float $sum) {
+            if ($condition) {
+                $this->update($sum);
+            }
+        }
+
+        /**
          * @param float|null $sum
          * @return InstallerSalary
          */
@@ -43,6 +54,9 @@
             ]);
         }
 
+        /**
+         * @return void
+         */
         public function removeNoInstallation() {
             \ProductHelper::getProduct()
                 ->order
@@ -69,14 +83,25 @@
             return $salary;
         }
 
+        /**
+         * @return bool
+         */
+        function hasSalaryNoInstallation(): bool {
+            return \OrderHelper::getOrder()
+            ->salaries
+            ->contains(function (InstallerSalary $salary) {
+                return $salary->type == SalaryType::NO_INSTALLATION && $salary->sum > 0;
+            });
+        }
+
         function checkMeasuringAndDelivery() {
-            $productInOrder = \ProductHelper::getProduct();
+            $order = \ProductHelper::getProduct()->order;
             if (\OrderHelper::hasInstallation() || Calculator::productNeedInstallation()) {
-                $productInOrder->order->measuring_price = 0;
+                $order->measuring_price = 0;
             } else {
-                $productInOrder->order->measuring_price = SystemVariables::value('measuring');
+                $order->measuring_price = SystemVariables::value('measuring');
                 // Прибавить к зп монтажника стоимости замера и доставки, если они заданы
-                $this->update(Calculator::getInstallersWage());
+                $this->updateIf(! $this->hasSalaryNoInstallation(), Calculator::getInstallersWage());
             }
         }
     }

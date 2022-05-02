@@ -44,10 +44,8 @@
 
         protected $table = 'products';
 
-        // todo расставить guarded поля
         protected $guarded = [];
 
-        // todo возможно сделать dto класс для этого
         protected $casts = [
             'data' => 'object',
         ];

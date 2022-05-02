@@ -2,8 +2,8 @@
 
     namespace App\Services\Helpers\Config;
 
-    // todo потом сделаю enum когда можно будет нормально обновиться до php 8.1
     use App\Models\ProductInOrder;
+    use App\Services\Repositories\Classes\ProductRepository;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
 
     class SalaryType
@@ -24,7 +24,13 @@
                     SalaryType::NO_INSTALLATION;
             }
 
-            if (\ProductHelper::hasInstallation($productInOrder)) {
+            if (
+                \ProductHelper::hasInstallation($productInOrder) ||
+                ProductRepository::byCategoryWithout($productInOrder)
+                    ->has(function ($product) {
+                        return \ProductHelper::hasInstallation($product);
+                    })
+            ) {
                 return self::INSTALLATION;
             }
 
