@@ -7,6 +7,8 @@ use Illuminate\Support\Collection;
 
 interface Calculator
 {
+    public function calculate();
+
     public function getPrice(): float;
 
     public function setPrice(float $price);
@@ -33,5 +35,6 @@ interface Calculator
 
     public function calculateSalaryForCount(int $count, ProductInOrder $productInOrder, $installation = null);
 
+    // todo перенести это в класс productHelper
     public function productNeedInstallation(): bool;
 }

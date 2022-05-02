@@ -1,15 +1,19 @@
 <?php
 
+    use App\Models\Category;
     use App\Models\Order;
+    use App\Models\User;
     use Illuminate\Support\Facades\Route;
 
-    require_once 'MosquitoSystems.php';
-
-    function isOrderPage() {
+    function isOrderPage(): bool {
         return Route::is('new-order', 'order');
     }
 
-    function fromUpdatingProductPage() {
+    function needPreload(): bool {
+        return Route::is('product-in-order');
+    }
+
+    function fromUpdatingProductPage(): bool {
         return Route::getRoutes()
                 ->match(
                     app('request')
@@ -19,10 +23,17 @@
                 )->getName() == 'product-in-order';
     }
 
+    function isMosquitoSystemProduct(): bool {
+        return in_array(request()->input('categories'), [5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
+        || in_array(request()->input('categoryId'), [5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
+        || in_array(request()->productInOrder->category_id, [5, 6, 7, 8, 9, 10, 11, 12, 13, 14]);
+    }
+
     function notify($text) {
         session()->push('notifications', $text);
     }
 
+    // todo перенести это в класс
     function productAlreadyExists($calculator, $product) {
         return json_decode(
                 $calculator->getOptions()
@@ -35,6 +46,7 @@
             );
     }
 
+    // todo перенести это в класс
     function updateProductInOrder($product, $mainPrice) {
         $product->count += (int)request()->input('count');
         $data = json_decode($product->data);
@@ -47,12 +59,14 @@
         session()->push('warnings', $text);
     }
 
+    // todo перенести это в класс
     function orderSalaries(Order $order) {
         return $order->salaries->sum('sum');
     }
 
     // when updating products, we save
     // count of products that was before update
+    // todo перенести это в класс
     function oldProductsCount() {
         try {
             return oldProduct()->count;
@@ -62,21 +76,7 @@
         }
     }
 
-    function oldProductData(string|array $field = null) {
-        if (is_null($field)) {
-            return json_decode(oldProduct('data'));
-        } elseif (is_string($field)) {
-            return json_decode(oldProduct('data'))->$field;
-        } elseif (is_array($field)) {
-            $result = json_decode(oldProduct('data'));
-            foreach ($field as $item) {
-                $result = $result->$item;
-            }
-
-            return $result;
-        }
-    }
-
+    // todo перенести это в класс
     function oldProduct(string $field = null) {
         if (is_null($field)) {
             return session('oldProduct', new stdClass());
@@ -88,8 +88,9 @@
         }
     }
 
+    // todo перенести это в класс
     function oldProductHasInstallation(): bool {
-        return \ProductHelper::hasInstallation(oldProduct());
+        return ProductHelper::hasInstallation(oldProduct());
     }
 
     function isInstallation(object $additional): bool {
@@ -99,7 +100,22 @@
     }
 
     function equals(float|int $first, float|int $second) {
-        return strval($first) === strval($second);
+        return strval((float)$first) === strval((float)$second);
+    }
+
+    function dataForOrderPage() {
+        return [
+            'data' => Category::all(),
+            'superCategories' => Category::whereIn(
+                'id', Category::select(['parent_id'])
+                ->whereNotNull('parent_id')
+                ->groupBy(['parent_id'])
+                ->get()
+                ->toArray()
+            )->get(),
+            'orderNumber' => Order::count() + 1,
+            'installers' => User::role('installer')->get()
+        ];
     }
 
     function selectedGroups() {

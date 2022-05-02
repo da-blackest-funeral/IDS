@@ -2,7 +2,9 @@
 
 namespace App\Exceptions;
 
+use App\Services\Notifications\Notifier;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Facades\Request;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -34,8 +36,10 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        $this->reportable(function (Throwable $e) {
-            //
+        $this->renderable(function (SalaryCalculationException $exception) {
+            \Notifier::warning($exception->getMessage());
+            \request()->productInOrder->delete();
+            return redirect(route('order', ['order' => \request()->order->id]));
         });
     }
 }

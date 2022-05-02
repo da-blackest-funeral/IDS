@@ -2,12 +2,12 @@
 
     namespace App\Services\Facades\Classes;
 
-    use App\Services\Helpers\Classes\OrderHelper;
+    use App\Services\Helpers\Interfaces\OrderHelperInterface;
     use Illuminate\Support\Facades\Facade;
 
     class OrderHelperFacade extends Facade
     {
         protected static function getFacadeAccessor() {
-            return OrderHelper::class;
+            return OrderHelperInterface::class;
         }
     }

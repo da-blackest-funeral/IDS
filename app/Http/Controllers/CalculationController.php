@@ -13,18 +13,8 @@
     class CalculationController extends Controller
     {
         public function index() {
-            return view('welcome')->with([
-                'data' => Category::all(),
-                'superCategories' => Category::whereIn(
-                    'id', Category::select(['parent_id'])
-                    ->whereNotNull('parent_id')
-                    ->groupBy(['parent_id'])
-                    ->get()
-                    ->toArray()
-                )->get(),
-                'orderNumber' => Order::count() + 1,
-                'installers' => User::role('installer')->get()
-            ]);
+            return view('welcome')
+                ->with(dataForOrderPage());
         }
 
         public function save() {
@@ -33,10 +23,10 @@
             // todo сделать учет ручного изменения цены заказа
             // todo сделать вывод всевозможных сообщений
             $order = \OrderHelper::make();
+            \OrderHelper::use($order);
 
-            \SalaryHelper::make($order);
-
-            \ProductHelper::make($order);
+            \SalaryHelper::make();
+            \ProductHelper::make();
 
             session()->flash('success', ['Заказ успешно создан!']);
 

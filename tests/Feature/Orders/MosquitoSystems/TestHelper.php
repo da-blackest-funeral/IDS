@@ -9,6 +9,7 @@
     use App\Models\Salaries\InstallerSalary;
     use App\Models\SystemVariables;
     use App\Models\User;
+    use App\Services\Helpers\Config\SalaryType;
 
     class TestHelper
     {
@@ -137,7 +138,7 @@
                 'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
                 'count' => 1,
                 'installation_id' => $installationId,
-                'data' => $data,
+                'data' => json_decode($data),
             ]);
         }
 
@@ -151,7 +152,7 @@
                 'comment' => '123',
                 'status' => 1,
                 'changed_sum' => 1100,
-                'type' => '123',
+                'type' => $sum == 960 ? SalaryType::NO_INSTALLATION : SalaryType::INSTALLATION,
             ]);
 
             return $this;

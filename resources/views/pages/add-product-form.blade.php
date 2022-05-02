@@ -23,8 +23,8 @@
                                placeholder="Высота (габаритн.) в мм."
                                type="text"
                                class="form-control"
-                               @if($needPreload ?? false)
-                               value="{{ $productData->size->height ?? '' }}"
+                               @if(needPreload())
+                               value="{{ $product->data->size->height ?? '' }}"
                                @endif
                                required>
                     </div>
@@ -35,8 +35,8 @@
                                placeholder="Ширина (габаритн.) в мм."
                                type="text"
                                class="form-control"
-                               @if($needPreload ?? false)
-                               value="{{ $productData->size->width ?? '' }}"
+                               @if(needPreload())
+                               value="{{ $product->data->size->width ?? '' }}"
                                @endif
                                required>
                     </div>
@@ -47,7 +47,7 @@
                                placeholder="Количество (шт)"
                                type="text"
                                class="form-control"
-                               @if($needPreload ?? false)
+                               @if(needPreload())
                                value="{{ $product->count ?? '' }}"
                                @endif
                                required>
@@ -63,7 +63,7 @@
                                     @foreach($data as $item)
                                         @if($item->parent_id == $category->id)
                                             <option
-                                                @if(isset($product) && $product->category_id == $item->id && ($needPreload ?? false))
+                                                @if(isset($product) && $product->category_id == $item->id && (needPreload()))
                                                 selected
                                                 @endif
                                                 value="{{ $item->id }}">{{ $item->name }}</option>
@@ -75,24 +75,24 @@
                     </div>
                     <div class="col-10 col-md-3 mt-1" id="items">
                         {{-- Сюда грузится второй селект --}}
-                        @if(isset($needPreload, $product) && $needPreload)
+                        @if(isset($product) && needPreload())
                             @include('ajax.second-select', [
                             // todo переименовать метод в secondSelect
-                                'data' => \ProductHelper::tissues($product->category_id),
+                                'data' => SelectData::secondSelect(),
                                 'link' => '/ajax/mosquito-systems/profile',
                                 'name' => 'tissues',
                                 'label' => 'Ткань',
-                                'selected' => $productData->tissueId
+                                'selected' => $product->data->tissueId
                             ])
                         @endif
                     </div>
                     <div class="col-10 col-md-3 mt-1" id="third">
                         {{-- Место для третьего селекта --}}
-                        @if(isset($needPreload, $product) && $needPreload)
+                        @if(isset($product) && needPreload())
                             @include('ajax.mosquito-systems.profiles', [
                             // todo переименовать метод в thirdSelect
-                                'data' => \ProductHelper::profiles($product),
-                                'selected' => $productData->profileId
+                                'data' => SelectData::thirdSelect(),
+                                'selected' => $product->data->profileId
                             ])
                         @endif
                     </div>
@@ -102,8 +102,8 @@
                 </div>
                 <div class="mt-4 pb-3" id="additional">
                     {{-- Место для дополнительных опций --}}
-                    @if(isset($needPreload, $product) && $needPreload)
-                        @include('ajax.mosquito-systems.additional', \ProductHelper::additional($product))
+                    @if(isset($product) && needPreload())
+                        @include('ajax.mosquito-systems.additional', SelectData::additional())
                     @endif
                 </div>
                 <div class="mt-4 pb-3" id="bracing">

@@ -6,6 +6,7 @@
     use App\Models\ProductInOrder;
     use App\Models\Salaries\InstallerSalary;
     use App\Models\SystemVariables;
+    use App\Services\Helpers\Config\SalaryType;
     use Illuminate\Foundation\Testing\Concerns\InteractsWithSession;
     use Illuminate\Foundation\Testing\RefreshDatabase;
     use Tests\TestCase;
@@ -54,7 +55,7 @@
             $salary['comment'] = '123';
             $salary['category_id'] = 5;
             $salary['status'] = 0;
-            $salary['type'] = 0;
+            $salary['type'] = SalaryType::INSTALLATION;
             InstallerSalary::create($salary);
 
             $inputs = $this->testHelper->exampleMosquitoSystemsInputs();

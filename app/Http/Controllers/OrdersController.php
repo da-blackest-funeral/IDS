@@ -29,13 +29,10 @@
         }
 
         public function addProduct(Order $order) {
-            $productInOrder = \OrderHelper::addProductTo($order);
+            $productInOrder = \OrderHelper::addProduct();
 
-            if (\OrderHelper::orderOrProductHasInstallation($order)) {
-                \SalaryHelper::checkMeasuringAndDelivery(
-                    order: $order,
-                    productInOrder: $productInOrder
-                );
+            if (\OrderHelper::orderOrProductHasInstallation()) {
+                \SalaryHelper::checkMeasuringAndDelivery($productInOrder);
             }
 
             return redirect(route('order', ['order' => $order->id]));

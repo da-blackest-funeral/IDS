@@ -53,7 +53,8 @@
                 $table->float('changed_sum')
                     ->comment('Спросить можно ли без этого');
                 $table->foreignId('created_user_id');
-                $table->string('type')
+                $table->enum('type', ['Монтаж', 'Без монтажа'])
+//                $table->string('type')
                     ->comment('Тип выплаты - за монтаж, за бензин и т.д.');
                 $table->timestamps();
             });

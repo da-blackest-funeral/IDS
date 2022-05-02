@@ -5,6 +5,7 @@ namespace Orders\MosquitoSystems;
 use App\Models\Order;
 use App\Models\ProductInOrder;
 use App\Models\Salaries\InstallerSalary;
+use App\Services\Helpers\Config\SalaryType;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithSession;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -204,8 +205,11 @@ class InstallationTest extends TestCase
             'comment' => 'test',
             'status' => 1,
             'changed_sum' => $this->testHelper->defaultSalarySum(1, 1, 9),
-            'type' => 'test',
+            'type' => SalaryType::INSTALLATION,
         ]);
+
+        $data = new \stdClass();
+        $data->coefficient = 1;
 
         ProductInOrder::create([
             'order_id' => 1,
@@ -214,7 +218,7 @@ class InstallationTest extends TestCase
             'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
             'count' => 1,
             'installation_id' => 9,
-            'data' => '{"coefficient": 1}',
+            'data' => $data,
         ]);
 
         $inputsWithInstallation = $this->testHelper->exampleMosquitoSystemsInputs();
@@ -275,7 +279,8 @@ class InstallationTest extends TestCase
 
         $salary = $this->testHelper->defaultSalary();
         $salary['sum'] = $salary['changed_sum'] = $this->testHelper->defaultSalarySum(1);
-        $salary['comment'] = $salary['type'] = 'test';
+        $salary['comment'] = 'test';
+        $salary['type'] = SalaryType::INSTALLATION;
         $salary['status'] = 0;
 
         Order::create($order);

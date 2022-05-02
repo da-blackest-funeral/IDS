@@ -6,6 +6,7 @@
     use App\Models\ProductInOrder;
     use App\Models\Salaries\InstallerSalary;
     use App\Models\SystemVariables;
+    use App\Services\Helpers\Config\SalaryType;
     use Illuminate\Foundation\Testing\Concerns\InteractsWithSession;
     use Illuminate\Foundation\Testing\RefreshDatabase;
     use Tests\TestCase;
@@ -126,7 +127,7 @@
             $salary['status'] = 'test';
             $salary['changed_sum'] = SystemVariables::value('measuringWage')
                 + SystemVariables::value('delivery');
-            $salary['type'] = 'test';
+            $salary['type'] = SalaryType::NO_INSTALLATION;
             InstallerSalary::create($salary);
 
             $inputs = $this->testHelper->exampleMosquitoSystemsInputs();

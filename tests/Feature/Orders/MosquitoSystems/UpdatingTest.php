@@ -166,7 +166,7 @@
                 'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
                 'count' => 1,
                 'installation_id' => 14,
-                'data' => $data,
+                'data' => json_decode($data),
             ]);
 
             $this->testHelper->createDefaultSalary();
@@ -252,7 +252,7 @@
                 'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
                 'count' => 1,
                 'installation_id' => 8,
-                'data' => $data,
+                'data' => json_decode($data),
             ]);
 
             /*
@@ -365,7 +365,7 @@
                 'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
                 'count' => 2,
                 'installation_id' => 8,
-                'data' => $data,
+                'data' => json_decode($data),
             ]);
 
             $this->testHelper->createDefaultSalary($salary);
@@ -461,7 +461,7 @@
                 'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
                 'count' => 2,
                 'installation_id' => 8,
-                'data' => $data,
+                'data' => json_decode($data),
             ]);
 
             $this->testHelper->createDefaultSalary($salary);
@@ -652,7 +652,7 @@
                     "installationPrice": 0
                 }';
 
-            $product['data'] = $data;
+            $product['data'] = json_decode($data);
             ProductInOrder::create($product);
 
             $this->testHelper
@@ -749,7 +749,7 @@
                 'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
                 'count' => 1,
                 'installation_id' => 8,
-                'data' => $data,
+                'data' => json_decode($data),
             ]);
 
             ProductInOrder::create([
@@ -759,18 +759,8 @@
                 'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
                 'count' => 1,
                 'installation_id' => 8,
-                'data' => $data,
+                'data' => json_decode($data),
             ]);
-
-            /*
-             * todo баг
-             * если обновлять товар несколько раз, меняя туда-сюда монтаж\без монтажа,
-             * то в какой то момент цена заказа становится на 600 больше чем должна
-             * я думаю дело в замере\доставке, нужно продебажить во время всех таких действий
-             * эти атрибуты у товара и заказа и записать на каком этапе это происходит
-             *
-             * проверить я это смогу когда будет доступен функционал отображения
-             */
 
             $this->testHelper->createDefaultSalary($this->testHelper->defaultSalarySum(2));
 
@@ -857,7 +847,7 @@
                 'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
                 'count' => 1,
                 'installation_id' => 8,
-                'data' => $data,
+                'data' => json_decode($data),
             ]);
 
             $data = '{
@@ -909,7 +899,7 @@
                 'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
                 'count' => 1,
                 'installation_id' => 14,
-                'data' => $data,
+                'data' => json_decode($data),
             ]);
 
             $this->testHelper->createDefaultSalary($this->testHelper->defaultSalarySum(1));

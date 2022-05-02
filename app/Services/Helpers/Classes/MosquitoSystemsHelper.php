@@ -2,69 +2,42 @@
 
     namespace App\Services\Helpers\Classes;
 
+    use App\Exceptions\SalaryCalculationException;
+    use App\Models\Category;
     use App\Models\MosquitoSystems\Group;
     use App\Models\MosquitoSystems\Product;
     use App\Models\MosquitoSystems\Profile;
     use App\Models\MosquitoSystems\Type;
     use App\Models\ProductInOrder;
+    use App\Services\Repositories\Classes\ProductRepository;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
+    use Illuminate\Database\Query\Builder;
     use Illuminate\Support\Collection;
 
     class MosquitoSystemsHelper extends AbstractProductHelper
     {
-        public function updateOrCreateSalary(ProductInOrder $productInOrder) {
-            $products = ProductInOrder::whereCategoryId($productInOrder->category_id)
-                ->whereOrderId($productInOrder->order_id)
-                ->get()
-                ->reject(function ($product) use ($productInOrder) {
-                    return $product->id == $productInOrder->id;
-                });
+        /**
+         * @return void
+         */
+        public function updateOrCreateSalary(): void {
 
-            $count = $this->countProductsWithInstallation($productInOrder);
-
-            $countOfAllProducts = $this->countOf(
-                \OrderHelper::withoutOldProduct($productInOrder->order->products)
-            );
-
-            $productsWithMaxInstallation = $this->productsWithMaxInstallation($productInOrder);
-
-            if (
-                /*
-                 * Need to determine if products of the same type
-                 * that current exists.
-                 * Because new product had been already created,
-                 * we need to skip them
-                 */
-                $products->isNotEmpty() &&
-                !is_null(\SalaryHelper::salary($productInOrder)) ||
-                !$countOfAllProducts && fromUpdatingProductPage()
-            ) {
-                /*
-                 * Условие звучит так: если в заказе уже есть такой же товар с монтажом, и добалвяется
-                 * товар без монтажа, то зп не пересчитывается. Если в заказе уже есть товар с монтажом, кроме нынешнего,
-                 * у которого монтаж убирается, то зп тоже не пересчитывается
-                 *
-                 * НО, если в заказе уже есть монтаж, а в нынешнем продукте его нет, то з\п должна пересчитываться
-                 * можно брать $count - request->count()
-                 *
-                 * расчет зарплаты при добавлении товаров одинакового типа
-                 * если добавлено несколько товаров одинакового типа, то при расчете з\п
-                 * берется монтаж с максимальной ценой, а количество равняется всем товарам данного типа,
-                 * у которых задан монтаж, даже если он другой
-                 */
-
+            if ($this->needUpdateSalary()) {
                 \SalaryHelper::update(
                     sum: $this->calculateInstallationSalary(
-                        productInOrder: $productsWithMaxInstallation->first(),
-                        count: $count,
+                        productInOrder: $this->productsWithMaxInstallation()
+                            ->first(),
+                        count: ProductRepository::withInstallation($this->order)
+                            ->count(),
                     ),
-                    productInOrder: $productInOrder,
                 );
 
-                \SalaryHelper::checkMeasuringAndDelivery(
-                    order: $productInOrder->order,
-                    productInOrder: $productInOrder
-                );
+                // todo проверить, нужно ли делать обратное
+                // когда убирается монтаж сделать возвращение зарплат за замер и доставку
+                if ($this->salariesForNoInstallationMustBeRemoved()) {
+                    \SalaryHelper::removeNoInstallation();
+                }
+
+                \SalaryHelper::checkMeasuringAndDelivery();
 
             } else {
                 // todo баг
@@ -77,19 +50,49 @@
                 // есть товар другого типа без монтажа, за который есть зп в 960, то зарплата складывается из
                 // 960 за один и за монтаж за другой, надо обнулять зарплату которая равна 960
 
-                /*
-                 * условие: если в заказе есть товары с монтажом и нынешнему товару не нужен монтаж, то не создавать зп
-                 */
-                if (\OrderHelper::hasProducts($productInOrder->order) && !Calculator::productNeedInstallation()) {
-                    \SalaryHelper::make($productInOrder->order, 0);
+                // todo возможное решение проблемы с зарплатой за доставку и замер - хранить ее прямо в заказе
+                // или хранить данные о типе зарплаты, т.е. за что она была начислена, и при необходимости
+                // находить такую зарплату по типу и обнулять ее
+
+                if (\OrderHelper::hasProducts() && !Calculator::productNeedInstallation()) {
+                    \SalaryHelper::make(0);
                     return;
                 }
 
-                \SalaryHelper::make($productInOrder->order);
+                \SalaryHelper::make();
             }
         }
 
-        protected function needDecreaseCount() {
+        /**
+         * @return bool
+         */
+        protected function salariesForNoInstallationMustBeRemoved(): bool {
+            return !\OrderHelper::hasInstallation() && \OrderHelper::hasProducts() &&
+                !Calculator::productNeedInstallation() &&
+                fromUpdatingProductPage() &&
+                static::hasInstallation(oldProduct());
+        }
+
+        /**
+         * @return bool
+         */
+        protected function needUpdateSalary(): bool {
+            $sameCategoryProducts = ProductRepository::byCategory($this->productInOrder)
+                ->without($this->productInOrder);
+
+            $countOfAllProducts = ProductRepository::use($this->productInOrder->order->products)
+                ->without(oldProduct())
+                ->count();
+
+            return $sameCategoryProducts->isNotEmpty() &&
+                !is_null(\SalaryHelper::salary()) ||
+                !$countOfAllProducts && fromUpdatingProductPage();
+        }
+
+        /**
+         * @return bool
+         */
+        protected function needDecreaseCount(): bool {
             return fromUpdatingProductPage() && oldProductHasInstallation();
         }
 
@@ -105,13 +108,13 @@
                 $count -= oldProductsCount();
             }
 
-            $result = $this->salaryByCount(
+            $result = $this->salary(
                 productInOrder: $productInOrder,
                 count: $count,
                 typeId: Type::byCategory($productInOrder->category_id)->id
             );
 
-            $result += $this->checkDifficultySalary($productInOrder);
+            $result += $this->difficultySalary($productInOrder);
 
             return $result;
         }
@@ -121,8 +124,9 @@
          * @param int $count
          * @param int $typeId
          * @return float|int|mixed
+         * @throws SalaryCalculationException
          */
-        protected function salaryByCount(ProductInOrder $productInOrder, int $count, int $typeId) {
+        protected function salary(ProductInOrder $productInOrder, int $count, int $typeId) {
             try {
                 $result = $this->salaryForCount(
                     productInOrder: $productInOrder,
@@ -147,7 +151,7 @@
          */
         protected function salaryForCount(ProductInOrder $productInOrder, int $count, int $typeId) {
             $salary = Calculator::getInstallationSalary(
-                installation: $installation ?? $productInOrder->installation_id,
+                installation: $productInOrder->installation_id,
                 count: $count,
                 typeId: $typeId
             );
@@ -159,6 +163,7 @@
          * @param ProductInOrder $productInOrder
          * @param int $typeId
          * @return float|int
+         * @throws SalaryCalculationException
          */
         protected function salaryForMaxCount(ProductInOrder $productInOrder, int $typeId) {
             $salary = Calculator::maxCountSalary(
@@ -167,10 +172,11 @@
             );
 
             if (is_null($salary)) {
-                return \OrderHelper::salaries($productInOrder->order);
+                throw new SalaryCalculationException('Зарплата за данный тип не найдена!');
             }
 
-            $missingCount = $this->countProductsWithInstallation($productInOrder) - $salary->count;
+            $missingCount = ProductRepository::withInstallation($productInOrder->order)
+                    ->count() - $salary->count;
             if ($this->needDecreaseCount()) {
                 $missingCount -= oldProductsCount();
             }
@@ -184,20 +190,18 @@
          * @param ProductInOrder $productInOrder
          * @return int
          */
-        protected function checkDifficultySalary(ProductInOrder $productInOrder) {
+        protected function difficultySalary(ProductInOrder $productInOrder) {
             $salary = 0;
 
-            $products = \OrderHelper::withoutOldProduct(
-                $this->productsWithInstallation($productInOrder)
-            );
+            $products = ProductRepository::withInstallation($productInOrder->order)
+                ->without(oldProduct())
+                ->get();
 
             foreach ($products as $product) {
                 if ($this->productHasCoefficient($product)) {
-                    $data = $this->productData($product);
-
                     $salary += Calculator::salaryForDifficulty(
-                        price: $data->installationPrice,
-                        coefficient: $data->coefficient,
+                        price: $product->data->installationPrice,
+                        coefficient: $product->data->coefficient,
                         count: $product->count
                     );
                 }
@@ -206,25 +210,12 @@
             return $salary;
         }
 
-        public function countOf(Collection $products) {
-            return $products->sum('count');
-        }
-
-        public function productHasCoefficient(ProductInOrder $productInOrder) {
-            return $this->productData($productInOrder, 'coefficient') > 1;
-        }
-
-        public function productData(ProductInOrder $productInOrder, string $field = null) {
-            if (is_null($field)) {
-                return json_decode($productInOrder->data);
-            }
-
-            return json_decode($productInOrder->data)->$field;
-        }
-
-        public function productsWithMaxInstallation(ProductInOrder $productInOrder) {
-            $typeId = Type::byCategory($productInOrder->category_id)->id;
-            $productsWithInstallation = $productInOrder->order
+        /**
+         * @return Collection
+         */
+        protected function productsWithMaxInstallation(): Collection {
+            $typeId = Type::byCategory($this->productInOrder->category_id)->id;
+            $productsWithInstallation = $this->order
                 ->products()
                 ->leftJoin(
                     'mosquito_systems_type_additional',
@@ -233,86 +224,87 @@
                     'products.installation_id'
                 )
                 ->where('mosquito_systems_type_additional.type_id', $typeId)
-                // todo оставить только те поля которые нужны
-                ->get(['*', 'price as installation_price']);
+                ->get();
 
-            $maxInstallationPrice = $productsWithInstallation->max('installation_price');
+            $maxInstallationPrice = $productsWithInstallation->max('price');
 
             return $productsWithInstallation->filter(function ($product) use ($maxInstallationPrice) {
-                return $product->installation_price == $maxInstallationPrice;
+                return equals($product->price, $maxInstallationPrice);
             });
         }
 
-        public function countProductsWithInstallation(ProductInOrder $productInOrder): int {
-            return $this->countOf(
-                $this->productsWithInstallation($productInOrder)
-            );
-        }
-
-        /*
-         * todo улучшение кода
-         * когда буду рефакторить, надо сделать так, чтобы пропускался старый товар (при обновлении, который еще не удален)
-         * во всех местах где используется этот метод нужно это учесть
+        /**
+         * @param ProductInOrder|null $product
+         * @return Collection
          */
-        public function productsWithInstallation(ProductInOrder $productInOrder): Collection {
-            return $productInOrder->order
-                ->products()
-                ->where('category_id', request()->input('categories'))
-                ->whereNotIn('installation_id', [0, 14])
-                ->get();
-        }
-
         public function profiles(ProductInOrder $product = null): Collection {
-            $productData = null;
-
-            if (!is_null($product)) {
-                $productData = json_decode($product->data);
-            }
-
-            return Profile::whereHas('products.type', function ($query) use ($product, $productData) {
+            return Profile::whereHas('products.type', function ($query) use ($product) {
                 return $query->where('category_id', $product->category_id ?? request()->input('categoryId'))
-                    ->where('tissue_id', $productData->tissueId ?? request()->input('additional'));
-            })
-                ->get(['id', 'name']);
+                    ->where('tissue_id', $product->data->tissueId ?? request()->input('additional'));
+            })->get(['id', 'name']);
         }
 
-        public function tissues(int $categoryId) {
-            // todo колхоз
-            return \App\Models\Category::tissues($categoryId)
-                ->get()
-                ->pluck('type')
-                ->pluck('products')
-                ->collapse()
-                ->pluck('tissue')
-                ->unique();
+        /**
+         * @param int $categoryId
+         * @return Collection
+         */
+        public function tissues(int $categoryId): Collection {
+            return Category::findOrFail($categoryId)
+                ->type
+                ->products()
+                ->with('tissue', function ($query) {
+                    $query->select(['id', 'name'])->distinct();
+                })
+                ->get(['tissue_id'])
+                ->pluck('tissue');
         }
 
-        public function additional(ProductInOrder $productInOrder = null) {
-            $productData = null;
-
-            if (isset($productInOrder->data)) {
-                $productData = json_decode($productInOrder->data);
-            }
-
-            $product = Product::whereTissueId($productData->tissueId ?? request()->input('nextAdditional'))
-                ->whereProfileId($productData->profileId ?? request()->input('additional'))
-                ->whereHas('type', function ($query) use ($productData) {
-                    $query->where('category_id', $productData->category ?? request()->input('categoryId'));
-                })->first();
+        /**
+         * @param ProductInOrder|null $productInOrder
+         * @return array
+         */
+        public function additional(ProductInOrder $productInOrder = null): array {
+            $product = $this->findProduct($productInOrder);
 
             $additional = $product->additional;
-
-            $groups = Group::whereHas('additional', function ($query) use ($additional) {
-                $query->whereIn('id', $additional->pluck('id'));
-            })->get()
-                // Заполняем для каждой группы выбранное в заказе значение
-                ->each(function ($item) use ($productData) {
-                    $name = "group-$item->id";
-                    if (isset($productData) && $productData->$name !== null) {
-                        $item->selected = $productData->$name;
-                    }
-                });
+            $groups = $this->groupsByAdditional($additional);
+            $this->fillSelectedGroups($groups);
 
             return compact('additional', 'groups', 'product');
+        }
+
+        /**
+         * @param Collection $groups
+         * @return void
+         */
+        protected function fillSelectedGroups(Collection $groups): void {
+            $groups->each(function ($item) {
+                $name = "group-$item->id";
+                if (isset($this->productInOrder->data) && $this->productInOrder->data->$name !== null) {
+                    $item->selected = $this->productInOrder->data->$name;
+                }
+            });
+        }
+
+        /**
+         * @param Collection $additional
+         * @return Collection
+         */
+        protected function groupsByAdditional(Collection $additional): Collection {
+            return Group::whereHas('additional', function ($query) use ($additional) {
+                $query->whereIn('id', $additional->pluck('id'));
+            })->get();
+        }
+
+        /**
+         * @param ProductInOrder|null $productInOrder
+         * @return Product
+         */
+        protected function findProduct(ProductInOrder $productInOrder = null): Product {
+            return Product::whereTissueId($productInOrder->data->tissueId ?? request()->input('nextAdditional'))
+                ->whereProfileId($productInOrder->data->profileId ?? request()->input('additional'))
+                ->whereHas('type', function ($query) use ($productInOrder) {
+                    $query->where('category_id', $productInOrder->data->category ?? request()->input('categoryId'));
+                })->first();
         }
     }
