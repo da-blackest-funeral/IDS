@@ -5,8 +5,8 @@
     use App\Models\Order;
     use App\Models\ProductInOrder;
     use App\Models\SystemVariables;
+    use App\Services\Repositories\Classes\ProductRepository;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
-    use Illuminate\Support\Collection;
     use App\Services\Helpers\Interfaces\OrderHelperInterface;
 
     class OrderHelper implements OrderHelperInterface
@@ -109,7 +109,7 @@
 
             $this->order->update();
 
-            $product = \ProductHelper::make($this->order->refresh());
+            $product = \ProductHelper::make();
 
             \ProductHelper::use($product)
                 ->updateOrCreateSalary();
@@ -130,7 +130,10 @@
          * @return bool
          */
         public function hasInstallation(): bool {
-            return $this->withoutOldProduct($this->order->products)->contains(function ($product) {
+            return ProductRepository::use($this->order->products)
+                    ->without(oldProduct())
+                    ->get()
+                    ->contains(function ($product) {
                     return \ProductHelper::hasInstallation($product);
                 }) && $this->hasProducts();
         }
@@ -139,16 +142,8 @@
          * @return bool
          */
         public function hasProducts(): bool {
-            return $this->withoutOldProduct($this->order->products)->isNotEmpty();
-        }
-
-        /**
-         * @param Collection $products
-         * @return Collection
-         */
-        public function withoutOldProduct(Collection $products): Collection {
-            return $products->reject(function ($product) {
-                return $product->id == oldProduct('id');
-            });
+            return ProductRepository::use($this->order->products)
+                ->without(oldProduct())
+                ->isNotEmpty();
         }
     }

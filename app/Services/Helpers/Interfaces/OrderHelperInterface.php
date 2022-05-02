@@ -47,11 +47,4 @@
          * @return bool
          */
         public function hasProducts(): bool;
-
-        /**
-         * @param Collection $products
-         * @return Collection
-         * @todo убрать в отдельный класс ProductRepository
-         */
-        public function withoutOldProduct(Collection $products): Collection;
     }
