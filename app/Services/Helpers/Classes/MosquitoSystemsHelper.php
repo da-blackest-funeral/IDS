@@ -37,7 +37,7 @@
 
                 \SalaryHelper::checkMeasuringAndDelivery();
 
-            } else {
+            } elseif (request()->get('_method') != 'delete') {
 
                 if (\OrderHelper::hasProducts() && !Calculator::productNeedInstallation()) {
                     \SalaryHelper::make(0);

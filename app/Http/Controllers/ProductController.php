@@ -3,9 +3,9 @@
     namespace App\Http\Controllers;
 
     use App\Http\Requests\SaveOrderRequest;
-    use App\Models\Category;
     use App\Models\Order;
     use App\Models\ProductInOrder;
+    use App\Services\Repositories\Classes\ProductRepository;
 
     class ProductController extends Controller
     {
@@ -23,15 +23,9 @@
 
         public function update(Order $order, ProductInOrder $productInOrder) {
 
-            $order->price -= $productInOrder->data->main_price;
-            $order->products_count -= $productInOrder->count;
+            \OrderHelper::removeFromOrder($productInOrder);
+
             session()->put('oldProduct', $productInOrder);
-
-            foreach ($productInOrder->data->additional as $additional) {
-                $order->price -= $additional->price;
-            }
-
-            $order->update();
 
             if (\OrderHelper::orderOrProductHasInstallation()) {
                 \SalaryHelper::checkMeasuringAndDelivery();
@@ -41,6 +35,24 @@
             $productInOrder->delete();
             $order->update();
 
+            return redirect(route('order', ['order' => $order->id]));
+        }
+
+        public function delete(Order $order, ProductInOrder $productInOrder) {
+            /*
+             * При удалении товара
+             * 1) проверить доставку и монтаж
+             * 2) удалить\обновить зарплату за него
+             */
+            \OrderHelper::removeFromOrder($productInOrder);
+
+            \ProductHelper::use(
+                ProductRepository::byCategory($productInOrder)
+                ->get()
+                ->last()
+            )->updateOrCreateSalary();
+
+            $productInOrder->delete();
             return redirect(route('order', ['order' => $order->id]));
         }
     }

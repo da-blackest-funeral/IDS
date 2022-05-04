@@ -92,6 +92,17 @@
             }
         }
 
+        public function removeFromOrder(ProductInOrder $productInOrder) {
+            $this->order->price -= $productInOrder->data->main_price;
+            $this->order->products_count -= $productInOrder->count;
+
+            foreach ($productInOrder->data->additional as $additional) {
+                $this->order->price -= $additional->price;
+            }
+
+            $this->order->update();
+        }
+
         /**
          * Creates new product and adds it to the order
          *

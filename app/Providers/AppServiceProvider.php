@@ -84,8 +84,10 @@
             }
 
             $this->callAfterResolving(Calculator::class, function (Calculator $calculator) {
-                $calculator->calculate();
-                $calculator->saveInfo();
+                if (request()->get('_method') != 'delete') {
+                    $calculator->calculate();
+                    $calculator->saveInfo();
+                }
             });
         }
     }

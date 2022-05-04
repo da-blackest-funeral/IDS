@@ -64,6 +64,7 @@
                                 <th scope="col" class="text-center">Количество</th>
                                 <th scope="col" class="text-center">Цена изделия</th>
                                 <th scope="col" class="text-center">Дополнительно</th>
+                                <th></th>
                             </tr>
                             </thead>
                             <tbody>
@@ -109,6 +110,20 @@
                                             </div>
                                         @endisset
                                         {{-- todo сделать вывод поля "Итого", Вова: тут же будет кнопка "Удалить" --}}
+                                    </td>
+                                    <td class="text-center">
+                                        <form action="{{ route('product-in-order', ['order' => $order->id, 'productInOrder' => $product->id]) }}"
+                                              method="post"
+                                        >
+                                            @method('delete')
+                                            @csrf
+                                            <button
+                                                type="submit"
+                                                onclick="return confirm('Вы уверены?')"
+                                                class="btn btn-outline-danger">
+                                                Удалить
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             @endforeach
