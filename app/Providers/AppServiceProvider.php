@@ -84,7 +84,7 @@
             }
 
             $this->callAfterResolving(Calculator::class, function (Calculator $calculator) {
-                if (request()->get('_method') != 'delete') {
+                if (! deletingProduct()) {
                     $calculator->calculate();
                     $calculator->saveInfo();
                 }

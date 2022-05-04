@@ -69,6 +69,7 @@
          * @return bool
          */
         protected function needUpdateSalary(): bool {
+            // todo возможно, тут не учитывается факт что товары удалены, сделать whereNull('deleted_at')
             $sameCategoryProducts = ProductRepository::byCategory($this->productInOrder)
                 ->without($this->productInOrder);
 
