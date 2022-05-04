@@ -67,7 +67,7 @@
             $this->order->measuring_price = 0;
         }
 
-        protected function calculateMeasuringOptions() {
+        public function calculateMeasuringOptions() {
             if ($this->notNeedMeasuring()) {
                 $this->order->price -= Calculator::getMeasuringPrice();
                 if (Calculator::productNeedInstallation()) {
@@ -78,7 +78,7 @@
             }
         }
 
-        protected function calculateDeliveryOptions() {
+        public function calculateDeliveryOptions() {
             if ($this->order->delivery) {
                 $this->order->price -= min(
                     $this->order->delivery,
@@ -92,13 +92,15 @@
             }
         }
 
-        public function removeFromOrder(ProductInOrder $productInOrder) {
+        public function remove(ProductInOrder $productInOrder) {
             $this->order->price -= $productInOrder->data->main_price;
             $this->order->products_count -= $productInOrder->count;
 
             foreach ($productInOrder->data->additional as $additional) {
                 $this->order->price -= $additional->price;
             }
+
+            session()->put('oldProduct', $productInOrder);
 
             $this->order->update();
         }

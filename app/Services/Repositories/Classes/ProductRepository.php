@@ -63,13 +63,17 @@
             return $this->products->isNotEmpty();
         }
 
-        public static function withInstallation(Order $order) {
+        public static function withInstallation(Order $order, int $categoryId = null) {
             $instance = new static();
             $instance->products = $order->products()
-                ->where('category_id', request()->input('categories'))
+                ->where('category_id', $categoryId ?? request()->input('categories'))
                 ->whereNotIn('installation_id', [0, 14])
                 ->get();
 
             return $instance;
+        }
+
+        public function first() {
+            return $this->products->first();
         }
     }

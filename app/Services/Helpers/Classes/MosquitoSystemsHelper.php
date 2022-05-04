@@ -26,7 +26,7 @@
                     sum: $this->calculateInstallationSalary(
                         productInOrder: $this->productsWithMaxInstallation()
                             ->first(),
-                        count: ProductRepository::withInstallation($this->order)
+                        count: ProductRepository::withInstallation($this->order, $this->productInOrder->category_id)
                             ->count(),
                     ),
                 );
@@ -37,7 +37,7 @@
 
                 \SalaryHelper::checkMeasuringAndDelivery();
 
-            } elseif (request()->get('_method') != 'delete') {
+            } elseif (! deletingProduct()) {
 
                 if (\OrderHelper::hasProducts() && !Calculator::productNeedInstallation()) {
                     \SalaryHelper::make(0);
@@ -56,7 +56,7 @@
          * @return bool
          */
         protected function salariesForNoInstallationMustBeRemoved(): bool {
-
+            // todo условие можно сократить
             return
                 !\OrderHelper::hasInstallation() &&
                 \OrderHelper::hasProducts() &&
@@ -85,7 +85,8 @@
          * @return bool
          */
         protected function needDecreaseCount(): bool {
-            return fromUpdatingProductPage() && $this->hasInstallation(oldProduct());
+            return (fromUpdatingProductPage() || deletingProduct())
+                && $this->hasInstallation(oldProduct());
         }
 
         /**
@@ -121,12 +122,13 @@
          */
         protected function salary(ProductInOrder $productInOrder, int $count, int $typeId) {
             try {
+                // todo должно отрабатывать здесь
                 $result = $this->salaryForCount(
                     productInOrder: $productInOrder,
                     count: $count,
                     typeId: $typeId
                 );
-            } catch (\Exception) {
+            } catch (\Exception $exception) {
                 $result = $this->salaryForMaxCount(
                     productInOrder: $productInOrder,
                     typeId: $typeId

@@ -23,9 +23,7 @@
 
         public function update(Order $order, ProductInOrder $productInOrder) {
 
-            \OrderHelper::removeFromOrder($productInOrder);
-
-            session()->put('oldProduct', $productInOrder);
+            \OrderHelper::remove($productInOrder);
 
             if (\OrderHelper::orderOrProductHasInstallation()) {
                 \SalaryHelper::checkMeasuringAndDelivery();
@@ -44,13 +42,27 @@
              * 1) проверить доставку и монтаж
              * 2) удалить\обновить зарплату за него
              */
-            \OrderHelper::removeFromOrder($productInOrder);
 
-            \ProductHelper::use(
-                ProductRepository::byCategory($productInOrder)
-                ->get()
-                ->last()
-            )->updateOrCreateSalary();
+            /*
+             * 1) если в заказе есть товары данного типа, то посчитать за них зарплату с помощью updateOrCreateSalary
+             * 2) если таких товаров нет, то просто удалить зарплату
+             * 3) если кроме удаленного товара в заказе нет товаров с монтажом, то замер сделать не бесплатным,
+             * зарплаты с типом NO_INSTALLATION вернуть
+             */
+
+            \OrderHelper::remove($productInOrder);
+            \OrderHelper::calculateMeasuringOptions();
+            \OrderHelper::calculateDeliveryOptions();
+
+            $sameCategoryProducts = ProductRepository::byCategoryWithout($productInOrder);
+
+            if ($sameCategoryProducts->isNotEmpty()) {
+                \ProductHelper::use(
+                    $sameCategoryProducts->first()
+                )->updateOrCreateSalary();
+            } else {
+                \SalaryHelper::salary()->delete();
+            }
 
             $productInOrder->delete();
             return redirect(route('order', ['order' => $order->id]));

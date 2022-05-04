@@ -121,3 +121,7 @@
     function userName(int $id): string {
         return \user($id)->name;
     }
+
+    function deletingProduct(): bool {
+        return request()->input('_method') == 'delete';
+    }

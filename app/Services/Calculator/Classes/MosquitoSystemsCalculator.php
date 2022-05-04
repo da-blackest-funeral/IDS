@@ -434,7 +434,8 @@
             return $result;
         }
 
-        public function getInstallationSalary($installation, $count = null, int $typeId = null) {
+        public function getInstallationSalary(mixed $installation, int $count = null, int $typeId = null) {
+//            dump($typeId, $installation, $count);
             return \DB::table('mosquito_systems_type_salary')
                 ->where('type_id', $typeId ?? $this->type->id)
                 ->where('additional_id', $installation->additional_id ?? $installation)
