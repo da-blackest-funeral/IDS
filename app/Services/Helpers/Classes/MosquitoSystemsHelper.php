@@ -36,9 +36,7 @@
                 }
 
                 \SalaryHelper::checkMeasuringAndDelivery();
-
             } elseif (! deletingProduct()) {
-
                 if (\OrderHelper::hasProducts() && !Calculator::productNeedInstallation()) {
                     \SalaryHelper::make(0);
                     return;
@@ -49,6 +47,23 @@
                 }
 
                 \SalaryHelper::make();
+                return;
+            }
+
+            // тут идет код с удалением товара
+            $this->checkNoInstallationSalaries();
+        }
+
+        /**
+         * @return void
+         */
+        protected function checkNoInstallationSalaries(): void {
+            $productsWithInstallation = ProductRepository::use($this->products)
+                ->without(oldProduct())
+                ->onlyWithInstallation();
+
+            if ($productsWithInstallation->isEmpty()) {
+                \SalaryHelper::restoreNoInstallation();
             }
         }
 
@@ -70,10 +85,9 @@
          */
         protected function needUpdateSalary(): bool {
             // todo возможно, тут не учитывается факт что товары удалены, сделать whereNull('deleted_at')
-            $sameCategoryProducts = ProductRepository::byCategory($this->productInOrder)
-                ->without($this->productInOrder);
+            $sameCategoryProducts = ProductRepository::byCategoryWithout($this->productInOrder);
 
-            $countOfAllProducts = ProductRepository::use($this->productInOrder->order->products)
+            $countOfAllProducts = ProductRepository::use($this->products)
                 ->without(oldProduct())
                 ->count();
 
@@ -123,7 +137,6 @@
          */
         protected function salary(ProductInOrder $productInOrder, int $count, int $typeId) {
             try {
-                // todo должно отрабатывать здесь
                 $result = $this->salaryForCount(
                     productInOrder: $productInOrder,
                     count: $count,
@@ -253,8 +266,7 @@
          * @return Collection
          */
         public function tissues(int $categoryId): Collection {
-            return Category::findOrFail($categoryId)
-                ->type
+            return Category::findOrFail($categoryId)->type
                 ->products()
                 ->with('tissue', function ($query) {
                     $query->select(['id', 'name'])->distinct();
@@ -310,5 +322,11 @@
                 ->whereHas('type', function ($query) use ($productInOrder) {
                     $query->where('category_id', $productInOrder->data->category ?? request()->input('categoryId'));
                 })->first();
+        }
+
+        public function installationCondition(): Callable {
+            return function ($product) {
+                return \ProductHelper::hasInstallation($product);
+            };
         }
     }

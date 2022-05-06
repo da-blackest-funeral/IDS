@@ -6,7 +6,7 @@
     use App\Models\ProductInOrder;
     use App\Services\Repositories\Interfaces\ProductRepositoryInterface;
     use Illuminate\Support\Collection;
-    use phpDocumentor\Reflection\Types\Callable_;
+    use JetBrains\PhpStorm\Pure;
 
     class ProductRepository implements ProductRepositoryInterface
     {
@@ -36,8 +36,20 @@
             return static::byCategory($productInOrder)->without($productInOrder);
         }
 
-        public function has(Callable $callback) {
+        public function has(callable $callback): bool {
             return $this->products->contains($callback);
+        }
+
+        public function hasInstallation(): bool {
+            return $this->has(\ProductHelper::installationCondition());
+        }
+
+        public function onlyWithInstallation(): ProductRepositoryInterface {
+            $this->products = $this->products->filter(
+                \ProductHelper::installationCondition()
+            );
+
+            return $this;
         }
 
         public function without(object $productToReject): ProductRepositoryInterface {
@@ -57,6 +69,10 @@
 
         public function count(): int {
             return $this->products->sum('count');
+        }
+
+        #[Pure] public function isEmpty(): bool {
+            return $this->products->isEmpty();
         }
 
         public function isNotEmpty(): bool {
