@@ -19,6 +19,8 @@
 
         public function onlyWithInstallation(): ProductRepositoryInterface;
 
+        public function isEmpty(): bool;
+
         public function isNotEmpty(): bool;
 
         public function get(): Collection;

@@ -36,9 +36,7 @@
                 }
 
                 \SalaryHelper::checkMeasuringAndDelivery();
-
             } elseif (! deletingProduct()) {
-
                 if (\OrderHelper::hasProducts() && !Calculator::productNeedInstallation()) {
                     \SalaryHelper::make(0);
                     return;
@@ -49,6 +47,7 @@
                 }
 
                 \SalaryHelper::make();
+                return;
             }
 
             // тут идет код с удалением товара
@@ -59,8 +58,13 @@
          * @return void
          */
         protected function checkNoInstallationSalaries(): void {
-//            $productsWithInstallation = ProductRepository::use($this->products);
-//            if ()
+            $productsWithInstallation = ProductRepository::use($this->products)
+                ->without(oldProduct())
+                ->onlyWithInstallation();
+//            dump($productsWithInstallation->get());
+            if ($productsWithInstallation->isEmpty()) {
+                \SalaryHelper::restoreNoInstallation();
+            }
         }
 
         /**

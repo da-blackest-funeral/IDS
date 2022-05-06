@@ -5,6 +5,7 @@
     use App\Models\Order;
     use App\Models\ProductInOrder;
 
+    // todo добавить остальные методы сюда
     interface SalaryHelperInterface
     {
         /**

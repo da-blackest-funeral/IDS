@@ -6,6 +6,7 @@
     use App\Models\ProductInOrder;
     use App\Services\Repositories\Interfaces\ProductRepositoryInterface;
     use Illuminate\Support\Collection;
+    use JetBrains\PhpStorm\Pure;
 
     class ProductRepository implements ProductRepositoryInterface
     {
@@ -68,6 +69,10 @@
 
         public function count(): int {
             return $this->products->sum('count');
+        }
+
+        #[Pure] public function isEmpty(): bool {
+            return $this->products->isEmpty();
         }
 
         public function isNotEmpty(): bool {
