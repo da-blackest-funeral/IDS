@@ -61,7 +61,7 @@
             $productsWithInstallation = ProductRepository::use($this->products)
                 ->without(oldProduct())
                 ->onlyWithInstallation();
-//            dump($productsWithInstallation->get());
+
             if ($productsWithInstallation->isEmpty()) {
                 \SalaryHelper::restoreNoInstallation();
             }
@@ -137,7 +137,6 @@
          */
         protected function salary(ProductInOrder $productInOrder, int $count, int $typeId) {
             try {
-                // todo должно отрабатывать здесь
                 $result = $this->salaryForCount(
                     productInOrder: $productInOrder,
                     count: $count,
@@ -267,8 +266,7 @@
          * @return Collection
          */
         public function tissues(int $categoryId): Collection {
-            return Category::findOrFail($categoryId)
-                ->type
+            return Category::findOrFail($categoryId)->type
                 ->products()
                 ->with('tissue', function ($query) {
                     $query->select(['id', 'name'])->distinct();

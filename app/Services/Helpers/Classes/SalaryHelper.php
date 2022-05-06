@@ -80,11 +80,9 @@
                 ->where('type', SalaryType::NO_INSTALLATION)
                 ->get()
                 ->each(function (InstallerSalary $salary) use ($order) {
-                    $salary->sum = 960;
-                    $salary->update();
-//                    $salary->update([
-//                        'sum' => $this->noInstallationSalarySum($order)
-//                    ]);
+                    $salary->update([
+                        'sum' => $this->noInstallationSalarySum($order)
+                    ]);
                 });
         }
 

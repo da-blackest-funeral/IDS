@@ -17029,6 +17029,16 @@
          *
          * @static 
          */ 
+        public static function restoreNoInstallation()
+        {
+                        /** @var \App\Services\Helpers\Classes\SalaryHelper $instance */
+                        return $instance->restoreNoInstallation();
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
         public static function salary()
         {
                         /** @var \App\Services\Helpers\Classes\SalaryHelper $instance */
