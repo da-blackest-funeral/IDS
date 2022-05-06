@@ -15,6 +15,10 @@
 
         public static function byCategory(ProductInOrder $productInOrder): ProductRepositoryInterface;
 
+        public function hasInstallation(): bool;
+
+        public function onlyWithInstallation(): ProductRepositoryInterface;
+
         public function isNotEmpty(): bool;
 
         public function get(): Collection;

@@ -50,6 +50,17 @@
 
                 \SalaryHelper::make();
             }
+
+            // тут идет код с удалением товара
+            $this->checkNoInstallationSalaries();
+        }
+
+        /**
+         * @return void
+         */
+        protected function checkNoInstallationSalaries(): void {
+//            $productsWithInstallation = ProductRepository::use($this->products);
+//            if ()
         }
 
         /**
@@ -70,10 +81,9 @@
          */
         protected function needUpdateSalary(): bool {
             // todo возможно, тут не учитывается факт что товары удалены, сделать whereNull('deleted_at')
-            $sameCategoryProducts = ProductRepository::byCategory($this->productInOrder)
-                ->without($this->productInOrder);
+            $sameCategoryProducts = ProductRepository::byCategoryWithout($this->productInOrder);
 
-            $countOfAllProducts = ProductRepository::use($this->productInOrder->order->products)
+            $countOfAllProducts = ProductRepository::use($this->products)
                 ->without(oldProduct())
                 ->count();
 
@@ -310,5 +320,11 @@
                 ->whereHas('type', function ($query) use ($productInOrder) {
                     $query->where('category_id', $productInOrder->data->category ?? request()->input('categoryId'));
                 })->first();
+        }
+
+        public function installationCondition(): Callable {
+            return function ($product) {
+                return \ProductHelper::hasInstallation($product);
+            };
         }
     }

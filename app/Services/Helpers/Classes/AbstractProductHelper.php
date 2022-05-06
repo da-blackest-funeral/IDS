@@ -47,7 +47,7 @@
          * @param object $productInOrder
          * @return bool
          */
-        public function hasInstallation(object $productInOrder): bool {
+        public static function hasInstallation(object $productInOrder): bool {
             return
                 isset($productInOrder->installation_id) &&
                 $productInOrder->installation_id &&
@@ -85,4 +85,6 @@
             return !\OrderHelper::hasInstallation() &&
                 !Calculator::productNeedInstallation();
         }
+
+        abstract public function installationCondition(): Callable;
     }

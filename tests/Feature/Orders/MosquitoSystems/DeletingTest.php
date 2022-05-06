@@ -60,7 +60,7 @@
         }
 
         /**
-         * @test
+         *
          * @return void
          */
         public function deleting_product_with_installation_when_order_has_product_with_no_installation() {

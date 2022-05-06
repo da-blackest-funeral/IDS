@@ -16709,6 +16709,7 @@
          * 
          *
          * @return void 
+         * @throws SalaryCalculationException
          * @static 
          */ 
         public static function updateOrCreateSalary()
@@ -16722,6 +16723,7 @@
          * @param \App\Models\ProductInOrder $productInOrder
          * @param int $count
          * @return int 
+         * @throws SalaryCalculationException
          * @static 
          */ 
         public static function calculateInstallationSalary($productInOrder, $count)
@@ -16768,6 +16770,16 @@
                     /**
          * 
          *
+         * @static 
+         */ 
+        public static function installationCondition()
+        {
+                        /** @var \App\Services\Helpers\Classes\MosquitoSystemsHelper $instance */
+                        return $instance->installationCondition();
+        }
+                    /**
+         * 
+         *
          * @return \App\Models\ProductInOrder 
          * @static 
          */ 
@@ -16797,8 +16809,7 @@
          */ 
         public static function hasInstallation($productInOrder)
         {            //Method inherited from \App\Services\Helpers\Classes\AbstractProductHelper         
-                        /** @var \App\Services\Helpers\Classes\MosquitoSystemsHelper $instance */
-                        return $instance->hasInstallation($productInOrder);
+                        return \App\Services\Helpers\Classes\MosquitoSystemsHelper::hasInstallation($productInOrder);
         }
                     /**
          * 
@@ -16885,6 +16896,36 @@
                         return $instance->orderOrProductHasInstallation();
         }
                     /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function calculateMeasuringOptions()
+        {
+                        /** @var \App\Services\Helpers\Classes\OrderHelper $instance */
+                        return $instance->calculateMeasuringOptions();
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function calculateDeliveryOptions()
+        {
+                        /** @var \App\Services\Helpers\Classes\OrderHelper $instance */
+                        return $instance->calculateDeliveryOptions();
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function remove($productInOrder)
+        {
+                        /** @var \App\Services\Helpers\Classes\OrderHelper $instance */
+                        return $instance->remove($productInOrder);
+        }
+                    /**
          * Creates new product and adds it to the order
          *
          * @return \App\Models\ProductInOrder 
@@ -16928,18 +16969,6 @@
                         /** @var \App\Services\Helpers\Classes\OrderHelper $instance */
                         return $instance->hasProducts();
         }
-                    /**
-         * 
-         *
-         * @param \Illuminate\Support\Collection $products
-         * @return \Illuminate\Support\Collection 
-         * @static 
-         */ 
-        public static function withoutOldProduct($products)
-        {
-                        /** @var \App\Services\Helpers\Classes\OrderHelper $instance */
-                        return $instance->withoutOldProduct($products);
-        }
          
     }
             /**
@@ -16950,16 +16979,33 @@
                     /**
          * 
          *
+         * @param int|float $sum
+         * @return void 
          * @static 
          */ 
         public static function update($sum)
         {
                         /** @var \App\Services\Helpers\Classes\SalaryHelper $instance */
-                        return $instance->update($sum);
+                        $instance->update($sum);
         }
                     /**
          * 
          *
+         * @param bool $condition
+         * @param int|float $sum
+         * @return void 
+         * @static 
+         */ 
+        public static function updateIf($condition, $sum)
+        {
+                        /** @var \App\Services\Helpers\Classes\SalaryHelper $instance */
+                        $instance->updateIf($condition, $sum);
+        }
+                    /**
+         * 
+         *
+         * @param float|null $sum
+         * @return \App\Models\Salaries\InstallerSalary 
          * @static 
          */ 
         public static function make($sum = null)
@@ -16970,12 +17016,13 @@
                     /**
          * 
          *
+         * @return void 
          * @static 
          */ 
         public static function removeNoInstallation()
         {
                         /** @var \App\Services\Helpers\Classes\SalaryHelper $instance */
-                        return $instance->removeNoInstallation();
+                        $instance->removeNoInstallation();
         }
                     /**
          * 
@@ -16990,12 +17037,70 @@
                     /**
          * 
          *
+         * @return bool 
+         * @static 
+         */ 
+        public static function hasSalaryNoInstallation()
+        {
+                        /** @var \App\Services\Helpers\Classes\SalaryHelper $instance */
+                        return $instance->hasSalaryNoInstallation();
+        }
+                    /**
+         * 
+         *
          * @static 
          */ 
         public static function checkMeasuringAndDelivery()
         {
                         /** @var \App\Services\Helpers\Classes\SalaryHelper $instance */
                         return $instance->checkMeasuringAndDelivery();
+        }
+         
+    }
+            /**
+     * 
+     *
+     */ 
+        class SelectDataFacade {
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function secondSelect()
+        {
+                        /** @var \App\Services\Renderer\Classes\MosquitoSelectData $instance */
+                        return $instance->secondSelect();
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function thirdSelect()
+        {
+                        /** @var \App\Services\Renderer\Classes\MosquitoSelectData $instance */
+                        return $instance->thirdSelect();
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function additional()
+        {
+                        /** @var \App\Services\Renderer\Classes\MosquitoSelectData $instance */
+                        return $instance->additional();
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function use($productInOrder)
+        {            //Method inherited from \App\Services\Renderer\Classes\SelectData         
+                        /** @var \App\Services\Renderer\Classes\MosquitoSelectData $instance */
+                        return $instance->use($productInOrder);
         }
          
     }
@@ -20916,6 +21021,7 @@ namespace  {
             class ProductHelper extends \App\Services\Facades\Classes\ProductHelperFacade {}
             class OrderHelper extends \App\Services\Facades\Classes\OrderHelperFacade {}
             class SalaryHelper extends \App\Services\Facades\Classes\SalaryHelperFacade {}
+            class SelectData extends \App\Services\Facades\Classes\SelectDataFacade {}
             class Flare extends \Facade\Ignition\Facades\Flare {}
      
 }

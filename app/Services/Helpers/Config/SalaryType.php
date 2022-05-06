@@ -27,9 +27,7 @@
             if (
                 \ProductHelper::hasInstallation($productInOrder) ||
                 ProductRepository::byCategoryWithout($productInOrder)
-                    ->has(function ($product) {
-                        return \ProductHelper::hasInstallation($product);
-                    })
+                    ->hasInstallation()
             ) {
                 return self::INSTALLATION;
             }
