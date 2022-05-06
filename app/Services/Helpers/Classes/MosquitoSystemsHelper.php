@@ -22,42 +22,66 @@
         public function updateOrCreateSalary(): void {
 
             if ($this->needUpdateSalary()) {
-                \SalaryHelper::update(
-                    sum: $this->calculateInstallationSalary(
-                        productInOrder: $this->productsWithMaxInstallation()
-                            ->first(),
-                        count: ProductRepository::withInstallation($this->order, $this->productInOrder->category_id)
-                            ->count(),
-                    ),
-                );
 
-                if ($this->salariesForNoInstallationMustBeRemoved()) {
-                    \SalaryHelper::removeNoInstallation();
-                }
-
+                $this->updateSalary();
+                $this->checkRemoveNoInstallationSalary();
                 \SalaryHelper::checkMeasuringAndDelivery();
             } elseif (! deletingProduct()) {
-                if (\OrderHelper::hasProducts() && !Calculator::productNeedInstallation()) {
-                    \SalaryHelper::make(0);
+
+                if ($this->checkEmptySalary()) {
                     return;
                 }
 
-                if ($this->salariesForNoInstallationMustBeRemoved()) {
-                    \SalaryHelper::removeNoInstallation();
-                }
+                $this->checkRemoveNoInstallationSalary();
 
                 \SalaryHelper::make();
                 return;
             }
 
             // тут идет код с удалением товара
-            $this->checkNoInstallationSalaries();
+            $this->checkRestoreNoInstallationSalaries();
+        }
+
+        /**
+         * @return bool
+         */
+        protected function checkEmptySalary(): bool {
+            if (\OrderHelper::hasProducts() && !Calculator::productNeedInstallation()) {
+                \SalaryHelper::make(0);
+                return true;
+            }
+
+            return false;
         }
 
         /**
          * @return void
          */
-        protected function checkNoInstallationSalaries(): void {
+        protected function checkRemoveNoInstallationSalary(): void {
+            if ($this->salariesForNoInstallationMustBeRemoved()) {
+                \SalaryHelper::removeNoInstallation();
+            }
+        }
+
+        /**
+         * @return void
+         * @throws SalaryCalculationException
+         */
+        protected function updateSalary(): void {
+            \SalaryHelper::update(
+                sum: $this->calculateInstallationSalary(
+                    productInOrder: $this->productsWithMaxInstallation()
+                        ->first(),
+                    count: ProductRepository::withInstallation($this->order, $this->productInOrder->category_id)
+                        ->count(),
+                ),
+            );
+        }
+
+        /**
+         * @return void
+         */
+        protected function checkRestoreNoInstallationSalaries(): void {
             $productsWithInstallation = ProductRepository::use($this->products)
                 ->without(oldProduct())
                 ->onlyWithInstallation();

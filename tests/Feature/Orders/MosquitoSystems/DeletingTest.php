@@ -104,4 +104,89 @@
                 ->assertDatabaseHas('installers_salaries', ['sum' => 0])
                 ->assertDatabaseCount('installers_salaries', 2);
         }
+
+        /**
+         * @test
+         * @return void
+         */
+        public function deleting_product_when_order_has_product_of_another_type_with_installation() {
+            $this->setUpDefaultActions();
+
+            ProductInOrder::create([
+                'order_id' => 1,
+                'user_id' => 1,
+                'category_id' => 5,
+                'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
+                'count' => 1,
+                'installation_id' => 8,
+                'data' => json_decode($this->testHelper->defaultInstallationData()),
+            ]);
+
+            $data = '{
+                    "size": {
+                        "width": "1000",
+                        "height": "1000"
+                    },
+                    "group-1": 6,
+                    "group-2": 13,
+                    "group-3": 10,
+                    "group-4": 38,
+                    "category": 5,
+                    "delivery": {
+                        "additional": 0,
+                        "deliveryPrice": ' . $this->testHelper->defaultDeliverySum(2) . ',
+                        "additionalSalary": "Нет"
+                    },
+                    "tissueId": 1,
+                    "measuring": 0,
+                    "profileId": 1,
+                    "additional": [
+                        {
+                            "text": "Доп. за Z-крепления пластик: 0",
+                            "price": 0
+                        },
+                        {
+                            "text": "Доп. за Белый цвет: 0",
+                            "price": 0
+                        },
+                        {
+                            "text": "Доп. за Монтаж на z-креплениях: ",
+                            "price": ' . $this->testHelper->installationPrice(2, 10) . '
+                        },
+                        {
+                            "text": "Доп. за Пластиковые ручки: 0",
+                            "price": 0
+                        }
+                    ],
+                    "main_price": ' . $this->testHelper->productPrice(1, 1, 2) . ',
+                    "coefficient": 1,
+                    "installationPrice": ' . $this->testHelper->installationPrice(2, 10) . '
+                }';
+
+            ProductInOrder::create([
+                'order_id' => 1,
+                'user_id' => 1,
+                'category_id' => 7,
+                'name' => 'Москитная дверь, 25 профиль, полотно Антимоскит',
+                'count' => 1,
+                'installation_id' => 10,
+                'data' => json_decode($data),
+            ]);
+
+            $this->testHelper->createDefaultSalary($this->testHelper->defaultSalarySum(1));
+            $this->testHelper->createDefaultSalary($this->testHelper->defaultSalarySum(1, 2, 10), 7);
+
+            $this->testHelper->createDefaultOrder(6202, 0, 2);
+            $this->post(route('product-in-order', ['order' => 1, 'productInOrder' => 2]), ['_method' => 'delete']);
+
+            $this->assertSoftDeleted('products', ['id' => 2])
+                ->assertSoftDeleted('installers_salaries', ['sum' => 1100])
+                ->assertDatabaseHas('installers_salaries', ['sum' => 1050])
+                ->assertDatabaseHas('orders', [
+                    'price' => 2555,
+                    'measuring_price' => 0,
+                    'products_count' => 1,
+                    'delivery' => 600,
+                ]);
+        }
     }
