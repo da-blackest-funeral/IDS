@@ -21,6 +21,88 @@
             return SystemVariables::value('delivery') + SystemVariables::value('measuringWage');
         }
 
+        public function defaultInstallationData() {
+            return '{
+                    "size": {
+                        "width": "1000",
+                        "height": "1000"
+                    },
+                    "group-1": 6,
+                    "group-2": 13,
+                    "group-3": 8,
+                    "group-4": 38,
+                    "category": 5,
+                    "delivery": {
+                        "additional": 0,
+                        "deliveryPrice": ' . $this->defaultDeliverySum() . ',
+                        "additionalSalary": "Нет"
+                    },
+                    "tissueId": 1,
+                    "measuring": 0,
+                    "profileId": 1,
+                    "additional": [
+                        {
+                            "text": "Доп. за Z-крепления пластик: 0",
+                            "price": 0
+                        },
+                        {
+                            "text": "Доп. за Белый цвет: 0",
+                            "price": 0
+                        },
+                        {
+                            "text": "Доп. за Монтаж на z-креплениях: ' . $this->installationPrice() . '",
+                            "price": ' . $this->installationPrice() . '
+                        },
+                        {
+                            "text": "Доп. за Пластиковые ручки: 0",
+                            "price": 0
+                        }
+                    ],
+                    "main_price": ' . $this->productPrice() . ',
+                    "coefficient": 1,
+                    "installationPrice": ' . $this->installationPrice() . '
+                }';
+        }
+
+        public function defaultNoInstallationData() {
+            return '{
+                    "size": {
+                        "width": "1000",
+                        "height": "1000"
+                    },
+                    "group-1": 6,
+                    "group-2": 13,
+                    "group-3": 14,
+                    "group-4": 38,
+                    "category": 5,
+                    "delivery": {
+                        "additional": 0,
+                        "deliveryPrice": ' . $this->defaultDeliverySum() . ',
+                        "additionalSalary": "Нет"
+                    },
+                    "tissueId": 1,
+                    "measuring": 0,
+                    "profileId": 1,
+                    "additional": [
+                        {
+                            "text": "Доп. за Z-крепления пластик: 0",
+                            "price": 0
+                        },
+                        {
+                            "text": "Доп. за Белый цвет: 0",
+                            "price": 0
+                        },
+                        {
+                            "text": "Доп. за Пластиковые ручки: 0",
+                            "price": 0
+                        }
+                    ],
+                    "main_price": ' . $this->productPrice() . ',
+                    "coefficient": 1,
+                    "installationPrice": 0
+                }';
+        }
+
         public function createDefaultOrder(
             int $price = 2256,
             int $measuringPrice = 600,

@@ -3,6 +3,7 @@
     namespace Orders\MosquitoSystems;
 
     use App\Models\ProductInOrder;
+    use App\Models\Salaries\InstallerSalary;
     use Illuminate\Foundation\Testing\RefreshDatabase;
     use Tests\TestCase;
 
@@ -19,46 +20,7 @@
         public function deleting_product_with_installation_when_order_has_product_of_same_type_with_installation() {
             $this->setUpDefaultActions();
 
-            $data = '{
-                    "size": {
-                        "width": "1000",
-                        "height": "1000"
-                    },
-                    "group-1": 6,
-                    "group-2": 13,
-                    "group-3": 8,
-                    "group-4": 38,
-                    "category": 5,
-                    "delivery": {
-                        "additional": 0,
-                        "deliveryPrice": ' . $this->testHelper->defaultDeliverySum() . ',
-                        "additionalSalary": "Нет"
-                    },
-                    "tissueId": 1,
-                    "measuring": 0,
-                    "profileId": 1,
-                    "additional": [
-                        {
-                            "text": "Доп. за Z-крепления пластик: 0",
-                            "price": 0
-                        },
-                        {
-                            "text": "Доп. за Белый цвет: 0",
-                            "price": 0
-                        },
-                        {
-                            "text": "Доп. за Монтаж на z-креплениях: ' . $this->testHelper->installationPrice() . '",
-                            "price": ' . $this->testHelper->installationPrice() . '
-                        },
-                        {
-                            "text": "Доп. за Пластиковые ручки: 0",
-                            "price": 0
-                        }
-                    ],
-                    "main_price": ' . $this->testHelper->productPrice() . ',
-                    "coefficient": 1,
-                    "installationPrice": ' . $this->testHelper->installationPrice() . '
-                }';
+            $data = $this->testHelper->defaultInstallationData();
 
             ProductInOrder::create([
                 'order_id' => 1,
@@ -95,5 +57,52 @@
                     'measuring_price' => 0,
                     'delivery' => 600
                 ]);
+        }
+
+        /**
+         * @test
+         * @return void
+         */
+        public function deleting_product_with_installation_when_order_has_product_with_no_installation() {
+            $this->setUpDefaultActions();
+
+            ProductInOrder::create([
+                'order_id' => 1,
+                'user_id' => 1,
+                'category_id' => 5,
+                'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
+                'count' => 1,
+                'installation_id' => 14,
+                'data' => json_decode($this->testHelper->defaultNoInstallationData()),
+            ]);
+
+            ProductInOrder::create([
+                'order_id' => 1,
+                'user_id' => 1,
+                'category_id' => 5,
+                'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
+                'count' => 1,
+                'installation_id' => 8,
+                'data' => json_decode($this->testHelper->defaultInstallationData()),
+            ]);
+
+            $this->testHelper->createDefaultSalary(1050);
+            $this->testHelper->createDefaultSalary(0);
+
+            $this->testHelper->createDefaultOrder(3717, 0, 2);
+
+            $this->post(route('product-in-order', ['order' => 1, 'productInOrder' => 2]), ['_method' => 'delete']);
+
+            $this->assertSoftDeleted('products', ['id' => 2])
+                ->assertDatabaseHas('orders', [
+                    'price' => 2362,
+                    'products_count' => 1,
+                    'measuring_price' => 600,
+                    'delivery' => 600,
+                ])
+                ->assertDatabaseHas('installers_salaries', ['sum' => 960])
+                ->assertDatabaseHas('installers_salaries', ['sum' => 0])
+                ->assertDatabaseCount('installers_salaries', 2);
+            // todo сейчас тест не работает потому что нет функционала
         }
     }
