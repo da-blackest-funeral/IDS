@@ -34,6 +34,7 @@
             return $this;
         }
 
+        // todo сделать из этого фабричный метод
         public function make(): Order {
             return Order::create([
                 'delivery' => Calculator::getDeliveryPrice(),
@@ -68,28 +69,45 @@
         }
 
         public function calculateMeasuringOptions() {
-            if ($this->notNeedMeasuring()) {
-                $this->order->price -= Calculator::getMeasuringPrice();
-                if (Calculator::productNeedInstallation()) {
-                    $this->deductMeasuringPrice();
-                }
-            } elseif (!Calculator::productNeedInstallation()) {
+            $this->notNeedMeasuring() ? $this->removeMeasuring() : $this->restoreMeasuring();
+        }
+
+        protected function removeMeasuring() {
+            $this->order->price -= Calculator::getMeasuringPrice();
+            if (Calculator::productNeedInstallation()) {
+                $this->deductMeasuringPrice();
+            }
+        }
+
+        protected function restoreMeasuring() {
+            if (!Calculator::productNeedInstallation() || deletingProduct()) {
                 $this->order->measuring_price = SystemVariables::value('measuring');
+            }
+
+            if (deletingProduct()) {
+                $this->order->price += $this->order->measuring_price;
             }
         }
 
         public function calculateDeliveryOptions() {
             if ($this->order->delivery) {
-                $this->order->price -= min(
-                    $this->order->delivery,
-                    Calculator::getDeliveryPrice()
-                );
-
-                $this->order->delivery = max(
-                    Calculator::getDeliveryPrice(),
-                    $this->order->delivery
-                );
+                $this->decreasePriceByDelivery();
+                $this->determineMaxDelivery();
             }
+        }
+
+        protected function decreasePriceByDelivery() {
+            $this->order->price -= min(
+                $this->order->delivery,
+                Calculator::getDeliveryPrice()
+            );
+        }
+
+        protected function determineMaxDelivery() {
+            $this->order->delivery = max(
+                Calculator::getDeliveryPrice(),
+                $this->order->delivery
+            );
         }
 
         public function remove(ProductInOrder $productInOrder) {
@@ -101,7 +119,6 @@
             }
 
             session()->put('oldProduct', $productInOrder);
-
             $this->order->update();
         }
 
@@ -114,7 +131,6 @@
             $this->order->price += Calculator::getPrice();
 
             $this->calculateMeasuringOptions();
-
             $this->calculateDeliveryOptions();
 
             $this->order->products_count += Calculator::getCount();
@@ -139,6 +155,7 @@
         }
 
         /**
+         * @todo аналогичные методы уже есть
          * @return bool
          */
         public function hasInstallation(): bool {

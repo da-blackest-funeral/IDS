@@ -65,6 +65,8 @@
             }
 
             $productInOrder->delete();
+            $order->update();
+
             return redirect(route('order', ['order' => $order->id]));
         }
     }
