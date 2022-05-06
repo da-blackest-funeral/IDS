@@ -10,13 +10,20 @@
 
     class ProductRepository implements ProductRepositoryInterface
     {
-        protected Collection $products;
+        public function __construct(protected Collection $products) {
+        }
 
         public static function use(Collection $products): ProductRepositoryInterface {
-            $instance = new static();
+            $instance = new static(collect());
             $instance->products = $products;
 
             return $instance;
+        }
+
+        public function maxDelivery(): int|null {
+            return $this->products->max(function (ProductInOrder $product) {
+               return $product->data->delivery->deliveryPrice;
+            });
         }
 
         public function get(): Collection {
@@ -24,7 +31,7 @@
         }
 
         public static function byCategory(ProductInOrder $productInOrder): ProductRepositoryInterface {
-            $instance = new static();
+            $instance = new static(collect());
             $instance->products = ProductInOrder::whereCategoryId($productInOrder->category_id)
                 ->whereOrderId($productInOrder->order_id)
                 ->get();
@@ -80,7 +87,7 @@
         }
 
         public static function withInstallation(Order $order, int $categoryId = null) {
-            $instance = new static();
+            $instance = new static(collect());
             $instance->products = $order->products()
                 ->where('category_id', $categoryId ?? request()->input('categories'))
                 ->whereNotIn('installation_id', [0, 14])

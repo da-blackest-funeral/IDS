@@ -24,4 +24,8 @@
         public function isNotEmpty(): bool;
 
         public function get(): Collection;
+
+        public function has(Callable $callback): bool;
+
+        public function maxDelivery(): int|null;
     }

@@ -64,7 +64,7 @@
                 }';
         }
 
-        public function defaultNoInstallationData() {
+        public function defaultNoInstallationData(int $coefficient = 1) {
             return '{
                     "size": {
                         "width": "1000",
@@ -98,7 +98,7 @@
                         }
                     ],
                     "main_price": ' . $this->productPrice() . ',
-                    "coefficient": 1,
+                    "coefficient": ' . $coefficient . ',
                     "installationPrice": 0
                 }';
         }
@@ -106,11 +106,12 @@
         public function createDefaultOrder(
             int $price = 2256,
             int $measuringPrice = 600,
-            int $count = 1
+            int $count = 1,
+            int $delivery = 600
         ) {
             Order::create([
                 'user_id' => 1,
-                'delivery' => 600,
+                'delivery' => $delivery,
                 'installation' => 0,
                 'price' => $price, // todo переписать с учетом минимальной суммы заказа
                 'installer_id' => 2,

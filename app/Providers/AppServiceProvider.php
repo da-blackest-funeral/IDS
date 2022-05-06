@@ -18,7 +18,11 @@
     use App\Services\Notifications\Notifier;
     use App\Services\Renderer\Classes\MosquitoSelectData;
     use App\Services\Renderer\Interfaces\SelectDataInterface;
+    use App\Services\Repositories\Classes\ProductRepository;
+    use App\Services\Repositories\Interfaces\ProductRepositoryInterface;
+    use Illuminate\Foundation\Application;
     use Illuminate\Pagination\Paginator;
+    use Illuminate\Support\Collection;
     use Illuminate\Support\ServiceProvider;
 
     class AppServiceProvider extends ServiceProvider
@@ -67,6 +71,10 @@
                 if (isMosquitoSystemProduct()) {
                     return new MosquitoSelectData(\request()->productInOrder);
                 }
+            });
+
+            $this->app->bind(ProductRepositoryInterface::class, function (Application $app, array $params) {
+                return new ProductRepository($params[0] ?? $params['products']);
             });
         }
 

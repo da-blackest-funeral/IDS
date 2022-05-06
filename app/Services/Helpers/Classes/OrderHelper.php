@@ -5,16 +5,25 @@
     use App\Models\Order;
     use App\Models\ProductInOrder;
     use App\Models\SystemVariables;
-    use App\Services\Repositories\Classes\ProductRepository;
-    use Facades\App\Services\Calculator\Interfaces\Calculator;
     use App\Services\Helpers\Interfaces\OrderHelperInterface;
+    use App\Services\Repositories\Interfaces\ProductRepositoryInterface;
+    use Facades\App\Services\Calculator\Interfaces\Calculator;
 
     class OrderHelper implements OrderHelperInterface
     {
         /**
+         * @var ProductRepositoryInterface
+         */
+        protected ProductRepositoryInterface $productRepository;
+
+        /**
          * @param Order $order
          */
         public function __construct(protected Order $order) {
+            $this->productRepository = app(
+                ProductRepositoryInterface::class,
+                ['products' => $this->order->products]
+            );
         }
 
         /**
@@ -97,16 +106,29 @@
         }
 
         protected function decreasePriceByDelivery() {
-            $this->order->price -= min(
+            if (!deletingProduct()) {
+                $this->order->price -= min(
+                    $this->order->delivery,
+                    Calculator::getDeliveryPrice()
+                );
+            } else {
+                $this->deliveryWhenDeletingProduct();
+            }
+        }
+
+        protected function deliveryWhenDeletingProduct() {
+            $this->order->price -= max(
                 $this->order->delivery,
-                Calculator::getDeliveryPrice()
+                $this->productRepository->maxDelivery()
             );
+
+            $this->order->price += $this->productRepository->maxDelivery();
         }
 
         protected function determineMaxDelivery() {
             $this->order->delivery = max(
                 Calculator::getDeliveryPrice(),
-                $this->order->delivery
+                $this->productRepository->maxDelivery()
             );
         }
 
@@ -155,24 +177,21 @@
         }
 
         /**
-         * @todo аналогичные методы уже есть
          * @return bool
+         * @todo аналогичные методы уже есть
          */
         public function hasInstallation(): bool {
-            return ProductRepository::use($this->order->products)
+            return $this->productRepository
                     ->without(oldProduct())
-                    ->get()
-                    ->contains(function ($product) {
-                    return \ProductHelper::hasInstallation($product);
-                }) && $this->hasProducts();
+                    ->hasInstallation()
+                && $this->hasProducts();
         }
 
         /**
          * @return bool
          */
         public function hasProducts(): bool {
-            return ProductRepository::use($this->order->products)
-                ->without(oldProduct())
+            return $this->productRepository
                 ->isNotEmpty();
         }
     }

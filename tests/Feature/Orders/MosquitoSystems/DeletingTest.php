@@ -176,7 +176,7 @@
             $this->testHelper->createDefaultSalary($this->testHelper->defaultSalarySum(1));
             $this->testHelper->createDefaultSalary($this->testHelper->defaultSalarySum(1, 2, 10), 7);
 
-            $this->testHelper->createDefaultOrder(6202, 0, 2);
+            $this->testHelper->createDefaultOrder(6202, 0, 2, 960);
             $this->post(route('product-in-order', ['order' => 1, 'productInOrder' => 2]), ['_method' => 'delete']);
 
             $this->assertSoftDeleted('products', ['id' => 2])
