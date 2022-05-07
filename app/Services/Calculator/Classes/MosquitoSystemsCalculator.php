@@ -203,9 +203,9 @@
         }
 
         /**
-         * @return \Illuminate\Database\Eloquent\Model
+         * @return Product
          */
-        public function getProduct(): \Illuminate\Database\Eloquent\Model {
+        public function getProduct(): Product {
             return $this->product;
         }
 
@@ -379,8 +379,8 @@
          */
 
         public function calculateInstallationSalary(): float|null {
-            // todo нарушение DRY, в этом классе есть похожий метод,
-            // надо "склеить" их в один
+            // todo нарушение DRY, уже есть похожий метод
+            // находится в MosquitoSystemsHelper
 
             if (!$this->needInstallation) {
                 $this->installersWage += $this->measuringSalary;
@@ -411,15 +411,11 @@
          * @param int $count
          * @param ProductInOrder $productInOrder
          * @param null $installation
-         * @return float|int|mixed|void
+         * @return float|int
          */
-        public function calculateSalaryForCount(
-            int            $count,
-            ProductInOrder $productInOrder,
-                           $installation = null
-        ) {
+        public function calculateSalaryForCount(int $count, ProductInOrder $productInOrder) {
             if (
-                $productInOrder->installation_id == 0 &&
+                !$productInOrder->installation_id &&
                 !$this->installation->additional_id &&
                 !$this->installation->id
             ) {

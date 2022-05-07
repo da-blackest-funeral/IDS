@@ -148,6 +148,10 @@
                 ->salary;
         }
 
+        public function salarySumUnusualCount() {
+
+        }
+
         public function productPrice($tissueId = 1, $profileId = 1, $typeId = 1) {
             return Product::whereTissueId($tissueId)
                 ->whereProfileId($profileId)
@@ -171,7 +175,7 @@
             $this->createDefaultSalary();
         }
 
-        public function createDefaultProduct(int $installationId = 14, $coefficient = 1) {
+        public function createDefaultProduct(int $installationId = 14, $coefficient = 1, $count = 1) {
             $data = '{
                     "size": {
                         "width": "1000",
@@ -180,7 +184,7 @@
                     "salary": 960,
                     "group-1": 6,
                     "group-2": 13,
-                    "group-3": 14,
+                    "group-3": ' . $installationId . ',
                     "group-4": 38,
                     "category": 5,
                     "delivery": {
@@ -211,15 +215,15 @@
                     ],
                     "main_price": ' . $this->productPrice() . ',
                     "coefficient": ' . $coefficient . ',
-                    "installationPrice": 0
+                    "installationPrice": ' . $this->installationPrice(1, $installationId) . '
                 }';
 
-            ProductInOrder::create([
+            return ProductInOrder::create([
                 'order_id' => 1,
                 'user_id' => 1,
                 'category_id' => 5,
                 'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
-                'count' => 1,
+                'count' => $count,
                 'installation_id' => $installationId,
                 'data' => json_decode($data),
             ]);

@@ -214,7 +214,7 @@
                 $missingCount -= oldProductsCount();
             }
 
-            return (int)(
+            return (int)ceil(
                 $salary->salary + $missingCount * $salary->salary_for_count
             );
         }

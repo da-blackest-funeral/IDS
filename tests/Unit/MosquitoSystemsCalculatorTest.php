@@ -2,16 +2,18 @@
 
     namespace Tests\Unit;
 
+    use App\Services\Calculator\Classes\MosquitoSystemsCalculator;
     use Tests\TestCase;
     use App\Services\Calculator\Interfaces\Calculator;
     use Tests\CreatesApplication;
+    use function PHPUnit\Framework\assertTrue;
 
     class MosquitoSystemsCalculatorTest extends TestCase
     {
         use CreatesApplication;
 
         public function setUpDefaultActions() {
-            $this->createApplication();
+//            $this->createApplication();
 
             \Artisan::call('migrate:fresh');
             \Artisan::call('db:seed');
@@ -34,7 +36,8 @@
         public function get_installation_salary() {
             $this->setUpDefaultActions();
 
-            $calculator = app(Calculator::class);
+//            $calculator = app(Calculator::class);
+            $calculator = new MosquitoSystemsCalculator(request());
             $salary = $calculator->getInstallationSalary(8, 1, 1);
 
             self::assertTrue($salary->salary == 1050);
@@ -47,7 +50,23 @@
         public function salary_for_difficulty() {
             $this->setUpDefaultActions();
 
-            $calculator = app(Calculator::class);
+            $calculator = new MosquitoSystemsCalculator(request());
             self::assertTrue($calculator->salaryForDifficulty(1000, 2, 2) == 500);
+        }
+
+        /**
+         * @return void
+         * @test
+         */
+        public function calculate_salary_for_count() {
+            $this->setUpDefaultActions();
+
+            $this->testHelper->createDefaultOrder();
+
+            $calculator = new MosquitoSystemsCalculator(request());
+            self::assertTrue($calculator->calculateSalaryForCount(
+                count: 5,
+                productInOrder: $this->testHelper->createDefaultProduct(8, 1, 5)
+            ) == $this->testHelper->defaultSalarySum(2) + 120 * 3);
         }
     }
