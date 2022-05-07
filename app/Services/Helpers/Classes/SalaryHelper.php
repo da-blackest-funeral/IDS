@@ -2,12 +2,15 @@
 
     namespace App\Services\Helpers\Classes;
 
+    use App\Models\Order;
     use App\Models\Salaries\InstallerSalary;
     use App\Models\SystemVariables;
     use App\Services\Helpers\Config\SalaryType;
     use App\Services\Helpers\Interfaces\SalaryHelperInterface;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
 
+    // todo сделать второй интерфейс - installation salary helper interface, туда добавить методы removeNoInstallation
+    // и т.д., а так же другой класс, я думаю с наследованием от этого
     class SalaryHelper implements SalaryHelperInterface
     {
         /**
@@ -57,16 +60,43 @@
         /**
          * @return void
          */
-        public function removeNoInstallation() {
+        public function removeNoInstallation(): void {
             \ProductHelper::getProduct()
                 ->order
                 ->salaries()
                 ->where('type', SalaryType::NO_INSTALLATION)
                 ->get()
                 ->each(function (InstallerSalary $salary) {
-                    $salary->sum = 0;
-                    $salary->update();
+                    $salary->update([
+                        'sum' => 0
+                    ]);
                 });
+        }
+
+        public function restoreNoInstallation() {
+            $order = \ProductHelper::getProduct()->order;
+
+            $order->salaries()
+                ->where('type', SalaryType::NO_INSTALLATION)
+                ->get()
+                ->each(function (InstallerSalary $salary) use ($order) {
+                    $salary->update([
+                        'sum' => $this->noInstallationSalarySum($order)
+                    ]);
+                });
+        }
+
+        protected function noInstallationSalarySum(Order $order): int|float {
+            $result = 0;
+            if ($order->measuring_price && $order->measuring) {
+                $result += SystemVariables::value('measuringWage');
+            }
+
+            if ($order->delivery) {
+                $result += SystemVariables::value('delivery');
+            }
+
+            return $result;
         }
 
         public function salary() {

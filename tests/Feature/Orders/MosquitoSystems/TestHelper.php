@@ -21,14 +21,97 @@
             return SystemVariables::value('delivery') + SystemVariables::value('measuringWage');
         }
 
+        public function defaultInstallationData() {
+            return '{
+                    "size": {
+                        "width": "1000",
+                        "height": "1000"
+                    },
+                    "group-1": 6,
+                    "group-2": 13,
+                    "group-3": 8,
+                    "group-4": 38,
+                    "category": 5,
+                    "delivery": {
+                        "additional": 0,
+                        "deliveryPrice": ' . $this->defaultDeliverySum() . ',
+                        "additionalSalary": "Нет"
+                    },
+                    "tissueId": 1,
+                    "measuring": 0,
+                    "profileId": 1,
+                    "additional": [
+                        {
+                            "text": "Доп. за Z-крепления пластик: 0",
+                            "price": 0
+                        },
+                        {
+                            "text": "Доп. за Белый цвет: 0",
+                            "price": 0
+                        },
+                        {
+                            "text": "Доп. за Монтаж на z-креплениях: ' . $this->installationPrice() . '",
+                            "price": ' . $this->installationPrice() . '
+                        },
+                        {
+                            "text": "Доп. за Пластиковые ручки: 0",
+                            "price": 0
+                        }
+                    ],
+                    "main_price": ' . $this->productPrice() . ',
+                    "coefficient": 1,
+                    "installationPrice": ' . $this->installationPrice() . '
+                }';
+        }
+
+        public function defaultNoInstallationData(int $coefficient = 1) {
+            return '{
+                    "size": {
+                        "width": "1000",
+                        "height": "1000"
+                    },
+                    "group-1": 6,
+                    "group-2": 13,
+                    "group-3": 14,
+                    "group-4": 38,
+                    "category": 5,
+                    "delivery": {
+                        "additional": 0,
+                        "deliveryPrice": ' . $this->defaultDeliverySum() . ',
+                        "additionalSalary": "Нет"
+                    },
+                    "tissueId": 1,
+                    "measuring": 0,
+                    "profileId": 1,
+                    "additional": [
+                        {
+                            "text": "Доп. за Z-крепления пластик: 0",
+                            "price": 0
+                        },
+                        {
+                            "text": "Доп. за Белый цвет: 0",
+                            "price": 0
+                        },
+                        {
+                            "text": "Доп. за Пластиковые ручки: 0",
+                            "price": 0
+                        }
+                    ],
+                    "main_price": ' . $this->productPrice() . ',
+                    "coefficient": ' . $coefficient . ',
+                    "installationPrice": 0
+                }';
+        }
+
         public function createDefaultOrder(
             int $price = 2256,
             int $measuringPrice = 600,
-            int $count = 1
+            int $count = 1,
+            int $delivery = 600
         ) {
             Order::create([
                 'user_id' => 1,
-                'delivery' => 600,
+                'delivery' => $delivery,
                 'installation' => 0,
                 'price' => $price, // todo переписать с учетом минимальной суммы заказа
                 'installer_id' => 2,
@@ -65,6 +148,10 @@
                 ->salary;
         }
 
+        public function salarySumUnusualCount() {
+
+        }
+
         public function productPrice($tissueId = 1, $profileId = 1, $typeId = 1) {
             return Product::whereTissueId($tissueId)
                 ->whereProfileId($profileId)
@@ -88,7 +175,7 @@
             $this->createDefaultSalary();
         }
 
-        public function createDefaultProduct(int $installationId = 14, $coefficient = 1) {
+        public function createDefaultProduct(int $installationId = 14, $coefficient = 1, $count = 1) {
             $data = '{
                     "size": {
                         "width": "1000",
@@ -97,7 +184,7 @@
                     "salary": 960,
                     "group-1": 6,
                     "group-2": 13,
-                    "group-3": 14,
+                    "group-3": ' . $installationId . ',
                     "group-4": 38,
                     "category": 5,
                     "delivery": {
@@ -128,15 +215,15 @@
                     ],
                     "main_price": ' . $this->productPrice() . ',
                     "coefficient": ' . $coefficient . ',
-                    "installationPrice": 0
+                    "installationPrice": ' . $this->installationPrice(1, $installationId) . '
                 }';
 
-            ProductInOrder::create([
+            return ProductInOrder::create([
                 'order_id' => 1,
                 'user_id' => 1,
                 'category_id' => 5,
                 'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
-                'count' => 1,
+                'count' => $count,
                 'installation_id' => $installationId,
                 'data' => json_decode($data),
             ]);
@@ -152,7 +239,7 @@
                 'comment' => '123',
                 'status' => 1,
                 'changed_sum' => 1100,
-                'type' => $sum == 960 ? SalaryType::NO_INSTALLATION : SalaryType::INSTALLATION,
+                'type' => $sum == 960 || $sum == 0 ? SalaryType::NO_INSTALLATION : SalaryType::INSTALLATION,
             ]);
 
             return $this;

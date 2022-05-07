@@ -45,11 +45,11 @@
                                 </li>
                             @endcan
                             <li>
-                                <a class="dropdown-item" href="{{ route('all-orders') }}">Предыдущие заказы
+                                <a class="dropdown-item" href="{{ route('all-orders') }}">Все заказы
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="{{ route('all-calculations') }}">Предыдущие
+                                <a class="dropdown-item" href="{{ route('all-calculations') }}">Все
                                     расчеты
                                 </a>
                             </li>

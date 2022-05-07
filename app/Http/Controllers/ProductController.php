@@ -5,6 +5,7 @@
     use App\Http\Requests\SaveOrderRequest;
     use App\Models\Order;
     use App\Models\ProductInOrder;
+    use App\Services\Helpers\Classes\OrderHelper;
     use App\Services\Repositories\Classes\ProductRepository;
 
     class ProductController extends Controller
@@ -38,6 +39,15 @@
 
         public function delete(Order $order, ProductInOrder $productInOrder) {
             /*
+             * todo баг
+             * ситуация:
+             * 1) в заказе есть рамная москитная сетка
+             * 2) есть москитная дверь
+             * при удалении москитной двери нужно чтобы доставка становилась 600 и цена самого заказа возвращалась
+             * todo по поводу доставки ставить в $order->delivery значение максимальной цены доставки во всем заказе
+             */
+
+            /*
              * При удалении товара
              * 1) проверить доставку и монтаж
              * 2) удалить\обновить зарплату за него
@@ -65,6 +75,16 @@
             }
 
             $productInOrder->delete();
+            $order->update();
+
+            if (!\OrderHelper::use($order->refresh())->hasProducts()) {
+                $order->update([
+                    'price' => 0,
+                    'measuring_price' => 0,
+                    'delivery' => 0,
+                ]);
+            }
+
             return redirect(route('order', ['order' => $order->id]));
         }
     }

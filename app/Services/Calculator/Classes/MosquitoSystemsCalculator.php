@@ -16,7 +16,11 @@
 
         // todo: скидки
         // todo вынести все методы по сохранению в options в другой класс
-        // возможно в тот же класс куда я добавлю функции, т.е. фасад
+        // Создать класс ProductData со всеми полями
+
+        /*
+         * todo методы с доставкой, коэф. сложности вынести в трейты
+         */
 
         /**
          * Type of mosquito system in current request
@@ -199,9 +203,9 @@
         }
 
         /**
-         * @return \Illuminate\Database\Eloquent\Model
+         * @return Product
          */
-        public function getProduct(): \Illuminate\Database\Eloquent\Model {
+        public function getProduct(): Product {
             return $this->product;
         }
 
@@ -375,8 +379,8 @@
          */
 
         public function calculateInstallationSalary(): float|null {
-            // todo нарушение DRY, в этом классе есть похожий метод,
-            // надо "склеить" их в один
+            // todo нарушение DRY, уже есть похожий метод
+            // находится в MosquitoSystemsHelper
 
             if (!$this->needInstallation) {
                 $this->installersWage += $this->measuringSalary;
@@ -406,16 +410,11 @@
         /**
          * @param int $count
          * @param ProductInOrder $productInOrder
-         * @param null $installation
-         * @return float|int|mixed|void
+         * @return float|int
          */
-        public function calculateSalaryForCount(
-            int            $count,
-            ProductInOrder $productInOrder,
-                           $installation = null
-        ) {
+        public function calculateSalaryForCount(int $count, ProductInOrder $productInOrder) {
             if (
-                $productInOrder->installation_id == 0 &&
+                !$productInOrder->installation_id &&
                 !$this->installation->additional_id &&
                 !$this->installation->id
             ) {
@@ -435,7 +434,6 @@
         }
 
         public function getInstallationSalary(mixed $installation, int $count = null, int $typeId = null) {
-//            dump($typeId, $installation, $count);
             return \DB::table('mosquito_systems_type_salary')
                 ->where('type_id', $typeId ?? $this->type->id)
                 ->where('additional_id', $installation->additional_id ?? $installation)

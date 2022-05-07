@@ -44,7 +44,7 @@
             @endif
         </div>
 
-        @isset($products)
+        @if(isset($products) && $products->isNotEmpty())
             {{-- todo Вова: колхозная кнопка --}}
             <a href="#" id="show" class="btn w-25" style="display: none;"
                onclick="$( this ).parent().children().show(400); $( this ).hide(400)">Развернуть
