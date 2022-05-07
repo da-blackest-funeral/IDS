@@ -3,13 +3,33 @@
     namespace Orders\MosquitoSystems;
 
     use App\Models\ProductInOrder;
-    use App\Models\Salaries\InstallerSalary;
     use Illuminate\Foundation\Testing\RefreshDatabase;
     use Tests\TestCase;
 
     class DeletingTest extends TestCase
     {
         use RefreshDatabase;
+
+        /**
+         * @return void
+         * @test
+         */
+        public function delete_when_order_has_single_product() {
+            $this->setUpDefaultActions();
+            $this->testHelper->createDefaultOrder();
+            $this->testHelper->createDefaultProduct();
+            $this->testHelper->createDefaultSalary();
+
+            $this->post(route('product-in-order', ['order' => 1, 'productInOrder' => 1]), ['_method' => 'delete']);
+            $this->assertSoftDeleted('products', ['id' => 1])
+                ->assertDatabaseHas('orders', [
+                    'price' => 0,
+                    'measuring_price' => 0,
+                    'delivery' => 0,
+                    'products_count' => 0,
+                ])->assertSoftDeleted('installers_salaries', ['id' => 1])
+                ->assertDatabaseCount('installers_salaries', 1);
+        }
 
         /**
          * Test when deleting product with installation when order has product of another type with installation
@@ -55,7 +75,7 @@
                     'price' => 2555,
                     'products_count' => 1,
                     'measuring_price' => 0,
-                    'delivery' => 600
+                    'delivery' => 600,
                 ]);
         }
 

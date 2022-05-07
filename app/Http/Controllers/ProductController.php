@@ -5,6 +5,7 @@
     use App\Http\Requests\SaveOrderRequest;
     use App\Models\Order;
     use App\Models\ProductInOrder;
+    use App\Services\Helpers\Classes\OrderHelper;
     use App\Services\Repositories\Classes\ProductRepository;
 
     class ProductController extends Controller
@@ -75,6 +76,14 @@
 
             $productInOrder->delete();
             $order->update();
+
+            if (!\OrderHelper::use($order->refresh())->hasProducts()) {
+                $order->update([
+                    'price' => 0,
+                    'measuring_price' => 0,
+                    'delivery' => 0,
+                ]);
+            }
 
             return redirect(route('order', ['order' => $order->id]));
         }

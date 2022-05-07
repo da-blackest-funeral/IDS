@@ -20,6 +20,11 @@
          * @param Order $order
          */
         public function __construct(protected Order $order) {
+            $this->makeProductRepository();
+        }
+
+        // todo тоже сделать фабричный метод
+        protected function makeProductRepository() {
             $this->productRepository = app(
                 ProductRepositoryInterface::class,
                 ['products' => $this->order->products]
@@ -39,6 +44,7 @@
          */
         public function use(Order $order): OrderHelperInterface {
             $this->order = $order;
+            $this->makeProductRepository();
 
             return $this;
         }
@@ -178,7 +184,6 @@
 
         /**
          * @return bool
-         * @todo аналогичные методы уже есть
          */
         public function hasInstallation(): bool {
             return $this->productRepository
