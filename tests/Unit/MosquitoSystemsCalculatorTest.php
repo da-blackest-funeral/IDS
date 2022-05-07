@@ -6,7 +6,7 @@
     use App\Services\Calculator\Interfaces\Calculator;
     use Tests\CreatesApplication;
 
-    class ExampleTest extends TestCase
+    class MosquitoSystemsCalculatorTest extends TestCase
     {
         use CreatesApplication;
 
