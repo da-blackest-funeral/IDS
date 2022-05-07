@@ -4,17 +4,13 @@
 
     use App\Services\Calculator\Classes\MosquitoSystemsCalculator;
     use Tests\TestCase;
-    use App\Services\Calculator\Interfaces\Calculator;
     use Tests\CreatesApplication;
-    use function PHPUnit\Framework\assertTrue;
 
     class MosquitoSystemsCalculatorTest extends TestCase
     {
         use CreatesApplication;
 
         public function setUpDefaultActions() {
-//            $this->createApplication();
-
             \Artisan::call('migrate:fresh');
             \Artisan::call('db:seed');
 
@@ -36,7 +32,6 @@
         public function get_installation_salary() {
             $this->setUpDefaultActions();
 
-//            $calculator = app(Calculator::class);
             $calculator = new MosquitoSystemsCalculator(request());
             $salary = $calculator->getInstallationSalary(8, 1, 1);
 

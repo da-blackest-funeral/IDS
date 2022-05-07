@@ -410,7 +410,6 @@
         /**
          * @param int $count
          * @param ProductInOrder $productInOrder
-         * @param null $installation
          * @return float|int
          */
         public function calculateSalaryForCount(int $count, ProductInOrder $productInOrder) {
