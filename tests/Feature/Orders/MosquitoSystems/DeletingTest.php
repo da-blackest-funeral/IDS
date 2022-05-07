@@ -13,10 +13,10 @@
         /*
          * Какие тесты нужно написать
          * 1) удаление единственного товара - готово
-         * 2) удаление товара без монтажа когда есть товар с монтажом
-         * 3) все комбинации удаления монтаж\без монтажа с другоим товаром в заказе
-         * 4) удаление товара когда в заказе есть товар другого типа
-         * 5) все комбинации есть\нет монтажа с товаром другого типа
+         * 2) удаление товара без монтажа когда есть товар с монтажом - готово
+         * 3) удаление товара с монтажом когда есть товар без монтажа - готово
+         * 4) удаление товара с монтажом когда в заказе есть товар другого типа с монтажом - готово
+         * 5) удаление товара без монтажа когда в заказе есть товар другого типа без монтажа
          */
 
         /**
@@ -41,8 +41,6 @@
         }
 
         /**
-         * Test when deleting product with installation when order has product of another type with installation
-         *
          * @test
          * @return void
          */
@@ -261,5 +259,52 @@
                 ])->assertDatabaseHas('installers_salaries', ['sum' => 1050])
                 ->assertDatabaseHas('installers_salaries', ['sum' => 0])
                 ->assertDatabaseCount('installers_salaries', 2);
+        }
+
+        /**
+         * @return void
+         * @test
+         */
+        public function deleting_product_with_no_installation_when_order_has_another_type_with_no_installation() {
+            $this->setUpDefaultActions();
+
+            $this->testHelper->createDefaultOrder(4504, 600, 2, 960);
+            $this->testHelper->createDefaultSalary(960, 7);
+            $this->testHelper->createDefaultSalary(0);
+
+            ProductInOrder::create([
+                'order_id' => 1,
+                'user_id' => 1,
+                'category_id' => 7,
+                'name' => 'Москитная дверь, 25 профиль, полотно Антимоскит',
+                'count' => 1,
+                'installation_id' => 14,
+                'data' => json_decode($this->testHelper->defaultNoInstallationData(1, 2)),
+            ]);
+
+            ProductInOrder::create([
+                'order_id' => 1,
+                'user_id' => 1,
+                'category_id' => 5,
+                'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
+                'count' => 1,
+                'installation_id' => 14,
+                'data' => json_decode($this->testHelper->defaultNoInstallationData()),
+            ]);
+
+            $this->post(route('product-in-order', ['order' => 1, 'productInOrder' => 1]), ['_method' => 'delete']);
+
+            $this->assertSoftDeleted('products', ['id' => 1])
+                ->assertDatabaseHas('orders', [
+                    'price' => 2362,
+                    'measuring_price' => 600,
+                    'products_count' => 1,
+                    'delivery' => 600,
+                ])
+                ->assertNotSoftDeleted('installers_salaries', ['sum' => 960])
+                ->assertDatabaseHas('installers_salaries', ['sum' => 0])
+                ->assertDatabaseCount('installers_salaries', 2);
+
+            // todo тест проваливается потому что функционал пока не рабочий
         }
     }

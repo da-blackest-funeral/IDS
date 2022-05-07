@@ -64,7 +64,7 @@
                 }';
         }
 
-        public function defaultNoInstallationData(int $coefficient = 1) {
+        public function defaultNoInstallationData(int $coefficient = 1, int $type = 1) {
             return '{
                     "size": {
                         "width": "1000",
@@ -77,7 +77,7 @@
                     "category": 5,
                     "delivery": {
                         "additional": 0,
-                        "deliveryPrice": ' . $this->defaultDeliverySum() . ',
+                        "deliveryPrice": ' . $this->defaultDeliverySum($type) . ',
                         "additionalSalary": "Нет"
                     },
                     "tissueId": 1,
