@@ -218,4 +218,48 @@
                     'delivery' => 600,
                 ]);
         }
+
+        /**
+         * @return void
+         * @test
+         */
+        public function deleting_product_with_no_installation_when_order_has_product_with_installation() {
+            $this->setUpDefaultActions();
+
+            ProductInOrder::create([
+                'order_id' => 1,
+                'user_id' => 1,
+                'category_id' => 5,
+                'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
+                'count' => 1,
+                'installation_id' => 14,
+                'data' => json_decode($this->testHelper->defaultNoInstallationData()),
+            ]);
+
+            ProductInOrder::create([
+                'order_id' => 1,
+                'user_id' => 1,
+                'category_id' => 5,
+                'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
+                'count' => 1,
+                'installation_id' => 8,
+                'data' => json_decode($this->testHelper->defaultInstallationData()),
+            ]);
+
+            $this->testHelper->createDefaultSalary(1050);
+            $this->testHelper->createDefaultSalary(0);
+
+            $this->testHelper->createDefaultOrder(3717, 0, 2);
+
+            $this->post(route('product-in-order', ['order' => 1, 'productInOrder' => 1]), ['_method' => 'delete']);
+
+            $this->assertSoftDeleted('products', ['id' => 1])
+                ->assertDatabaseHas('orders', [
+                    'price' => 2555,
+                    'measuring_price' => 0,
+                    'products_count' => 1,
+                ])->assertDatabaseHas('installers_salaries', ['sum' => 1050])
+                ->assertDatabaseHas('installers_salaries', ['sum' => 0])
+                ->assertDatabaseCount('installers_salaries', 2);
+        }
     }
