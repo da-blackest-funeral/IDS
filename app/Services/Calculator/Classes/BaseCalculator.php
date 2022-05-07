@@ -70,7 +70,7 @@
          */
         protected bool $needInstallation = false;
 
-        protected $installation;
+        protected mixed $installation;
 
         protected int $categoryId;
 
