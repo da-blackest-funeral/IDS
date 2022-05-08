@@ -97,7 +97,7 @@
                             "price": 0
                         }
                     ],
-                    "main_price": ' . $this->productPrice() . ',
+                    "main_price": ' . $this->productPrice(typeId: $type) . ',
                     "coefficient": ' . $coefficient . ',
                     "installationPrice": 0
                 }';

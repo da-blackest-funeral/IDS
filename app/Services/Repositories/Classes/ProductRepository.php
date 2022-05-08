@@ -21,9 +21,25 @@
         }
 
         public function maxDelivery(): int|null {
-            return $this->products->max(function (ProductInOrder $product) {
-               return $product->data->delivery->deliveryPrice;
-            });
+            return $this->hasManyProducts() ?
+                $this->maxDeliveryWithoutOld() :
+                $this->products->max($this->maxDeliveryCallback());
+        }
+
+        #[Pure] protected function hasManyProducts(): bool {
+            return $this->products->count() > 1;
+        }
+
+        protected function maxDeliveryWithoutOld() {
+            return $this->without(oldProduct())
+                ->get()
+                ->max($this->maxDeliveryCallback());
+        }
+
+        protected function maxDeliveryCallback(): callable {
+            return function (ProductInOrder $product) {
+                return $product->data->delivery->deliveryPrice;
+            };
         }
 
         public function get(): Collection {
