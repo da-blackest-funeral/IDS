@@ -133,6 +133,8 @@
                 'is_private_person' => 0,
                 'structure' => 'not ready',
             ]);
+
+            return $this;
         }
 
         public function installationPrice($typeId = 1, $installationId = 8) {

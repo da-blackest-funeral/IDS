@@ -15,9 +15,12 @@
          * 1) удаление единственного товара - готово
          * 2) удаление товара без монтажа когда есть товар с монтажом - готово
          * 3) удаление товара с монтажом когда есть товар без монтажа - готово
-         * 4) удаление товара с монтажом когда в заказе есть товар другого типа с монтажом - готово
-         * 5) удаление товара без монтажа когда в заказе есть товар другого типа без монтажа - готово
-         * 6) удаление товара с монтажом когда в заказе есть товар другого типа без монтажа
+         * 4) удаление товара с монтажом когда есть товар с монтажом - готово
+         *   *** когда оба товара одинакового типа без монтажа ***
+         * 5) удаление товара с монтажом когда в заказе есть товар другого типа с монтажом - готово
+         * 6) удаление товара без монтажа когда в заказе есть товар другого типа без монтажа - готово
+         * 7) удаление товара с монтажом когда в заказе есть товар другого типа без монтажа - готово
+         * todo удаление товара без монтажа когда есть товар с монтажом
          */
 
         /**
@@ -349,5 +352,47 @@
                 ])->assertSoftDeleted('installers_salaries', ['sum' => 1100])
                 ->assertNotSoftDeleted('installers_salaries', ['sum' => 960])
                 ->assertDatabaseCount('installers_salaries', 2);
+        }
+
+        /**
+         * @return void
+         * @test
+         */
+        public function delete_product_with_no_installation_has_product_with_no_installation() {
+            $this->setUpDefaultActions();
+
+            $this->testHelper->createDefaultOrder(3524, 600, 2)
+                ->createDefaultSalary();
+
+            ProductInOrder::create([
+                'order_id' => 1,
+                'user_id' => 1,
+                'category_id' => 5,
+                'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
+                'count' => 1,
+                'installation_id' => 14,
+                'data' => json_decode($this->testHelper->defaultNoInstallationData()),
+            ]);
+
+            ProductInOrder::create([
+                'order_id' => 1,
+                'user_id' => 1,
+                'category_id' => 5,
+                'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
+                'count' => 1,
+                'installation_id' => 14,
+                'data' => json_decode($this->testHelper->defaultNoInstallationData()),
+            ]);
+
+            $this->post(route('product-in-order', ['order' => 1, 'productInOrder' => 1]), ['_method' => 'delete']);
+
+            $this->assertDatabaseHas('orders', [
+                'price' => 2362,
+                'products_count' => 1,
+                'measuring_price' => 600,
+                'delivery' => 600,
+            ])->assertSoftDeleted('products', ['id' => 1])
+                ->assertNotSoftDeleted('installers_salaries', ['sum' => 960])
+                ->assertDatabaseCount('installers_salaries', 1);
         }
     }
