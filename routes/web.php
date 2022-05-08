@@ -41,6 +41,8 @@
                 ->name('product-in-order');
 
             Route::post('/{order}/products/{productInOrder}', [ProductController::class, 'update']);
+
+            Route::delete('/{order}/products/{productInOrder}', [ProductController::class, 'delete']);
         });
 
         Route::get('/documents', [ProductController::class, 'test'])

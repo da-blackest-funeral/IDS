@@ -208,8 +208,7 @@ class InstallationTest extends TestCase
             'type' => SalaryType::INSTALLATION,
         ]);
 
-        $data = new \stdClass();
-        $data->coefficient = 1;
+        $data = json_decode($this->testHelper->defaultInstallationData());
 
         ProductInOrder::create([
             'order_id' => 1,
@@ -275,7 +274,7 @@ class InstallationTest extends TestCase
 
         $product = $this->testHelper->defaultProductInOrder();
         $product['installation_id'] = 8;
-        $product['data'] = '{"coefficient": "1"}';
+        $product['data'] = json_decode($this->testHelper->defaultInstallationData());
 
         $salary = $this->testHelper->defaultSalary();
         $salary['sum'] = $salary['changed_sum'] = $this->testHelper->defaultSalarySum(1);

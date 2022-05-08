@@ -20,35 +20,72 @@
          * @throws SalaryCalculationException
          */
         public function updateOrCreateSalary(): void {
-
             if ($this->needUpdateSalary()) {
-                \SalaryHelper::update(
-                    sum: $this->calculateInstallationSalary(
-                        productInOrder: $this->productsWithMaxInstallation()
-                            ->first(),
-                        count: ProductRepository::withInstallation($this->order)
-                            ->count(),
-                    ),
-                );
-
-                if ($this->salariesForNoInstallationMustBeRemoved()) {
-                    \SalaryHelper::removeNoInstallation();
-                }
-
+                $this->updateSalary();
+                $this->checkRemoveNoInstallationSalary();
                 \SalaryHelper::checkMeasuringAndDelivery();
 
-            } else {
+            } elseif (! deletingProduct()) {
 
-                if (\OrderHelper::hasProducts() && !Calculator::productNeedInstallation()) {
-                    \SalaryHelper::make(0);
+                if ($this->checkEmptySalary()) {
                     return;
                 }
 
-                if ($this->salariesForNoInstallationMustBeRemoved()) {
-                    \SalaryHelper::removeNoInstallation();
-                }
+                $this->checkRemoveNoInstallationSalary();
 
                 \SalaryHelper::make();
+                return;
+            }
+
+            // тут идет код с удалением товара
+            $this->checkRestoreNoInstallationSalaries();
+        }
+
+        /**
+         * @return bool
+         */
+        protected function checkEmptySalary(): bool {
+            if (\OrderHelper::hasProducts() && !Calculator::productNeedInstallation()) {
+                \SalaryHelper::make(0);
+                return true;
+            }
+
+            return false;
+        }
+
+        /**
+         * @return void
+         */
+        protected function checkRemoveNoInstallationSalary(): void {
+            if ($this->salariesForNoInstallationMustBeRemoved()) {
+                \SalaryHelper::removeNoInstallation();
+            }
+        }
+
+        /**
+         * @return void
+         * @throws SalaryCalculationException
+         */
+        protected function updateSalary(): void {
+            \SalaryHelper::update(
+                sum: $this->calculateInstallationSalary(
+                    productInOrder: $this->productsWithMaxInstallation()
+                        ->first(),
+                    count: ProductRepository::withInstallation($this->order, $this->productInOrder->category_id)
+                        ->count(),
+                ),
+            );
+        }
+
+        /**
+         * @return void
+         */
+        public function checkRestoreNoInstallationSalaries(): void {
+            $productsWithInstallation = ProductRepository::use($this->products)
+                ->without(oldProduct())
+                ->onlyWithInstallation();
+            if ($productsWithInstallation->isEmpty()) {
+                \SalaryHelper::restoreNoInstallation();
             }
         }
 
@@ -56,7 +93,7 @@
          * @return bool
          */
         protected function salariesForNoInstallationMustBeRemoved(): bool {
-
+            // todo условие можно сократить
             return
                 !\OrderHelper::hasInstallation() &&
                 \OrderHelper::hasProducts() &&
@@ -69,23 +106,24 @@
          * @return bool
          */
         protected function needUpdateSalary(): bool {
-            $sameCategoryProducts = ProductRepository::byCategory($this->productInOrder)
-                ->without($this->productInOrder);
+            // todo возможно, тут не учитывается факт что товары удалены, сделать whereNull('deleted_at')
+            $sameCategoryProducts = ProductRepository::byCategoryWithout($this->productInOrder);
 
-            $countOfAllProducts = ProductRepository::use($this->productInOrder->order->products)
+            $countOfAllProducts = ProductRepository::use($this->products)
                 ->without(oldProduct())
                 ->count();
 
             return $sameCategoryProducts->isNotEmpty() &&
                 !is_null(\SalaryHelper::salary()) ||
-                !$countOfAllProducts && fromUpdatingProductPage();
+                !$countOfAllProducts && !deletingProduct();
         }
 
         /**
          * @return bool
          */
         protected function needDecreaseCount(): bool {
-            return fromUpdatingProductPage() && $this->hasInstallation(oldProduct());
+            return (fromUpdatingProductPage() || deletingProduct())
+                && $this->hasInstallation(oldProduct());
         }
 
         /**
@@ -126,7 +164,7 @@
                     count: $count,
                     typeId: $typeId
                 );
-            } catch (\Exception) {
+            } catch (\Exception $exception) {
                 $result = $this->salaryForMaxCount(
                     productInOrder: $productInOrder,
                     typeId: $typeId
@@ -174,7 +212,7 @@
                 $missingCount -= oldProductsCount();
             }
 
-            return (int)(
+            return (int)ceil(
                 $salary->salary + $missingCount * $salary->salary_for_count
             );
         }
@@ -250,8 +288,7 @@
          * @return Collection
          */
         public function tissues(int $categoryId): Collection {
-            return Category::findOrFail($categoryId)
-                ->type
+            return Category::findOrFail($categoryId)->type
                 ->products()
                 ->with('tissue', function ($query) {
                     $query->select(['id', 'name'])->distinct();
@@ -307,5 +344,11 @@
                 ->whereHas('type', function ($query) use ($productInOrder) {
                     $query->where('category_id', $productInOrder->data->category ?? request()->input('categoryId'));
                 })->first();
+        }
+
+        public function installationCondition(): Callable {
+            return function ($product) {
+                return \ProductHelper::hasInstallation($product);
+            };
         }
     }

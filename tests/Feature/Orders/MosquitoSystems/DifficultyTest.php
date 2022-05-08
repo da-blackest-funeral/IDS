@@ -42,7 +42,7 @@
 
             $product = $this->testHelper->defaultProductInOrder();
             $product['installation_id'] = 8;
-            $product['data'] = '{"coefficient": ' . $coefficient . '}';
+            $product['data'] = json_decode($this->testHelper->defaultNoInstallationData($coefficient));
             ProductInOrder::create($product);
 
             $salary = $this->testHelper->defaultSalary();

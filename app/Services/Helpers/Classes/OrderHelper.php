@@ -5,16 +5,30 @@
     use App\Models\Order;
     use App\Models\ProductInOrder;
     use App\Models\SystemVariables;
-    use App\Services\Repositories\Classes\ProductRepository;
-    use Facades\App\Services\Calculator\Interfaces\Calculator;
     use App\Services\Helpers\Interfaces\OrderHelperInterface;
+    use App\Services\Repositories\Interfaces\ProductRepositoryInterface;
+    use Facades\App\Services\Calculator\Interfaces\Calculator;
 
     class OrderHelper implements OrderHelperInterface
     {
         /**
+         * @var ProductRepositoryInterface
+         */
+        protected ProductRepositoryInterface $productRepository;
+
+        /**
          * @param Order $order
          */
         public function __construct(protected Order $order) {
+            $this->makeProductRepository();
+        }
+
+        // todo тоже сделать фабричный метод
+        protected function makeProductRepository() {
+            $this->productRepository = app(
+                ProductRepositoryInterface::class,
+                ['products' => $this->order->products]
+            );
         }
 
         /**
@@ -30,10 +44,12 @@
          */
         public function use(Order $order): OrderHelperInterface {
             $this->order = $order;
+            $this->makeProductRepository();
 
             return $this;
         }
 
+        // todo сделать из этого фабричный метод
         public function make(): Order {
             return Order::create([
                 'delivery' => Calculator::getDeliveryPrice(),
@@ -67,29 +83,71 @@
             $this->order->measuring_price = 0;
         }
 
-        protected function calculateMeasuringOptions() {
-            if ($this->notNeedMeasuring()) {
-                $this->order->price -= Calculator::getMeasuringPrice();
-                if (Calculator::productNeedInstallation()) {
-                    $this->deductMeasuringPrice();
-                }
-            } elseif (!Calculator::productNeedInstallation()) {
-                $this->order->measuring_price = SystemVariables::value('measuring');
+        public function calculateMeasuringOptions() {
+            $this->notNeedMeasuring() ? $this->removeMeasuring() : $this->restoreMeasuring();
+        }
+
+        protected function removeMeasuring() {
+            $this->order->price -= Calculator::getMeasuringPrice();
+            if (Calculator::productNeedInstallation()) {
+                $this->deductMeasuringPrice();
             }
         }
 
-        protected function calculateDeliveryOptions() {
+        protected function restoreMeasuring() {
+            if (!Calculator::productNeedInstallation() || deletingProduct()) {
+                $this->order->measuring_price = SystemVariables::value('measuring');
+            }
+
+            if (deletingProduct()) {
+                $this->order->price += $this->order->measuring_price;
+            }
+        }
+
+        public function calculateDeliveryOptions() {
             if ($this->order->delivery) {
+                $this->decreasePriceByDelivery();
+                $this->determineMaxDelivery();
+            }
+        }
+
+        protected function decreasePriceByDelivery() {
+            if (!deletingProduct()) {
                 $this->order->price -= min(
                     $this->order->delivery,
                     Calculator::getDeliveryPrice()
                 );
-
-                $this->order->delivery = max(
-                    Calculator::getDeliveryPrice(),
-                    $this->order->delivery
-                );
+            } else {
+                $this->deliveryWhenDeletingProduct();
             }
+        }
+
+        protected function deliveryWhenDeletingProduct() {
+            $this->order->price -= max(
+                $this->order->delivery,
+                $this->productRepository->maxDelivery()
+            );
+
+            $this->order->price += $this->productRepository->maxDelivery();
+        }
+
+        protected function determineMaxDelivery() {
+            $this->order->delivery = max(
+                Calculator::getDeliveryPrice(),
+                $this->productRepository->maxDelivery()
+            );
+        }
+
+        public function remove(ProductInOrder $productInOrder) {
+            $this->order->price -= $productInOrder->data->main_price;
+            $this->order->products_count -= $productInOrder->count;
+
+            foreach ($productInOrder->data->additional as $additional) {
+                $this->order->price -= $additional->price;
+            }
+
+            session()->put('oldProduct', $productInOrder);
+            $this->order->update();
         }
 
         /**
@@ -101,7 +159,6 @@
             $this->order->price += Calculator::getPrice();
 
             $this->calculateMeasuringOptions();
-
             $this->calculateDeliveryOptions();
 
             $this->order->products_count += Calculator::getCount();
@@ -129,20 +186,17 @@
          * @return bool
          */
         public function hasInstallation(): bool {
-            return ProductRepository::use($this->order->products)
+            return $this->productRepository
                     ->without(oldProduct())
-                    ->get()
-                    ->contains(function ($product) {
-                    return \ProductHelper::hasInstallation($product);
-                }) && $this->hasProducts();
+                    ->hasInstallation()
+                && $this->hasProducts();
         }
 
         /**
          * @return bool
          */
         public function hasProducts(): bool {
-            return ProductRepository::use($this->order->products)
-                ->without(oldProduct())
+            return $this->productRepository
                 ->isNotEmpty();
         }
     }

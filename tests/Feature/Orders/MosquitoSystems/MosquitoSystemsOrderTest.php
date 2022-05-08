@@ -119,7 +119,7 @@
             Order::create($order);
 
             $product = $this->testHelper->defaultProductInOrder();
-            $product['data'] = '{}';
+            $product['data'] = json_decode($this->testHelper->defaultNoInstallationData());
             ProductInOrder::create($product);
 
             $salary = $this->testHelper->defaultSalary();

@@ -6,17 +6,40 @@
     use App\Models\ProductInOrder;
     use App\Services\Repositories\Interfaces\ProductRepositoryInterface;
     use Illuminate\Support\Collection;
-    use phpDocumentor\Reflection\Types\Callable_;
+    use JetBrains\PhpStorm\Pure;
 
     class ProductRepository implements ProductRepositoryInterface
     {
-        protected Collection $products;
+        public function __construct(protected Collection $products) {
+        }
 
         public static function use(Collection $products): ProductRepositoryInterface {
-            $instance = new static();
+            $instance = new static(collect());
             $instance->products = $products;
 
             return $instance;
+        }
+
+        public function maxDelivery(): int|null {
+            return $this->hasManyProducts() ?
+                $this->maxDeliveryWithoutOld() :
+                $this->products->max($this->maxDeliveryCallback());
+        }
+
+        #[Pure] protected function hasManyProducts(): bool {
+            return $this->products->count() > 1;
+        }
+
+        protected function maxDeliveryWithoutOld() {
+            return $this->without(oldProduct())
+                ->get()
+                ->max($this->maxDeliveryCallback());
+        }
+
+        protected function maxDeliveryCallback(): callable {
+            return function (ProductInOrder $product) {
+                return $product->data->delivery->deliveryPrice;
+            };
         }
 
         public function get(): Collection {
@@ -24,7 +47,7 @@
         }
 
         public static function byCategory(ProductInOrder $productInOrder): ProductRepositoryInterface {
-            $instance = new static();
+            $instance = new static(collect());
             $instance->products = ProductInOrder::whereCategoryId($productInOrder->category_id)
                 ->whereOrderId($productInOrder->order_id)
                 ->get();
@@ -36,8 +59,20 @@
             return static::byCategory($productInOrder)->without($productInOrder);
         }
 
-        public function has(Callable $callback) {
+        public function has(callable $callback): bool {
             return $this->products->contains($callback);
+        }
+
+        public function hasInstallation(): bool {
+            return $this->has(\ProductHelper::installationCondition());
+        }
+
+        public function onlyWithInstallation(): ProductRepositoryInterface {
+            $this->products = $this->products->filter(
+                \ProductHelper::installationCondition()
+            );
+
+            return $this;
         }
 
         public function without(object $productToReject): ProductRepositoryInterface {
@@ -59,17 +94,25 @@
             return $this->products->sum('count');
         }
 
+        #[Pure] public function isEmpty(): bool {
+            return $this->products->isEmpty();
+        }
+
         public function isNotEmpty(): bool {
             return $this->products->isNotEmpty();
         }
 
-        public static function withInstallation(Order $order) {
-            $instance = new static();
+        public static function withInstallation(Order $order, int $categoryId = null) {
+            $instance = new static(collect());
             $instance->products = $order->products()
-                ->where('category_id', request()->input('categories'))
+                ->where('category_id', $categoryId ?? request()->input('categories'))
                 ->whereNotIn('installation_id', [0, 14])
                 ->get();
 
             return $instance;
+        }
+
+        public function first() {
+            return $this->products->first();
         }
     }
