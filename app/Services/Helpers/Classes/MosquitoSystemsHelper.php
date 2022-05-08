@@ -20,12 +20,11 @@
          * @throws SalaryCalculationException
          */
         public function updateOrCreateSalary(): void {
-
             if ($this->needUpdateSalary()) {
-
                 $this->updateSalary();
                 $this->checkRemoveNoInstallationSalary();
                 \SalaryHelper::checkMeasuringAndDelivery();
+
             } elseif (! deletingProduct()) {
 
                 if ($this->checkEmptySalary()) {
@@ -81,11 +80,10 @@
         /**
          * @return void
          */
-        protected function checkRestoreNoInstallationSalaries(): void {
+        public function checkRestoreNoInstallationSalaries(): void {
             $productsWithInstallation = ProductRepository::use($this->products)
                 ->without(oldProduct())
                 ->onlyWithInstallation();
-
             if ($productsWithInstallation->isEmpty()) {
                 \SalaryHelper::restoreNoInstallation();
             }
@@ -117,7 +115,7 @@
 
             return $sameCategoryProducts->isNotEmpty() &&
                 !is_null(\SalaryHelper::salary()) ||
-                !$countOfAllProducts && fromUpdatingProductPage();
+                !$countOfAllProducts && !deletingProduct();
         }
 
         /**

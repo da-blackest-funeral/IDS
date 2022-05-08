@@ -123,10 +123,6 @@
         }
 
         protected function deliveryWhenDeletingProduct() {
-//            dump(max(
-//                $this->order->delivery,
-//                $this->productRepository->maxDelivery()
-//            ));
             $this->order->price -= max(
                 $this->order->delivery,
                 $this->productRepository->maxDelivery()

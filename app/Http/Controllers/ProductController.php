@@ -5,7 +5,6 @@
     use App\Http\Requests\SaveOrderRequest;
     use App\Models\Order;
     use App\Models\ProductInOrder;
-    use App\Services\Helpers\Classes\OrderHelper;
     use App\Services\Repositories\Classes\ProductRepository;
 
     class ProductController extends Controller
@@ -72,6 +71,8 @@
                 )->updateOrCreateSalary();
             } else {
                 \SalaryHelper::salary()->delete();
+                \ProductHelper::use($productInOrder)
+                    ->checkRestoreNoInstallationSalaries();
             }
 
             $productInOrder->delete();

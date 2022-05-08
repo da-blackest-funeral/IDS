@@ -305,9 +305,7 @@
                     'delivery' => 600,
                 ])
                 ->assertNotSoftDeleted('installers_salaries', ['sum' => 960])
-                ->assertDatabaseHas('installers_salaries', ['sum' => 0])
+                ->assertSoftDeleted('installers_salaries', ['sum' => 960, 'id' => 1])
                 ->assertDatabaseCount('installers_salaries', 2);
-
-            // todo тест проваливается потому что функционал пока не рабочий
         }
     }
