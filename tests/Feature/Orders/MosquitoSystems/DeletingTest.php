@@ -20,7 +20,7 @@
          * 5) удаление товара с монтажом когда в заказе есть товар другого типа с монтажом - готово
          * 6) удаление товара без монтажа когда в заказе есть товар другого типа без монтажа - готово
          * 7) удаление товара с монтажом когда в заказе есть товар другого типа без монтажа - готово
-         * todo удаление товара без монтажа когда есть товар с монтажом
+         * *** удаление товара без монтажа когда есть товар с монтажом ***
          */
 
         /**
@@ -153,47 +153,6 @@
                 'data' => json_decode($this->testHelper->defaultInstallationData()),
             ]);
 
-            $data = '{
-                    "size": {
-                        "width": "1000",
-                        "height": "1000"
-                    },
-                    "group-1": 6,
-                    "group-2": 13,
-                    "group-3": 10,
-                    "group-4": 38,
-                    "category": 5,
-                    "delivery": {
-                        "additional": 0,
-                        "deliveryPrice": ' . $this->testHelper->defaultDeliverySum(2) . ',
-                        "additionalSalary": "Нет"
-                    },
-                    "tissueId": 1,
-                    "measuring": 0,
-                    "profileId": 1,
-                    "additional": [
-                        {
-                            "text": "Доп. за Z-крепления пластик: 0",
-                            "price": 0
-                        },
-                        {
-                            "text": "Доп. за Белый цвет: 0",
-                            "price": 0
-                        },
-                        {
-                            "text": "Доп. за Монтаж на z-креплениях: ",
-                            "price": ' . $this->testHelper->installationPrice(2, 10) . '
-                        },
-                        {
-                            "text": "Доп. за Пластиковые ручки: 0",
-                            "price": 0
-                        }
-                    ],
-                    "main_price": ' . $this->testHelper->productPrice(1, 1, 2) . ',
-                    "coefficient": 1,
-                    "installationPrice": ' . $this->testHelper->installationPrice(2, 10) . '
-                }';
-
             ProductInOrder::create([
                 'order_id' => 1,
                 'user_id' => 1,
@@ -201,7 +160,7 @@
                 'name' => 'Москитная дверь, 25 профиль, полотно Антимоскит',
                 'count' => 1,
                 'installation_id' => 10,
-                'data' => json_decode($data),
+                'data' => json_decode($this->testHelper->defaultInstallationData(10, 2)),
             ]);
 
             $this->testHelper->createDefaultSalary($this->testHelper->defaultSalarySum(1));
@@ -394,5 +353,50 @@
             ])->assertSoftDeleted('products', ['id' => 1])
                 ->assertNotSoftDeleted('installers_salaries', ['sum' => 960])
                 ->assertDatabaseCount('installers_salaries', 1);
+        }
+
+        /**
+         * @return void
+         * @test
+         */
+        public function delete_no_installation_when_has_another_type_with_installation() {
+            $this->setUpDefaultActions();
+
+            $this->testHelper->createDefaultOrder(5409, 0, 2, 960)
+                ->createDefaultSalary(1100, 7)
+                ->createDefaultSalary(0);
+
+            ProductInOrder::create([
+                'order_id' => 1,
+                'user_id' => 1,
+                'category_id' => 5,
+                'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
+                'count' => 1,
+                'installation_id' => 14,
+                'data' => json_decode($this->testHelper->defaultNoInstallationData()),
+            ]);
+
+            ProductInOrder::create([
+                'order_id' => 1,
+                'user_id' => 1,
+                'category_id' => 7,
+                'name' => 'Москитная дверь, 25 профиль, полотно Антимоскит',
+                'count' => 1,
+                'installation_id' => 10,
+                'data' => json_decode($this->testHelper->defaultInstallationData(10, 2)),
+            ]);
+
+            $this->post(route('product-in-order', ['order' => 1, 'productInOrder' => 1]), ['_method' => 'delete']);
+
+            $this->assertSoftDeleted('products', ['id' => 1])
+                ->assertNotSoftDeleted('installers_salaries', ['sum' => 1100])
+                ->assertSoftDeleted('installers_salaries', ['sum' => 0])
+                ->assertDatabaseCount('installers_salaries', 2)
+                ->assertDatabaseHas('orders', [
+                    'price' => 4247,
+                    'products_count' => 1,
+                    'measuring_price' => 0,
+                    'delivery' => 960,
+                ]);
         }
     }
