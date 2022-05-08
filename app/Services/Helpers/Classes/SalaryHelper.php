@@ -88,7 +88,8 @@
 
         protected function noInstallationSalarySum(Order $order): int|float {
             $result = 0;
-            if ($order->measuring_price && $order->measuring) {
+            // todo потом заменить на $order->measuring - флаг, выставляемый в общих настройках заказа
+            if ($order->measuring_price || $order->measuring) {
                 $result += SystemVariables::value('measuringWage');
             }
 

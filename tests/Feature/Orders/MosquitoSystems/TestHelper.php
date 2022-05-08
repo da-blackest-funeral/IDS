@@ -8,7 +8,6 @@
     use App\Models\ProductInOrder;
     use App\Models\Salaries\InstallerSalary;
     use App\Models\SystemVariables;
-    use App\Models\User;
     use App\Services\Helpers\Config\SalaryType;
 
     class TestHelper
@@ -21,7 +20,11 @@
             return SystemVariables::value('delivery') + SystemVariables::value('measuringWage');
         }
 
-        public function defaultInstallationData() {
+        public function defaultInstallationData($installation = 8, $type = 1) {
+            $installationPrice = $this->installationPrice(
+                typeId: $type,
+                installationId: $installation
+            );
             return '{
                     "size": {
                         "width": "1000",
@@ -34,7 +37,7 @@
                     "category": 5,
                     "delivery": {
                         "additional": 0,
-                        "deliveryPrice": ' . $this->defaultDeliverySum() . ',
+                        "deliveryPrice": ' . $this->defaultDeliverySum(typeId: $type) . ',
                         "additionalSalary": "Нет"
                     },
                     "tissueId": 1,
@@ -50,17 +53,18 @@
                             "price": 0
                         },
                         {
-                            "text": "Доп. за Монтаж на z-креплениях: ' . $this->installationPrice() . '",
-                            "price": ' . $this->installationPrice() . '
+                            "text": "Доп. за Монтаж на z-креплениях: ' . $installationPrice .
+                '",
+                            "price": ' . $installationPrice . '
                         },
                         {
                             "text": "Доп. за Пластиковые ручки: 0",
                             "price": 0
                         }
                     ],
-                    "main_price": ' . $this->productPrice() . ',
+                    "main_price": ' . $this->productPrice(1, 1, $type) . ',
                     "coefficient": 1,
-                    "installationPrice": ' . $this->installationPrice() . '
+                    "installationPrice": ' . $installationPrice . '
                 }';
         }
 
