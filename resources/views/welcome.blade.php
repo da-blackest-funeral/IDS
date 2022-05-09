@@ -8,49 +8,7 @@
 
         @include('components.order-page.top-section')
 
-        @if(isset($products) && $products->isNotEmpty())
-            {{-- todo Вова: колхозная кнопка --}}
-            <a href="#" id="show" class="btn w-25" style="display: none;"
-               onclick="$( this ).parent().children().show(400); $( this ).hide(400)">Развернуть
-            </a>
-            <div class="row align-content-between position-relative">
-                @include('components.close', ['closeText' => 'Свернуть'])
-                <div class="mt-4 w-75">
-                    <h1 class="h2"><strong>Список товаров</strong></h1>
-                    <div class="table-wrapper">
-                        {{-- todo Вова: надо сделать таблицу адаптивной --}}
-                        <x-products-table :products="$products"></x-products-table>
-                    </div>
-                </div>
-                <div class="w-75 mt-4">
-                    <h1 class="h2"><strong>Общие сведения о заказе</strong></h1>
-                    <div style="border-radius: 8px;overflow: hidden;" class="position-relative">
-                        <table class="table table-bordered rounded" style="min-height: 130px;">
-                            <thead>
-                            <tr class="table-secondary">
-                                <th scope="col" class="text-center">Стоимость заказа</th>
-                                <th class="text-center">Число товаров</th>
-                                <th scope="col" class="text-center">Замер</th>
-                                <th scope="col" class="text-center">Доставка</th>
-                                <th scope="col" class="text-center">Заработок монтажника</th>
-                                <th class="text-center">Создан</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td class="text-center align-middle">{{ formatPrice($order->price) }}</td>
-                                <td class="text-center align-middle">{{ $order->products_count }}</td>
-                                <td class="text-center align-middle">{{ formatPrice($order->measuring_price) ? : 'Бесплатно' }}</td>
-                                <td class="text-center align-middle">{{ $order->delivery }}</td>
-                                <td class="text-center align-middle">{{ OrderHelper::salaries() }}</td>
-                                <td class="text-center align-middle">{{ carbon($order->created_at, 'd.m.Y') }}</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        @endif
+        @includeWhen(isset($products) && $products->isNotEmpty(), 'components.order-page.order-section')
 
         @include('pages.add-product-form')
         @yield('add-product')
@@ -197,9 +155,9 @@
                             @include('components.tooltip', [
                                 'tooltip' =>
                                 '1. -1 - какой процент потерь из-за ручного изменения, такой процент и вычитается из зп.
-        2. 0 - не вычитать ничего.
-        3. любое число больше 0 - прибавить эту сумму.
-        4. любое число меньше -1 - вычесть эту сумму.'
+2. 0 - не вычитать ничего.
+3. любое число больше 0 - прибавить эту сумму.
+4. любое число меньше -1 - вычесть эту сумму.'
                             ])
                         </label>
                         <input type="text" class="form-control select-order" name="wage-manually" id="wage-manually"
