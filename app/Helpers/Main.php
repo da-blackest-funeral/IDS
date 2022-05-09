@@ -125,3 +125,19 @@
     function deletingProduct(): bool {
         return strtolower(request()->input('_method')) == 'delete';
     }
+
+    function requestHasProduct(): bool {
+        return isset(request()->productInOrder);
+    }
+
+    function requestProduct(): \App\Models\ProductInOrder {
+        return request()->productInOrder;
+    }
+
+    /**
+     * @param int|float $price
+     * @return int
+     */
+    function formatPrice(int|float $price): int {
+        return (int) ceil($price);
+    }

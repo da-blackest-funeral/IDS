@@ -147,12 +147,12 @@
                             </thead>
                             <tbody>
                             <tr>
-                                <td class="text-center align-middle">{{ $order->price }}</td>
+                                <td class="text-center align-middle">{{ formatPrice($order->price) }}</td>
                                 <td class="text-center align-middle">{{ $order->products_count }}</td>
-                                <td class="text-center align-middle">{{ $order->measuring_price > 0 ? $order->measuring_price : 'Бесплатно' }}</td>
+                                <td class="text-center align-middle">{{ formatPrice($order->measuring_price) ? : 'Бесплатно' }}</td>
                                 <td class="text-center align-middle">{{ $order->delivery }}</td>
-                                <td class="text-center align-middle">{{ $order->salaries()->get()->sum('sum') ?? 'Не готово' }}</td>
-                                <td class="text-center align-middle">{{ \Carbon\Carbon::parse($order->created_at)->format('d.m.Y') }}</td>
+                                <td class="text-center align-middle">{{ OrderHelper::salaries() }}</td>
+                                <td class="text-center align-middle">{{ carbon($order->created_at, 'd.m.Y') }}</td>
                             </tr>
                             </tbody>
                         </table>

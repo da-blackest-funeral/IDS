@@ -77,7 +77,7 @@
                         {{-- Сюда грузится второй селект --}}
                         @if(isset($product) && needPreload())
                             @include('ajax.second-select', [
-                            // todo переименовать метод в secondSelect
+                            // todo сделать эти неймы, лейблы и ссылки тоже в классе SelectData
                                 'data' => SelectData::secondSelect(),
                                 'link' => '/ajax/mosquito-systems/profile',
                                 'name' => 'tissues',

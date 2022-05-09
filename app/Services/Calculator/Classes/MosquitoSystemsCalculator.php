@@ -266,13 +266,19 @@
          */
         protected function setProductPrice() {
             try {
-                // Decreasing price if customer need repairing instead new
-                if ($this->request->has('new') && !$this->request->get('new')) {
+                // Decreasing price if customer need repairing instead of creating new
+                if (!$this->request->input('new', false)) {
                     $this->product->price *= SystemVariables::value('repairCoefficient');
+                    $this->options->put('new', false);
+                } else {
+                    $this->options->put('new', true);
                 }
                 // Increasing price if customer need product to be created faster
-                if ($this->request->has('fast') && $this->request->get('fast')) {
+                if ($this->request->input('fast', false)) {
                     $this->product->price *= SystemVariables::value('coefficientFastCreating');
+                    $this->options->put('fast', true);
+                } else {
+                    $this->options->put('fast', false);
                 }
 
                 $this->price += $this->product->price * $this->squareCoefficient;
