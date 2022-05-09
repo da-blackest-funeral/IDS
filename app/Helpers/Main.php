@@ -125,3 +125,11 @@
     function deletingProduct(): bool {
         return strtolower(request()->input('_method')) == 'delete';
     }
+
+    function requestHasProduct(): bool {
+        return isset(request()->productInOrder);
+    }
+
+    function requestProduct(): \App\Models\ProductInOrder {
+        return request()->productInOrder;
+    }
