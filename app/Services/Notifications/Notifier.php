@@ -38,6 +38,7 @@
                     $object->category == request()->input('categories')
                 ) {
                     $needWarning = false;
+                    // сделать здесь паттерн Visitor
                     if (isset($object->profile)) {
                         $needWarning = $object->profile == request()->input('profiles');
                     }
