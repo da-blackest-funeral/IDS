@@ -4,7 +4,7 @@
         <option value="1">Коэффициент</option>
         @for($i = 1.1; $i <= 4; $i += 0.1)
             <option
-                @if(isset($productData, $productData->coefficient) && equals($productData->coefficient, $i))
+                @if(equals(request()->productInOrder->data->coefficient, $i))
                 selected
                 @endif
                 value="{{ $i }}">
