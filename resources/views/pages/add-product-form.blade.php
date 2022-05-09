@@ -11,23 +11,10 @@
         <div class="container-fluid bg-light mt-4" style="min-height: 250px;">
             <form method="POST" class="form-group pt-1">
                 @csrf
-                <input type="hidden" value="{{ $orderNumber }}" name="order_id">
-                @isset($product)
-                    <input type="hidden" value="{{ $product->id }}" name="product_id">
-                @endisset
+
                 <div class="row mt-3">
-                    <div class="col-12 col-md-3">
-                        <label class="mb-1 mt-2 mt-md-0" for="height">Высота (длина)</label>
-                        <input name="height"
-                               id="height"
-                               placeholder="Высота (габаритн.) в мм."
-                               type="text"
-                               class="form-control"
-                               @if(needPreload())
-                               value="{{ $product->data->size->height ?? '' }}"
-                               @endif
-                               required>
-                    </div>
+                    <!-- todo сделать из этого универсальный компонент -->
+                    @include('components.order-page.height')
                     <div class="col-12 col-md-3">
                         <label class="mb-1 mt-2 mt-md-0" for="width">Ширина (глубина)</label>
                         <input name="width"
