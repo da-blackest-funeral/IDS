@@ -75,22 +75,14 @@
                     </div>
                     <div class="col-10 col-md-3 mt-1" id="items">
                         {{-- Сюда грузится второй селект --}}
-                        @if(isset($product) && needPreload())
-                            @include('ajax.second-select', [
-                            // todo сделать эти неймы, лейблы и ссылки тоже в классе SelectData
-                                'data' => SelectData::secondSelect(),
-                                'link' => '/ajax/mosquito-systems/profile',
-                                'name' => 'tissues',
-                                'label' => 'Ткань',
-                                'selected' => $product->data->tissueId
-                            ])
+                        @if(requestHasProduct() && needPreload())
+                            <x-second-select></x-second-select>
                         @endif
                     </div>
                     <div class="col-10 col-md-3 mt-1" id="third">
                         {{-- Место для третьего селекта --}}
                         @if(isset($product) && needPreload())
                             @include('ajax.mosquito-systems.profiles', [
-                            // todo переименовать метод в thirdSelect
                                 'data' => SelectData::thirdSelect(),
                                 'selected' => $product->data->profileId
                             ])
