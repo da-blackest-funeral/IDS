@@ -2,28 +2,19 @@
 
     namespace App\Services\Renderer\Classes;
 
-    use App\Models\ProductInOrder;
     use Illuminate\Support\Collection;
-    use JetBrains\PhpStorm\Pure;
+    use JetBrains\PhpStorm\ArrayShape;
 
     class MosquitoSelectData extends SelectData
     {
-        protected ProductInOrder $productInOrder;
-
-        public function __construct(ProductInOrder $productInOrder) {
-            $this->productInOrder = $productInOrder;
-        }
-
+        #[ArrayShape(['link' => "string", 'name' => "string", 'label' => "string", 'selected' => "int"])]
         public function selectAttributes() {
             return [
                 'link' => '/ajax/mosquito-systems/profile',
                 'name' => 'tissues',
-                'label' => 'Ткань'
+                'label' => 'Ткань',
+                'selected' => $this->productInOrder->data->tissueId,
             ];
-        }
-
-        public function getSelected() {
-            return $this->productInOrder->data->tissueId;
         }
 
         public function secondSelect(): Collection {
@@ -32,9 +23,5 @@
 
         public function thirdSelect(): Collection {
             return \ProductHelper::profiles($this->productInOrder);
-        }
-
-        public function additional(): array {
-            return \ProductHelper::additional($this->productInOrder);
         }
     }

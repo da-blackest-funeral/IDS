@@ -35,7 +35,7 @@
                 $this->name = $attributes['name'];
                 $this->label = $attributes['label'];
 
-                $this->selected = \SelectData::getSelected();
+                $this->selected = $attributes['selected'];
             }
 
             return view('ajax.second-select')
