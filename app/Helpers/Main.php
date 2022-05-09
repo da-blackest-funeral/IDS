@@ -133,3 +133,11 @@
     function requestProduct(): \App\Models\ProductInOrder {
         return request()->productInOrder;
     }
+
+    /**
+     * @param int|float $price
+     * @return int
+     */
+    function formatPrice(int|float $price): int {
+        return (int) ceil($price);
+    }
