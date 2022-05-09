@@ -46,16 +46,7 @@
                             <td>{{ $order->price }} руб.</td>
                             <td>{{ 'Не готово' }}</td>
                             <td>
-                                <form action="{{ route('order', ['order' => $order->id]) }}" method="post" id="delete">
-                                    @method('delete')
-                                    @csrf
-                                    <button
-                                        type="submit"
-                                        onclick="return confirm('Вы уверены?')"
-                                        class="btn btn-outline-danger">
-                                        Удалить
-                                    </button>
-                                </form>
+                                @include('components.delete-button-form', ['action' => route('order', ['order' => $order->id])])
                             </td>
                         </tr>
                     @endforeach

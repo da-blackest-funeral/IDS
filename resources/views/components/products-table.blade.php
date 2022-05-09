@@ -12,11 +12,12 @@
     </thead>
     <tbody>
     @foreach($products as $product)
+        {{-- todo сделать компонент этой tr с онкликом, оборачивающий другой html --}}
         <tr style="cursor:pointer;" onclick="
         {{-- todo Вова: вот таблица и вот как реализован переход на страницу редактирования товара --}}
             window.location ='{{ route('product-in-order', [
                 'order' => $order->id,
-                'productInOrder' => $product
+                'productInOrder' => $product->id
             ]) }}'">
 
             <th scope="row" class="text-center"><strong>{{ $loop->iteration }}</strong></th>
@@ -54,19 +55,12 @@
                 {{-- todo сделать вывод поля "Итого", Вова: тут же будет кнопка "Удалить" --}}
             </td>
             <td class="text-center">
-                <form
-                    action="{{ route('product-in-order', ['order' => $order->id, 'productInOrder' => $product->id]) }}"
-                    method="post"
-                >
-                    @method('delete')
-                    @csrf
-                    <button
-                        type="submit"
-                        onclick="return confirm('Вы уверены?')"
-                        class="btn btn-outline-danger">
-                        Удалить
-                    </button>
-                </form>
+                @include('components.delete-button-form', [
+                    'action' => route('product-in-order', [
+                        'order' => $order->id,
+                        'productInOrder' => $product->id
+                    ])
+                ])
             </td>
         </tr>
     @endforeach
