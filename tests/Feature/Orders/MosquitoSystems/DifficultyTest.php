@@ -148,7 +148,6 @@
          * and one with installation and difficulty
          *
          * @return void
-         * @todo проверить может такой тест уже есть
          * @test
          */
         public function order_when_creating_one_product_with_difficulty_and_another_with_no_installation() {

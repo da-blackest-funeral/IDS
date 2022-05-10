@@ -15,4 +15,8 @@
             $this->productInOrder = $productInOrder;
             return $this;
         }
+
+        public function additional(): array {
+            return \ProductHelper::additional($this->productInOrder);
+        }
     }

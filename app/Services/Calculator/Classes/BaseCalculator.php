@@ -78,7 +78,7 @@
             $this->request = $request;
             $this->options = new Collection();
             $this->count = (int)$request->get('count');
-            $this->categoryId = (int) $request->get('categories');
+            $this->categoryId = (int)$request->get('categories');
         }
 
         /**
@@ -107,7 +107,7 @@
         protected function setSize() {
             $this->options->put('size', [
                 'height' => $this->request->get('height') ?? 'Нет',
-                'width' => $this->request->get('width') ?? 'Нет'
+                'width' => $this->request->get('width') ?? 'Нет',
             ]);
         }
 
@@ -201,11 +201,10 @@
         protected function saveDelivery($additional, $salary) {
             $this->options->put(
                 'delivery', [
-                'deliveryPrice' => $this->deliveryPrice,
-//                'deliverySalary' => ,
-                'additional' => $additional,
-                'additionalSalary' => $salary > 0 ? $salary : 'Нет',
-            ],
+                    'deliveryPrice' => $this->deliveryPrice,
+                    'additional' => $additional,
+                    'additionalSalary' => $salary > 0 ? $salary : 'Нет',
+                ]
             );
         }
 

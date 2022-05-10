@@ -17,7 +17,6 @@ class RolesSeeder extends Seeder
 //        'courier' => [7, 25],
 //        'measurer' => [2, 11, 23, ],
         'director' => [1, 2, 3, 4, 8, 9, 10, 11, 12, 16, 13, 15, 18, 19, 20, ],
-        // todo роль директора и админа пока что совпадают (на самом деле не совсем, потом исправлю)
     ];
 
     protected $permissions = [

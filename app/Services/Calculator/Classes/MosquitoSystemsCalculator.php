@@ -73,7 +73,7 @@
             }
 
             try {
-                $this->type = Type::byCategory($request->get('categories'));
+                $this->type = Type::byCategory($this->categoryId);
             } catch (\Exception $exception) {
                 return view('welcome')->withErrors([
                     'not_found' => 'Тип не найден',
