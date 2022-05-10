@@ -172,13 +172,6 @@
             $this->options->put(
                 'measuring', $this->measuringPrice ? : 'Бесплатно'
             );
-
-            if ($this->installersWage) {
-                $this->options->put(
-                    'salary',
-                    $this->installersWage,
-                );
-            }
         }
 
         /**
