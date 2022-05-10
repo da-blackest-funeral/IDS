@@ -3,7 +3,11 @@
 @section('content')
     <div class="container mt-4" id="app" style="margin-bottom: 100px;">
         <h1 class="h1">
-            Заказ <span style="font-size: 30px">№{{ $orderNumber }}</span>
+            @isset(request()->order)
+                Заказ <span style="font-size: 30px">№{{ request()->order->id }}</span>
+            @else
+                Новый заказ
+            @endisset
         </h1>
 
         @include('components.order-page.top-section')

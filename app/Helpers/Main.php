@@ -4,6 +4,7 @@
     use App\Models\Order;
     use App\Models\User;
     use Illuminate\Support\Facades\Route;
+    use JetBrains\PhpStorm\ArrayShape;
 
     function isOrderPage(): bool {
         return Route::is('new-order', 'order');
@@ -68,7 +69,8 @@
         return strval((float)$first) === strval((float)$second);
     }
 
-    function dataForOrderPage() {
+    #[ArrayShape(['data' => "\App\Models\Category[]|\Illuminate\Database\Eloquent\Collection", 'superCategories' => "\Illuminate\Support\Collection", 'installers' => "\App\Models\User[]|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection"])]
+    function dataForOrderPage(): array {
         return [
             'data' => Category::all(),
             'superCategories' => Category::whereIn(
@@ -78,7 +80,6 @@
                 ->get()
                 ->toArray()
             )->get(),
-            'orderNumber' => Order::count() + 1,
             'installers' => User::role('installer')->get()
         ];
     }
