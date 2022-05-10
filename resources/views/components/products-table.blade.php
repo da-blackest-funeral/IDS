@@ -12,9 +12,7 @@
     </thead>
     <tbody>
     @foreach($products as $product)
-        {{-- todo сделать компонент этой tr с онкликом, оборачивающий другой html --}}
         <tr style="cursor:pointer;" onclick="
-        {{-- todo Вова: вот таблица и вот как реализован переход на страницу редактирования товара --}}
             window.location ='{{ route('product-in-order', [
                 'order' => $order->id,
                 'productInOrder' => $product->id
@@ -52,7 +50,6 @@
                         <strong>{{ $product->data->salaryForCoefficient }}</strong>
                     </div>
                 @endisset
-                {{-- todo сделать вывод поля "Итого", Вова: тут же будет кнопка "Удалить" --}}
             </td>
             <td class="text-center">
                 @include('components.delete-button-form', [
