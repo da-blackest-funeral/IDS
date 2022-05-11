@@ -130,7 +130,7 @@
     }
 
     function deletingProduct(): bool {
-        return strtolower(request()->input('_method')) == 'delete';
+        return strtolower(request()->input('_method', '')) == 'delete';
     }
 
     function requestHasProduct(): bool {

@@ -116,6 +116,7 @@
             Order::create([
                 'user_id' => 1,
                 'delivery' => $delivery,
+                'need_delivery' => 1,
                 'installation' => 0,
                 'price' => $price, // todo переписать с учетом минимальной суммы заказа
                 'installer_id' => 2,

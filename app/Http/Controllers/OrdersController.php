@@ -51,7 +51,7 @@
             return redirect(route('all-orders'));
         }
 
-        public function update(Order $order, UpdateOrderVisitor $visitor) {
+        public function update(Order $order) {
             /*
              * Что надо обновлять
              * 1) нужна ли доставка
@@ -60,6 +60,6 @@
             // если доставка изменилась с "нужна" на "не нужна", то уменьшать зарплату
             // если наоборот - увеличивать
 
-            $visitor->execute();
+//            $visitor->execute();
         }
     }

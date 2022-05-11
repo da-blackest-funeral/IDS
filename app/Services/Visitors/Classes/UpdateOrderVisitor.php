@@ -12,11 +12,11 @@
         protected array $visitItems;
 
         public function __construct(Request $request) {
-            $this->visitItems = $request->except([
-                '_method',
-                '_token',
-                'add',
-            ]);
+//            $this->visitItems = $request->except([
+//                '_method',
+//                '_token',
+//                'add',
+//            ]);
         }
 
         public function execute() {
@@ -39,7 +39,12 @@
         }
 
         public function visitDelivery() {
-            dump('it works!');
+            $order = \OrderHelper::getOrder();
+            if ($order->need_delivery && ! \request()->input('delivery')) {
+                \SalaryHelper::removeDelivery();
+                $order->price -= $order->delivery;
+                $order->delivery = 0;
+            }
         }
 
         public function visitSale() {

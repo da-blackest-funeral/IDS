@@ -96,6 +96,8 @@
                     ->constrained('users');
                 $table->integer('delivery')
                     ->default(0);
+                $table->boolean('need_delivery')
+                    ->default(true);
                 $table->integer('installation')
                     ->default(0);
                 $table->float('price');
