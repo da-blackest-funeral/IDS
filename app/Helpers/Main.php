@@ -1,7 +1,6 @@
 <?php
 
     use App\Models\Category;
-    use App\Models\Order;
     use App\Models\User;
     use Illuminate\Support\Facades\Route;
     use JetBrains\PhpStorm\ArrayShape;
@@ -12,6 +11,12 @@
 
     function needPreload(): bool {
         return Route::is('product-in-order');
+    }
+
+    function updatingOrder(): bool {
+        return Str::contains(request()->getRequestUri(), 'orders/') &&
+            !Str::contains(request()->getRequestUri(), '/products') &&
+            strtolower(request()->input('_method')) == 'put';
     }
 
     function fromUpdatingProductPage(): bool {
@@ -25,9 +30,10 @@
     }
 
     function isMosquitoSystemProduct(): bool {
-        return in_array(request()->input('categories'), [5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
-        || in_array(request()->input('categoryId'), [5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
-        || in_array(request()->productInOrder->category_id, [5, 6, 7, 8, 9, 10, 11, 12, 13, 14]);
+        $categories = [5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+        return in_array(request()->input('categories'), $categories)
+            || in_array(request()->input('categoryId'), $categories)
+            || requestHasProduct() && in_array(request()->productInOrder->category_id, $categories);
     }
 
     function notify($text) {
@@ -80,7 +86,7 @@
                 ->get()
                 ->toArray()
             )->get(),
-            'installers' => User::role('installer')->get()
+            'installers' => User::role('installer')->get(),
         ];
     }
 
@@ -140,5 +146,5 @@
      * @return int
      */
     function formatPrice(int|float $price): int {
-        return (int) ceil($price);
+        return (int)ceil($price);
     }

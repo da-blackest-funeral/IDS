@@ -22,7 +22,6 @@
     use App\Services\Repositories\Interfaces\ProductRepositoryInterface;
     use Illuminate\Foundation\Application;
     use Illuminate\Pagination\Paginator;
-    use Illuminate\Support\Collection;
     use Illuminate\Support\ServiceProvider;
 
     class AppServiceProvider extends ServiceProvider
@@ -91,11 +90,11 @@
                 \Notifier::displayWarnings();
             }
 
-            $this->callAfterResolving(Calculator::class, function (Calculator $calculator) {
-                if (! deletingProduct()) {
+            if (!deletingProduct() && !updatingOrder()) {
+                $this->callAfterResolving(Calculator::class, function (Calculator $calculator) {
                     $calculator->calculate();
                     $calculator->saveInfo();
-                }
-            });
+                });
+            }
         }
     }

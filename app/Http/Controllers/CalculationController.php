@@ -17,6 +17,7 @@
                 ->with(dataForOrderPage());
         }
 
+        // todo удалить этот контроллер вообще и перенести в orderscontroller
         public function save() {
             // todo сделать логику с "была ли взята машина компании"
             // todo соответствующее поле в таблице order

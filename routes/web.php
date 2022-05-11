@@ -32,10 +32,12 @@
             Route::get('/', [OrdersController::class, 'index'])
                 ->name('all-orders');
 
-            Route::get('/{order}', [OrdersController::class, 'order'])
+            Route::get('/{order}', [OrdersController::class, 'show'])
                 ->name('order');
 
             Route::post('/{order}', [OrdersController::class, 'addProduct']);
+
+            Route::put('/{order}', [OrdersController::class, 'update']);
 
             Route::get('/{order}/products/{productInOrder}', [ProductController::class, 'index'])
                 ->name('product-in-order');
