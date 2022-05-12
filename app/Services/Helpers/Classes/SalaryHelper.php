@@ -6,6 +6,7 @@
     use App\Models\Salaries\InstallerSalary;
     use App\Models\SystemVariables;
     use App\Services\Helpers\Config\SalaryType;
+    use App\Services\Helpers\Config\SalaryTypesEnum;
     use App\Services\Helpers\Interfaces\SalaryHelperInterface;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
 
@@ -84,7 +85,7 @@
         protected function salariesNoInstallation() {
             return \OrderHelper::getOrder()
                 ->salaries()
-                ->where('type', SalaryType::NO_INSTALLATION)
+                ->where('type', SalaryTypesEnum::NO_INSTALLATION->value)
                 ->get();
         }
 
@@ -92,7 +93,7 @@
             $order = \ProductHelper::getProduct()->order;
 
             $order->salaries()
-                ->where('type', SalaryType::NO_INSTALLATION)
+                ->where('type', SalaryTypesEnum::NO_INSTALLATION->value)
                 ->get()
                 ->each(function (InstallerSalary $salary) use ($order) {
                     $this->update($this->noInstallationSalarySum($order), $salary);
@@ -134,7 +135,7 @@
             return \OrderHelper::getOrder()
                 ->salaries
                 ->contains(function (InstallerSalary $salary) {
-                    return $salary->type == SalaryType::NO_INSTALLATION && $salary->sum > 0;
+                    return $salary->type == SalaryTypesEnum::NO_INSTALLATION->value && $salary->sum > 0;
                 });
         }
 
