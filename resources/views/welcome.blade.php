@@ -17,11 +17,13 @@
         @include('pages.add-product-form')
         @yield('add-product')
 
-        <div class="mt-5">
-            <h1 class="h3"><strong>Настройки всего заказа</strong></h1>
-            <div class="bg-light p-3 pt-1">
-                @include('components.order-page.order-form')
+        @if(requestHasOrder())
+            <div class="mt-5">
+                <h1 class="h3"><strong>Настройки всего заказа</strong></h1>
+                <div class="bg-light p-3 pt-1">
+                    @include('components.order-page.order-form')
+                </div>
             </div>
-        </div>
+        @endif
     </div>
 @endsection
