@@ -9,13 +9,9 @@
             <label for="{{ $group->name }}">{{ $group->name }}</label>
             <select name="group-{{ $loop->iteration }}" id="{{ $group->name }}" class="form-control">
                 @foreach($additional as $item)
-                    @if($item->group_id == $group->id)
+                    @if(equals($item->group_id, $group->id))
                         <option
-                            @isset($group->selected)
-                            @if($group->selected == $item->id)
-                            selected
-                            @endif
-                            @endisset
+                            @selected(isset($group->selected) && equals($group->selected, $item->id))
                             value="{{ $item->id }}">
                             {{ $item->name }}
                         </option>

@@ -12,12 +12,14 @@
     <div class="mt-5">
         <label class="btn btn-sm btn-secondary active">
             {{-- todo Вова: тут тоже есть забавный таск позже расскажу ч тут д --}}
-            <input type="radio" name="delivery" value="1" checked
+            <input type="radio" name="delivery" value="1"
+                   @checked(requestOrder()->need_delivery)
                    onclick="$('#delivery-options').show(400)">
             <span style="font-weight: bold;">Доставка \ Выезд на монтаж</span>
         </label>
         <label class="btn btn-sm btn-secondary active">
             <input type="radio" name="delivery" value="0" id="no_delivery"
+                   @checked(!requestOrder()->need_delivery)
                    onchange="toggleDeliveryOptions()">
             Самовывоз
         </label>
