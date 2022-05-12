@@ -1,6 +1,7 @@
 <?php
 
     use App\Models\Category;
+    use App\Models\Order;
     use App\Models\ProductInOrder;
     use App\Models\User;
     use Illuminate\Support\Facades\Route;
@@ -138,7 +139,15 @@
         return isset(request()->productInOrder);
     }
 
-    function requestProduct(): \App\Models\ProductInOrder {
+    function requestHasOrder(): bool {
+        return isset(request()->order);
+    }
+
+    function requestOrder(): Order {
+        return request()->order;
+    }
+
+    function requestProduct(): ProductInOrder {
         return request()->productInOrder;
     }
 

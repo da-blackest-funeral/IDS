@@ -104,14 +104,6 @@
             }
         }
 
-        public function calculateDeliveryOptions() {
-            // todo перевести на need_delivery
-            if ($this->order->delivery) {
-                $this->decreasePriceByDelivery();
-                $this->determineMaxDelivery();
-            }
-        }
-
         protected function decreasePriceByDelivery() {
             if (!deletingProduct()) {
                 $this->order->price -= min(
@@ -133,10 +125,10 @@
         }
 
         protected function determineMaxDelivery() {
-            $this->order->delivery = max(
+            $this->order->delivery = $this->order->need_delivery ? max(
                 Calculator::getDeliveryPrice(),
                 $this->productRepository->maxDelivery()
-            );
+            ) : 0;
         }
 
         public function remove(ProductInOrder $productInOrder) {
@@ -149,6 +141,13 @@
 
             session()->put('oldProduct', $productInOrder);
             $this->order->update();
+        }
+
+        public function calculateDeliveryOptions() {
+            if ($this->order->need_delivery) {
+                $this->decreasePriceByDelivery();
+                $this->determineMaxDelivery();
+            }
         }
 
         /**

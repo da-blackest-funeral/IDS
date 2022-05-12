@@ -65,5 +65,6 @@
             // если наоборот - увеличивать
 
             $visitor->execute();
+            return redirect(route('order', ['order' => $order->id]));
         }
     }

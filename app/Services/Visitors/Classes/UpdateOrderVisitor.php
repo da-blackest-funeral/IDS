@@ -42,7 +42,7 @@
 
         public function visitDelivery() {
             $order = \OrderHelper::getOrder();
-            if (! \request()->input('delivery')) {
+            if (!request()->input('delivery', false)) {
                 if ($order->need_delivery) {
                     \SalaryHelper::removeDelivery();
                     $order->price -= $order->delivery;
