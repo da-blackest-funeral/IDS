@@ -1,6 +1,14 @@
 <form action="" method="post">
     @method('put')
     @csrf
+
+    @if(request()->order != null)
+        <input type="hidden" name="order" value="{{ request()->order->id }}">
+    @endif
+
+    @if(requestHasProduct())
+        <input type="hidden" name="productInOrder" value="{{ requestProduct()->id }}">
+    @endif
     <div class="mt-5">
         <label class="btn btn-sm btn-secondary active">
             {{-- todo Вова: тут тоже есть забавный таск позже расскажу ч тут д --}}

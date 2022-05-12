@@ -61,7 +61,7 @@
             });
 
             $this->app->bind(OrderHelperInterface::class, function () {
-                return new OrderHelper(\request()->order ?? new Order());
+                return new OrderHelper(Order::find(request()->input('order')) ?? \request()->order ?? new Order());
             });
 
             $this->app->bind(SalaryHelperInterface::class, SalaryHelper::class);
@@ -88,13 +88,6 @@
             if (request()->method() == 'POST') {
                 \Notifier::setData();
                 \Notifier::displayWarnings();
-            }
-
-            if (!deletingProduct() && !updatingOrder()) {
-                $this->callAfterResolving(Calculator::class, function (Calculator $calculator) {
-                    $calculator->calculate();
-                    $calculator->saveInfo();
-                });
             }
         }
     }

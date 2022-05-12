@@ -18,10 +18,10 @@
         }
 
         // todo удалить этот контроллер вообще и перенести в orderscontroller
-        public function save() {
-            // todo сделать логику с "была ли взята машина компании"
-            // todo соответствующее поле в таблице order
-            // todo сделать учет ручного изменения цены заказа
+        public function save(Calculator $calculator) {
+            $calculator->calculate();
+            $calculator->saveInfo();
+
             $order = \OrderHelper::make();
             \OrderHelper::use($order);
 

@@ -15,14 +15,17 @@
     {
         /**
          * @param int|float $sum
+         * @param InstallerSalary|null $salary
          * @return void
          */
-        public function update(int|float $sum) {
-            $salary = $this->salary()
-                ->first();
+        public function update(int|float $sum, InstallerSalary $salary = null) {
+            if (is_null($salary)) {
+                $salary = $this->salary()
+                    ->first();
+                $salary->type = SalaryType::determine(\ProductHelper::getProduct());
+            }
 
             $salary->sum = $sum;
-            $salary->type = SalaryType::determine(\ProductHelper::getProduct());
 
             $salary->update();
         }
@@ -63,9 +66,7 @@
         public function removeNoInstallation(): void {
             $this->salariesNoInstallation()
                 ->each(function (InstallerSalary $salary) {
-                    $salary->update([
-                        'sum' => 0,
-                    ]);
+                    $this->update(0, $salary);
                 });
         }
 
@@ -81,8 +82,7 @@
         }
 
         protected function salariesNoInstallation() {
-            return \ProductHelper::getProduct()
-                ->order
+            return \OrderHelper::getOrder()
                 ->salaries()
                 ->where('type', SalaryType::NO_INSTALLATION)
                 ->get();
@@ -95,9 +95,7 @@
                 ->where('type', SalaryType::NO_INSTALLATION)
                 ->get()
                 ->each(function (InstallerSalary $salary) use ($order) {
-                    $salary->update([
-                        'sum' => $this->noInstallationSalarySum($order),
-                    ]);
+                    $this->update($this->noInstallationSalarySum($order), $salary);
                 });
         }
 
@@ -132,7 +130,7 @@
         /**
          * @return bool
          */
-        function hasSalaryNoInstallation(): bool {
+        public function hasSalaryNoInstallation(): bool {
             return \OrderHelper::getOrder()
                 ->salaries
                 ->contains(function (InstallerSalary $salary) {
@@ -140,7 +138,7 @@
                 });
         }
 
-        function checkMeasuringAndDelivery() {
+        public function checkMeasuringAndDelivery() {
             $order = \ProductHelper::getProduct()->order;
             if (\OrderHelper::hasInstallation() || Calculator::productNeedInstallation()) {
                 $order->measuring_price = 0;

@@ -105,6 +105,7 @@
         }
 
         public function calculateDeliveryOptions() {
+            // todo перевести на need_delivery
             if ($this->order->delivery) {
                 $this->decreasePriceByDelivery();
                 $this->determineMaxDelivery();

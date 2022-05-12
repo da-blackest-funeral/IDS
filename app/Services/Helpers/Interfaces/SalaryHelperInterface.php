@@ -4,6 +4,7 @@
 
     use App\Models\Order;
     use App\Models\ProductInOrder;
+    use App\Models\Salaries\InstallerSalary;
 
     // todo добавить остальные методы сюда
     interface SalaryHelperInterface
@@ -12,7 +13,7 @@
          * @param int|float $sum
          * @return mixed
          */
-        public function update(int|float $sum);
+        public function update(int|float $sum, InstallerSalary $salary = null);
 
         /**
          * @param float|null $sum

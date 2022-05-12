@@ -5,6 +5,7 @@
     use App\Http\Requests\SaveOrderRequest;
     use App\Models\Order;
     use App\Models\ProductInOrder;
+    use App\Services\Calculator\Interfaces\Calculator;
     use App\Services\Repositories\Classes\ProductRepository;
 
     class ProductController extends Controller
@@ -21,7 +22,9 @@
                 ->with($data);
         }
 
-        public function update(Order $order, ProductInOrder $productInOrder) {
+        public function update(Order $order, ProductInOrder $productInOrder, Calculator $calculator) {
+            $calculator->calculate();
+            $calculator->saveInfo();
 
             \OrderHelper::remove($productInOrder);
 

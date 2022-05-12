@@ -1,6 +1,7 @@
 <?php
 
     use App\Models\Category;
+    use App\Models\ProductInOrder;
     use App\Models\User;
     use Illuminate\Support\Facades\Route;
     use JetBrains\PhpStorm\ArrayShape;

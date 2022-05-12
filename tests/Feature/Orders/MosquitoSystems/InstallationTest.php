@@ -120,7 +120,10 @@ class InstallationTest extends TestCase
         $inputsWithInstallation = $this->testHelper->exampleMosquitoSystemsInputs();
         $inputsWithInstallation['group-3'] = 8;
 
-        $this->post(route('new-order'), $inputsWithInstallation);
+        $this->testHelper->createDefaultOrder(2555, 0)
+            ->createDefaultSalary(1050)
+            ->createDefaultProduct(8);
+
         $this->post(route('order', ['order' => 1]), $inputsWithInstallation);
 
         $resultOrder = $this->testHelper->defaultOrder();

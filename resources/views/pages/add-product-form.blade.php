@@ -6,7 +6,7 @@
             </strong>
         </h1>
         @if(!isOrderPage())
-            <p class="h4 mt-3">Заказ №{{ $orderNumber }}</p>
+            <p class="h4 mt-3">Заказ №{{ $orderNumber ?? request()->order->id }}</p>
         @endif
         <div class="container-fluid bg-light mt-4" style="min-height: 250px;">
             <form method="POST" class="form-group pt-1">

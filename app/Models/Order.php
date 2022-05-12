@@ -61,6 +61,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereUserId($value)
  * @mixin \Eloquent
  * @property float $measuring_price
+ * @property bool $need_delivery
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ProductInOrder[] $products
  * @property InstallerSalary|null $salary
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereMeasuringPrice($value)

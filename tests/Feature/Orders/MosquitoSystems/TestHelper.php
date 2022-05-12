@@ -246,7 +246,7 @@
                 'comment' => '123',
                 'status' => 1,
                 'changed_sum' => 1100,
-                'type' => $sum == 960 || $sum == 0 ? SalaryType::NO_INSTALLATION : SalaryType::INSTALLATION,
+                'type' => ($sum == 960 || $sum == 0) ? SalaryType::NO_INSTALLATION : SalaryType::INSTALLATION,
             ]);
 
             return $this;

@@ -60,7 +60,11 @@
         public function order_with_two_same_products_with_no_installation() {
             $this->setUpDefaultActions();
 
-            $this->post(route('new-order'), $this->testHelper->exampleMosquitoSystemsInputs());
+            $this->testHelper->createDefaultOrder(2362)
+                ->createDefaultProduct();
+
+            $this->testHelper->createDefaultSalary();
+
             $this->post(route('order', ['order' => 1]), $this->testHelper->exampleMosquitoSystemsInputs());
 
             $resultOrder = $this->testHelper->defaultOrder();
