@@ -2,6 +2,7 @@
 
     namespace App\Services\Visitors\Classes;
 
+    use App\Services\Helpers\Classes\OrderHelper;
     use App\Services\Visitors\Interfaces\Visitable;
     use App\Services\Visitors\Interfaces\Visitor;
     use Illuminate\Http\Request;
@@ -115,7 +116,9 @@
         }
 
         public function visitAllOrderComment() {
-            // TODO: Implement visitAllOrderComment() method.
+            \OrderHelper::getOrder()->update([
+                'comment' => \request()->input('all-order-comment', 'Комментарий отсутствует')
+            ]);
         }
 
         public function visitWish() {
