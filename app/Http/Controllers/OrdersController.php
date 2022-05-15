@@ -45,21 +45,14 @@
         }
 
         public function delete(Order $order) {
-            $order->products->each(function ($product) {
-                $product->delete();
-            });
-
-            $order->salaries->each(function ($salary) {
-                $salary->delete();
-            });
-
+            $order->products()->delete();
+            $order->salaries()->delete();
             $order->delete();
 
             return redirect(route('all-orders'));
         }
 
         public function update(Order $order) {
-
             $visitor = new UpdateOrderVisitor(
                 \request()->except(['_method', '_token', 'add',])
             );
