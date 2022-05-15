@@ -7,6 +7,7 @@
     use App\Models\Salaries\InstallerSalary;
     use App\Models\SystemVariables;
     use App\Services\Helpers\Config\SalaryType;
+    use App\Services\Helpers\Config\SalaryTypesEnum;
     use Illuminate\Foundation\Testing\Concerns\InteractsWithSession;
     use Illuminate\Foundation\Testing\RefreshDatabase;
     use Tests\TestCase;
@@ -55,7 +56,7 @@
             $salary['comment'] = '123';
             $salary['category_id'] = 5;
             $salary['status'] = 0;
-            $salary['type'] = SalaryType::INSTALLATION;
+            $salary['type'] = SalaryTypesEnum::INSTALLATION->value;
             InstallerSalary::create($salary);
 
             $inputs = $this->testHelper->exampleMosquitoSystemsInputs();

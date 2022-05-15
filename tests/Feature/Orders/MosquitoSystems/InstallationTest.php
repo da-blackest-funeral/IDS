@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\ProductInOrder;
 use App\Models\Salaries\InstallerSalary;
 use App\Services\Helpers\Config\SalaryType;
+use App\Services\Helpers\Config\SalaryTypesEnum;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithSession;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -208,7 +209,7 @@ class InstallationTest extends TestCase
             'comment' => 'test',
             'status' => 1,
             'changed_sum' => $this->testHelper->defaultSalarySum(1, 1, 9),
-            'type' => SalaryType::INSTALLATION,
+            'type' => SalaryTypesEnum::INSTALLATION->value,
         ]);
 
         $data = json_decode($this->testHelper->defaultInstallationData());
@@ -282,7 +283,7 @@ class InstallationTest extends TestCase
         $salary = $this->testHelper->defaultSalary();
         $salary['sum'] = $salary['changed_sum'] = $this->testHelper->defaultSalarySum(1);
         $salary['comment'] = 'test';
-        $salary['type'] = SalaryType::INSTALLATION;
+        $salary['type'] = SalaryTypesEnum::INSTALLATION->value;
         $salary['status'] = 0;
 
         Order::create($order);

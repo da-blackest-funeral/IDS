@@ -9,6 +9,7 @@
     use App\Models\Salaries\InstallerSalary;
     use App\Models\SystemVariables;
     use App\Services\Helpers\Config\SalaryType;
+    use App\Services\Helpers\Config\SalaryTypesEnum;
 
     class TestHelper
     {
@@ -246,7 +247,9 @@
                 'comment' => '123',
                 'status' => 1,
                 'changed_sum' => 1100,
-                'type' => ($sum == 960 || $sum == 0) ? SalaryType::NO_INSTALLATION : SalaryType::INSTALLATION,
+                'type' => ($sum == 960 || $sum == 0) ?
+                    SalaryTypesEnum::NO_INSTALLATION->value :
+                    SalaryTypesEnum::INSTALLATION->value,
             ]);
 
             return $this;
