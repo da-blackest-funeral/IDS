@@ -56,17 +56,19 @@
             return $this;
         }
 
-        // todo сделать из этого фабричный метод
+        /**
+         * @return Order
+         */
         public function make(): Order {
             return Order::create([
                 'delivery' => Calculator::getDeliveryPrice(),
                 'user_id' => auth()->user()->getAuthIdentifier(),
-                'installer_id' => request()->input('installer') ?? 2,
+                'installer_id' => firstInstaller('id'),
                 'price' => Calculator::getPrice(),
-                'discounted_price' => Calculator::getPrice(), // todo сделать расчет с учетом скидок
+                'discounted_price' => Calculator::getPrice(),
                 'measuring' => Calculator::getNeedMeasuring(),
                 'measuring_price' => Calculator::getMeasuringPrice(),
-                'discounted_measuring_price' => Calculator::getMeasuringPrice(), // todo скидки
+                'discounted_measuring_price' => Calculator::getMeasuringPrice(),
                 'comment' => request()->input('comment') ?? 'Комментарий отсутствует',
                 'products_count' => Calculator::getCount(),
                 'installing_difficult' => request()->input('coefficient'),
@@ -75,25 +77,40 @@
             ]);
         }
 
+        /**
+         * @return bool
+         */
         public function orderOrProductHasInstallation(): bool {
             return !\OrderHelper::hasProducts() ||
                 \OrderHelper::hasInstallation() ||
                 Calculator::productNeedInstallation();
         }
 
+        /**
+         * @return bool
+         */
         protected function notNeedMeasuring(): bool {
             return $this->order->measuring_price || $this->hasInstallation();
         }
 
+        /**
+         * @return void
+         */
         protected function deductMeasuringPrice() {
             $this->order->price -= $this->order->measuring_price;
             $this->order->measuring_price = 0;
         }
 
+        /**
+         * @return void
+         */
         public function calculateMeasuringOptions() {
             $this->notNeedMeasuring() ? $this->removeMeasuring() : $this->restoreMeasuring();
         }
 
+        /**
+         * @return void
+         */
         protected function removeMeasuring() {
             $this->order->price -= Calculator::getMeasuringPrice();
             if (Calculator::productNeedInstallation()) {
@@ -101,6 +118,9 @@
             }
         }
 
+        /**
+         * @return void
+         */
         protected function restoreMeasuring() {
             if (!Calculator::productNeedInstallation() || deletingProduct()) {
                 $this->order->measuring_price = SystemVariables::value('measuring');
@@ -111,6 +131,9 @@
             }
         }
 
+        /**
+         * @return void
+         */
         protected function decreasePriceByDelivery() {
             if (!deletingProduct()) {
                 $this->order->price -= min(
@@ -122,6 +145,9 @@
             }
         }
 
+        /**
+         * @return void
+         */
         protected function deliveryWhenDeletingProduct() {
             $this->order->price -= max(
                 $this->order->delivery,
@@ -131,6 +157,9 @@
             $this->order->price += $this->productRepository->maxDelivery();
         }
 
+        /**
+         * @return void
+         */
         protected function determineMaxDelivery() {
             $this->order->delivery = $this->order->need_delivery ? max(
                 Calculator::getDeliveryPrice(),
@@ -138,6 +167,10 @@
             ) : 0;
         }
 
+        /**
+         * @param ProductInOrder $productInOrder
+         * @return void
+         */
         public function remove(ProductInOrder $productInOrder) {
             $this->order->price -= $productInOrder->data->main_price;
             $this->order->products_count -= $productInOrder->count;
@@ -150,6 +183,9 @@
             $this->order->update();
         }
 
+        /**
+         * @return void
+         */
         public function calculateDeliveryOptions() {
             if ($this->order->need_delivery) {
                 $this->decreasePriceByDelivery();

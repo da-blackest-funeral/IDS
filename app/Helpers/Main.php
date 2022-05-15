@@ -155,6 +155,14 @@
         return 'Со скидкой: ' . formatPrice(\order()->discounted_price);
     }
 
+    function firstInstaller(?string $field): mixed {
+        if (is_null($field)) {
+            return User::role('installer')->first();
+        }
+
+        return User::role('installer')->first()->$field;
+    }
+
     function orderHasSale(): bool {
         return \order()->price != \order()->discounted_price;
     }

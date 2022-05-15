@@ -52,7 +52,7 @@
         }
 
         protected function visitInstaller() {
-            \order()->installer_id = request()->input('installer', User::role('installer')->first()->id);
+            \order()->installer_id = request()->input('installer', firstInstaller('id'));
         }
 
         protected function visitMinimalOrderSum() {
