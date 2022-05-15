@@ -54,10 +54,19 @@
                     $order->delivery = 0;
                 }
 
-                return $order->need_delivery = false;
-            }
+                $order->need_delivery = false;
+            } else {
+                $delivery = \OrderHelper::getProductRepository()
+                    ->maxDelivery();
 
-            return $order->need_delivery = true;
+                if (!$order->need_delivery) {
+                    \SalaryHelper::restoreDelivery();
+                    $order->price += $delivery;
+                    $order->delivery = $delivery;
+                }
+
+                $order->need_delivery = true;
+            }
         }
 
         public function visitSale() {
@@ -84,7 +93,7 @@
             $this->checkChangedMeasuring($order, $measuringPrice);
 
             $order->measuring = $needMeasuring;
-            $order->measuring_price = (int) $needMeasuring * $measuringPrice;
+            $order->measuring_price = (int)$needMeasuring * $measuringPrice;
         }
 
         public function visitCountAdditionalVisits() {
@@ -96,7 +105,7 @@
                 $order->price -= $measuringPrice;
             }
 
-            if (! $order->measuring && \request()->input('measuring', false)) {
+            if (!$order->measuring && \request()->input('measuring', false)) {
                 $order->price += $measuringPrice;
             }
         }

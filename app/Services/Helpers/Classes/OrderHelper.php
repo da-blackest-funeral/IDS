@@ -32,6 +32,13 @@
         }
 
         /**
+         * @return ProductRepositoryInterface
+         */
+        public function getProductRepository(): ProductRepositoryInterface {
+            return $this->productRepository;
+        }
+
+        /**
          * @return Order
          */
         public function getOrder(): Order {

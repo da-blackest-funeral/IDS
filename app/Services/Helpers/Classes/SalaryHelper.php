@@ -82,6 +82,13 @@
                 });
         }
 
+        public function restoreDelivery() {
+            $this->salariesNoInstallation()
+                ->each(fn($salary) => $salary->update([
+                    'sum' => $salary->sum + SystemVariables::value('delivery')
+                ]));
+        }
+
         protected function salariesNoInstallation() {
             return \OrderHelper::getOrder()
                 ->salaries()
