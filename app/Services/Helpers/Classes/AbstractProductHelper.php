@@ -68,7 +68,7 @@
                 'user_id' => auth()->user()->getAuthIdentifier(),
                 'category_id' => request()->input('categories'),
                 'count' => request()->input('count', 1),
-                'comment' => request()->input('comment'),
+                'comment' => request()->input('comment') ?? 'Нет комментария',
             ]);
         }
 

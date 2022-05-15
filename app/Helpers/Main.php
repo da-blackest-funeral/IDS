@@ -147,6 +147,18 @@
         return request()->order;
     }
 
+    function orderPrice(): string {
+        if (!orderHasSale()) {
+            return formatPrice(\order()->price);
+        }
+
+        return 'Со скидкой: ' . formatPrice(\order()->discounted_price);
+    }
+
+    function orderHasSale(): bool {
+        return \order()->price != \order()->discounted_price;
+    }
+
     function requestProduct(): ProductInOrder {
         return request()->productInOrder;
     }

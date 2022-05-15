@@ -61,8 +61,8 @@
     <div class="mt-3">
         <label for="sale">Дополнительная скидка</label>
         <select type="text" class="form-control select-order" name="sale" id="sale">
-            <option value="0">Без скидки</option>
-            <option value="5">Скидка 5%</option>
+            <option value="0" @selected(!orderHasSale())>Без скидки</option>
+            <option value="5" @selected(orderHasSale())>Скидка 5%</option>
         </select>
     </div>
     <div class="mt-3">

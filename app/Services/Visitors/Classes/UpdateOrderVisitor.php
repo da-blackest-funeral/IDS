@@ -70,7 +70,10 @@
         }
 
         public function visitSale() {
-            // TODO: Implement visitSale() method.
+            $sale = (int)\request()->input('sale', 0);
+            \order()->discounted_price = $sale ?
+                \order()->price * (1 - $sale / 100) :
+                \order()->discounted_price = \order()->price;
         }
 
         public function visitAdditionalSale() {

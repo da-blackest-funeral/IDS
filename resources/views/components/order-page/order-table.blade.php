@@ -11,7 +11,13 @@
     </thead>
     <tbody>
     <tr>
-        <td class="text-center align-middle">{{ formatPrice($order->price) }}</td>
+        <td class="text-center align-middle">
+            <span @class([
+              'text-danger' => orderHasSale()
+            ])>
+                {{ orderPrice() }}
+            </span>
+        </td>
         <td class="text-center align-middle">{{ $order->products_count }}</td>
         <td class="text-center align-middle">{{ formatPrice($order->measuring_price) ? : 'Бесплатно' }}</td>
         <td class="text-center align-middle">{{ $order->delivery }}</td>
