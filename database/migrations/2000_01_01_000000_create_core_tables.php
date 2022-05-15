@@ -54,7 +54,6 @@
                     ->comment('Спросить можно ли без этого');
                 $table->foreignId('created_user_id');
                 $table->enum('type', ['Монтаж', 'Без монтажа'])
-//                $table->string('type')
                     ->comment('Тип выплаты - за монтаж, за бензин и т.д.');
                 $table->softDeletes();
                 $table->timestamps();
@@ -154,6 +153,9 @@
                 $table->foreignId('category_id');
                 $table->string('name');
                 $table->integer('count');
+                $table->string('comment')
+                    ->default('Без комментария')
+                    ->comment('Примечание к позиции');
                 $table->boolean('installation_id')
                     ->default(0);
                 $table->json('data')

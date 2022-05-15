@@ -143,7 +143,7 @@
         return isset(request()->order);
     }
 
-    function requestOrder(): Order {
+    function order(): Order {
         return request()->order;
     }
 

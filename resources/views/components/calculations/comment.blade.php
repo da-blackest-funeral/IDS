@@ -4,5 +4,5 @@
               id="comment"
               class="form-control"
               rows="7"
-              placeholder="Примечание">{{ requestHasOrder() ? requestOrder()->comment : '' }}</textarea>
+              placeholder="Примечание">{{ $comment ?? '' }}</textarea>
 </div>

@@ -221,7 +221,7 @@
          * @return BaseCalculator
          */
         protected function addDelivery(): BaseCalculator {
-            if (! requestHasOrder() || requestOrder()->need_delivery) {
+            if (! requestHasOrder() || order()->need_delivery) {
                 $this->price += $this->deliveryPrice;
             }
 

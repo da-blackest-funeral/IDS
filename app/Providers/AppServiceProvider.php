@@ -61,7 +61,7 @@
             });
 
             $this->app->bind(OrderHelperInterface::class, function () {
-                return new OrderHelper(Order::find(request()->input('order')) ?? \request()->order ?? new Order());
+                return new OrderHelper(\request()->order ?? new Order());
             });
 
             $this->app->bind(SalaryHelperInterface::class, SalaryHelper::class);

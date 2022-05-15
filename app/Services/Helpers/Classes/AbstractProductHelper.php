@@ -21,8 +21,9 @@
          */
         public function __construct(
             protected ProductInOrder $productInOrder,
-            protected Order $order,
-        ) {}
+            protected Order          $order,
+        ) {
+        }
 
         /**
          * @return ProductInOrder
@@ -66,7 +67,8 @@
                 'data' => Calculator::getOptions(),
                 'user_id' => auth()->user()->getAuthIdentifier(),
                 'category_id' => request()->input('categories'),
-                'count' => request()->input('count'),
+                'count' => request()->input('count', 1),
+                'comment' => request()->input('comment'),
             ]);
         }
 
@@ -86,5 +88,5 @@
                 !Calculator::productNeedInstallation();
         }
 
-        abstract public function installationCondition(): Callable;
+        abstract public function installationCondition(): callable;
     }

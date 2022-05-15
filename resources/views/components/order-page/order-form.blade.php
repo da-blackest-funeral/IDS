@@ -1,43 +1,35 @@
 <form action="" method="post">
     @method('put')
     @csrf
-
-    @if(request()->order != null)
-        <input type="hidden" name="order" value="{{ request()->order->id }}">
-    @endif
-
-    @if(requestHasProduct())
-        <input type="hidden" name="productInOrder" value="{{ requestProduct()->id }}">
-    @endif
     <div class="mt-5">
         <label class="btn btn-sm btn-secondary active">
             {{-- todo Вова: тут тоже есть забавный таск позже расскажу ч тут д --}}
             <input type="radio" name="delivery" value="1"
-                   @checked(requestOrder()->need_delivery)
+                   @checked(order()->need_delivery)
                    onclick="$('#delivery-options').show(400)">
             <span style="font-weight: bold;">Доставка \ Выезд на монтаж</span>
         </label>
         <label class="btn btn-sm btn-secondary active">
             <input type="radio" name="delivery" value="0" id="no_delivery"
-                   @checked(!requestOrder()->need_delivery)
+                   @checked(!order()->need_delivery)
                    onchange="toggleDeliveryOptions()">
             Самовывоз
         </label>
         <label class="btn btn-sm btn-secondary active">
             <input type="radio" name="measuring" value="1"
-                   @checked(requestOrder()->measuring)
+                   @checked(order()->measuring)
                    onclick="$('#delivery-options').show(400)">
             <span style="font-weight: bold;">Нужен Замер</span>
         </label>
         <label class="btn btn-sm btn-secondary active">
             <input type="radio" name="measuring" value="0" id="no_measuring"
-                   @checked(!requestOrder()->measuring)
+                   @checked(!order()->measuring)
                    onchange="toggleDeliveryOptions()">
             Без замера
         </label>
     </div>
     <div id="delivery-options"
-         @if(! (requestOrder()->need_delivery || requestOrder()->measuring))
+         @if(! (order()->need_delivery || order()->measuring))
              style="display: none"
         @endif>
         <div class="row mt-3 mb-3">
@@ -87,7 +79,8 @@
     @if(isOrderPage())
         @include('components.calculations.comment', [
             'label' => 'Примечание ко всему заказу',
-            'name' => 'all-order-comment'
+            'name' => 'all-order-comment',
+            'comment' => order()->comment
         ])
     @endif
 
@@ -107,7 +100,8 @@
     @if(isOrderPage())
         @include('components.calculations.comment', [
         'label' => 'Пожелание клиента',
-        'name' => 'wish'
+        'name' => 'wish',
+        'comment' => order()->wish ?? 'Пока не готово'
     ])
     @endif
 
