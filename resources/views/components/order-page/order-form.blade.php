@@ -92,7 +92,7 @@
                     'tooltip' => 'Во время замера вы взяли предоплату с клиента (вписывать только если это предоплата, а не оплата за заказ)'
                 ])
             </label>
-            <input type="text" id="prepayment" name="prepayment" value="0"
+            <input type="text" id="prepayment" name="prepayment" value="{{ order()->prepayment }}"
                    class="form-control select-order">
         </div>
     @endif

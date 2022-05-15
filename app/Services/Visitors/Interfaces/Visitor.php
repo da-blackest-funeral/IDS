@@ -6,8 +6,6 @@
 
     interface Visitor
     {
-        public function addVisitable(Visitable $visitable): Visitor;
-
         public function setVisitable(Collection $visitableCollection): Visitor;
 
         public function visitDelivery();

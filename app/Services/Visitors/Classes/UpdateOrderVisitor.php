@@ -37,12 +37,9 @@
             return \Str::of($name)->camel()->ucfirst()->__toString();
         }
 
-        public function addVisitable(Visitable $visitable): Visitor {
-            // TODO: Implement addVisitable() method.
-        }
-
         public function setVisitable(Collection $visitableCollection): Visitor {
-            // TODO: Implement setVisitable() method.
+            $this->visitItems = $visitableCollection->toArray();
+            return $this;
         }
 
         public function visitDelivery() {
@@ -126,7 +123,7 @@
         }
 
         public function visitPrepayment() {
-            // TODO: Implement visitPrepayment() method.
+            \order()->prepayment = \request()->input('prepayment', 0);
         }
 
         public function visitPerson() {
