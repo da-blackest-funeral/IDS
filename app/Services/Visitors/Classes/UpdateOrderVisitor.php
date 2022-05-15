@@ -2,6 +2,8 @@
 
     namespace App\Services\Visitors\Classes;
 
+    use App\Models\Order;
+    use App\Models\SystemVariables;
     use App\Services\Helpers\Classes\OrderHelper;
     use App\Services\Visitors\Interfaces\Visitable;
     use App\Services\Visitors\Interfaces\Visitor;
@@ -18,7 +20,7 @@
                 '_token',
                 'add',
                 'order',
-                'productInOrder'
+                'productInOrder',
             ]);
         }
 
@@ -27,6 +29,8 @@
                 $method = "visit{$this->convertToMethod($visitItem)}";
                 $this->$method();
             }
+
+            \OrderHelper::getOrder()->update();
         }
 
         public function convertToMethod(string $name) {
@@ -50,13 +54,10 @@
                     $order->delivery = 0;
                 }
 
-                $order->need_delivery = false;
-                $order->update();
-            } else {
-                $order->update([
-                    'need_delivery' => true
-                ]);
+                return $order->need_delivery = false;
             }
+
+            return $order->need_delivery = true;
         }
 
         public function visitSale() {
@@ -76,11 +77,28 @@
         }
 
         public function visitMeasuring() {
-            // TODO: Implement visitMeasuring() method.
+            $order = \OrderHelper::getOrder();
+            $needMeasuring = \request()->input('measuring', false);
+            $measuringPrice = SystemVariables::value('measuring');
+
+            $this->checkChangedMeasuring($order, $measuringPrice);
+
+            $order->measuring = $needMeasuring;
+            $order->measuring_price = (int) $needMeasuring * $measuringPrice;
         }
 
         public function visitCountAdditionalVisits() {
             // TODO: Implement visitCountAdditionalVisits() method.
+        }
+
+        protected function checkChangedMeasuring(Order $order, int $measuringPrice) {
+            if ($order->measuring && !\request()->input('measuring', false)) {
+                $order->price -= $measuringPrice;
+            }
+
+            if (! $order->measuring && \request()->input('measuring', false)) {
+                $order->price += $measuringPrice;
+            }
         }
 
         public function visitKilometres() {
@@ -117,7 +135,7 @@
 
         public function visitAllOrderComment() {
             \OrderHelper::getOrder()->update([
-                'comment' => \request()->input('all-order-comment', 'Комментарий отсутствует')
+                'comment' => \request()->input('all-order-comment', 'Комментарий отсутствует'),
             ]);
         }
 

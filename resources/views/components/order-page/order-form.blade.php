@@ -24,17 +24,22 @@
             Самовывоз
         </label>
         <label class="btn btn-sm btn-secondary active">
-            <input type="radio" name="measuring" value="1" checked
+            <input type="radio" name="measuring" value="1"
+                   @checked(requestOrder()->measuring)
                    onclick="$('#delivery-options').show(400)">
             <span style="font-weight: bold;">Нужен Замер</span>
         </label>
         <label class="btn btn-sm btn-secondary active">
             <input type="radio" name="measuring" value="0" id="no_measuring"
+                   @checked(!requestOrder()->measuring)
                    onchange="toggleDeliveryOptions()">
             Без замера
         </label>
     </div>
-    <div id="delivery-options">
+    <div id="delivery-options"
+         @if(! (requestOrder()->need_delivery || requestOrder()->measuring))
+             style="display: none"
+        @endif>
         <div class="row mt-3 mb-3">
             <div class="p-2 w-25 align-bottom">
                 <label>

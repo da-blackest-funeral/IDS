@@ -144,7 +144,9 @@
             if (\OrderHelper::hasInstallation() || Calculator::productNeedInstallation()) {
                 $order->measuring_price = 0;
             } else {
-                $order->measuring_price = SystemVariables::value('measuring');
+                $order->measuring_price = $order->measuring ?
+                    SystemVariables::value('measuring')
+                    : 0;
                 // Прибавить к зп монтажника стоимости замера и доставки, если они заданы
                 $this->updateIf(!$this->hasSalaryNoInstallation(), Calculator::getInstallersWage());
             }
