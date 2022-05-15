@@ -4,7 +4,6 @@
 
     use App\Models\Order;
     use App\Models\SystemVariables;
-    use App\Models\User;
 
     class UpdateOrderVisitor extends AbstractVisitor
     {
@@ -17,26 +16,25 @@
         }
 
         protected function visitDelivery() {
-            $order = \OrderHelper::getOrder();
             if (!request()->input('delivery', false)) {
-                if ($order->need_delivery) {
+                if (\order()->need_delivery) {
                     \SalaryHelper::removeDelivery();
-                    $order->price -= $order->delivery;
-                    $order->delivery = 0;
+                    \order()->price -= \order()->delivery;
+                    \order()->delivery = 0;
                 }
 
-                $order->need_delivery = false;
+                \order()->need_delivery = false;
             } else {
                 $delivery = \OrderHelper::getProductRepository()
                     ->maxDelivery();
 
-                if (!$order->need_delivery) {
+                if (!\order()->need_delivery) {
                     \SalaryHelper::restoreDelivery();
-                    $order->price += $delivery;
-                    $order->delivery = $delivery;
+                    \order()->price += $delivery;
+                    \order()->delivery = $delivery;
                 }
 
-                $order->need_delivery = true;
+                \order()->need_delivery = true;
             }
         }
 
@@ -60,14 +58,13 @@
         }
 
         protected function visitMeasuring() {
-            $order = \OrderHelper::getOrder();
             $needMeasuring = \request()->input('measuring', false);
             $measuringPrice = SystemVariables::value('measuring');
 
-            $this->checkChangedMeasuring($order, $measuringPrice);
+            $this->checkChangedMeasuring(\order(), $measuringPrice);
 
-            $order->measuring = $needMeasuring;
-            $order->measuring_price = (int)$needMeasuring * $measuringPrice;
+            \order()->measuring = $needMeasuring;
+            \order()->measuring_price = (int)$needMeasuring * $measuringPrice;
         }
 
         protected function visitCountAdditionalVisits() {
@@ -117,7 +114,7 @@
         }
 
         protected function visitAllOrderComment() {
-            \OrderHelper::getOrder()->comment = request()
+            \order()->comment = request()
                 ->input('all-order-comment', 'Комментарий отсутствует');
         }
 
