@@ -122,7 +122,11 @@
                 <option value="0">Ни к кому</option>
                 @isset($installers)
                     @foreach($installers as $installer)
-                        <option value="{{ $installer->id }}">{{ $installer->name }}</option>
+                        <option
+                            @selected(equals($installer->id, order()->installer_id))
+                            value="{{ $installer->id }}">
+                            {{ $installer->name }}
+                        </option>
                     @endforeach
                 @endif
             </select>

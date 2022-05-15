@@ -4,6 +4,7 @@
 
     use App\Models\Order;
     use App\Models\SystemVariables;
+    use App\Models\User;
 
     class UpdateOrderVisitor extends AbstractVisitor
     {
@@ -51,7 +52,7 @@
         }
 
         protected function visitInstaller() {
-            // TODO: Implement visitInstaller() method.
+            \order()->installer_id = request()->input('installer', User::role('installer')->first()->id);
         }
 
         protected function visitMinimalOrderSum() {
