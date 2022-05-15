@@ -58,14 +58,11 @@
             return redirect(route('all-orders'));
         }
 
-        public function update(Order $order, UpdateOrderVisitor $visitor) {
-            /*
-             * Что надо обновлять
-             * 1) нужна ли доставка
-             */
+        public function update(Order $order) {
 
-            // если доставка изменилась с "нужна" на "не нужна", то уменьшать зарплату
-            // если наоборот - увеличивать
+            $visitor = new UpdateOrderVisitor(
+                \request()->except(['_method', '_token', 'add',])
+            );
 
             $visitor->execute();
             return redirect(route('order', ['order' => $order->id]));

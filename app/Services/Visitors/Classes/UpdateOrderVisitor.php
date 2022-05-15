@@ -4,45 +4,18 @@
 
     use App\Models\Order;
     use App\Models\SystemVariables;
-    use App\Services\Helpers\Classes\OrderHelper;
-    use App\Services\Visitors\Interfaces\Visitable;
-    use App\Services\Visitors\Interfaces\Visitor;
-    use Illuminate\Http\Request;
-    use Illuminate\Support\Collection;
 
-    class UpdateOrderVisitor implements Visitor
+    class UpdateOrderVisitor extends AbstractVisitor
     {
-        protected array $visitItems;
-
-        public function __construct(Request $request) {
-            $this->visitItems = $request->except([
-                '_method',
-                '_token',
-                'add',
-                'order',
-                'productInOrder',
-            ]);
+        protected function final() {
+            \order()->update();
         }
 
-        public function execute() {
-            foreach ($this->visitItems as $visitItem => $value) {
-                $method = "visit{$this->convertToMethod($visitItem)}";
-                $this->$method();
-            }
-
-            \OrderHelper::getOrder()->update();
+        public function convertToMethod(string $name): string {
+            return 'visit' . \Str::of($name)->camel()->ucfirst()->__toString();
         }
 
-        public function convertToMethod(string $name) {
-            return \Str::of($name)->camel()->ucfirst()->__toString();
-        }
-
-        public function setVisitable(Collection $visitableCollection): Visitor {
-            $this->visitItems = $visitableCollection->toArray();
-            return $this;
-        }
-
-        public function visitDelivery() {
+        protected function visitDelivery() {
             $order = \OrderHelper::getOrder();
             if (!request()->input('delivery', false)) {
                 if ($order->need_delivery) {
@@ -66,26 +39,26 @@
             }
         }
 
-        public function visitSale() {
+        protected function visitSale() {
             $sale = (int)\request()->input('sale', 0);
             \order()->discounted_price = $sale ?
                 \order()->price * (1 - $sale / 100) :
                 \order()->discounted_price = \order()->price;
         }
 
-        public function visitAdditionalSale() {
+        protected function visitAdditionalSale() {
             // TODO: Implement visitAdditionalSale() method.
         }
 
-        public function visitInstaller() {
+        protected function visitInstaller() {
             // TODO: Implement visitInstaller() method.
         }
 
-        public function visitMinimalOrderSum() {
+        protected function visitMinimalOrderSum() {
             // TODO: Implement visitMinimalOrderSum() method.
         }
 
-        public function visitMeasuring() {
+        protected function visitMeasuring() {
             $order = \OrderHelper::getOrder();
             $needMeasuring = \request()->input('measuring', false);
             $measuringPrice = SystemVariables::value('measuring');
@@ -96,7 +69,7 @@
             $order->measuring_price = (int)$needMeasuring * $measuringPrice;
         }
 
-        public function visitCountAdditionalVisits() {
+        protected function visitCountAdditionalVisits() {
             // TODO: Implement visitCountAdditionalVisits() method.
         }
 
@@ -110,44 +83,44 @@
             }
         }
 
-        public function visitKilometres() {
+        protected function visitKilometres() {
             // TODO: Implement visitKilometres() method.
         }
 
-        public function visitAddress() {
+        protected function visitAddress() {
             // TODO: Implement visitAddress() method.
         }
 
-        public function visitAutoSale() {
+        protected function visitAutoSale() {
             // TODO: Implement visitAutoSale() method.
         }
 
-        public function visitPrepayment() {
+        protected function visitPrepayment() {
             \order()->prepayment = \request()->input('prepayment', 0);
         }
 
-        public function visitPerson() {
+        protected function visitPerson() {
             // TODO: Implement visitPerson() method.
         }
 
-        public function visitMinimalSum() {
+        protected function visitMinimalSum() {
             // TODO: Implement visitMinimalSum() method.
         }
 
-        public function visitSumManually() {
+        protected function visitSumManually() {
             // TODO: Implement visitSumManually() method.
         }
 
-        public function visitWageManually() {
+        protected function visitWageManually() {
             // TODO: Implement visitWageManually() method.
         }
 
-        public function visitAllOrderComment() {
+        protected function visitAllOrderComment() {
             \OrderHelper::getOrder()->comment = request()
                 ->input('all-order-comment', 'Комментарий отсутствует');
         }
 
-        public function visitWish() {
+        protected function visitWish() {
             // TODO: Implement visitWish() method.
         }
     }
