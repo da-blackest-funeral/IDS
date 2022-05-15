@@ -18,7 +18,7 @@
             return view('pages.orders.all')
                 ->with([
                     'orders' => Order::orderByDesc('created_at')
-                        ->paginate(3)
+                        ->paginate(3),
                 ]);
         }
 
@@ -28,6 +28,9 @@
             );
         }
 
+        /**
+         * @throws \Throwable
+         */
         public function addProduct(Order $order, Calculator $calculator) {
             $calculator->calculate();
             $calculator->saveInfo();
@@ -43,11 +46,11 @@
 
         public function delete(Order $order) {
             $order->products->each(function ($product) {
-               $product->delete();
+                $product->delete();
             });
 
             $order->salaries->each(function ($salary) {
-               $salary->delete();
+                $salary->delete();
             });
 
             $order->delete();

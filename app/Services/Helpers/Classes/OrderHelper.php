@@ -161,8 +161,10 @@
          * Creates new product and adds it to the order
          *
          * @return ProductInOrder
+         * @throws \Throwable
          */
         public function addProduct(): ProductInOrder {
+
             $this->order->price += Calculator::getPrice();
 
             $this->calculateMeasuringOptions();
@@ -171,11 +173,12 @@
             $this->order->products_count += Calculator::getCount();
 
             $this->order->update();
-
             $product = \ProductHelper::make();
 
-            \ProductHelper::use($product)
-                ->updateOrCreateSalary();
+            \DB::transaction(function () use ($product) {
+                \ProductHelper::use($product)
+                    ->updateOrCreateSalary();
+            });
 
             return $product;
         }

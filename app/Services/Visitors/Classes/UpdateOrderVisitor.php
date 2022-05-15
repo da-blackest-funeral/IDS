@@ -143,9 +143,8 @@
         }
 
         public function visitAllOrderComment() {
-            \OrderHelper::getOrder()->update([
-                'comment' => \request()->input('all-order-comment', 'Комментарий отсутствует'),
-            ]);
+            \OrderHelper::getOrder()->comment = request()
+                ->input('all-order-comment', 'Комментарий отсутствует');
         }
 
         public function visitWish() {
