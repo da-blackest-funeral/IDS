@@ -4,5 +4,5 @@
 
     interface Visitable
     {
-        public function accept(Visitable $visitable);
+        public function accept();
     }
