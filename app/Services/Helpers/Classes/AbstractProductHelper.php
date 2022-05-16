@@ -49,10 +49,7 @@
          * @return bool
          */
         public static function hasInstallation(object $productInOrder): bool {
-            return
-                isset($productInOrder->installation_id) &&
-                $productInOrder->installation_id &&
-                $productInOrder->installation_id != 14;
+            return mosquitoHasInstallation($productInOrder);
         }
 
         /**

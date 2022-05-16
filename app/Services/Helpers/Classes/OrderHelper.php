@@ -65,7 +65,7 @@
                 'user_id' => auth()->user()->getAuthIdentifier(),
                 'installer_id' => firstInstaller('id'),
                 'price' => Calculator::getPrice(),
-                'discounted_price' => Calculator::getPrice(),
+                'discounted_price' => 0,
                 'measuring' => Calculator::getNeedMeasuring(),
                 'measuring_price' => Calculator::getMeasuringPrice(),
                 'discounted_measuring_price' => Calculator::getMeasuringPrice(),

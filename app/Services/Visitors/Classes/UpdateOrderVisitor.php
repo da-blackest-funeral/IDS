@@ -40,9 +40,7 @@
 
         protected function visitSale() {
             $sale = (int)\request()->input('sale', 0);
-            \order()->discounted_price = $sale ?
-                \order()->price * (1 - $sale / 100) :
-                \order()->discounted_price = \order()->price;
+            order()->discounted_price = $sale * order()->price / 100;
         }
 
         protected function visitAdditionalSale() {
@@ -50,11 +48,7 @@
         }
 
         protected function visitInstaller() {
-            \order()->installer_id = request()->input('installer', firstInstaller('id'));
-        }
-
-        protected function visitMinimalOrderSum() {
-            // TODO: Implement visitMinimalOrderSum() method.
+            \order()->installer_id = \request()->input('installer', firstInstaller('id'));
         }
 
         protected function visitMeasuring() {
@@ -102,7 +96,7 @@
         }
 
         protected function visitMinimalSum() {
-            // TODO: Implement visitMinimalSum() method.
+            SystemVariables::updateByName('minSumOrder', request()->input('minimal-sum'));
         }
 
         protected function visitSumManually() {

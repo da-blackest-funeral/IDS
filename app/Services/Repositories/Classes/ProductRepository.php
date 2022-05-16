@@ -64,12 +64,12 @@
         }
 
         public function hasInstallation(): bool {
-            return $this->has(\ProductHelper::installationCondition());
+            return $this->has(mosquitoInstallationCondition());
         }
 
         public function onlyWithInstallation(): ProductRepositoryInterface {
             $this->products = $this->products->filter(
-                \ProductHelper::installationCondition()
+                mosquitoInstallationCondition()
             );
 
             return $this;

@@ -148,11 +148,28 @@
     }
 
     function orderPrice(): string {
+        $minimalSum = systemVariable('minSumOrder');
+        if (\OrderHelper::hasInstallation() && \order()->price < $minimalSum) {
+            return $minimalSum;
+        }
+
         if (!orderHasSale()) {
             return formatPrice(\order()->price);
         }
 
-        return 'Со скидкой: ' . formatPrice(\order()->discounted_price);
+        return 'Со скидкой: ' . formatPrice(order()->price - \order()->discounted_price);
+    }
+
+    function mosquitoInstallationCondition() {
+        return function ($product) {
+            return mosquitoHasInstallation($product);
+        };
+    }
+
+    function mosquitoHasInstallation(object $productInOrder) {
+        return isset($productInOrder->installation_id) &&
+            $productInOrder->installation_id &&
+            $productInOrder->installation_id != 14;
     }
 
     function firstInstaller(?string $field): mixed {
@@ -163,8 +180,12 @@
         return User::role('installer')->first()->$field;
     }
 
+    function systemVariable(string $name): mixed {
+        return \App\Models\SystemVariables::value($name);
+    }
+
     function orderHasSale(): bool {
-        return \order()->price != \order()->discounted_price;
+        return (int) \order()->discounted_price;
     }
 
     function requestProduct(): ProductInOrder {

@@ -21,6 +21,7 @@
                 $table->string('name');
                 $table->string('value');
                 $table->text('description');
+                $table->timestamps();
             });
 
             Schema::create('users', function (Blueprint $table) {

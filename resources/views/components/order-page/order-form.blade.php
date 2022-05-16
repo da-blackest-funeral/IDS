@@ -136,7 +136,8 @@
         <label for="min-sum">
             Минимальная сумма заказа
         </label>
-        <input type="text" class="form-control select-order" name="minimal-sum" id="min-sum" value="5000">
+        <input type="text" class="form-control select-order" name="minimal-sum" id="min-sum"
+               value="{{ systemVariable('minSumOrder') }}">
     </div>
     <div class="mt-3">
         <label for="sum-manually">
