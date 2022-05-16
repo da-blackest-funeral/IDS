@@ -84,7 +84,7 @@
      * @param string|null $field
      * @return mixed
      */
-    function oldProduct(?string $field): mixed {
+    function oldProduct(string $field = null): mixed {
         if (is_null($field)) {
             return session('oldProduct', new stdClass());
         }
