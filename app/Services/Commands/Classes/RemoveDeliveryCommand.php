@@ -2,17 +2,21 @@
 
     namespace App\Services\Commands\Classes;
 
+    use App\Models\Order;
     use App\Services\Commands\Interfaces\Command;
 
     class RemoveDeliveryCommand implements Command
     {
+        public function __construct(protected Order $order) {
+        }
+
         public function execute() {
-            if (\order()->need_delivery) {
+            if ($this->order->need_delivery) {
                 \SalaryHelper::removeDelivery();
-                \order()->price -= \order()->delivery;
-                \order()->delivery = 0;
+                $this->order->price -= $this->order->delivery;
+                $this->order->delivery = 0;
             }
 
-            \order()->need_delivery = false;
+            $this->order->need_delivery = false;
         }
     }

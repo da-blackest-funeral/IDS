@@ -25,11 +25,11 @@
         /**
          * @return void
          */
-        private function visitDelivery() {
+        protected function visitDelivery() {
             /** @var Command */
             $command = request()->input('delivery', false) ?
-                new RestoreDeliveryCommand() :
-                new RemoveDeliveryCommand();
+                new RestoreDeliveryCommand(\order(), \OrderHelper::getProductRepository()) :
+                new RemoveDeliveryCommand(order());
 
             $command->execute();
         }
@@ -45,21 +45,21 @@
         /**
          * @return void
          */
-        private function visitAdditionalSale() {
+        protected function visitAdditionalSale() {
             // TODO: Implement visitAdditionalSale() method.
         }
 
         /**
          * @return void
          */
-        private function visitInstaller() {
+        protected function visitInstaller() {
             \order()->installer_id = \request()->input('installer', firstInstaller('id'));
         }
 
         /**
          * @return void
          */
-        private function visitMeasuring() {
+        protected function visitMeasuring() {
             $needMeasuring = \request()->input('measuring', false);
             $measuringPrice = SystemVariables::value('measuring');
 
@@ -72,8 +72,8 @@
         /**
          * @return void
          */
-        private function visitCountAdditionalVisits() {
-            // TODO: Implement visitCountAdditionalVisits() method.
+        protected function visitCountAdditionalVisits() {
+
         }
 
         /**
@@ -81,7 +81,7 @@
          * @param int $measuringPrice
          * @return void
          */
-        private function checkChangedMeasuring(Order $order, int $measuringPrice) {
+        protected function checkChangedMeasuring(Order $order, int $measuringPrice) {
             if ($order->measuring && !\request()->input('measuring', false)) {
                 $order->price -= $measuringPrice;
             }
@@ -91,44 +91,44 @@
             }
         }
 
-        private function visitKilometres() {
+        protected function visitKilometres() {
             // TODO: Implement visitKilometres() method.
         }
 
-        private function visitAddress() {
+        protected function visitAddress() {
             // TODO: Implement visitAddress() method.
         }
 
-        private function visitAutoSale() {
+        protected function visitAutoSale() {
             // TODO: Implement visitAutoSale() method.
         }
 
-        private function visitPrepayment() {
+        protected function visitPrepayment() {
             \order()->prepayment = \request()->input('prepayment', 0);
         }
 
-        private function visitPerson() {
+        protected function visitPerson() {
             // TODO: Implement visitPerson() method.
         }
 
-        private function visitMinimalSum() {
+        protected function visitMinimalSum() {
             SystemVariables::updateByName('minSumOrder', request()->input('minimal-sum'));
         }
 
-        private function visitSumManually() {
+        protected function visitSumManually() {
             // TODO: Implement visitSumManually() method.
         }
 
-        private function visitWageManually() {
+        protected function visitWageManually() {
             // TODO: Implement visitWageManually() method.
         }
 
-        private function visitAllOrderComment() {
+        protected function visitAllOrderComment() {
             \order()->comment = request()
                 ->input('all-order-comment', 'Комментарий отсутствует');
         }
 
-        private function visitWish() {
+        protected function visitWish() {
             // TODO: Implement visitWish() method.
         }
     }
