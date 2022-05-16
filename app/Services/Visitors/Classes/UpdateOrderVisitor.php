@@ -4,12 +4,14 @@
 
     use App\Models\Order;
     use App\Models\SystemVariables;
-    use App\Services\Visitors\Interfaces\Visitable;
+    use App\Services\Commands\Classes\RemoveDeliveryCommand;
+    use App\Services\Commands\Classes\RestoreDeliveryCommand;
+    use App\Services\Commands\Interfaces\Command;
 
     class UpdateOrderVisitor extends AbstractVisitor
     {
         protected function final() {
-            \order()->update();
+            return order()->update();
         }
 
         /**
@@ -24,12 +26,12 @@
          * @return void
          */
         private function visitDelivery() {
-            /** @var Visitable $visitable */
-            $visitable = request()->input('delivery', false) ?
-                new RestoreDeliveryVisitable() :
-                new RemoveDeliveryVisitable();
+            /** @var Command */
+            $command = request()->input('delivery', false) ?
+                new RestoreDeliveryCommand() :
+                new RemoveDeliveryCommand();
 
-            $visitable->accept();
+            $command->execute();
         }
 
         /**

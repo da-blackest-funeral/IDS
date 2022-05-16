@@ -1,12 +1,12 @@
 <?php
 
-    namespace App\Services\Visitors\Classes;
+    namespace App\Services\Commands\Classes;
 
-    use App\Services\Visitors\Interfaces\Visitable;
+    use App\Services\Commands\Interfaces\Command;
 
-    class RestoreDeliveryVisitable implements Visitable
+    class RestoreDeliveryCommand implements Command
     {
-        public function accept() {
+        public function execute() {
             $delivery = \OrderHelper::getProductRepository()
                 ->maxDelivery();
 

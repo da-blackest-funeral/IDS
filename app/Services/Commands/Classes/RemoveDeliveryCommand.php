@@ -1,12 +1,12 @@
 <?php
 
-    namespace App\Services\Visitors\Classes;
+    namespace App\Services\Commands\Classes;
 
-    use App\Services\Visitors\Interfaces\Visitable;
+    use App\Services\Commands\Interfaces\Command;
 
-    class RemoveDeliveryVisitable implements Visitable
+    class RemoveDeliveryCommand implements Command
     {
-        public function accept() {
+        public function execute() {
             if (\order()->need_delivery) {
                 \SalaryHelper::removeDelivery();
                 \order()->price -= \order()->delivery;
