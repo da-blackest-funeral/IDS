@@ -103,8 +103,8 @@
                 $table->float('price');
                 $table->foreignId('installer_id')
                     ->constrained('users');
-                $table->float('discounted_price')
-                    ->comment('Цена со скидкой');
+                $table->float('discount')
+                    ->comment('Процент скидки');
                 $table->boolean('status')
                     ->default(false)
                     ->comment('Выполнен заказ или нет');

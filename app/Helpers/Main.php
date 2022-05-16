@@ -157,7 +157,7 @@
             return formatPrice(\order()->price);
         }
 
-        return 'Со скидкой: ' . formatPrice(order()->price - \order()->discounted_price);
+        return 'Со скидкой: ' . formatPrice(order()->price * (1 - order()->discount / 100));
     }
 
     function mosquitoInstallationCondition() {
@@ -185,7 +185,7 @@
     }
 
     function orderHasSale(): bool {
-        return (int) \order()->discounted_price;
+        return (int) \order()->discount;
     }
 
     function requestProduct(): ProductInOrder {

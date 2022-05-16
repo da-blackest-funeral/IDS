@@ -38,9 +38,8 @@
             }
         }
 
-        protected function visitSale() {
-            $sale = (int)\request()->input('sale', 0);
-            order()->discounted_price = $sale * order()->price / 100;
+        public function visitSale(int $sale = null) {
+            order()->discount = $sale ?? (int) request()->input('sale', 0);
         }
 
         protected function visitAdditionalSale() {

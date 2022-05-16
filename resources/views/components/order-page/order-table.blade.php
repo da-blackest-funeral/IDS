@@ -13,7 +13,7 @@
     <tr>
         <td class="text-center align-middle">
             <span @class([
-              'text-danger' => orderHasSale()
+              'text-danger h5' => orderHasSale()
             ])>
                 {{ orderPrice() }}
             </span>

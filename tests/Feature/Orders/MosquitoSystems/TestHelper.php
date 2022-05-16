@@ -121,7 +121,7 @@
                 'installation' => 0,
                 'price' => $price, // todo переписать с учетом минимальной суммы заказа
                 'installer_id' => 2,
-                'discounted_price' => 2256, // todo поменять когда я сделаю учет скидок
+                'discount' => 2256, // todo поменять когда я сделаю учет скидок
                 'status' => 0,
                 'measuring_price' => $measuringPrice,
                 'measuring' => 1,

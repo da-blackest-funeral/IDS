@@ -36,7 +36,7 @@
 
             $order['price'] = $price;
             $order['measuring_price'] = 0;
-            $order['discounted_price'] = 0;
+            $order['discount'] = 0;
             $order['measuring'] = 0;
             $order['structure'] = 'test';
             Order::create($order);

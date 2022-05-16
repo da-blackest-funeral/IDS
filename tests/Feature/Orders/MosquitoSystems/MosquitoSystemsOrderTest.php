@@ -115,9 +115,7 @@
             $this->setUpDefaultActions();
 
             $order = $this->testHelper->defaultOrder();
-            $order['discounted_price'] = $this->testHelper->measuringPrice() +
-                $this->testHelper->defaultDeliverySum() +
-                $this->testHelper->productPrice();
+            $order['discount'] = 0;
             $order['measuring'] = 0;
             $order['structure'] = 'test';
 

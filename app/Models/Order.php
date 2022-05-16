@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $id
  * @property int $user_id
  * @property float $price
- * @property float $discounted_price Цена со скидкой
+ * @property float $discount Цена со скидкой
  * @property string $date
  * @property int $status Выполнен заказ или нет
  * @property int $measuring Нужен ли замер
