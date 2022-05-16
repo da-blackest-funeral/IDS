@@ -36,7 +36,7 @@
             <div class="p-2 w-25 align-bottom">
                 <label>
                     Количество доп. выездов
-                    <input type="text" value="0" name="count-additional-visits"
+                    <input type="text" value="{{ order()->additional_visits }}" name="count-additional-visits"
                            class="form-control mw-100">
                 </label>
             </div>

@@ -66,6 +66,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property InstallerSalary|null $salary
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereMeasuringPrice($value)
  * @property int $delivery
+ * @property int $additional_visits
  * @property int $installation
  * @property int $installer_id
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereDelivery($value)

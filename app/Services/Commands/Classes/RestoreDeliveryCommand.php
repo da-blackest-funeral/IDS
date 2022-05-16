@@ -8,6 +8,10 @@
 
     class RestoreDeliveryCommand implements Command
     {
+        /**
+         * @param Order $order
+         * @param ProductRepositoryInterface $productRepository
+         */
         public function __construct(
             protected Order $order,
             protected ProductRepositoryInterface $productRepository

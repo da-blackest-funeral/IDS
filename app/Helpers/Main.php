@@ -96,6 +96,14 @@
     }
 
     /**
+     * @param Order $order
+     * @return string
+     */
+    function delivery(Order $order): string {
+        return formatPrice($order->delivery * (1 + $order->additional_visits));
+    }
+
+    /**
      * @param object $additional
      * @return bool
      */

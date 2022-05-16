@@ -9,6 +9,7 @@
     use App\Services\Helpers\Config\SalaryTypesEnum;
     use App\Services\Helpers\Interfaces\SalaryHelperInterface;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
+    use Illuminate\Support\Collection;
 
     // todo сделать второй интерфейс - installation salary helper interface, туда добавить методы removeNoInstallation
     // и т.д., а так же другой класс, я думаю с наследованием от этого
@@ -89,8 +90,14 @@
                 ]));
         }
 
-        protected function salariesNoInstallation() {
-            return \OrderHelper::getOrder()
+        /**
+         * @param Order|null $order
+         * @return Collection<InstallerSalary>
+         */
+        public function salariesNoInstallation(?Order $order): Collection {
+            /** @var Order $order */
+            $order = $order ?? \OrderHelper::getOrder();
+            return $order
                 ->salaries()
                 ->where('type', SalaryTypesEnum::NO_INSTALLATION->value)
                 ->get();

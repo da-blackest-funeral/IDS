@@ -96,6 +96,9 @@
                     ->constrained('users');
                 $table->integer('delivery')
                     ->default(0);
+                $table->integer('additional_visits')
+                    ->default(0)
+                    ->comment('Количество допольнительных выездов');
                 $table->boolean('need_delivery')
                     ->default(true);
                 $table->integer('installation')

@@ -4,8 +4,10 @@
 
     use App\Models\Order;
     use App\Models\SystemVariables;
+    use App\Services\Commands\Classes\RemoveAdditionalVisitsCommand;
     use App\Services\Commands\Classes\RemoveDeliveryCommand;
     use App\Services\Commands\Classes\RestoreDeliveryCommand;
+    use App\Services\Commands\Classes\SetAdditionalVisitsCommand;
     use App\Services\Commands\Interfaces\Command;
 
     class UpdateOrderVisitor extends AbstractVisitor
@@ -73,7 +75,13 @@
          * @return void
          */
         protected function visitCountAdditionalVisits() {
+            $visits = (int) request()->input('count-additional-visits', 0);
+            /** @var Command $command */
+            $command = $visits ?
+                new SetAdditionalVisitsCommand(\order(), $visits) :
+                new RemoveAdditionalVisitsCommand(\order());
 
+            $command->execute();
         }
 
         /**
