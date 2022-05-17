@@ -12,7 +12,7 @@
 
     class UpdateOrderVisitor extends AbstractVisitor
     {
-        protected function final() {
+        public function final() {
             return order()->update();
         }
 
@@ -28,12 +28,9 @@
          * @return void
          */
         protected function visitDelivery() {
-            /** @var Command */
-            $command = request()->input('delivery', false) ?
+            $this->commands[] = request()->input('delivery', false) ?
                 new RestoreDeliveryCommand(\order(), \OrderHelper::getProductRepository()) :
                 new RemoveDeliveryCommand(order());
-
-            $command->execute();
         }
 
         /**
@@ -76,12 +73,9 @@
          */
         protected function visitCountAdditionalVisits() {
             $visits = (int) request()->input('count-additional-visits', 0);
-            /** @var Command $command */
-            $command = $visits ?
+            $this->commands[] = $visits ?
                 new SetAdditionalVisitsCommand(\order(), $visits) :
                 new RemoveAdditionalVisitsCommand(\order());
-
-            $command->execute();
         }
 
         /**
@@ -100,7 +94,7 @@
         }
 
         protected function visitKilometres() {
-            // TODO: Implement visitKilometres() method.
+
         }
 
         protected function visitAddress() {

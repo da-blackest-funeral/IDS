@@ -2,10 +2,16 @@
 
     namespace App\Services\Visitors\Classes;
 
+    use App\Services\Commands\Interfaces\Command;
     use App\Services\Visitors\Interfaces\Visitor;
 
     abstract class AbstractVisitor implements Visitor
     {
+        /**
+         * @var array<Command>
+         */
+        protected array $commands;
+
         /**
          * @param array<string, string> $visitItems
          */
@@ -22,18 +28,20 @@
         }
 
         /**
-         * @return void
+         * @return Visitor
          */
-        public function execute() {
+        public function execute(): Visitor {
             foreach ($this->visitItems as $visitItem => $value) {
                 $method = $this->convertToMethod($visitItem);
                 $this->$method();
             }
 
-            return $this->final();
+            foreach ($this->commands as $command) {
+                $command->execute();
+            }
+
+            return $this;
         }
 
         abstract protected function convertToMethod(string $name): string;
-
-        abstract protected function final();
     }

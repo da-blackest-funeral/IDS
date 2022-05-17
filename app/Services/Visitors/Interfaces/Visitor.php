@@ -10,5 +10,7 @@
 
         public function setVisitable(array $visitItems): Visitor;
 
-        public function execute();
+        public function execute(): Visitor;
+
+        public function final();
     }

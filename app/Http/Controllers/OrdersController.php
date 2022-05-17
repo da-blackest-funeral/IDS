@@ -8,6 +8,7 @@
     use App\Models\Salaries\InstallerSalary;
     use App\Services\Calculator\Interfaces\Calculator;
     use App\Services\Visitors\Classes\UpdateOrderVisitor;
+    use App\Services\Visitors\Interfaces\Visitor;
     use Illuminate\Http\Request;
 
     class OrdersController extends Controller
@@ -53,11 +54,13 @@
         }
 
         public function update(Order $order) {
+            /** @var Visitor $visitor */
             $visitor = new UpdateOrderVisitor(
                 \request()->except(['_method', '_token', 'add',])
             );
 
-            $visitor->execute();
+            $visitor->execute()->final();
+
             return redirect(route('order', ['order' => $order->id]));
         }
     }
