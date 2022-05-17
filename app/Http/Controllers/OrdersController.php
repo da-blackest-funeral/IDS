@@ -53,11 +53,16 @@
         public function update(Order $order) {
             /** @var Visitor $visitor */
             $visitor = new UpdateOrderVisitor(
-                \request()->except(['_method', '_token', 'add',])
+                visitItems: \request()->except(['_method', '_token', 'add',]),
+                order: $order
             );
 
-            $visitor->execute()->final();
+            if ($visitor->execute()->final()) {
+                return redirect(route('order', ['order' => $order->id]));
+            }
 
-            return redirect(route('order', ['order' => $order->id]));
+            return back()->withErrors([
+                'error' => 'Не удалось обновить заказ'
+            ]);
         }
     }

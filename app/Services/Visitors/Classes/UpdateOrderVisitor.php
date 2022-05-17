@@ -6,7 +6,6 @@
     use App\Models\SystemVariables;
     use App\Services\Commands\Classes\RemoveAdditionalVisitsCommand;
     use App\Services\Commands\Classes\RemoveDeliveryCommand;
-    use App\Services\Commands\Classes\RemoveDeliveryKilometresCommand;
     use App\Services\Commands\Classes\RestoreDeliveryCommand;
     use App\Services\Commands\Classes\SetAdditionalVisitsCommand;
     use App\Services\Commands\Classes\DeliveryKilometresCommand;
@@ -14,7 +13,7 @@
     class UpdateOrderVisitor extends AbstractVisitor
     {
         public function final() {
-            return order()->update();
+            return $this->order->update();
         }
 
         /**
@@ -30,8 +29,8 @@
          */
         protected function visitDelivery() {
             $this->commands[] = request()->input('delivery', false) ?
-                new RestoreDeliveryCommand(order(), \OrderHelper::getProductRepository()) :
-                new RemoveDeliveryCommand(order());
+                new RestoreDeliveryCommand($this->order, \OrderHelper::getProductRepository()) :
+                new RemoveDeliveryCommand($this->order);
         }
 
         /**
@@ -39,7 +38,7 @@
          * @return void
          */
         public function visitSale(int $sale = null) {
-            order()->discount = $sale ?? (int)request()->input('sale', 0);
+            $this->order->discount = $sale ?? (int)request()->input('sale', 0);
         }
 
         /**
@@ -53,7 +52,7 @@
          * @return void
          */
         protected function visitInstaller() {
-            \order()->installer_id = \request()->input('installer', firstInstaller('id'));
+            $this->order->installer_id = \request()->input('installer', firstInstaller('id'));
         }
 
         /**
@@ -63,10 +62,10 @@
             $needMeasuring = \request()->input('measuring', false);
             $measuringPrice = systemVariable('measuring');
 
-            $this->checkChangedMeasuring(\order(), $measuringPrice);
+            $this->checkChangedMeasuring($this->order, $measuringPrice);
 
-            \order()->measuring = $needMeasuring;
-            \order()->measuring_price = (int)$needMeasuring * $measuringPrice;
+            $this->order->measuring = $needMeasuring;
+            $this->order->measuring_price = (int)$needMeasuring * $measuringPrice;
         }
 
         /**
@@ -75,8 +74,8 @@
         protected function visitCountAdditionalVisits() {
             $visits = (int)request()->input('count-additional-visits', 0);
             $this->commands[] = $visits ?
-                new SetAdditionalVisitsCommand(\order(), $visits) :
-                new RemoveAdditionalVisitsCommand(\order());
+                new SetAdditionalVisitsCommand($this->order, $visits) :
+                new RemoveAdditionalVisitsCommand($this->order);
         }
 
         /**
@@ -99,7 +98,7 @@
          */
         protected function visitKilometres() {
             $kilometres = (int)request()->input('kilometres', 0);
-            $this->commands[] = new DeliveryKilometresCommand($kilometres, \order());
+            $this->commands[] = new DeliveryKilometresCommand($kilometres, $this->order);
         }
 
         protected function visitAddress() {
@@ -111,7 +110,7 @@
         }
 
         protected function visitPrepayment() {
-            order()->prepayment = request()->input('prepayment', 0);
+            $this->order->prepayment = request()->input('prepayment', 0);
         }
 
         protected function visitPerson() {
@@ -131,7 +130,7 @@
         }
 
         protected function visitAllOrderComment() {
-            \order()->comment = request()
+            $this->order->comment = request()
                 ->input('all-order-comment', 'Комментарий отсутствует');
         }
 
