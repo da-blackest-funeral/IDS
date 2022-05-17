@@ -7,11 +7,7 @@
         <option value="0">Профиль</option>
         @forelse($data as $item)
             <option
-                @isset($selected)
-                @if($selected === $item->id)
-                selected
-                @endif
-                @endisset
+                @selected(isset($selected) && equals($selected, $item->id))
                 value="{{ $item->id }}">
                 {{ $item->name }}
             </option>

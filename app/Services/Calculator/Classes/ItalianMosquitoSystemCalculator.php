@@ -3,7 +3,6 @@
 namespace App\Services\Calculator\Classes;
 
 use App\Models\MosquitoSystems\Italian;
-use App\Services\Classes\MosquitoSystemsCalculator;
 
 class ItalianMosquitoSystemCalculator extends MosquitoSystemsCalculator
 {

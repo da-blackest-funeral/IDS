@@ -172,13 +172,6 @@
             $this->options->put(
                 'measuring', $this->measuringPrice ? : 'Бесплатно'
             );
-
-            if ($this->installersWage) {
-                $this->options->put(
-                    'salary',
-                    $this->installersWage,
-                );
-            }
         }
 
         /**
@@ -228,7 +221,10 @@
          * @return BaseCalculator
          */
         protected function addDelivery(): BaseCalculator {
-            $this->price += $this->deliveryPrice;
+            if (! requestHasOrder() || order()->need_delivery) {
+                $this->price += $this->deliveryPrice;
+            }
+
             return $this;
         }
 
@@ -260,7 +256,7 @@
          * @param int $count
          * @return void
          */
-        protected function saveSystemOptions($variable, int $count = 1): void {
+        protected function saveSystemOptions(SystemVariables $variable, int $count = 1): void {
             $this->options->put(
                 $variable->name,
                 $variable->description . ' ' . $variable->value * $count > 0 ? $variable->value * $count : 'Бесплатно',

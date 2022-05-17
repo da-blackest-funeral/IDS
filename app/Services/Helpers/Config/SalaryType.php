@@ -8,30 +8,26 @@
 
     class SalaryType
     {
-        const INSTALLATION = 'Монтаж';
-
-        const NO_INSTALLATION = 'Без монтажа';
-
         /**
          * @param ProductInOrder|null $productInOrder
          * @return string
          */
         public static function determine(ProductInOrder $productInOrder = null): string {
             if (is_null($productInOrder)) {
-
                 return Calculator::productNeedInstallation() ?
-                    SalaryType::INSTALLATION :
-                    SalaryType::NO_INSTALLATION;
+                    SalaryTypesEnum::INSTALLATION->value :
+                    SalaryTypesEnum::NO_INSTALLATION->value;
             }
 
             if (
                 \ProductHelper::hasInstallation($productInOrder) ||
                 ProductRepository::byCategoryWithout($productInOrder)
+                    ->without(oldProduct())
                     ->hasInstallation()
             ) {
-                return self::INSTALLATION;
+                return SalaryTypesEnum::INSTALLATION->value;
             }
 
-            return self::NO_INSTALLATION;
+            return SalaryTypesEnum::NO_INSTALLATION->value;
         }
     }

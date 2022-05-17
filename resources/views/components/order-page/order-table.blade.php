@@ -1,3 +1,6 @@
+<?php
+    /** @var \App\Models\Order $order */
+?>
 <table class="table table-bordered rounded" style="min-height: 130px;">
     <thead>
     <tr class="table-secondary">
@@ -11,10 +14,16 @@
     </thead>
     <tbody>
     <tr>
-        <td class="text-center align-middle">{{ formatPrice($order->price) }}</td>
+        <td class="text-center align-middle">
+            <span @class([
+              'text-danger h5' => orderHasSale()
+            ])>
+                {{ orderPrice() }}
+            </span>
+        </td>
         <td class="text-center align-middle">{{ $order->products_count }}</td>
         <td class="text-center align-middle">{{ formatPrice($order->measuring_price) ? : 'Бесплатно' }}</td>
-        <td class="text-center align-middle">{{ $order->delivery }}</td>
+        <td class="text-center align-middle">{{ delivery($order) }}</td>
         <td class="text-center align-middle">{{ OrderHelper::salaries() }}</td>
         <td class="text-center align-middle">{{ carbon($order->created_at, 'd.m.Y') }}</td>
     </tr>

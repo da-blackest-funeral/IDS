@@ -7,6 +7,7 @@
     use App\Models\Salaries\InstallerSalary;
     use App\Models\SystemVariables;
     use App\Services\Helpers\Config\SalaryType;
+    use App\Services\Helpers\Config\SalaryTypesEnum;
     use Illuminate\Foundation\Testing\Concerns\InteractsWithSession;
     use Illuminate\Foundation\Testing\RefreshDatabase;
     use Tests\TestCase;
@@ -60,7 +61,11 @@
         public function order_with_two_same_products_with_no_installation() {
             $this->setUpDefaultActions();
 
-            $this->post(route('new-order'), $this->testHelper->exampleMosquitoSystemsInputs());
+            $this->testHelper->createDefaultOrder(2362)
+                ->createDefaultProduct();
+
+            $this->testHelper->createDefaultSalary();
+
             $this->post(route('order', ['order' => 1]), $this->testHelper->exampleMosquitoSystemsInputs());
 
             $resultOrder = $this->testHelper->defaultOrder();
@@ -110,9 +115,7 @@
             $this->setUpDefaultActions();
 
             $order = $this->testHelper->defaultOrder();
-            $order['discounted_price'] = $this->testHelper->measuringPrice() +
-                $this->testHelper->defaultDeliverySum() +
-                $this->testHelper->productPrice();
+            $order['discount'] = 0;
             $order['measuring'] = 0;
             $order['structure'] = 'test';
 
@@ -127,7 +130,7 @@
             $salary['status'] = 'test';
             $salary['changed_sum'] = SystemVariables::value('measuringWage')
                 + SystemVariables::value('delivery');
-            $salary['type'] = SalaryType::NO_INSTALLATION;
+            $salary['type'] = SalaryTypesEnum::NO_INSTALLATION->value;
             InstallerSalary::create($salary);
 
             $inputs = $this->testHelper->exampleMosquitoSystemsInputs();

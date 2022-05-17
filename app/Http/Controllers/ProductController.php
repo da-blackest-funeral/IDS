@@ -5,6 +5,7 @@
     use App\Http\Requests\SaveOrderRequest;
     use App\Models\Order;
     use App\Models\ProductInOrder;
+    use App\Services\Calculator\Interfaces\Calculator;
     use App\Services\Repositories\Classes\ProductRepository;
 
     class ProductController extends Controller
@@ -14,14 +15,13 @@
         }
 
         public function index(Order $order, ProductInOrder $productInOrder) {
-            $data = dataForOrderPage();
-            $data['product'] = $productInOrder;
-
             return view('pages.add-product')
-                ->with($data);
+                ->with(\Arr::add(dataForOrderPage(), 'product', $productInOrder));
         }
 
-        public function update(Order $order, ProductInOrder $productInOrder) {
+        public function update(Order $order, ProductInOrder $productInOrder, Calculator $calculator) {
+            $calculator->calculate();
+            $calculator->saveInfo();
 
             \OrderHelper::remove($productInOrder);
 
@@ -37,15 +37,6 @@
         }
 
         public function delete(Order $order, ProductInOrder $productInOrder) {
-            /*
-             * todo баг
-             * ситуация:
-             * 1) в заказе есть рамная москитная сетка
-             * 2) есть москитная дверь
-             * при удалении москитной двери нужно чтобы доставка становилась 600 и цена самого заказа возвращалась
-             * todo по поводу доставки ставить в $order->delivery значение максимальной цены доставки во всем заказе
-             */
-
             /*
              * При удалении товара
              * 1) проверить доставку и монтаж

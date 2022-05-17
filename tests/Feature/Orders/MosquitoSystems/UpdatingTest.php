@@ -102,7 +102,7 @@
                 'installation' => 0,
                 'price' => $price,
                 'installer_id' => 2,
-                'discounted_price' => $price,
+                'discount' => 0,
                 'status' => 0,
                 'measuring_price' => $this->testHelper->measuringPrice(),
                 'measuring' => 0,

@@ -2,9 +2,7 @@
     <label for="comment">{{ $label ?? 'Примечание к этой позиции' }}</label>
     <textarea name="{{ $name ?? 'comment' }}"
               id="comment"
-              cols="20"
-              rows="7"
               class="form-control"
-              placeholder="Примечание">
-    </textarea>
+              rows="7"
+              placeholder="Примечание">{{ $comment ?? '' }}</textarea>
 </div>

@@ -21,8 +21,9 @@
          */
         public function __construct(
             protected ProductInOrder $productInOrder,
-            protected Order $order,
-        ) {}
+            protected Order          $order,
+        ) {
+        }
 
         /**
          * @return ProductInOrder
@@ -48,10 +49,7 @@
          * @return bool
          */
         public static function hasInstallation(object $productInOrder): bool {
-            return
-                isset($productInOrder->installation_id) &&
-                $productInOrder->installation_id &&
-                $productInOrder->installation_id != 14;
+            return mosquitoHasInstallation($productInOrder);
         }
 
         /**
@@ -66,7 +64,8 @@
                 'data' => Calculator::getOptions(),
                 'user_id' => auth()->user()->getAuthIdentifier(),
                 'category_id' => request()->input('categories'),
-                'count' => request()->input('count'),
+                'count' => request()->input('count', 1),
+                'comment' => request()->input('comment') ?? 'Нет комментария',
             ]);
         }
 
@@ -86,5 +85,5 @@
                 !Calculator::productNeedInstallation();
         }
 
-        abstract public function installationCondition(): Callable;
+        abstract public function installationCondition(): callable;
     }

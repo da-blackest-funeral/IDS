@@ -9,6 +9,7 @@
     use App\Models\Salaries\InstallerSalary;
     use App\Models\SystemVariables;
     use App\Services\Helpers\Config\SalaryType;
+    use App\Services\Helpers\Config\SalaryTypesEnum;
 
     class TestHelper
     {
@@ -116,10 +117,11 @@
             Order::create([
                 'user_id' => 1,
                 'delivery' => $delivery,
+                'need_delivery' => 1,
                 'installation' => 0,
                 'price' => $price, // todo переписать с учетом минимальной суммы заказа
                 'installer_id' => 2,
-                'discounted_price' => 2256, // todo поменять когда я сделаю учет скидок
+                'discount' => 2256, // todo поменять когда я сделаю учет скидок
                 'status' => 0,
                 'measuring_price' => $measuringPrice,
                 'measuring' => 1,
@@ -245,7 +247,9 @@
                 'comment' => '123',
                 'status' => 1,
                 'changed_sum' => 1100,
-                'type' => $sum == 960 || $sum == 0 ? SalaryType::NO_INSTALLATION : SalaryType::INSTALLATION,
+                'type' => ($sum == 960 || $sum == 0) ?
+                    SalaryTypesEnum::NO_INSTALLATION->value :
+                    SalaryTypesEnum::INSTALLATION->value,
             ]);
 
             return $this;

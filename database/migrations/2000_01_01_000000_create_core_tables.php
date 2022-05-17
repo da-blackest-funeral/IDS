@@ -21,6 +21,7 @@
                 $table->string('name');
                 $table->string('value');
                 $table->text('description');
+                $table->timestamps();
             });
 
             Schema::create('users', function (Blueprint $table) {
@@ -54,7 +55,6 @@
                     ->comment('Спросить можно ли без этого');
                 $table->foreignId('created_user_id');
                 $table->enum('type', ['Монтаж', 'Без монтажа'])
-//                $table->string('type')
                     ->comment('Тип выплаты - за монтаж, за бензин и т.д.');
                 $table->softDeletes();
                 $table->timestamps();
@@ -96,13 +96,21 @@
                     ->constrained('users');
                 $table->integer('delivery')
                     ->default(0);
+                $table->integer('additional_visits')
+                    ->default(0)
+                    ->comment('Количество допольнительных выездов');
+                $table->integer('kilometres')
+                    ->comment('Дальность доставки')
+                    ->default(0);
+                $table->boolean('need_delivery')
+                    ->default(true);
                 $table->integer('installation')
                     ->default(0);
                 $table->float('price');
                 $table->foreignId('installer_id')
                     ->constrained('users');
-                $table->float('discounted_price')
-                    ->comment('Цена со скидкой');
+                $table->float('discount')
+                    ->comment('Процент скидки');
                 $table->boolean('status')
                     ->default(false)
                     ->comment('Выполнен заказ или нет');
@@ -152,6 +160,9 @@
                 $table->foreignId('category_id');
                 $table->string('name');
                 $table->integer('count');
+                $table->string('comment')
+                    ->default('Без комментария')
+                    ->comment('Примечание к позиции');
                 $table->boolean('installation_id')
                     ->default(0);
                 $table->json('data')

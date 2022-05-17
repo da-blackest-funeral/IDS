@@ -346,9 +346,7 @@
                 })->first();
         }
 
-        public function installationCondition(): Callable {
-            return function ($product) {
-                return \ProductHelper::hasInstallation($product);
-            };
+        public function installationCondition(): callable {
+            return mosquitoInstallationCondition();
         }
     }

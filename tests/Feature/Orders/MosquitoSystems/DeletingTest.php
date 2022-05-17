@@ -2,6 +2,7 @@
 
     namespace Orders\MosquitoSystems;
 
+    use App\Models\Order;
     use App\Models\ProductInOrder;
     use Illuminate\Foundation\Testing\RefreshDatabase;
     use Tests\TestCase;
@@ -118,7 +119,6 @@
             ]);
 
             $this->testHelper->createDefaultSalary(1050);
-            $this->testHelper->createDefaultSalary(0);
 
             $this->testHelper->createDefaultOrder(3717, 0, 2);
 
@@ -132,8 +132,9 @@
                     'delivery' => 600,
                 ])
                 ->assertDatabaseHas('installers_salaries', ['sum' => 960])
-                ->assertDatabaseHas('installers_salaries', ['sum' => 0])
-                ->assertDatabaseCount('installers_salaries', 2);
+                ->assertDatabaseCount('installers_salaries', 1);
+
+            self::assertTrue(\OrderHelper::use(Order::first())->salaries() == 960);
         }
 
         /**

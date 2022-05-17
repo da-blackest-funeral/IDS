@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $id
  * @property int $user_id
  * @property float $price
- * @property float $discounted_price Цена со скидкой
+ * @property float $discount Цена со скидкой
  * @property string $date
  * @property int $status Выполнен заказ или нет
  * @property int $measuring Нужен ли замер
@@ -61,10 +61,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereUserId($value)
  * @mixin \Eloquent
  * @property float $measuring_price
+ * @property bool $need_delivery
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ProductInOrder[] $products
  * @property InstallerSalary|null $salary
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereMeasuringPrice($value)
  * @property int $delivery
+ * @property int $kilometres
+ * @property int $additional_visits
  * @property int $installation
  * @property int $installer_id
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereDelivery($value)

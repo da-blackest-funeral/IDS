@@ -23,7 +23,7 @@
         protected array $categories;
 
         public function __construct() {
-            $this->categoryId = (int)\request()->post('categoryId');
+            $this->categoryId = (int)\request()->input('categoryId');
             // todo возможно перенести в json
             $this->categories = [
                 [
@@ -57,7 +57,8 @@
         public function __invoke() {
             try {
                 $data = call_user_func_array($this->getMethod(), [$this->categoryId]);
-            } catch (\Exception) {
+            } catch (\Exception $exception) {
+                \Debugbar::alert($exception);
                 return view("ajax.additional.category$this->categoryId-additional");
             }
 

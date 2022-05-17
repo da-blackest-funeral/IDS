@@ -6,8 +6,10 @@
     use App\Models\Salaries\InstallerSalary;
     use App\Models\SystemVariables;
     use App\Services\Helpers\Config\SalaryType;
+    use App\Services\Helpers\Config\SalaryTypesEnum;
     use App\Services\Helpers\Interfaces\SalaryHelperInterface;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
+    use Illuminate\Support\Collection;
 
     // todo сделать второй интерфейс - installation salary helper interface, туда добавить методы removeNoInstallation
     // и т.д., а так же другой класс, я думаю с наследованием от этого
@@ -15,14 +17,17 @@
     {
         /**
          * @param int|float $sum
+         * @param InstallerSalary|null $salary
          * @return void
          */
-        public function update(int|float $sum) {
-            $salary = $this->salary()
-                ->first();
+        public function update(int|float $sum, InstallerSalary $salary = null) {
+            if (is_null($salary)) {
+                $salary = $this->salary()
+                    ->first();
+                $salary->type = SalaryType::determine(\ProductHelper::getProduct());
+            }
 
             $salary->sum = $sum;
-            $salary->type = SalaryType::determine(\ProductHelper::getProduct());
 
             $salary->update();
         }
@@ -61,28 +66,51 @@
          * @return void
          */
         public function removeNoInstallation(): void {
-            \ProductHelper::getProduct()
-                ->order
-                ->salaries()
-                ->where('type', SalaryType::NO_INSTALLATION)
-                ->get()
+            $this->salariesNoInstallation()
                 ->each(function (InstallerSalary $salary) {
-                    $salary->update([
-                        'sum' => 0
-                    ]);
+                    $this->update(0, $salary);
                 });
+        }
+
+        /**
+         * @return void
+         */
+        public function removeDelivery() {
+            $this->salariesNoInstallation()
+                ->each(function (InstallerSalary $salary) {
+                    $salary->sum -= SystemVariables::value('delivery');
+                    $salary->update();
+                });
+        }
+
+        public function restoreDelivery() {
+            $this->salariesNoInstallation()
+                ->each(fn($salary) => $salary->update([
+                    'sum' => $salary->sum + SystemVariables::value('delivery')
+                ]));
+        }
+
+        /**
+         * @param Order|null $order
+         * @return Collection<InstallerSalary>
+         */
+        public function salariesNoInstallation(Order $order = null): Collection {
+            /** @var Order $order */
+            $order = $order ?? \OrderHelper::getOrder();
+            return $order
+                ->salaries()
+                ->where('type', SalaryTypesEnum::NO_INSTALLATION->value)
+                ->get();
         }
 
         public function restoreNoInstallation() {
             $order = \ProductHelper::getProduct()->order;
 
             $order->salaries()
-                ->where('type', SalaryType::NO_INSTALLATION)
+                ->where('type', SalaryTypesEnum::NO_INSTALLATION->value)
                 ->get()
                 ->each(function (InstallerSalary $salary) use ($order) {
-                    $salary->update([
-                        'sum' => $this->noInstallationSalarySum($order)
-                    ]);
+                    $this->update($this->noInstallationSalarySum($order), $salary);
                 });
         }
 
@@ -117,22 +145,24 @@
         /**
          * @return bool
          */
-        function hasSalaryNoInstallation(): bool {
+        public function hasSalaryNoInstallation(): bool {
             return \OrderHelper::getOrder()
-            ->salaries
-            ->contains(function (InstallerSalary $salary) {
-                return $salary->type == SalaryType::NO_INSTALLATION && $salary->sum > 0;
-            });
+                ->salaries
+                ->contains(function (InstallerSalary $salary) {
+                    return $salary->type == SalaryTypesEnum::NO_INSTALLATION->value && $salary->sum > 0;
+                });
         }
 
-        function checkMeasuringAndDelivery() {
+        public function checkMeasuringAndDelivery() {
             $order = \ProductHelper::getProduct()->order;
             if (\OrderHelper::hasInstallation() || Calculator::productNeedInstallation()) {
                 $order->measuring_price = 0;
             } else {
-                $order->measuring_price = SystemVariables::value('measuring');
+                $order->measuring_price = $order->measuring ?
+                    SystemVariables::value('measuring')
+                    : 0;
                 // Прибавить к зп монтажника стоимости замера и доставки, если они заданы
-                $this->updateIf(! $this->hasSalaryNoInstallation(), Calculator::getInstallersWage());
+                $this->updateIf(!$this->hasSalaryNoInstallation(), Calculator::getInstallersWage());
             }
         }
     }
