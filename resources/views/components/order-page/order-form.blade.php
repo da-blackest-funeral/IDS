@@ -44,7 +44,7 @@
                 <div>
                     <label>
                         Км.
-                        <input type="text" value="0" name="kilometres" class="form-control mw-100">
+                        <input type="number" value="{{ order()->kilometres }}" name="kilometres" class="form-control mw-100">
                     </label>
                 </div>
             </div>

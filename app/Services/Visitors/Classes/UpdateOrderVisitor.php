@@ -9,7 +9,7 @@
     use App\Services\Commands\Classes\RemoveDeliveryKilometresCommand;
     use App\Services\Commands\Classes\RestoreDeliveryCommand;
     use App\Services\Commands\Classes\SetAdditionalVisitsCommand;
-    use App\Services\Commands\Classes\SetDeliveryKilometresCommand;
+    use App\Services\Commands\Classes\DeliveryKilometresCommand;
 
     class UpdateOrderVisitor extends AbstractVisitor
     {
@@ -99,9 +99,7 @@
          */
         protected function visitKilometres() {
             $kilometres = (int)request()->input('kilometres', 0);
-            $this->commands[] = $kilometres ?
-                new SetDeliveryKilometresCommand($kilometres, order()):
-                new RemoveDeliveryKilometresCommand(order()->kilometres, order());
+            $this->commands[] = new DeliveryKilometresCommand($kilometres, \order());
         }
 
         protected function visitAddress() {

@@ -13,6 +13,10 @@
         ) {}
 
         public function execute() {
+            if (!$this->order->additional_visits) {
+                return;
+            }
+
             /** @var InstallerSalary $salary */
             $salary = \SalaryHelper::salariesNoInstallation($this->order)
                 ->first();
