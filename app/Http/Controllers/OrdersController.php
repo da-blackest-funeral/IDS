@@ -2,10 +2,7 @@
 
     namespace App\Http\Controllers;
 
-    use App\Models\Category;
     use App\Models\Order;
-    use App\Models\ProductInOrder;
-    use App\Models\Salaries\InstallerSalary;
     use App\Services\Calculator\Interfaces\Calculator;
     use App\Services\Visitors\Classes\UpdateOrderVisitor;
     use App\Services\Visitors\Interfaces\Visitor;
