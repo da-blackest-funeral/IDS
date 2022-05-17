@@ -2,11 +2,12 @@
 
     namespace App\Services\Commands\Classes;
 
-    use App\Services\Commands\Interfaces\Command;
-
-    class RemoveDeliveryKilometresCommand implements Command
+    class RemoveDeliveryKilometresCommand extends DeliveryCommand
     {
         public function execute() {
-            // TODO: Implement execute() method.
+            $this->order->price -= $this->kilometres * $this->deliveryPrice;
+            $this->salary->sum -= $this->deliveryWage * $this->kilometres;
+
+            $this->order->kilometres = 0;
         }
     }

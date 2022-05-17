@@ -13,7 +13,7 @@
         public function execute() {
             if ($this->order->need_delivery) {
                 \SalaryHelper::removeDelivery();
-                $this->order->price -= $this->order->delivery;
+                $this->order->price -= $this->order->delivery * (1 + $this->order->additional_visits);
                 $this->order->delivery = 0;
             }
 

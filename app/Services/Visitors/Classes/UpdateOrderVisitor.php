@@ -6,9 +6,10 @@
     use App\Models\SystemVariables;
     use App\Services\Commands\Classes\RemoveAdditionalVisitsCommand;
     use App\Services\Commands\Classes\RemoveDeliveryCommand;
+    use App\Services\Commands\Classes\RemoveDeliveryKilometresCommand;
     use App\Services\Commands\Classes\RestoreDeliveryCommand;
     use App\Services\Commands\Classes\SetAdditionalVisitsCommand;
-    use App\Services\Commands\Interfaces\Command;
+    use App\Services\Commands\Classes\SetDeliveryKilometresCommand;
 
     class UpdateOrderVisitor extends AbstractVisitor
     {
@@ -29,7 +30,7 @@
          */
         protected function visitDelivery() {
             $this->commands[] = request()->input('delivery', false) ?
-                new RestoreDeliveryCommand(\order(), \OrderHelper::getProductRepository()) :
+                new RestoreDeliveryCommand(order(), \OrderHelper::getProductRepository()) :
                 new RemoveDeliveryCommand(order());
         }
 
@@ -38,7 +39,7 @@
          * @return void
          */
         public function visitSale(int $sale = null) {
-            order()->discount = $sale ?? (int) request()->input('sale', 0);
+            order()->discount = $sale ?? (int)request()->input('sale', 0);
         }
 
         /**
@@ -60,7 +61,7 @@
          */
         protected function visitMeasuring() {
             $needMeasuring = \request()->input('measuring', false);
-            $measuringPrice = SystemVariables::value('measuring');
+            $measuringPrice = systemVariable('measuring');
 
             $this->checkChangedMeasuring(\order(), $measuringPrice);
 
@@ -72,7 +73,7 @@
          * @return void
          */
         protected function visitCountAdditionalVisits() {
-            $visits = (int) request()->input('count-additional-visits', 0);
+            $visits = (int)request()->input('count-additional-visits', 0);
             $this->commands[] = $visits ?
                 new SetAdditionalVisitsCommand(\order(), $visits) :
                 new RemoveAdditionalVisitsCommand(\order());
@@ -93,8 +94,14 @@
             }
         }
 
+        /**
+         * @return void
+         */
         protected function visitKilometres() {
-
+            $kilometres = (int)request()->input('kilometres', 0);
+            $this->commands[] = $kilometres ?
+                new SetDeliveryKilometresCommand($kilometres, order()):
+                new RemoveDeliveryKilometresCommand(order()->kilometres, order());
         }
 
         protected function visitAddress() {
@@ -106,7 +113,7 @@
         }
 
         protected function visitPrepayment() {
-            \order()->prepayment = \request()->input('prepayment', 0);
+            order()->prepayment = request()->input('prepayment', 0);
         }
 
         protected function visitPerson() {

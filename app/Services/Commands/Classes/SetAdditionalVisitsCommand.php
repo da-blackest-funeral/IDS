@@ -5,8 +5,6 @@
     use App\Models\Order;
     use App\Models\Salaries\InstallerSalary;
     use App\Services\Commands\Interfaces\Command;
-    use App\Services\Repositories\Classes\ProductRepository;
-    use App\Services\Repositories\Interfaces\ProductRepositoryInterface;
 
     class SetAdditionalVisitsCommand implements Command
     {
@@ -19,10 +17,12 @@
             /** @var InstallerSalary $salary */
             $salary = \SalaryHelper::salariesNoInstallation($this->order)
                 ->first();
-            $salary->sum += systemVariable('delivery') * $this->visits;
-            $salary->update();
+            if ($this->order->additional_visits < $this->visits) {
+                $salary->sum += systemVariable('delivery') * $this->visits;
+                $salary->update();
+                $this->order->price += $this->order->delivery * $this->visits;
+            }
 
-            $this->order->price += $this->order->delivery * $this->visits;
             $this->order->additional_visits = $this->visits;
         }
     }

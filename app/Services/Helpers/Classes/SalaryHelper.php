@@ -94,7 +94,7 @@
          * @param Order|null $order
          * @return Collection<InstallerSalary>
          */
-        public function salariesNoInstallation(?Order $order): Collection {
+        public function salariesNoInstallation(Order $order = null): Collection {
             /** @var Order $order */
             $order = $order ?? \OrderHelper::getOrder();
             return $order

@@ -99,6 +99,9 @@
                 $table->integer('additional_visits')
                     ->default(0)
                     ->comment('Количество допольнительных выездов');
+                $table->integer('kilometres')
+                    ->comment('Дальность доставки')
+                    ->default(0);
                 $table->boolean('need_delivery')
                     ->default(true);
                 $table->integer('installation')

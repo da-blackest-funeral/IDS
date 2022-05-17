@@ -14,7 +14,6 @@
          */
         public static function determine(ProductInOrder $productInOrder = null): string {
             if (is_null($productInOrder)) {
-
                 return Calculator::productNeedInstallation() ?
                     SalaryTypesEnum::INSTALLATION->value :
                     SalaryTypesEnum::NO_INSTALLATION->value;
@@ -23,6 +22,7 @@
             if (
                 \ProductHelper::hasInstallation($productInOrder) ||
                 ProductRepository::byCategoryWithout($productInOrder)
+                    ->without(oldProduct())
                     ->hasInstallation()
             ) {
                 return SalaryTypesEnum::INSTALLATION->value;

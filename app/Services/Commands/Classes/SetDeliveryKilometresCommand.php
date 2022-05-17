@@ -2,10 +2,15 @@
 
     namespace App\Services\Commands\Classes;
 
-    class SetDeliveryKilometresCommand implements \App\Services\Commands\Interfaces\Command
-    {
+    use App\Models\Order;
+    use App\Models\Salaries\InstallerSalary;
 
+    class SetDeliveryKilometresCommand extends DeliveryCommand
+    {
         public function execute() {
-            // TODO: Implement execute() method.
+            $this->order->price += $this->deliveryPrice * $this->kilometres;
+            $this->salary->sum += $this->deliveryWage * $this->kilometres;
+
+            $this->order->kilometres = $this->kilometres;
         }
     }

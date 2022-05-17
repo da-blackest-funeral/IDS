@@ -24,7 +24,7 @@
 
             if (!$this->order->need_delivery) {
                 \SalaryHelper::restoreDelivery();
-                $this->order->price += $delivery;
+                $this->order->price += $delivery * (1 + $this->order->additional_visits);
                 $this->order->delivery = $delivery;
             }
 
