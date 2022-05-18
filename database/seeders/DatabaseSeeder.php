@@ -16,7 +16,6 @@ class DatabaseSeeder extends Seeder
         $this->call([
             SystemVariablesSeeder::class,
             CategorySeeder::class,
-            ServiceSeeder::class,
             TypesWindowsSeeder::class,
             MosquitoSystemsSeeder::class,
             CategoryHasModelSeeder::class,

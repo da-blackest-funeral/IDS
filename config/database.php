@@ -91,6 +91,18 @@ return [
             'prefix_indexes' => true,
         ],
 
+        'remote' => [
+            'driver' => 'mysql',
+            'host' => env('REMOTE_IDS_DB_HOST'),
+            'port' => env('REMOTE_IDS_DB_PORT'),
+            'database' => env('REMOTE_IDS_DATABASE'),
+            'username' => env('REMOTE_IDS_USER'),
+            'password' => env('REMOTE_IDS_DB_PASSWORD'),
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'schema' => 'public',
+        ]
+
     ],
 
     /*
