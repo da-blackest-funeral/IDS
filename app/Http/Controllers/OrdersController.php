@@ -3,6 +3,7 @@
     namespace App\Http\Controllers;
 
     use App\Models\Order;
+    use App\Models\Salaries\InstallerSalary;
     use App\Services\Calculator\Interfaces\Calculator;
     use App\Services\Visitors\Classes\UpdateOrderVisitor;
     use App\Services\Visitors\Interfaces\Visitor;
@@ -51,13 +52,20 @@
         }
 
         public function update(Order $order) {
+            $salary = \SalaryHelper::salariesNoInstallation()
+                ->first();
+
+            $visitItems = \request()->except(['_method', '_token', 'add',]);
+
             /** @var Visitor $visitor */
             $visitor = new UpdateOrderVisitor(
-                visitItems: \request()->except(['_method', '_token', 'add',]),
-                order: $order
+                visitItems: $visitItems,
+                order: $order,
+                salary: $salary
             );
+            $visitor->execute();
 
-            if ($visitor->execute()->final()) {
+            if ($visitor->final()) {
                 return redirect(route('order', ['order' => $order->id]));
             }
 

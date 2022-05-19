@@ -3,17 +3,33 @@
     namespace App\Services\Visitors\Classes;
 
     use App\Models\Order;
+    use App\Models\Salaries\InstallerSalary;
     use App\Models\SystemVariables;
     use App\Services\Commands\Classes\RemoveAdditionalVisitsCommand;
     use App\Services\Commands\Classes\RemoveDeliveryCommand;
+    use App\Services\Commands\Classes\RemoveMeasuringCommand;
     use App\Services\Commands\Classes\RestoreDeliveryCommand;
+    use App\Services\Commands\Classes\RestoreMeasuringCommand;
     use App\Services\Commands\Classes\SetAdditionalVisitsCommand;
     use App\Services\Commands\Classes\DeliveryKilometresCommand;
 
     class UpdateOrderVisitor extends AbstractVisitor
     {
+        /**
+         * @param array $visitItems
+         * @param Order $order
+         * @param InstallerSalary $salary
+         */
+        public function __construct(
+            protected array $visitItems,
+            private readonly Order $order,
+            private readonly InstallerSalary $salary,
+        ) {
+            parent::__construct($visitItems);
+        }
+
         public function final() {
-            return $this->order->update();
+            return $this->order->update() && $this->salary->update();
         }
 
         /**
@@ -60,12 +76,18 @@
          */
         protected function visitMeasuring() {
             $needMeasuring = \request()->input('measuring', false);
-            $measuringPrice = systemVariable('measuring');
+            $measuringPrice = (int) systemVariable('measuring');
 
-            $this->checkChangedMeasuring($this->order, $measuringPrice);
-
-            $this->order->measuring = $needMeasuring;
-            $this->order->measuring_price = (int)$needMeasuring * $measuringPrice;
+            $this->commands[] = $needMeasuring ?
+                new RestoreMeasuringCommand(
+                    order: $this->order,
+                    salary: $this->salary
+                ) :
+                new RemoveMeasuringCommand(
+                    order: $this->order,
+                    measuringPrice: $measuringPrice,
+                    salary: $this->salary
+                );
         }
 
         /**
@@ -76,21 +98,6 @@
             $this->commands[] = $visits ?
                 new SetAdditionalVisitsCommand($this->order, $visits) :
                 new RemoveAdditionalVisitsCommand($this->order);
-        }
-
-        /**
-         * @param Order $order
-         * @param int $measuringPrice
-         * @return void
-         */
-        protected function checkChangedMeasuring(Order $order, int $measuringPrice) {
-            if ($order->measuring && !\request()->input('measuring', false)) {
-                $order->price -= $measuringPrice;
-            }
-
-            if (!$order->measuring && \request()->input('measuring', false)) {
-                $order->price += $measuringPrice;
-            }
         }
 
         /**

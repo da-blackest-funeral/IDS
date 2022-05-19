@@ -8,9 +8,8 @@
 
     class RemoveAdditionalVisitsCommand implements Command
     {
-        public function __construct(
-            protected Order $order
-        ) {}
+        public function __construct(protected Order $order) {
+        }
 
         public function execute() {
             if (!$this->order->additional_visits) {

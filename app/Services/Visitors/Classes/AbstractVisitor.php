@@ -5,20 +5,18 @@
     use App\Models\Order;
     use App\Services\Commands\Interfaces\Command;
     use App\Services\Visitors\Interfaces\Visitor;
-    use Symfony\Component\Routing\Annotation\Route;
 
     abstract class AbstractVisitor implements Visitor
     {
         /**
          * @var array<Command>
          */
-        protected array $commands;
+        protected array $commands = [];
 
         /**
          * @param array<string, string> $visitItems
-         * @param Order $order
          */
-        public function __construct(protected array $visitItems, protected Order $order) {
+        public function __construct(protected array $visitItems) {
         }
 
         /**

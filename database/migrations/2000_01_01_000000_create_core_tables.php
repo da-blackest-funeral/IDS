@@ -24,6 +24,11 @@
                 $table->timestamps();
             });
 
+            Schema::create('services', function (Blueprint $table) {
+                $table->id();
+                $table->timestamps();
+            });
+
             Schema::create('users', function (Blueprint $table) {
                 $table->id();
                 $table->string('name');

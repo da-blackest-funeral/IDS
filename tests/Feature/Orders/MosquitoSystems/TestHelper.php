@@ -112,7 +112,8 @@
             int $price = 2256,
             int $measuringPrice = 600,
             int $count = 1,
-            int $delivery = 600
+            int $delivery = 600,
+            bool $measuring = true,
         ) {
             Order::create([
                 'user_id' => 1,
@@ -124,7 +125,7 @@
                 'discount' => 2256, // todo поменять когда я сделаю учет скидок
                 'status' => 0,
                 'measuring_price' => $measuringPrice,
-                'measuring' => 1,
+                'measuring' => $measuring,
                 'discounted_measuring_price' => $measuringPrice, // todo скидки
                 'comment' => 'Test Comment!',
                 'service_price' => 0,
@@ -247,7 +248,7 @@
                 'comment' => '123',
                 'status' => 1,
                 'changed_sum' => 1100,
-                'type' => ($sum == 960 || $sum == 0) ?
+                'type' => ($sum == 960 || $sum == 0 || $sum == 480) ?
                     SalaryTypesEnum::NO_INSTALLATION->value :
                     SalaryTypesEnum::INSTALLATION->value,
             ]);
