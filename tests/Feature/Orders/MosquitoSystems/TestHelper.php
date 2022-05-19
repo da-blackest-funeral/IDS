@@ -114,11 +114,14 @@
             int $count = 1,
             int $delivery = 600,
             bool $measuring = true,
+            bool $needDelivery = true,
+            int $additionalVisits = 0,
         ) {
             Order::create([
                 'user_id' => 1,
+                'additional_visits' => $additionalVisits,
                 'delivery' => $delivery,
-                'need_delivery' => 1,
+                'need_delivery' => $needDelivery,
                 'installation' => 0,
                 'price' => $price, // todo переписать с учетом минимальной суммы заказа
                 'installer_id' => 2,
@@ -238,7 +241,17 @@
             ]);
         }
 
-        public function createDefaultSalary(int $sum = 960, int $categoryId = 5) {
+        public function createDefaultSalary(
+            int $sum = 960,
+            int $categoryId = 5,
+            string $type = null
+        ) {
+            if (is_null($type)) {
+                $type = ($sum == 960 || $sum == 0 || $sum == 480) ?
+                    SalaryTypesEnum::NO_INSTALLATION->value :
+                    SalaryTypesEnum::INSTALLATION->value;
+            }
+
             InstallerSalary::create([
                 'installer_id' => 2,
                 'order_id' => 1,
@@ -248,9 +261,7 @@
                 'comment' => '123',
                 'status' => 1,
                 'changed_sum' => 1100,
-                'type' => ($sum == 960 || $sum == 0 || $sum == 480) ?
-                    SalaryTypesEnum::NO_INSTALLATION->value :
-                    SalaryTypesEnum::INSTALLATION->value,
+                'type' => $type,
             ]);
 
             return $this;

@@ -97,7 +97,7 @@
             $visits = (int)request()->input('count-additional-visits', 0);
             $this->commands[] = $visits ?
                 new SetAdditionalVisitsCommand($this->order, $visits) :
-                new RemoveAdditionalVisitsCommand($this->order);
+                new RemoveAdditionalVisitsCommand($this->order, $this->salary);
         }
 
         /**

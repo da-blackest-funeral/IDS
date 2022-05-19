@@ -2,6 +2,7 @@
 
     namespace Tests\Feature\Orders;
 
+    use App\Models\Order;
     use App\Services\Helpers\Config\SalaryTypesEnum;
     use Illuminate\Foundation\Testing\RefreshDatabase;
     use Tests\TestCase;
@@ -85,7 +86,46 @@
                 'measuring' => true,
                 'measuring_price' => 600,
             ])->assertDatabaseHas('installers_salaries', [
-                'sum' => 960
+                'sum' => 960,
+            ])->assertDatabaseCount('installers_salaries', 1);
+        }
+
+        /**
+         * @return void
+         * @test
+         */
+        public function set_no_delivery_when_has_additional_visits() {
+            $this->setUpDefaultActions();
+            $visits = rand(2, 5);
+//            dump($visits);
+            $deliveryPrice = 600;
+            $salary = systemVariable('delivery') * ($visits + 1)
+                + systemVariable('measuringWage');
+            $resultSalary = systemVariable('measuringWage');
+
+            $this->testHelper->createDefaultOrder(
+                price: 1762 + $deliveryPrice * ($visits + 1),
+                delivery: $deliveryPrice,
+                additionalVisits: $visits,
+            );
+
+            $this->testHelper->createDefaultSalary(
+                sum: $salary,
+                type: SalaryTypesEnum::NO_INSTALLATION->value
+            );
+
+            $this->post(route('order', ['order' => 1]), [
+                '_method' => 'put',
+                'delivery' => 0,
+            ]);
+
+            $this->assertDatabaseHas('orders', [
+                'price' => 1762,
+                'delivery' => 0,
+                'need_delivery' => 0,
+                'additional_visits' => $visits
+            ])->assertDatabaseHas('installers_salaries', [
+                'sum' => $resultSalary
             ]);
         }
     }

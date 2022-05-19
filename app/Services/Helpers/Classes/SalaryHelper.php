@@ -76,18 +76,23 @@
          * @return void
          */
         public function removeDelivery() {
+            $deliverySalary = SystemVariables::value('delivery') *
+                (\OrderHelper::getOrder()->additional_visits + 1);
+
             $this->salariesNoInstallation()
-                ->each(function (InstallerSalary $salary) {
-                    $salary->sum -= SystemVariables::value('delivery');
+                ->each(function (InstallerSalary $salary) use ($deliverySalary) {
+                    $salary->sum -= $deliverySalary;
                     $salary->update();
                 });
         }
 
         public function restoreDelivery() {
             $this->salariesNoInstallation()
-                ->each(fn($salary) => $salary->update([
-                    'sum' => $salary->sum + SystemVariables::value('delivery')
-                ]));
+                ->each(function(InstallerSalary $salary) {
+                    $salary->update([
+                        'sum' => $salary->sum + SystemVariables::value('delivery')
+                    ]);
+                });
         }
 
         /**
