@@ -34,7 +34,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereUpdatedAt($value)
  * @mixin \Eloquent
  * @property-read \Illuminate\Database\Eloquent\Collection|Additional[] $additional
- * @property-read int|null $additional_count
+ * @property int|null $additional_count
  */
 // todo расставить $hidden, $guarder аттрибуты
 class Product extends Model

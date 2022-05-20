@@ -13,6 +13,8 @@
     use App\Services\Commands\Classes\SetAdditionalVisitsCommand;
     use App\Services\Commands\Classes\DeliveryKilometresCommand;
 
+    // todo оставить тут только методы, которые сеттят команды, а те которые просто
+    // раскладывают данные без расчетов переместить в контроллер
     class UpdateOrderVisitor extends AbstractVisitor
     {
         /**
@@ -22,8 +24,8 @@
          */
         public function __construct(
             protected array $visitItems,
-            private readonly Order $order,
-            private readonly InstallerSalary $salary,
+            private         readonly Order $order,
+            private         readonly InstallerSalary $salary,
         ) {
             parent::__construct($visitItems);
         }
@@ -76,7 +78,7 @@
          */
         protected function visitMeasuring() {
             $needMeasuring = \request()->input('measuring', false);
-            $measuringPrice = (int) systemVariable('measuring');
+            $measuringPrice = (int)systemVariable('measuring');
 
             $this->commands[] = $needMeasuring ?
                 new RestoreMeasuringCommand(

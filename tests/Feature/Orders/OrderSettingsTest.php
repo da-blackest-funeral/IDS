@@ -2,7 +2,9 @@
 
     namespace Tests\Feature\Orders;
 
+    use App\Models\MosquitoSystems\Product;
     use App\Models\Order;
+    use App\Models\ProductInOrder;
     use App\Services\Helpers\Config\SalaryTypesEnum;
     use Illuminate\Foundation\Testing\RefreshDatabase;
     use Tests\TestCase;
@@ -97,7 +99,6 @@
         public function set_no_delivery_when_has_additional_visits() {
             $this->setUpDefaultActions();
             $visits = rand(2, 5);
-//            dump($visits);
             $deliveryPrice = 600;
             $salary = systemVariable('delivery') * ($visits + 1)
                 + systemVariable('measuringWage');
@@ -123,9 +124,74 @@
                 'price' => 1762,
                 'delivery' => 0,
                 'need_delivery' => 0,
-                'additional_visits' => $visits
+                'additional_visits' => $visits,
             ])->assertDatabaseHas('installers_salaries', [
-                'sum' => $resultSalary
+                'sum' => $resultSalary,
             ]);
+        }
+
+        /**
+         * @return void
+         * @test
+         */
+        public function set_delivery_when_has_many_products() {
+            $this->setUpDefaultActions();
+            $price = rand(3000, 5000);
+            $delivery = $this->testHelper->defaultDeliverySum(2);
+
+            $this->testHelper->createDefaultProduct();
+            ProductInOrder::create([
+                'order_id' => 1,
+                'user_id' => 1,
+                'category_id' => 7,
+                'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
+                'count' => 1,
+                'installation_id' => 8,
+                'data' => json_decode($this->testHelper->defaultNoInstallationData(type: 2)),
+            ]);
+
+            $this->testHelper->createDefaultOrder(
+                price: $price,
+                delivery: 0,
+                needDelivery: false
+            );
+
+            $salary = $this->testHelper->salaryNoInstallation();
+            $this->testHelper->createDefaultSalary(
+                sum: $salary - systemVariable('delivery')
+            );
+
+            $this->post(route('order', ['order' => 1]), [
+                '_method' => 'put',
+                'delivery' => 1,
+            ]);
+
+            $this->assertDatabaseHas('orders', [
+                'price' => $price + $delivery,
+                'need_delivery' => 1,
+                'delivery' => $delivery,
+            ])->assertDatabaseHas('installers_salaries', [
+                'sum' => $salary
+            ])->assertDatabaseCount('installers_salaries', 1);
+        }
+
+        public function set_no_delivery_when_has_many_products() {
+            $this->setUpDefaultActions();
+        }
+
+        public function set_delivery_many_products_with_visits() {
+            $this->setUpDefaultActions();
+        }
+
+        public function set_no_delivery_when_has_many_products_with_visits() {
+            $this->setUpDefaultActions();
+        }
+
+        public function set_visits_when_has_count_of_product() {
+            $this->setUpDefaultActions();
+        }
+
+        public function remove_visits_when_has_count_of_product() {
+            $this->setUpDefaultActions();
         }
     }
