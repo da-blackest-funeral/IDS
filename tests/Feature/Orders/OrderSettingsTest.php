@@ -171,12 +171,52 @@
                 'need_delivery' => 1,
                 'delivery' => $delivery,
             ])->assertDatabaseHas('installers_salaries', [
-                'sum' => $salary
+                'sum' => $salary,
             ])->assertDatabaseCount('installers_salaries', 1);
         }
 
+        /**
+         * @return void
+         * @test
+         */
         public function set_no_delivery_when_has_many_products() {
             $this->setUpDefaultActions();
+            $price = rand(4000, 5000);
+            $delivery = $this->testHelper->defaultDeliverySum(2);
+            $salary = $this->testHelper->salaryNoInstallation();
+
+            $this->testHelper->createDefaultProduct();
+            ProductInOrder::create([
+                'order_id' => 1,
+                'user_id' => 1,
+                'category_id' => 7,
+                'name' => 'Рамные москитные сетки, 25 профиль, полотно Антимоскит',
+                'count' => 1,
+                'installation_id' => 8,
+                'data' => json_decode($this->testHelper->defaultNoInstallationData(type: 2)),
+            ]);
+
+            $this->testHelper->createDefaultOrder(
+                price: $price,
+                delivery: $delivery,
+            );
+
+            $this->testHelper->createDefaultSalary(
+                sum: $salary
+            );
+
+            $this->post(route('order', ['order' => 1]), [
+                '_method' => 'put',
+                'delivery' => 0,
+            ]);
+
+            $this->assertDatabaseHas('orders', [
+                'price' => $price - $delivery,
+                'need_delivery' => false,
+                'delivery' => 0,
+            ])->assertDatabaseHas('installers_salaries', [
+                'sum' => $salary - systemVariable('delivery')
+            ]);
         }
 
         public function set_delivery_many_products_with_visits() {
