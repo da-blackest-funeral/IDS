@@ -180,7 +180,8 @@
      * @return User
      */
     function user(int $id): User {
-        return User::findOrFail($id);
+        Cache::rememberForever('user', fn() => User::findOrFail($id));
+        return Cache::get('user');
     }
 
     /**

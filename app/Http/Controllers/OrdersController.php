@@ -17,8 +17,15 @@
         public function index() {
             return view('pages.orders.all')
                 ->with([
-                    'orders' => Order::orderByDesc('created_at')
-                        ->paginate(10),
+                    'orders' => Order::orderByDesc('id')
+                        ->paginate(10, [
+                            'orders.created_at',
+                            'orders.id',
+                            'orders.user_id',
+                            'orders.prepayment',
+                            'orders.price',
+                            'orders.status'
+                        ]),
                 ]);
         }
 

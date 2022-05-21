@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             GlazedWindowsSeeder::class,
             RolesSeeder::class,
             UserSeeder::class,
+            OrderSeeder::class,
         ]);
     }
 }
