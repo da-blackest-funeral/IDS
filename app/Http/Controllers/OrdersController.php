@@ -5,8 +5,9 @@
     use App\Models\Order;
     use App\Models\Salaries\InstallerSalary;
     use App\Services\Calculator\Interfaces\Calculator;
-    use App\Services\Visitors\Classes\UpdateOrderVisitor;
-    use App\Services\Visitors\Interfaces\Visitor;
+    use App\Services\Visitors\Classes\UpdateOrderCommandComposite;
+    use App\Services\Visitors\Classes\UpdateOrderDto;
+    use App\Services\Visitors\Interfaces\CommandComposite;
     use Illuminate\Http\Request;
 
     class OrdersController extends Controller
@@ -55,22 +56,32 @@
             $salary = \SalaryHelper::salariesNoInstallation()
                 ->first();
 
-            $visitItems = \request()->except(['_method', '_token', 'add',]);
+            $data = request()->only([
+                'delivery',
+                'measuring',
+                'count-additional-visits',
+                'kilometres',
+            ]);
+            $data['measuring-price'] = (int) systemVariable('measuring');
 
-            /** @var Visitor $visitor */
-            $visitor = new UpdateOrderVisitor(
-                visitItems: $visitItems,
+            $dto = new UpdateOrderDto($data);
+
+            /** @var CommandComposite $composite */
+            $composite = new UpdateOrderCommandComposite(
+                commandData: $dto,
                 order: $order,
                 salary: $salary
             );
-            $visitor->execute();
 
-            if ($visitor->final()) {
+            $composite->commands()
+                ->execute();
+
+            if ($composite->result()) {
                 return redirect(route('order', ['order' => $order->id]));
             }
 
             return back()->withErrors([
-                'error' => 'Не удалось обновить заказ'
+                'error' => 'Не удалось обновить заказ',
             ]);
         }
     }

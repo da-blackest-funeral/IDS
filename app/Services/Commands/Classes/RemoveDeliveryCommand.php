@@ -7,7 +7,7 @@
 
     class RemoveDeliveryCommand implements Command
     {
-        public function __construct(private Order $order, ) {
+        public function __construct(private readonly Order $order) {
         }
 
         public function execute() {

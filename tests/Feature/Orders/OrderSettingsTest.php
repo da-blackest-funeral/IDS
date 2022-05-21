@@ -20,15 +20,19 @@
         public function set_no_delivery() {
             $this->setUpDefaultActions();
             $this->testHelper->createDefaultOrder(2362);
+            $order = Order::first();
             $this->testHelper->createDefaultSalary();
 
             $this->post(route('order', ['order' => 1]), [
                 '_method' => 'put',
                 'delivery' => 0,
+                'measuring' => 1,
             ]);
 
             $this->assertDatabaseHas('orders', [
-                'price' => 2362 - $this->testHelper->defaultDeliverySum(),
+                'price' => 2362 -
+                    $this->testHelper->defaultDeliverySum() *
+                    ($order->additional_visits + 1),
                 'delivery' => 0,
             ])->assertNotSoftDeleted('installers_salaries', [
                 'sum' => $this->testHelper->salaryNoInstallation() - systemVariable('delivery'),
@@ -49,6 +53,7 @@
             $this->post(route('order', ['order' => 1]), [
                 '_method' => 'put',
                 'measuring' => 0,
+                'delivery' => 1,
             ]);
 
             $this->assertNotSoftDeleted('orders', [
@@ -81,6 +86,7 @@
             $this->post(route('order', ['order' => 1]), [
                 '_method' => 'put',
                 'measuring' => 1,
+                'delivery' => 1,
             ]);
 
             $this->assertDatabaseHas('orders', [
@@ -118,6 +124,8 @@
             $this->post(route('order', ['order' => 1]), [
                 '_method' => 'put',
                 'delivery' => 0,
+                'count-additional-visits' => $visits,
+                'measuring' => 1,
             ]);
 
             $this->assertDatabaseHas('orders', [
@@ -164,6 +172,7 @@
             $this->post(route('order', ['order' => 1]), [
                 '_method' => 'put',
                 'delivery' => 1,
+                'measuring' => 1,
             ]);
 
             $this->assertDatabaseHas('orders', [
@@ -208,6 +217,7 @@
             $this->post(route('order', ['order' => 1]), [
                 '_method' => 'put',
                 'delivery' => 0,
+                'measuring' => 1,
             ]);
 
             $this->assertDatabaseHas('orders', [
