@@ -73,17 +73,32 @@
         }
 
         /**
-         * @return void
+         * @return mixed
          */
-        public function removeDelivery() {
+        public function removeDelivery(InstallerSalary $salary = null) {
             $deliverySalary = SystemVariables::value('delivery') *
                 (\OrderHelper::getOrder()->additional_visits + 1);
+            if (!is_null($salary)) {
+                return $this->removeSingleDelivery($salary, $deliverySalary);
+            }
 
             $this->salariesNoInstallation()
-                ->each(function (InstallerSalary $salary) use ($deliverySalary) {
-                    $salary->sum -= $deliverySalary;
-                    $salary->update();
-                });
+                ->each(fn(InstallerSalary $salary) =>
+                    $this->removeSingleDelivery($salary, $deliverySalary)
+                );
+        }
+
+        /**
+         * @param InstallerSalary $salary
+         * @param int $deliverySalary
+         * @return bool
+         */
+        private function removeSingleDelivery(
+            InstallerSalary $salary,
+            int $deliverySalary
+        ) {
+            $salary->sum -= $deliverySalary;
+            return $salary->update();
         }
 
         public function restoreDelivery() {

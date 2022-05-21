@@ -14,6 +14,8 @@
          * @return void
          */
         public function run() {
-            Order::factory(30000)->create();
+            if (!\App::runningUnitTests()) {
+                Order::factory(30)->create();
+            }
         }
     }

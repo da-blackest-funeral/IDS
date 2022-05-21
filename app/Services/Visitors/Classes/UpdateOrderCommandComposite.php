@@ -39,7 +39,7 @@
             /** @var Command $command */
             $command = $this->commandData->isNeedDelivery() ?
                 new RestoreDeliveryCommand($this->order, \OrderHelper::getProductRepository()) :
-                new RemoveDeliveryCommand($this->order);
+                new RemoveDeliveryCommand($this->order, $this->salary);
 
             $this->addCommand($command);
 

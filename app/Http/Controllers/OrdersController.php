@@ -3,7 +3,6 @@
     namespace App\Http\Controllers;
 
     use App\Models\Order;
-    use App\Models\Salaries\InstallerSalary;
     use App\Services\Calculator\Interfaces\Calculator;
     use App\Services\Visitors\Classes\UpdateOrderCommandComposite;
     use App\Services\Visitors\Classes\UpdateOrderDto;
