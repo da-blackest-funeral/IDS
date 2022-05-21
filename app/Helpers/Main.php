@@ -127,17 +127,21 @@
      */
     #[ArrayShape(['data' => "\App\Models\Category[]|\Illuminate\Database\Eloquent\Collection", 'superCategories' => "\Illuminate\Support\Collection", 'installers' => "\App\Models\User[]|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection"])]
     function dataForOrderPage(): array {
-        return [
-            'data' => Category::all(),
-            'superCategories' => Category::whereIn(
-                'id', Category::select(['parent_id'])
-                ->whereNotNull('parent_id')
-                ->groupBy(['parent_id'])
-                ->get()
-                ->toArray()
-            )->get(),
-            'installers' => User::role('installer')->get(),
-        ];
+        Cache::remember('create-order-data', 600, function () {
+            return [
+                'data' => Category::all(),
+                'superCategories' => Category::whereIn(
+                    'id', Category::select(['parent_id'])
+                    ->whereNotNull('parent_id')
+                    ->groupBy(['parent_id'])
+                    ->get()
+                    ->toArray()
+                )->get(),
+                'installers' => User::role('installer')->get(),
+            ];
+        });
+
+        return Cache::get('create-order-data');
     }
 
     /**
@@ -281,7 +285,7 @@
      * @return bool
      */
     function orderHasSale(): bool {
-        return (int) \order()->discount;
+        return (int)\order()->discount;
     }
 
     /**
