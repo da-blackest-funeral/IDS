@@ -18,7 +18,7 @@
             return view('pages.orders.all')
                 ->with([
                     'orders' => Order::orderByDesc('created_at')
-                        ->paginate(3),
+                        ->paginate(10),
                 ]);
         }
 
