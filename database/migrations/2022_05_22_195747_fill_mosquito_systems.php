@@ -39,8 +39,10 @@
          * @return void
          */
         public function down() {
+            DB::statement('SET FOREIGN_KEY_CHECKS = 0');
             foreach (self::$tables as $table) {
-                DB::table($table)->delete();
+                DB::table("mosquito_systems_$table")->delete();
             }
+            DB::statement('SET FOREIGN_KEY_CHECKS = 1');
         }
     };

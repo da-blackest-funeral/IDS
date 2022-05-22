@@ -141,6 +141,7 @@ return new class extends Migration {
      * @return void
      */
     public function down() {
+        DB::statement('SET FOREIGN_KEY_CHECKS = 0');
         Schema::dropIfExists("{$this->prefix}_groups");
         Schema::dropIfExists("{$this->prefix}_with_heating");
         Schema::dropIfExists("{$this->prefix}_services");
@@ -150,5 +151,6 @@ return new class extends Migration {
         Schema::dropIfExists("{$this->prefix}_additional");
         Schema::dropIfExists("{$this->prefix}");
         Schema::dropIfExists('glass');
+        DB::statement('SET FOREIGN_KEY_CHECKS = 1');
     }
 };

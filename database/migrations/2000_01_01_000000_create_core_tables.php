@@ -222,6 +222,7 @@
          * @return void
          */
         public function down() {
+            DB::statement('SET FOREIGN_KEY_CHECKS = 0');
             Schema::dropIfExists('users');
             Schema::dropIfExists('categories');
             Schema::dropIfExists('services');
@@ -231,5 +232,6 @@
             Schema::dropIfExists('deliveries');
             Schema::dropIfExists('managements');
             Schema::dropIfExists('wishes');
+            DB::statement('SET FOREIGN_KEY_CHECKS = 1');
         }
     };

@@ -27,6 +27,8 @@
          * @return void
          */
         public function down() {
+            DB::statement('SET FOREIGN_KEY_CHECKS = 0');
             DB::table('category_has_method')->delete();
+            DB::statement('SET FOREIGN_KEY_CHECKS = 1');
         }
     };
