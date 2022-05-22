@@ -18,19 +18,6 @@ class GlazedWindowsSeeder extends Seeder
      * @return void
      */
     public function run() {
-//        $this->seedFor('types_windows');
-        $this->seedFor('glazed_windows_layers');
-        $this->seedFor("glazed_windows");
-        $this->seedFor('glazed_windows_additional');
-    }
-
-    protected function seedFor($name) {
-        foreach (GlazedWindowsData::all($name) as $item) {
-            $item['created_at'] = date('Y-m-d H:i:s', time());
-            $item['updated_at'] = date('Y-m-d H:i:s', time());
-//            $item['category_id'] = ;
-
-            \DB::table($name)->insert($item);
-        }
+        //
     }
 }
