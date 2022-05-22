@@ -3,7 +3,10 @@
     use App\Models\Category;
     use App\Models\Order;
     use App\Models\ProductInOrder;
+    use App\Models\Slopes\Slope;
+    use App\Models\TypesWindows;
     use App\Models\User;
+    use App\Models\Wraps\Wrap;
     use Illuminate\Support\Facades\Route;
     use JetBrains\PhpStorm\ArrayShape;
 
@@ -159,13 +162,14 @@
     }
 
     /**
+     * @todo сделать по нормальному подключение пути а не так
      * @param string $file
      * @return \Illuminate\Support\Collection
      */
     function jsonData(string $file) {
         return collect(
             json_decode(
-                file_get_contents(app_path("Services/Config/$file.json"))
+                file_get_contents("$file.json"), associative: true
             )
         );
     }

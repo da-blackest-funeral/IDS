@@ -25,8 +25,4 @@
 
             $this->order->need_delivery = false;
         }
-
-        private function prepare() {
-
-        }
     }

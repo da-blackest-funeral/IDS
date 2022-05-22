@@ -1,0 +1,1421 @@
+[
+    {
+        "type_id": 1,
+        "tissue_id": 1,
+        "profile_id": 1,
+        "price": 1162,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 1,
+        "tissue_id": 2,
+        "profile_id": 1,
+        "price": 1848,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 1,
+        "tissue_id": 3,
+        "profile_id": 1,
+        "price": 2825,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 1,
+        "tissue_id": 4,
+        "profile_id": 1,
+        "price": 2957,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 1,
+        "tissue_id": 5,
+        "profile_id": 1,
+        "price": 2561,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 1,
+        "tissue_id": 6,
+        "profile_id": 1,
+        "price": 1848,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 1,
+        "tissue_id": 7,
+        "profile_id": 1,
+        "price": 3551,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 1,
+        "tissue_id": 8,
+        "profile_id": 1,
+        "price": 5888,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 1,
+        "tissue_id": 1,
+        "profile_id": 2,
+        "price": 2706,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 1,
+        "tissue_id": 2,
+        "profile_id": 2,
+        "price": 3446,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 1,
+        "tissue_id": 3,
+        "profile_id": 2,
+        "price": 4396,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 1,
+        "tissue_id": 4,
+        "profile_id": 2,
+        "price": 4528,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 1,
+        "tissue_id": 5,
+        "profile_id": 2,
+        "price": 4370,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 1,
+        "tissue_id": 6,
+        "profile_id": 2,
+        "price": 3380,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 1,
+        "tissue_id": 7,
+        "profile_id": 2,
+        "price": 5241,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 1,
+        "profile_id": 1,
+        "price": 1782,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 2,
+        "profile_id": 1,
+        "price": 2495,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 3,
+        "profile_id": 1,
+        "price": 3142,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 4,
+        "profile_id": 1,
+        "price": 3195,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 5,
+        "profile_id": 1,
+        "price": 2733,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 6,
+        "profile_id": 1,
+        "price": 2442,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 7,
+        "profile_id": 1,
+        "price": 2865,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 1,
+        "profile_id": 2,
+        "price": 4079,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 2,
+        "profile_id": 2,
+        "price": 4528,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 3,
+        "profile_id": 2,
+        "price": 5294,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 4,
+        "profile_id": 2,
+        "price": 5228,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 5,
+        "profile_id": 2,
+        "price": 5030,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 6,
+        "profile_id": 2,
+        "price": 4620,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 7,
+        "profile_id": 2,
+        "price": 5307,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 1,
+        "profile_id": 3,
+        "price": 4396,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 2,
+        "profile_id": 3,
+        "price": 5056,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 3,
+        "profile_id": 3,
+        "price": 5756,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 4,
+        "profile_id": 3,
+        "price": 5795,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 5,
+        "profile_id": 3,
+        "price": 5742,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 6,
+        "profile_id": 3,
+        "price": 5056,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 7,
+        "profile_id": 3,
+        "price": 5742,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 1,
+        "profile_id": 4,
+        "price": 4634,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 1,
+        "profile_id": 4,
+        "price": 4634,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 2,
+        "profile_id": 4,
+        "price": 5346,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 3,
+        "profile_id": 4,
+        "price": 5993,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 4,
+        "profile_id": 4,
+        "price": 6046,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 5,
+        "profile_id": 4,
+        "price": 5940,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 6,
+        "profile_id": 4,
+        "price": 5333,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 7,
+        "profile_id": 4,
+        "price": 6006,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 3,
+        "tissue_id": 1,
+        "profile_id": 6,
+        "price": 2376,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 3,
+        "tissue_id": 2,
+        "profile_id": 6,
+        "price": 2970,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 3,
+        "tissue_id": 3,
+        "profile_id": 6,
+        "price": 3617,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 3,
+        "tissue_id": 4,
+        "profile_id": 6,
+        "price": 3670,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 3,
+        "tissue_id": 5,
+        "profile_id": 6,
+        "price": 3208,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 3,
+        "tissue_id": 6,
+        "profile_id": 6,
+        "price": 2970,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 3,
+        "tissue_id": 7,
+        "profile_id": 6,
+        "price": 3564,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 6,
+        "tissue_id": 1,
+        "profile_id": 5,
+        "price": 1835,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 6,
+        "tissue_id": 2,
+        "profile_id": 5,
+        "price": 2706,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 6,
+        "tissue_id": 3,
+        "profile_id": 5,
+        "price": 3485,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 6,
+        "tissue_id": 4,
+        "profile_id": 5,
+        "price": 3789,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 6,
+        "tissue_id": 5,
+        "profile_id": 5,
+        "price": 3380,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 6,
+        "tissue_id": 6,
+        "profile_id": 5,
+        "price": 2746,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 6,
+        "tissue_id": 7,
+        "profile_id": 5,
+        "price": 3908,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 6,
+        "tissue_id": 8,
+        "profile_id": 5,
+        "price": 6746,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 1,
+        "tissue_id": 9,
+        "profile_id": 1,
+        "price": 7102,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 1,
+        "tissue_id": 9,
+        "profile_id": 2,
+        "price": 9359,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 9,
+        "profile_id": 1,
+        "price": 6297,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 9,
+        "profile_id": 2,
+        "price": 8805,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 9,
+        "profile_id": 3,
+        "price": 9610,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 9,
+        "profile_id": 4,
+        "price": 9980,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 3,
+        "tissue_id": 9,
+        "profile_id": 6,
+        "price": 7010,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 6,
+        "tissue_id": 9,
+        "profile_id": 5,
+        "price": 7907,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 7,
+        "tissue_id": 1,
+        "profile_id": 1,
+        "price": 1017,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 7,
+        "tissue_id": 2,
+        "profile_id": 1,
+        "price": 1730,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 7,
+        "tissue_id": 3,
+        "profile_id": 1,
+        "price": 2508,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 7,
+        "tissue_id": 4,
+        "profile_id": 1,
+        "price": 2786,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 7,
+        "tissue_id": 5,
+        "profile_id": 1,
+        "price": 2601,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 7,
+        "tissue_id": 6,
+        "profile_id": 1,
+        "price": 1703,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 7,
+        "tissue_id": 7,
+        "profile_id": 1,
+        "price": 3419,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 7,
+        "tissue_id": 8,
+        "profile_id": 1,
+        "price": 5874,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 7,
+        "tissue_id": 9,
+        "profile_id": 1,
+        "price": 8132,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 1,
+        "tissue_id": 11,
+        "profile_id": 1,
+        "price": 2772,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 1,
+        "tissue_id": 11,
+        "profile_id": 2,
+        "price": 4554,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 11,
+        "profile_id": 1,
+        "price": 2706,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 11,
+        "profile_id": 2,
+        "price": 4964,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 11,
+        "profile_id": 3,
+        "price": 5531,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 11,
+        "profile_id": 4,
+        "price": 5795,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 3,
+        "tissue_id": 11,
+        "profile_id": 6,
+        "price": 3393,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 6,
+        "tissue_id": 11,
+        "profile_id": 5,
+        "price": 3472,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 7,
+        "tissue_id": 11,
+        "profile_id": 1,
+        "price": 2772,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 1,
+        "tissue_id": 10,
+        "profile_id": 1,
+        "price": 3102,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 1,
+        "tissue_id": 10,
+        "profile_id": 2,
+        "price": 4898,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 10,
+        "profile_id": 1,
+        "price": 2786,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 10,
+        "profile_id": 2,
+        "price": 4898,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 10,
+        "profile_id": 3,
+        "price": 6006,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 10,
+        "profile_id": 4,
+        "price": 6284,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 3,
+        "tissue_id": 10,
+        "profile_id": 6,
+        "price": 3446,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 6,
+        "tissue_id": 10,
+        "profile_id": 5,
+        "price": 3776,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 7,
+        "tissue_id": 10,
+        "profile_id": 1,
+        "price": 3353,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 8,
+        "tissue_id": 1,
+        "profile_id": 7,
+        "price": 1954,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 8,
+        "tissue_id": 2,
+        "profile_id": 7,
+        "price": 2786,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 8,
+        "tissue_id": 5,
+        "profile_id": 7,
+        "price": 3551,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 8,
+        "tissue_id": 6,
+        "profile_id": 7,
+        "price": 2786,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 8,
+        "tissue_id": 7,
+        "profile_id": 7,
+        "price": 4264,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 8,
+        "tissue_id": 8,
+        "profile_id": 7,
+        "price": 6402,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 8,
+        "tissue_id": 9,
+        "profile_id": 7,
+        "price": 8184,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 8,
+        "tissue_id": 10,
+        "profile_id": 7,
+        "price": 4211,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 8,
+        "tissue_id": 11,
+        "profile_id": 7,
+        "price": 3908,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 4,
+        "tissue_id": 1,
+        "profile_id": 8,
+        "price": 6693,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 4,
+        "tissue_id": 4,
+        "profile_id": 8,
+        "price": 8052,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 4,
+        "tissue_id": 1,
+        "profile_id": 9,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 4,
+        "tissue_id": 2,
+        "profile_id": 9,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 5,
+        "tissue_id": 1,
+        "profile_id": 10,
+        "price": 212,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 5,
+        "tissue_id": 1,
+        "profile_id": 11,
+        "price": 212,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 1,
+        "tissue_id": 12,
+        "profile_id": 1,
+        "price": 1994,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 1,
+        "tissue_id": 12,
+        "profile_id": 2,
+        "price": 3683,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 12,
+        "profile_id": 1,
+        "price": 4739,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 12,
+        "profile_id": 2,
+        "price": 4739,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 12,
+        "profile_id": 3,
+        "price": 5558,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 12,
+        "profile_id": 4,
+        "price": 5861,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 3,
+        "tissue_id": 12,
+        "profile_id": 6,
+        "price": 3274,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 4,
+        "tissue_id": 12,
+        "profile_id": 9,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 6,
+        "tissue_id": 12,
+        "profile_id": 5,
+        "price": 2258,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 3,
+        "tissue_id": 12,
+        "profile_id": 6,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 7,
+        "tissue_id": 12,
+        "profile_id": 1,
+        "price": 1848,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 8,
+        "tissue_id": 12,
+        "profile_id": 7,
+        "price": 3076,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 1,
+        "tissue_id": 13,
+        "profile_id": 1,
+        "price": 3987,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 1,
+        "tissue_id": 13,
+        "profile_id": 2,
+        "price": 6204,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 13,
+        "profile_id": 1,
+        "price": 3762,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 13,
+        "profile_id": 2,
+        "price": 6600,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 13,
+        "profile_id": 3,
+        "price": 7683,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 13,
+        "profile_id": 4,
+        "price": 7511,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 3,
+        "tissue_id": 13,
+        "profile_id": 6,
+        "price": 5729,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 6,
+        "tissue_id": 13,
+        "profile_id": 5,
+        "price": 5254,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 7,
+        "tissue_id": 13,
+        "profile_id": 1,
+        "price": 4079,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 9,
+        "tissue_id": 1,
+        "profile_id": 11,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 8,
+        "tissue_id": 4,
+        "profile_id": 7,
+        "price": 3736,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 8,
+        "tissue_id": 3,
+        "profile_id": 7,
+        "price": 3393,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 1,
+        "tissue_id": 14,
+        "profile_id": 1,
+        "price": 2693,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 1,
+        "tissue_id": 14,
+        "profile_id": 2,
+        "price": 4264,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 14,
+        "profile_id": 1,
+        "price": 2931,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 14,
+        "profile_id": 3,
+        "price": 5531,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 14,
+        "profile_id": 2,
+        "price": 4964,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 14,
+        "profile_id": 4,
+        "price": 5782,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 3,
+        "tissue_id": 14,
+        "profile_id": 6,
+        "price": 3406,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 4,
+        "tissue_id": 14,
+        "profile_id": 8,
+        "price": 7854,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 6,
+        "tissue_id": 14,
+        "profile_id": 5,
+        "price": 3525,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 7,
+        "tissue_id": 14,
+        "profile_id": 1,
+        "price": 2522,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 8,
+        "tissue_id": 14,
+        "profile_id": 7,
+        "price": 3472,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 8,
+        "tissue_id": 1,
+        "profile_id": 12,
+        "price": 2350,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 8,
+        "tissue_id": 2,
+        "profile_id": 12,
+        "price": 3182,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 8,
+        "tissue_id": 3,
+        "profile_id": 12,
+        "price": 3789,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 8,
+        "tissue_id": 4,
+        "profile_id": 12,
+        "price": 4132,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 8,
+        "tissue_id": 5,
+        "profile_id": 12,
+        "price": 3947,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 8,
+        "tissue_id": 6,
+        "profile_id": 12,
+        "price": 3182,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 8,
+        "tissue_id": 7,
+        "profile_id": 12,
+        "price": 4660,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 8,
+        "tissue_id": 8,
+        "profile_id": 12,
+        "price": 6798,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 8,
+        "tissue_id": 9,
+        "profile_id": 12,
+        "price": 8580,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 8,
+        "tissue_id": 10,
+        "profile_id": 12,
+        "price": 4607,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 8,
+        "tissue_id": 11,
+        "profile_id": 12,
+        "price": 4343,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 8,
+        "tissue_id": 12,
+        "profile_id": 12,
+        "price": 3472,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 8,
+        "tissue_id": 14,
+        "profile_id": 12,
+        "price": 3868,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 1,
+        "tissue_id": 15,
+        "profile_id": 1,
+        "price": 6706,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 1,
+        "tissue_id": 15,
+        "profile_id": 2,
+        "price": 8963,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 15,
+        "profile_id": 1,
+        "price": 5901,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 15,
+        "profile_id": 2,
+        "price": 8409,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 15,
+        "profile_id": 3,
+        "price": 9214,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 15,
+        "profile_id": 4,
+        "price": 9584,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 3,
+        "tissue_id": 15,
+        "profile_id": 6,
+        "price": 6614,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 6,
+        "tissue_id": 15,
+        "profile_id": 5,
+        "price": 7511,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 7,
+        "tissue_id": 15,
+        "profile_id": 1,
+        "price": 7736,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 8,
+        "tissue_id": 15,
+        "profile_id": 7,
+        "price": 7788,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 8,
+        "tissue_id": 15,
+        "profile_id": 12,
+        "price": 8184,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 1,
+        "tissue_id": 16,
+        "profile_id": 1,
+        "price": 1254,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 1,
+        "tissue_id": 16,
+        "profile_id": 2,
+        "price": 2838,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 16,
+        "profile_id": 1,
+        "price": 1888,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 16,
+        "profile_id": 2,
+        "price": 4224,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 2,
+        "tissue_id": 16,
+        "profile_id": 3,
+        "price": 4554,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 3,
+        "tissue_id": 16,
+        "profile_id": 6,
+        "price": 2495,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 6,
+        "tissue_id": 16,
+        "profile_id": 5,
+        "price": 1928,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 8,
+        "tissue_id": 16,
+        "profile_id": 7,
+        "price": 2046,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 8,
+        "tissue_id": 16,
+        "profile_id": 12,
+        "price": 2508,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    },
+    {
+        "type_id": 10,
+        "tissue_id": 1,
+        "profile_id": 13,
+        "price": 1584,
+        "created_at": "2022-05-22 19:49:29",
+        "updated_at": "2022-05-22 19:49:29"
+    }
+]

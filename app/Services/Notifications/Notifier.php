@@ -21,7 +21,7 @@
          * @return void
          */
         public function setData() {
-            static::$messagesAndRules = jsonData('warnings');
+            static::$messagesAndRules = jsonData('Services/Config/warnings');
         }
 
         /**

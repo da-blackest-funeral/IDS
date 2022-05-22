@@ -35,7 +35,6 @@
          */
         public function execute(): CommandComposite {
             foreach ($this->commands as $command) {
-                dump($command::class);
                 $command->execute();
             }
 
