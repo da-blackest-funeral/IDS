@@ -225,12 +225,59 @@
                 'need_delivery' => false,
                 'delivery' => 0,
             ])->assertDatabaseHas('installers_salaries', [
-                'sum' => $salary - systemVariable('delivery')
+                'sum' => $salary - systemVariable('delivery'),
             ]);
         }
 
+        /**
+         * @return void
+         * @test
+         */
         public function set_delivery_many_products_with_visits() {
             $this->setUpDefaultActions();
+
+            $price = rand(4000, 6000);
+            $delivery = $this->testHelper->defaultDeliverySum(2);
+            $salary = systemVariable('delivery');
+            $visits = rand(1, 2);
+
+            $order = $this->testHelper->createDefaultOrder(
+                price: $price,
+                delivery: 0,
+                needDelivery: false,
+                additionalVisits: $visits
+            );
+
+            $this->testHelper->createDefaultSalary(
+                sum: $salary,
+                type: SalaryTypesEnum::NO_INSTALLATION->value
+            );
+
+            $this->testHelper->createDefaultProduct();
+            ProductInOrder::create([
+                'order_id' => 1,
+                'user_id' => 1,
+                'category_id' => 7,
+                'name' => 'Москитная дверь, 25 профиль, полотно Антимоскит',
+                'count' => 1,
+                'installation_id' => 8,
+                'data' => json_decode($this->testHelper->defaultNoInstallationData(type: 2)),
+            ]);
+
+            $this->post(route('order', ['order' => 1]), [
+                '_method' => 'put',
+                'delivery' => 1,
+                'measuring' => 1,
+                'count-additional-visits' => $visits,
+            ]);
+
+            $this->assertDatabaseHas('orders', [
+                'price' => $price + $delivery * (1 + $visits),
+                'delivery' => $delivery,
+                'additional_visits' => $visits,
+            ])->assertDatabaseHas('installers_salaries', [
+                'sum' => $salary * (1 + $visits) + systemVariable('measuringWage')
+            ]);
         }
 
         public function set_no_delivery_when_has_many_products_with_visits() {

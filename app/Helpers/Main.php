@@ -166,10 +166,10 @@
      * @param string $file
      * @return \Illuminate\Support\Collection
      */
-    function jsonData(string $file) {
+    function jsonData(string $file, bool $associative = null) {
         return collect(
             json_decode(
-                file_get_contents("$file.json"), associative: true
+                file_get_contents("$file.json"), associative: $associative ?? true
             )
         );
     }

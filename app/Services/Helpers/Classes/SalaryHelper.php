@@ -73,7 +73,7 @@
         }
 
         /**
-         * @return mixed
+         * @return bool|void
          */
         public function removeDelivery(InstallerSalary $salary = null) {
             $deliverySalary = SystemVariables::value('delivery') *
@@ -83,9 +83,7 @@
             }
 
             $this->salariesNoInstallation()
-                ->each(fn(InstallerSalary $salary) =>
-                    $this->removeSingleDelivery($salary, $deliverySalary)
-                );
+                ->each(fn($salary) => $this->removeSingleDelivery($salary, $deliverySalary));
         }
 
         /**
@@ -93,21 +91,19 @@
          * @param int $deliverySalary
          * @return bool
          */
-        private function removeSingleDelivery(
-            InstallerSalary $salary,
-            int $deliverySalary
-        ) {
+        private function removeSingleDelivery(InstallerSalary $salary, int $deliverySalary) {
             $salary->sum -= $deliverySalary;
             return $salary->update();
         }
 
         public function restoreDelivery() {
-            $this->salariesNoInstallation()
-                ->each(function(InstallerSalary $salary) {
-                    $salary->update([
-                        'sum' => $salary->sum + SystemVariables::value('delivery')
-                    ]);
-                });
+            $salary = $this->salariesNoInstallation()
+                ->first();
+
+            $salary->update([
+                'sum' => $salary->sum + SystemVariables::value('delivery') *
+                    (\OrderHelper::getOrder()->additional_visits + 1),
+            ]);
         }
 
         /**
@@ -136,7 +132,6 @@
 
         protected function noInstallationSalarySum(Order $order): int|float {
             $result = 0;
-            // todo потом заменить на $order->measuring - флаг, выставляемый в общих настройках заказа
             if ($order->measuring_price || $order->measuring) {
                 $result += SystemVariables::value('measuringWage');
             }

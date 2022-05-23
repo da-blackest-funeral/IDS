@@ -21,7 +21,7 @@
          * @return void
          */
         public function setData() {
-            static::$messagesAndRules = jsonData(app_path('Services/Config/warnings'));
+            static::$messagesAndRules = jsonData(app_path('Services/Config/warnings'), false);
         }
 
         /**
@@ -33,6 +33,7 @@
             $selected = collect(selectedGroups());
 
             static::$messagesAndRules->each(function ($object) use ($selected) {
+//                dd(request()->input('categories'));
                 if (
                     request()->has('categories') &&
                     $object->category == request()->input('categories')
