@@ -88,7 +88,11 @@
             $visits = $this->commandData->getCountAdditionalVisits();
             /** @var Command $command */
             $command = $visits > 0 ?
-                new SetAdditionalVisitsCommand($this->order, $visits) :
+                new SetAdditionalVisitsCommand(
+                    order: $this->order,
+                    salary: $this->salary,
+                    visits: $visits
+                ) :
                 new RemoveAdditionalVisitsCommand($this->order, $this->salary);
 
             $this->addCommand($command);
@@ -102,7 +106,8 @@
         protected function kilometresCommand() {
             $this->addCommand(new DeliveryKilometresCommand(
                 $this->commandData->getKilometres(),
-                $this->order
+                $this->order,
+                $this->salary
             ));
 
             return $this;

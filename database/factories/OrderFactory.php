@@ -23,7 +23,7 @@
                 'user_id' => 1,
                 'comment' => $this->faker->word(),
                 'delivery' => 600,
-                'additional_visits' => rand(0, 2),
+                'additional_visits' => 0,
                 'kilometres' => 0,
                 'need_delivery' => 1,
                 'price' => rand(1700, 5000),

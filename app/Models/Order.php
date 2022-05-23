@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property float $discount Цена со скидкой
  * @property string $date
  * @property int $status Выполнен заказ или нет
- * @property int $measuring Нужен ли замер
+ * @property bool $measuring Нужен ли замер
  * @property float $discounted_measuring_price
  * @property string $comment
  * @property float $service_price Цена услуги

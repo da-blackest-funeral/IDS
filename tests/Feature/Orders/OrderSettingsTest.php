@@ -330,11 +330,5 @@
             ])->assertDatabaseCount('installers_salaries', 1);
         }
 
-        public function set_visits_when_has_count_of_product() {
-            $this->setUpDefaultActions();
-        }
-
-        public function remove_visits_when_has_count_of_product() {
-            $this->setUpDefaultActions();
-        }
+        // todo тесты с километражом
     }
