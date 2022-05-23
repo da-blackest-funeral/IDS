@@ -10,10 +10,8 @@
     use App\Services\Helpers\Config\SalaryTypesEnum;
     use App\Services\Visitors\Classes\UpdateOrderCommandComposite;
     use App\Services\Visitors\Classes\UpdateOrderDto;
-    use App\Services\Visitors\Interfaces\CommandComposite;
     use Tests\CreatesApplication;
     use Tests\TestCase;
-    use function PHPUnit\Framework\assertTrue;
 
     class UpdatingOrderCommandCompositeTest extends TestCase
     {
@@ -73,22 +71,7 @@
 
             $kilometres = rand(5, 15);
             $price = $this->order->price;
-            $salary = $this->salary->sum;
             $visits = rand(1, 2);
-
-            $deliveryPrice = ($visits + 1) * (
-                    $this->testHelper->defaultDeliverySum() +
-                    systemVariable('additionalPriceDeliveryPerKm')
-                    * $kilometres
-                );
-
-            $dto = new UpdateOrderDto([
-                'delivery' => true,
-                'measuring-price' => systemVariable('measuring'),
-                'kilometres' => $kilometres,
-                'count-additional-visits' => $visits,
-                'measuring' => true,
-            ]);
 
             (new SetAdditionalVisitsCommand(
                 order: $this->order,
@@ -105,33 +88,24 @@
                 salary: $this->salary
             ))->execute()->save();
 
-//            $this->salary->refresh();
-//            $this->order->refresh();
-//            (new SetAdditionalVisitsCommand(
-//                order: $this->order,
-//                salary: $this->salary,
-//                visits: $visits
-//            ))->execute()
-
-//            $composite->addCommand(
-//
-//            )
-//                ->addCommand(
-//                new DeliveryKilometresCommand(
-//                    $kilometres,
-//                    $this->order,
-//                    $this->salary
-//                )
             $this->salary->refresh();
             $this->order->refresh();
 
-            dump($this->salary->sum, $kilometres, $visits);
+            self::assertTrue(
+                $this->salary->sum ==
+                systemVariable('delivery') * (
+                    $visits +
+                    $this->order->need_delivery +
+                    $this->order->measuring
+                ) +
+                $kilometres * systemVariable('additionalWagePerKm') *
+                ($visits + $this->order->measuring) *
+                ($this->order->measuring + $this->order->need_delivery)
+            );
 
             self::assertTrue(
-                $this->salary->sum == (
-                    systemVariable('delivery')
-                    + $kilometres * systemVariable('additionalWagePerKm')
-                ) * ($visits + 1)
+                $this->order->price == $price + $visits * $this->order->delivery
+                + $kilometres * systemVariable('additionalPriceDeliveryPerKm')
             );
         }
     }

@@ -5,6 +5,10 @@
     class DeliveryKilometresCommand extends DeliveryCommand
     {
         public function execute() {
+            if (!$this->order->need_delivery) {
+                return $this;
+            }
+
             $this->calculateOrderPrice();
             $this->calculateSalary();
             $this->order->kilometres = $this->kilometres;
@@ -26,6 +30,7 @@
             );
 
             $deliveryVisits = ($this->order->additional_visits + 1);
+
             $totalVisits = $deliveryVisits + $this->order->measuring * $deliveryVisits;
 
             $this->salary->sum += $kilometresSalaryDiff * $totalVisits;
