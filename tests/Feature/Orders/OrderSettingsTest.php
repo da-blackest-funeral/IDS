@@ -280,8 +280,54 @@
             ]);
         }
 
+        /**
+         * @return void
+         * @test
+         */
         public function set_no_delivery_when_has_many_products_with_visits() {
             $this->setUpDefaultActions();
+
+            $visits = rand(1, 2);
+            $price = rand(4000, 6000);
+            $delivery = $this->testHelper->defaultDeliverySum(2);
+            $salary = systemVariable('delivery') * (1 + $visits) + systemVariable('measuringWage');
+
+            $this->testHelper->createDefaultOrder(
+                price: $price,
+                delivery: $this->testHelper->defaultDeliverySum(2),
+                additionalVisits: $visits
+            );
+
+            $this->testHelper->createDefaultSalary(
+                sum: $salary,
+                type: SalaryTypesEnum::NO_INSTALLATION->value
+            );
+
+            $this->testHelper->createDefaultProduct();
+            ProductInOrder::create([
+                'order_id' => 1,
+                'user_id' => 1,
+                'category_id' => 7,
+                'name' => 'Москитная дверь, 25 профиль, полотно Антимоскит',
+                'count' => 1,
+                'installation_id' => 8,
+                'data' => json_decode($this->testHelper->defaultNoInstallationData(type: 2)),
+            ]);
+
+            $this->post(route('order', ['order' => 1]), [
+                '_method' => 'put',
+                'delivery' => 0,
+                'measuring' => 1,
+                'count-additional-visits' => $visits,
+            ]);
+
+            $this->assertDatabaseHas('orders', [
+                'price' => $price - $delivery * (1 + $visits),
+                'delivery' => 0,
+                'additional_visits' => $visits,
+            ])->assertDatabaseHas('installers_salaries', [
+                'sum' => systemVariable('measuringWage')
+            ])->assertDatabaseCount('installers_salaries', 1);
         }
 
         public function set_visits_when_has_count_of_product() {
