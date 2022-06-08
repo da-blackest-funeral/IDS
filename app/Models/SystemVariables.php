@@ -30,7 +30,7 @@ class SystemVariables extends Model
     }
 
     public static function value(string $varName) {
-        return self::whereName($varName)->firstOrFail()->value;
+        return self::whereName($varName)->firstOrFail('value')->value;
     }
 
     public static function updateByName(string $varName, mixed $value) {
