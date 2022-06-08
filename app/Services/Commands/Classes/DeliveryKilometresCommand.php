@@ -18,9 +18,17 @@
 
         private function calculateOrderPrice() {
             $this->order->price +=
-                $this->deliveryPrice * (
-                    $this->kilometres - $this->order->kilometres
-                );
+                $this->deliveryPrice *
+                $this->kilometresDifference() *
+                $this->visits();
+        }
+
+        private function kilometresDifference() {
+            return $this->kilometres - $this->order->kilometres;
+        }
+
+        private function visits() {
+            return ($this->order->additional_visits + 1) * (1 + $this->order->measuring);
         }
 
         private function calculateSalary() {

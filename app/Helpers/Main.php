@@ -112,10 +112,16 @@
         return $deliveryPrice;
     }
 
+    /**
+     * @param Order $order
+     * @return string
+     */
     function additionalDeliveryPrice(Order $order): string {
+        // todo нарушение DRY в классе DeliveryKilometresCommand
         return formatPrice(
             $order->kilometres *
             (int) systemVariable('additionalPriceDeliveryPerKm')
+            * ($order->additional_visits + 1) * (1+ $order->measuring)
         );
     }
 

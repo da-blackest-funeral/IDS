@@ -13,13 +13,13 @@
          * @param ProductRepositoryInterface $productRepository
          */
         public function __construct(
-            protected Order                      $order,
+            protected Order $order,
             protected ProductRepositoryInterface $productRepository
         ) {
         }
 
         public function execute() {
-            if ($this->order->need_delivery) {
+            if ($this->order->need_delivery || $this->order->additional_visits == 0) {
                 return;
             }
 
