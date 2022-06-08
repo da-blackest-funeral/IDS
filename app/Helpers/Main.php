@@ -103,7 +103,20 @@
      * @return string
      */
     function delivery(Order $order): string {
-        return formatPrice($order->delivery * (1 + $order->additional_visits));
+        $deliveryPrice = formatPrice($order->delivery * (1 + $order->additional_visits));
+        if ($order->kilometres > 0) {
+            $additionalDeliveryPrice = additionalDeliveryPrice($order);
+            $deliveryPrice .= " + $additionalDeliveryPrice за километры.";
+        }
+
+        return $deliveryPrice;
+    }
+
+    function additionalDeliveryPrice(Order $order): string {
+        return formatPrice(
+            $order->kilometres *
+            (int) systemVariable('additionalPriceDeliveryPerKm')
+        );
     }
 
     /**

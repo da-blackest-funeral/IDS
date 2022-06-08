@@ -23,7 +23,6 @@
 
         public function setUpDefaultActions() {
             \Artisan::call('migrate');
-//            \Artisan::call('db:seed');
 
             $this->order = Order::factory()->create();
 
