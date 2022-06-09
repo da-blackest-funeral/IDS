@@ -10,12 +10,13 @@
     use App\Services\Helpers\Config\SalaryTypesEnum;
     use App\Services\Visitors\Classes\UpdateOrderCommandComposite;
     use App\Services\Visitors\Classes\UpdateOrderDto;
+    use Illuminate\Foundation\Testing\DatabaseTransactions;
     use Tests\CreatesApplication;
     use Tests\TestCase;
 
     class UpdatingOrderCommandCompositeTest extends TestCase
     {
-        use CreatesApplication;
+        use CreatesApplication, DatabaseTransactions;
 
         private Order $order;
 
@@ -103,8 +104,15 @@
             );
 
             self::assertTrue(
-                $this->order->price == $price + $visits * $this->order->delivery
-                + $kilometres * systemVariable('additionalPriceDeliveryPerKm')
+                $this->order->price ==
+                $price
+                + $visits
+                * $this->order->delivery
+                + ($kilometres * (int) systemVariable('additionalPriceDeliveryPerKm'))
+                * ($this->order->measuring + 1)
+                * ($visits + 1)
             );
         }
+
+        // тест на уменьшение числа километров
     }
