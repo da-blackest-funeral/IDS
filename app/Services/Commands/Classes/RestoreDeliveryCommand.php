@@ -19,7 +19,7 @@
         }
 
         public function execute() {
-            if ($this->order->need_delivery || $this->order->additional_visits == 0) {
+            if ($this->order->need_delivery) {
                 return;
             }
 
