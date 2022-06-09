@@ -16,6 +16,15 @@
     class SalaryHelper implements SalaryHelperInterface
     {
         /**
+         * @var CreateSalaryService
+         */
+        private CreateSalaryService $createSalaryService;
+
+        public function __construct() {
+            $this->createSalaryService = new CreateSalaryService();
+        }
+
+        /**
          * @param int|float $sum
          * @param InstallerSalary|null $salary
          * @return void
@@ -44,32 +53,23 @@
         }
 
         /**
-         * @param CreateSalaryDto|null $dto
+         * @param CreateSalaryDto $dto
+         * @return InstallerSalary
+         */
+        public function make(CreateSalaryDto $dto): InstallerSalary {
+            return $this->createSalaryService->make($dto);
+        }
+
+        /**
          * @param float|null $sum
          * @param Order|null $order
          * @return InstallerSalary
          */
-        public function make(
-            CreateSalaryDto $dto = null,
-            float $sum = null,
-            Order $order = null
-        ): InstallerSalary {
-            $salaryService = new CreateSalaryService();
-            if (!is_null($dto)) {
-                return $salaryService->make($dto);
-            }
-
-            $dto = new CreateSalaryDto();
-            $dto->setCategory(request()->input('categories', 5));
-            $dto->setComment('Пока не готово');
-            $dto->setInstallersWage($sum ?? Calculator::getInstallersWage());
-            $dto->setStatus(false);
-            $dto->setChangedSum($dto->getInstallersWage());
-            $dto->setOrder($order ?? \OrderHelper::getOrder());
-            $dto->setType(SalaryType::determine());
-            $dto->setUserId(auth()->user()->getAuthIdentifier());
-
-            return $salaryService->make($dto);
+        public function create(float $sum = null, Order $order = null) {
+            return $this->createSalaryService->create(
+                order: $order ?? \OrderHelper::getOrder(),
+                sum: $sum ?? Calculator::getInstallersWage()
+            );
         }
 
         /**

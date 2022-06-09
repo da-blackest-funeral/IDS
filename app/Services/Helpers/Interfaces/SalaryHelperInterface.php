@@ -15,11 +15,11 @@
          */
         public function update(int|float $sum, InstallerSalary $salary = null);
 
-        /**
-         * @param float|null $sum
-         * @return mixed
-         */
-        public function make(CreateSalaryDto $dto = null, float $sum = null);
+//        /**
+//         * @param float|null $sum
+//         * @return mixed
+//         */
+//        public function make(CreateSalaryDto $dto = null, float $sum = null);
 
         /**
          * @return mixed

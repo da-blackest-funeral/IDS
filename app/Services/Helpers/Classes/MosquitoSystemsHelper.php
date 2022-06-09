@@ -33,7 +33,7 @@
 
                 $this->checkRemoveNoInstallationSalary();
 
-                \SalaryHelper::make();
+                \SalaryHelper::create(order: $this->order);
                 return;
             }
 
@@ -46,7 +46,7 @@
          */
         protected function checkEmptySalary(): bool {
             if (\OrderHelper::hasProducts() && !Calculator::productNeedInstallation()) {
-                \SalaryHelper::make(sum: 0);
+                \SalaryHelper::create(sum: 0, order: $this->order);
                 return true;
             }
 
