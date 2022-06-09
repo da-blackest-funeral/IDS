@@ -3,7 +3,12 @@
     namespace App\Http\Controllers;
 
     use App\Models\Order;
+    use App\Models\Salaries\InstallerSalary;
     use App\Services\Calculator\Interfaces\Calculator;
+    use App\Services\Helpers\Classes\CreateSalaryDto;
+    use App\Services\Helpers\Classes\CreateSalaryService;
+    use App\Services\Helpers\Classes\SalaryHelper;
+    use App\Services\Helpers\Config\SalaryTypesEnum;
     use App\Services\Visitors\Classes\UpdateOrderCommandComposite;
     use App\Services\Visitors\Classes\UpdateOrderDto;
     use App\Services\Visitors\Interfaces\CommandComposite;
@@ -23,7 +28,7 @@
                             'orders.user_id',
                             'orders.prepayment',
                             'orders.price',
-                            'orders.status'
+                            'orders.status',
                         ]),
                 ]);
         }
@@ -62,13 +67,32 @@
             $salary = \SalaryHelper::salariesNoInstallation()
                 ->first();
 
+            if (is_null($salary)) {
+                $createSalaryDto = new CreateSalaryDto();
+                $createSalaryDto->setInstallersWage(0);
+                $createSalaryDto->setInstallerId($order->installer_id);
+                $createSalaryDto->setOrder($order);
+                $createSalaryDto->setCategory(
+                    $order->products()
+                        ->first('category_id')
+                        ->category_id
+                );
+                $createSalaryDto->setComment('Пока не готово');
+                $createSalaryDto->setStatus(0);
+                $createSalaryDto->setChangedSum(0);
+                $createSalaryDto->setUserId(auth()->user()->getAuthIdentifier());
+                $createSalaryDto->setType(SalaryTypesEnum::NO_INSTALLATION->value);
+
+                \SalaryHelper::make($createSalaryDto);
+            }
+
             $data = request()->only([
                 'delivery',
                 'measuring',
                 'count-additional-visits',
                 'kilometres',
             ]);
-            $data['measuring-price'] = (int) systemVariable('measuring');
+            $data['measuring-price'] = (int)systemVariable('measuring');
 
             $dto = new UpdateOrderDto($data);
 

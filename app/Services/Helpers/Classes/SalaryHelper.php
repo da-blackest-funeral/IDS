@@ -44,22 +44,32 @@
         }
 
         /**
+         * @param CreateSalaryDto|null $dto
          * @param float|null $sum
+         * @param Order|null $order
          * @return InstallerSalary
          */
-        public function make(float $sum = null): InstallerSalary {
-            $order = \OrderHelper::getOrder();
-            return InstallerSalary::create([
-                'installer_id' => $order->installer_id,
-                'category_id' => request()->input('categories'),
-                'order_id' => $order->id,
-                'sum' => $sum ?? Calculator::getInstallersWage(),
-                'comment' => 'Пока не готово',
-                'status' => false,
-                'changed_sum' => Calculator::getInstallersWage(),
-                'created_user_id' => auth()->user()->getAuthIdentifier(),
-                'type' => SalaryType::determine(),
-            ]);
+        public function make(
+            CreateSalaryDto $dto = null,
+            float $sum = null,
+            Order $order = null
+        ): InstallerSalary {
+            $salaryService = new CreateSalaryService();
+            if (!is_null($dto)) {
+                return $salaryService->make($dto);
+            }
+
+            $dto = new CreateSalaryDto();
+            $dto->setCategory(request()->input('categories', 5));
+            $dto->setComment('Пока не готово');
+            $dto->setInstallersWage($sum ?? Calculator::getInstallersWage());
+            $dto->setStatus(false);
+            $dto->setChangedSum($dto->getInstallersWage());
+            $dto->setOrder($order ?? \OrderHelper::getOrder());
+            $dto->setType(SalaryType::determine());
+            $dto->setUserId(auth()->user()->getAuthIdentifier());
+
+            return $salaryService->make($dto);
         }
 
         /**

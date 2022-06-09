@@ -46,7 +46,7 @@
          */
         protected function checkEmptySalary(): bool {
             if (\OrderHelper::hasProducts() && !Calculator::productNeedInstallation()) {
-                \SalaryHelper::make(0);
+                \SalaryHelper::make(sum: 0);
                 return true;
             }
 
