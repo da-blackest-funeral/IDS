@@ -108,11 +108,54 @@
                 $price
                 + $visits
                 * $this->order->delivery
-                + ($kilometres * (int) systemVariable('additionalPriceDeliveryPerKm'))
+                + ($kilometres * (int)systemVariable('additionalPriceDeliveryPerKm'))
                 * ($this->order->measuring + 1)
                 * ($visits + 1)
             );
         }
 
-        // тест на уменьшение числа километров
+        /**
+         * @return void
+         * @test
+         */
+        public function decrease_delivery_kilometres_command() {
+            $this->setUpDefaultActions();
+            $firstKilometres = rand(6, 15);
+            $defaultOrderPrice = rand(2000, 5000);
+
+            $this->order->price = $defaultOrderPrice +
+                $firstKilometres * systemVariable('additionalPriceDeliveryPerKm')
+                * ($this->order->measuring + 1);
+
+            $this->salary->sum = 960 +
+                systemVariable('additionalWagePerKm') * $firstKilometres
+                * ($this->order->measuring + 1);
+
+            $this->order->kilometres = $firstKilometres;
+            $kilometres = rand(1, 2);
+
+            (new DeliveryKilometresCommand(
+                kilometres: $kilometres,
+                order: $this->order,
+                salary: $this->salary
+            ))->execute()->save();
+
+            $this->salary->refresh();
+            $this->order->refresh();
+
+            self::assertEquals(
+                $this->salary->sum,
+                systemVariable('delivery') +
+                systemVariable('measuringWage') +
+                $kilometres * systemVariable('additionalWagePerKm') * 2
+            );
+
+            self::assertEquals(
+                $this->order->price,
+                $defaultOrderPrice
+                + ($kilometres * (int)systemVariable('additionalPriceDeliveryPerKm'))
+                * ($this->order->measuring + 1),
+                $this->order->price
+            );
+        }
     }
