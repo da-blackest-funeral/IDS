@@ -13,7 +13,7 @@
     use Facades\App\Services\Calculator\Interfaces\Calculator;
     use Illuminate\Support\Collection;
 
-    class MosquitoSystemsHelper extends AbstractProductHelper
+    class MosquitoSystemsService extends AbstractProductService
     {
         /**
          * @return void
@@ -23,7 +23,7 @@
             if ($this->needUpdateSalary()) {
                 $this->updateSalary();
                 $this->checkRemoveNoInstallationSalary();
-                \SalaryHelper::checkMeasuringAndDelivery();
+                \SalaryService::checkMeasuringAndDelivery();
 
             } elseif (! deletingProduct()) {
 
@@ -33,7 +33,7 @@
 
                 $this->checkRemoveNoInstallationSalary();
 
-                \SalaryHelper::create(order: $this->order);
+                \SalaryService::create(order: $this->order);
                 return;
             }
 
@@ -45,8 +45,8 @@
          * @return bool
          */
         protected function checkEmptySalary(): bool {
-            if (\OrderHelper::hasProducts() && !Calculator::productNeedInstallation()) {
-                \SalaryHelper::create(sum: 0, order: $this->order);
+            if (\OrderService::hasProducts() && !Calculator::productNeedInstallation()) {
+                \SalaryService::create(sum: 0, order: $this->order);
                 return true;
             }
 
@@ -58,7 +58,7 @@
          */
         protected function checkRemoveNoInstallationSalary(): void {
             if ($this->salariesForNoInstallationMustBeRemoved()) {
-                \SalaryHelper::removeNoInstallation();
+                \SalaryService::removeNoInstallation();
             }
         }
 
@@ -67,7 +67,7 @@
          * @throws SalaryCalculationException
          */
         protected function updateSalary(): void {
-            \SalaryHelper::update(
+            \SalaryService::update(
                 sum: $this->calculateInstallationSalary(
                     productInOrder: $this->productsWithMaxInstallation()
                         ->first(),
@@ -85,7 +85,7 @@
                 ->without(oldProduct())
                 ->onlyWithInstallation();
             if ($productsWithInstallation->isEmpty()) {
-                \SalaryHelper::restoreNoInstallation();
+                \SalaryService::restoreNoInstallation();
             }
         }
 
@@ -95,10 +95,10 @@
         protected function salariesForNoInstallationMustBeRemoved(): bool {
             // todo условие можно сократить
             return
-                !\OrderHelper::hasInstallation() &&
-                \OrderHelper::hasProducts() &&
+                !\OrderService::hasInstallation() &&
+                \OrderService::hasProducts() &&
                 !Calculator::productNeedInstallation() ||
-                \OrderHelper::hasInstallation() ||
+                \OrderService::hasInstallation() ||
                 Calculator::productNeedInstallation();
         }
 
@@ -114,7 +114,7 @@
                 ->count();
 
             return $sameCategoryProducts->isNotEmpty() &&
-                !is_null(\SalaryHelper::salary()) ||
+                !is_null(\SalaryService::salary()) ||
                 !$countOfAllProducts && !deletingProduct();
         }
 

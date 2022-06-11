@@ -18,10 +18,10 @@
         }
 
         public function secondSelect(): Collection {
-            return \ProductHelper::tissues($this->productInOrder->category_id);
+            return \ProductService::tissues($this->productInOrder->category_id);
         }
 
         public function thirdSelect(): Collection {
-            return \ProductHelper::profiles($this->productInOrder);
+            return \ProductService::profiles($this->productInOrder);
         }
     }

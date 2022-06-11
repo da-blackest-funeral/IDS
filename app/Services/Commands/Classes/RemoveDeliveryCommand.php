@@ -19,7 +19,7 @@
                 return;
             }
 
-            \SalaryHelper::removeDelivery($this->salary);
+            \SalaryService::removeDelivery($this->salary);
             $this->order->price -= $this->order->delivery * (1 + $this->order->additional_visits);
             $this->order->delivery = 0;
 

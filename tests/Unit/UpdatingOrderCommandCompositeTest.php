@@ -8,8 +8,8 @@
     use App\Services\Commands\Classes\RemoveDeliveryCommand;
     use App\Services\Commands\Classes\SetAdditionalVisitsCommand;
     use App\Services\Helpers\Config\SalaryTypesEnum;
-    use App\Services\Visitors\Classes\UpdateOrderCommandComposite;
-    use App\Services\Visitors\Classes\UpdateOrderDto;
+    use App\Services\Repositories\Classes\UpdateOrderCommandRepository;
+    use App\Services\Repositories\Classes\UpdateOrderDto;
     use Illuminate\Foundation\Testing\DatabaseTransactions;
     use Tests\CreatesApplication;
     use Tests\TestCase;
@@ -48,7 +48,7 @@
                 'delivery' => true,
                 'measuring-price' => systemVariable('measuring'),
             ]);
-            $composite = new UpdateOrderCommandComposite($dto, $this->order, $this->salary);
+            $composite = new UpdateOrderCommandRepository($dto, $this->order, $this->salary);
             $composite->addCommand(new RemoveDeliveryCommand($this->order, $this->salary))
                 ->execute();
 

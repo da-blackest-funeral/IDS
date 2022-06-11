@@ -494,7 +494,7 @@
                 return $this->installersWage;
             }
 
-            $result = \ProductHelper::calculateInstallationSalary(
+            $result = \ProductService::calculateInstallationSalary(
                 productInOrder: $productInOrder,
                 count: $count
             );

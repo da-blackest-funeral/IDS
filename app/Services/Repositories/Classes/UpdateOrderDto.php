@@ -1,6 +1,6 @@
 <?php
 
-    namespace App\Services\Visitors\Classes;
+    namespace App\Services\Repositories\Classes;
 
     class UpdateOrderDto
     {

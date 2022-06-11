@@ -134,7 +134,7 @@
                 ->assertDatabaseHas('installers_salaries', ['sum' => 960])
                 ->assertDatabaseCount('installers_salaries', 1);
 
-            self::assertTrue(\OrderHelper::use(Order::first())->salaries() == 960);
+            self::assertTrue(\OrderService::use(Order::first())->salaries() == 960);
         }
 
         /**

@@ -3,16 +3,12 @@
     namespace App\Http\Controllers;
 
     use App\Models\Order;
-    use App\Models\ProductInOrder;
-    use App\Models\Salaries\InstallerSalary;
     use App\Services\Calculator\Interfaces\Calculator;
     use App\Services\Helpers\Classes\CreateSalaryDto;
-    use App\Services\Helpers\Classes\CreateSalaryService;
-    use App\Services\Helpers\Classes\SalaryHelper;
     use App\Services\Helpers\Config\SalaryTypesEnum;
-    use App\Services\Visitors\Classes\UpdateOrderCommandComposite;
-    use App\Services\Visitors\Classes\UpdateOrderDto;
-    use App\Services\Visitors\Interfaces\CommandComposite;
+    use App\Services\Repositories\Classes\UpdateOrderCommandRepository;
+    use App\Services\Repositories\Classes\UpdateOrderDto;
+    use App\Services\Repositories\Interfaces\CommandRepository;
     use Illuminate\Http\Request;
 
     class OrdersController extends Controller
@@ -47,10 +43,10 @@
             $calculator->calculate();
             $calculator->saveInfo();
 
-            \OrderHelper::addProduct();
+            \OrderService::addProduct();
 
-            if (\OrderHelper::orderOrProductHasInstallation()) {
-                \SalaryHelper::checkMeasuringAndDelivery();
+            if (\OrderService::orderOrProductHasInstallation()) {
+                \SalaryService::checkMeasuringAndDelivery();
             }
 
             return redirect(route('order', ['order' => $order->id]));
@@ -65,10 +61,10 @@
         }
 
         public function update(Order $order) {
-            $salary = \SalaryHelper::salariesNoInstallation()
+            $salary = \SalaryService::salariesNoInstallation()
                 ->first();
 
-            \SalaryHelper::setOrder($order);
+            \SalaryService::setOrder($order);
 
             if (is_null($salary)) {
                 $createSalaryDto = new CreateSalaryDto();
@@ -86,7 +82,7 @@
                 $createSalaryDto->setUserId(auth()->user()->getAuthIdentifier());
                 $createSalaryDto->setType(SalaryTypesEnum::NO_INSTALLATION->value);
 
-                $salary = \SalaryHelper::make($createSalaryDto);
+                $salary = \SalaryService::make($createSalaryDto);
             }
 
             $data = request()->only([
@@ -99,8 +95,8 @@
 
             $dto = new UpdateOrderDto($data);
 
-            /** @var CommandComposite $composite */
-            $composite = new UpdateOrderCommandComposite(
+            /** @var CommandRepository $composite */
+            $composite = new UpdateOrderCommandRepository(
                 commandData: $dto,
                 order: $order,
                 salary: $salary

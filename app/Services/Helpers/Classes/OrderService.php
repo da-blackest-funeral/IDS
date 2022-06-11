@@ -5,11 +5,11 @@
     use App\Models\Order;
     use App\Models\ProductInOrder;
     use App\Models\SystemVariables;
-    use App\Services\Helpers\Interfaces\OrderHelperInterface;
+    use App\Services\Helpers\Interfaces\OrderServiceInterface;
     use App\Services\Repositories\Interfaces\ProductRepositoryInterface;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
 
-    class OrderHelper implements OrderHelperInterface
+    class OrderService implements OrderServiceInterface
     {
         /**
          * @var ProductRepositoryInterface
@@ -47,9 +47,9 @@
 
         /**
          * @param Order $order
-         * @return OrderHelperInterface
+         * @return OrderServiceInterface
          */
-        public function use(Order $order): OrderHelperInterface {
+        public function use(Order $order): OrderServiceInterface {
             $this->order = $order;
             $this->makeProductRepository();
 
@@ -82,8 +82,8 @@
          * @return bool
          */
         public function orderOrProductHasInstallation(): bool {
-            return !\OrderHelper::hasProducts() ||
-                \OrderHelper::hasInstallation() ||
+            return !\OrderService::hasProducts() ||
+                \OrderService::hasInstallation() ||
                 Calculator::productNeedInstallation();
         }
 
@@ -210,10 +210,10 @@
             $this->order->products_count += Calculator::getCount();
 
             $this->order->update();
-            $product = \ProductHelper::make();
+            $product = \ProductService::make();
 
             \DB::transaction(function () use ($product) {
-                \ProductHelper::use($product)
+                \ProductService::use($product)
                     ->updateOrCreateSalary();
             });
 

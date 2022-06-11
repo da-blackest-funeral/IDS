@@ -4,11 +4,11 @@
 
     use App\Models\Order;
     use App\Models\ProductInOrder;
-    use App\Services\Helpers\Interfaces\ProductHelperInterface;
+    use App\Services\Helpers\Interfaces\ProductServiceInterface;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
     use Illuminate\Support\Collection;
 
-    abstract class AbstractProductHelper implements ProductHelperInterface
+    abstract class AbstractProductService implements ProductServiceInterface
     {
         /**
          * @var Collection
@@ -34,9 +34,9 @@
 
         /**
          * @param ProductInOrder $productInOrder
-         * @return ProductHelperInterface
+         * @return ProductServiceInterface
          */
-        public function use(ProductInOrder $productInOrder): ProductHelperInterface {
+        public function use(ProductInOrder $productInOrder): ProductServiceInterface {
             $this->productInOrder = $productInOrder;
             $this->order = $productInOrder->order;
             $this->products = $this->order->products;
@@ -56,7 +56,7 @@
          * @return ProductInOrder
          */
         function make(): ProductInOrder {
-            $order = \OrderHelper::getOrder();
+            $order = \OrderService::getOrder();
             return ProductInOrder::create([
                 'installation_id' => Calculator::getInstallation('additional_id'),
                 'order_id' => $order->id,
@@ -81,7 +81,7 @@
          * @return bool
          */
         public function noInstallation(): bool {
-            return !\OrderHelper::hasInstallation() &&
+            return !\OrderService::hasInstallation() &&
                 !Calculator::productNeedInstallation();
         }
 

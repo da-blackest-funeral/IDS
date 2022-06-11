@@ -6,13 +6,13 @@
     use App\Models\ProductInOrder;
     use Illuminate\Support\Collection;
 
-    interface OrderHelperInterface
+    interface OrderServiceInterface
     {
         /**
          * @param Order $order
-         * @return OrderHelperInterface
+         * @return OrderServiceInterface
          */
-        public function use(Order $order): OrderHelperInterface;
+        public function use(Order $order): OrderServiceInterface;
 
         /**
          * @return Order

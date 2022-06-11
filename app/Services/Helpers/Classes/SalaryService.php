@@ -8,13 +8,13 @@
     use App\Models\SystemVariables;
     use App\Services\Helpers\Config\SalaryType;
     use App\Services\Helpers\Config\SalaryTypesEnum;
-    use App\Services\Helpers\Interfaces\SalaryHelperInterface;
+    use App\Services\Helpers\Interfaces\SalaryServiceInterface;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
     use Illuminate\Support\Collection;
 
     // todo сделать второй интерфейс - installation salary helper interface, туда добавить методы removeNoInstallation
     // и т.д., а так же другой класс, я думаю с наследованием от этого
-    class SalaryHelper implements SalaryHelperInterface
+    class SalaryService implements SalaryServiceInterface
     {
         /**
          * @var CreateSalaryService
@@ -64,7 +64,7 @@
         public function update(int|float $sum, InstallerSalary $salary = null) {
             if (is_null($salary)) {
                 $salary = $this->salary();
-                $salary->type = SalaryType::determine(\ProductHelper::getProduct());
+                $salary->type = SalaryType::determine(\ProductService::getProduct());
             }
 
             $salary->sum = $sum;
@@ -152,7 +152,7 @@
          * @return void
          */
         public function restoreNoInstallation(Order $order = null) {
-            $order = $order ?? \OrderHelper::getOrder();
+            $order = $order ?? \OrderService::getOrder();
 
             $order->salaries()
                 ->where('type', SalaryTypesEnum::NO_INSTALLATION->value)
@@ -184,7 +184,7 @@
          * @return object
          */
         public function salary(ProductInOrder $productInOrder = null) {
-            $productInOrder = $productInOrder ?? \ProductHelper::getProduct();
+            $productInOrder = $productInOrder ?? \ProductService::getProduct();
             return $productInOrder->order
                 ->salaries()
                 ->where('category_id', $productInOrder->category_id)
@@ -196,7 +196,7 @@
          * @return bool
          */
         public function hasSalaryNoInstallation(Order $order = null): bool {
-            $order = $order ?? \OrderHelper::getOrder();
+            $order = $order ?? \OrderService::getOrder();
             return $order
                 ->salaries
                 ->contains(function (InstallerSalary $salary) {
@@ -205,8 +205,8 @@
         }
 
         public function checkMeasuringAndDelivery() {
-            $order = \ProductHelper::getProduct()->order;
-            if (\OrderHelper::hasInstallation() || Calculator::productNeedInstallation()) {
+            $order = \ProductService::getProduct()->order;
+            if (\OrderService::hasInstallation() || Calculator::productNeedInstallation()) {
                 $order->measuring_price = 0;
             } else {
                 $order->measuring_price = $order->measuring ?

@@ -26,7 +26,7 @@
             $delivery = $this->productRepository
                 ->maxDelivery();
 
-            \SalaryHelper::restoreDelivery();
+            \SalaryService::restoreDelivery();
             $this->order->price += $delivery * (1 + $this->order->additional_visits);
             $this->order->delivery = $delivery;
 

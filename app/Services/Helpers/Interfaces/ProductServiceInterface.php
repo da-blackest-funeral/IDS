@@ -5,7 +5,7 @@
     use App\Models\ProductInOrder;
     use Illuminate\Support\Collection;
 
-    interface ProductHelperInterface
+    interface ProductServiceInterface
     {
         /**
          * @return void
@@ -14,9 +14,9 @@
 
         /**
          * @param ProductInOrder $productInOrder
-         * @return ProductHelperInterface
+         * @return ProductServiceInterface
          */
-        public function use(ProductInOrder $productInOrder): ProductHelperInterface;
+        public function use(ProductInOrder $productInOrder): ProductServiceInterface;
 
         /**
          * Calculates salary for specified product and count

@@ -1,11 +1,11 @@
 <?php
 
-    namespace App\Services\Visitors\Classes;
+    namespace App\Services\Repositories\Classes;
 
     use App\Services\Commands\Interfaces\Command;
-    use App\Services\Visitors\Interfaces\CommandComposite;
+    use App\Services\Repositories\Interfaces\CommandRepository;
 
-    abstract class AbstractCommandComposite implements CommandComposite
+    abstract class AbstractCommandRepository implements CommandRepository
     {
         /**
          * @var array<Command>
@@ -14,26 +14,26 @@
 
         /**
          * @param array<Command> $commands
-         * @return CommandComposite
+         * @return CommandRepository
          */
-        public function setCommands(array $commands): CommandComposite {
+        public function setCommands(array $commands): CommandRepository {
             $this->commands = $commands;
             return $this;
         }
 
         /**
          * @param Command $command
-         * @return CommandComposite
+         * @return CommandRepository
          */
-        public function addCommand(Command $command): CommandComposite {
+        public function addCommand(Command $command): CommandRepository {
             $this->commands[] = $command;
             return $this;
         }
 
         /**
-         * @return CommandComposite
+         * @return CommandRepository
          */
-        public function execute(): CommandComposite {
+        public function execute(): CommandRepository {
             foreach ($this->commands as $command) {
                 $command->execute();
             }

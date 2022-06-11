@@ -1,20 +1,19 @@
 <?php
 
-    namespace App\Services\Visitors\Classes;
+    namespace App\Services\Repositories\Classes;
 
     use App\Models\Order;
     use App\Models\Salaries\InstallerSalary;
-    use App\Models\SystemVariables;
+    use App\Services\Commands\Classes\DeliveryKilometresCommand;
     use App\Services\Commands\Classes\RemoveAdditionalVisitsCommand;
     use App\Services\Commands\Classes\RemoveDeliveryCommand;
     use App\Services\Commands\Classes\RemoveMeasuringCommand;
     use App\Services\Commands\Classes\RestoreDeliveryCommand;
     use App\Services\Commands\Classes\RestoreMeasuringCommand;
     use App\Services\Commands\Classes\SetAdditionalVisitsCommand;
-    use App\Services\Commands\Classes\DeliveryKilometresCommand;
     use App\Services\Commands\Interfaces\Command;
 
-    class UpdateOrderCommandComposite extends AbstractCommandComposite
+    class UpdateOrderCommandRepository extends AbstractCommandRepository
     {
         /**
          * @param UpdateOrderDto $commandData
@@ -25,20 +24,19 @@
             private readonly UpdateOrderDto $commandData,
             private readonly Order $order,
             private readonly InstallerSalary $salary
-        ) {
-        }
+        ) {}
 
         public function result() {
             return $this->order->update() && $this->salary->update();
         }
 
         /**
-         * @return UpdateOrderCommandComposite
+         * @return UpdateOrderCommandRepository
          */
         protected function deliveryCommand() {
             /** @var Command $command */
             $command = $this->commandData->isNeedDelivery() ?
-                new RestoreDeliveryCommand($this->order, \OrderHelper::getProductRepository()) :
+                new RestoreDeliveryCommand($this->order, \OrderService::getProductRepository()) :
                 new RemoveDeliveryCommand($this->order, $this->salary);
 
             $this->addCommand($command);
@@ -46,23 +44,8 @@
             return $this;
         }
 
-//        /**
-//         * @param int|null $sale
-//         * @return void
-//         */
-//        public function visitSale(int $sale = null) {
-//            $this->order->discount = $sale ?? (int)request()->input('sale', 0);
-//        }
-
-//        /**
-//         * @return void
-//         */
-//        protected function visitInstaller() {
-//            $this->order->installer_id = \request()->input('installer', firstInstaller('id'));
-//        }
-
         /**
-         * @return UpdateOrderCommandComposite
+         * @return UpdateOrderCommandRepository
          */
         protected function measuringCommand() {
             /** @var Command $command */
@@ -82,7 +65,7 @@
         }
 
         /**
-         * @return UpdateOrderCommandComposite
+         * @return UpdateOrderCommandRepository
          */
         protected function countAdditionalVisitsCommand() {
             $visits = $this->commandData->getCountAdditionalVisits();
@@ -101,7 +84,7 @@
         }
 
         /**
-         * @return UpdateOrderCommandComposite
+         * @return UpdateOrderCommandRepository
          */
         protected function kilometresCommand() {
             $this->addCommand(new DeliveryKilometresCommand(
@@ -113,7 +96,10 @@
             return $this;
         }
 
-        public function commands(): UpdateOrderCommandComposite {
+        /**
+         * @return $this
+         */
+        public function commands(): UpdateOrderCommandRepository {
             $this->countAdditionalVisitsCommand();
             $this->deliveryCommand();
             $this->measuringCommand();
@@ -121,17 +107,4 @@
 
             return $this;
         }
-
-//        protected function visitPrepayment() {
-//            $this->order->prepayment = request()->input('prepayment', 0);
-//        }
-
-//        protected function visitMinimalSum() {
-//            SystemVariables::updateByName('minSumOrder', request()->input('minimal-sum'));
-//        }
-
-//        protected function visitAllOrderComment() {
-//            $this->order->comment = request()
-//                ->input('all-order-comment', 'Комментарий отсутствует');
-//        }
     }

@@ -254,7 +254,7 @@
     function orderPrice(Order $order = null): string {
         $order = $order ?? order();
         $minimalSum = systemVariable('minSumOrder');
-        if (\OrderHelper::hasInstallation() && $order->price < $minimalSum) {
+        if (\OrderService::hasInstallation() && $order->price < $minimalSum) {
             return $minimalSum;
         }
 

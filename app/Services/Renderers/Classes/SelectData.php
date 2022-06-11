@@ -17,6 +17,6 @@
         }
 
         public function additional(): array {
-            return \ProductHelper::additional($this->productInOrder);
+            return \ProductService::additional($this->productInOrder);
         }
     }

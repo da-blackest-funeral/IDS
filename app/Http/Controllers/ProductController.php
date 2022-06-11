@@ -23,13 +23,13 @@
             $calculator->calculate();
             $calculator->saveInfo();
 
-            \OrderHelper::remove($productInOrder);
+            \OrderService::remove($productInOrder);
 
-            if (\OrderHelper::orderOrProductHasInstallation()) {
-                \SalaryHelper::checkMeasuringAndDelivery();
+            if (\OrderService::orderOrProductHasInstallation()) {
+                \SalaryService::checkMeasuringAndDelivery();
             }
 
-            \OrderHelper::addProduct();
+            \OrderService::addProduct();
             $productInOrder->delete();
             $order->update();
 
@@ -50,26 +50,26 @@
              * зарплаты с типом NO_INSTALLATION вернуть
              */
 
-            \OrderHelper::remove($productInOrder);
-            \OrderHelper::calculateMeasuringOptions();
-            \OrderHelper::calculateDeliveryOptions();
+            \OrderService::remove($productInOrder);
+            \OrderService::calculateMeasuringOptions();
+            \OrderService::calculateDeliveryOptions();
 
             $sameCategoryProducts = ProductRepository::byCategoryWithout($productInOrder);
 
             if ($sameCategoryProducts->isNotEmpty()) {
-                \ProductHelper::use(
+                \ProductService::use(
                     $sameCategoryProducts->first()
                 )->updateOrCreateSalary();
             } else {
-                \SalaryHelper::salary()->delete();
-                \ProductHelper::use($productInOrder)
+                \SalaryService::salary()->delete();
+                \ProductService::use($productInOrder)
                     ->checkRestoreNoInstallationSalaries();
             }
 
             $productInOrder->delete();
             $order->update();
 
-            if (!\OrderHelper::use($order->refresh())->hasProducts()) {
+            if (!\OrderService::use($order->refresh())->hasProducts()) {
                 $order->update([
                     'price' => 0,
                     'measuring_price' => 0,
