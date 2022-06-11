@@ -107,7 +107,7 @@
          */
         public function removeDelivery(InstallerSalary $salary = null) {
             $deliverySalary = SystemVariables::value('delivery') *
-                (\OrderHelper::getOrder()->additional_visits + 1);
+                ($this->order->additional_visits + 1);
             if (!is_null($salary)) {
                 return $this->removeSingleDelivery($salary, $deliverySalary);
             }
@@ -132,7 +132,7 @@
 
             $salary->update([
                 'sum' => $salary->sum + SystemVariables::value('delivery') *
-                    (\OrderHelper::getOrder()->additional_visits + 1),
+                    ($this->order->additional_visits + 1),
             ]);
         }
 
@@ -141,8 +141,7 @@
          * @return Collection<InstallerSalary>
          */
         public function salariesNoInstallation(Order $order = null): Collection {
-            /** @var Order $order */
-            $order = $order ?? \OrderHelper::getOrder();
+            $order = $order ?? $this->order;
             return $order->salaries()
                 ->where('type', SalaryTypesEnum::NO_INSTALLATION->value)
                 ->get();

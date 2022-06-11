@@ -61,10 +61,12 @@
             });
 
             $this->app->bind(OrderHelperInterface::class, function () {
-                return new OrderHelper(\request()->order ?? new Order());
+                return new OrderHelper(request()->order ?? new Order());
             });
 
-            $this->app->bind(SalaryHelperInterface::class, SalaryHelper::class);
+            $this->app->bind(SalaryHelperInterface::class, function () {
+                return new SalaryHelper(request()->order, request()->productInOrder);
+            });
 
             $this->app->bind(SelectDataInterface::class, function () {
                 if (isMosquitoSystemProduct()) {

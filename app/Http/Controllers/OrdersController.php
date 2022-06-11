@@ -3,6 +3,7 @@
     namespace App\Http\Controllers;
 
     use App\Models\Order;
+    use App\Models\ProductInOrder;
     use App\Models\Salaries\InstallerSalary;
     use App\Services\Calculator\Interfaces\Calculator;
     use App\Services\Helpers\Classes\CreateSalaryDto;
@@ -67,6 +68,8 @@
             $salary = \SalaryHelper::salariesNoInstallation()
                 ->first();
 
+            \SalaryHelper::setOrder($order);
+
             if (is_null($salary)) {
                 $createSalaryDto = new CreateSalaryDto();
                 $createSalaryDto->setInstallersWage(0);
@@ -83,7 +86,7 @@
                 $createSalaryDto->setUserId(auth()->user()->getAuthIdentifier());
                 $createSalaryDto->setType(SalaryTypesEnum::NO_INSTALLATION->value);
 
-                \SalaryHelper::make($createSalaryDto);
+                $salary = \SalaryHelper::make($createSalaryDto);
             }
 
             $data = request()->only([

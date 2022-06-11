@@ -5,6 +5,7 @@
     use App\Models\MosquitoSystems\Product;
     use App\Models\Order;
     use App\Models\ProductInOrder;
+    use App\Models\Salaries\InstallerSalary;
     use App\Services\Helpers\Config\SalaryTypesEnum;
     use Illuminate\Foundation\Testing\RefreshDatabase;
     use Tests\TestCase;
@@ -22,6 +23,7 @@
             $this->testHelper->createDefaultOrder(2362);
             $order = Order::first();
             $this->testHelper->createDefaultSalary();
+            $this->testHelper->createDefaultProduct();
 
             $this->post(route('order', ['order' => 1]), [
                 '_method' => 'put',
@@ -34,9 +36,12 @@
                     $this->testHelper->defaultDeliverySum() *
                     ($order->additional_visits + 1),
                 'delivery' => 0,
-            ])->assertNotSoftDeleted('installers_salaries', [
-                'sum' => $this->testHelper->salaryNoInstallation() - systemVariable('delivery'),
             ]);
+
+            self::assertEquals(
+                $this->testHelper->salaryNoInstallation() - systemVariable('delivery'),
+                InstallerSalary::sum('installers_salaries.sum')
+            );
         }
 
         /**
@@ -62,10 +67,12 @@
                 'additional_visits' => 0,
                 'measuring' => 0,
                 'measuring_price' => 0,
-            ])->assertDatabaseHas('installers_salaries', [
-                'sum' => 480,
-                'type' => SalaryTypesEnum::NO_INSTALLATION->value,
             ]);
+
+            self::assertEquals(
+                systemVariable('delivery'),
+                InstallerSalary::sum('installers_salaries.sum')
+            );
         }
 
         /**
@@ -81,7 +88,8 @@
                 measuring: false,
             );
 
-            $this->testHelper->createDefaultSalary(480);
+            $this->testHelper->createDefaultSalary(systemVariable('delivery'));
+            $this->testHelper->createDefaultProduct();
 
             $this->post(route('order', ['order' => 1]), [
                 '_method' => 'put',
@@ -93,9 +101,12 @@
                 'price' => 2362,
                 'measuring' => true,
                 'measuring_price' => 600,
-            ])->assertDatabaseHas('installers_salaries', [
-                'sum' => 960,
-            ])->assertDatabaseCount('installers_salaries', 1);
+            ]);
+
+            self::assertEquals(
+                systemVariable('delivery') + systemVariable('measuringWage'),
+                InstallerSalary::sum('installers_salaries.sum')
+            );
         }
 
         /**
@@ -121,6 +132,8 @@
                 type: SalaryTypesEnum::NO_INSTALLATION->value
             );
 
+            $this->testHelper->createDefaultProduct();
+
             $this->post(route('order', ['order' => 1]), [
                 '_method' => 'put',
                 'delivery' => 0,
@@ -133,9 +146,9 @@
                 'delivery' => 0,
                 'need_delivery' => 0,
                 'additional_visits' => $visits,
-            ])->assertDatabaseHas('installers_salaries', [
-                'sum' => $resultSalary,
             ]);
+
+            self::assertEquals($resultSalary, InstallerSalary::sum('installers_salaries.sum'));
         }
 
         /**
@@ -179,9 +192,9 @@
                 'price' => $price + $delivery,
                 'need_delivery' => 1,
                 'delivery' => $delivery,
-            ])->assertDatabaseHas('installers_salaries', [
-                'sum' => $salary,
-            ])->assertDatabaseCount('installers_salaries', 1);
+            ]);
+
+            self::assertEquals($salary, InstallerSalary::sum('installers_salaries.sum'));
         }
 
         /**
@@ -224,9 +237,12 @@
                 'price' => $price - $delivery,
                 'need_delivery' => false,
                 'delivery' => 0,
-            ])->assertDatabaseHas('installers_salaries', [
-                'sum' => $salary - systemVariable('delivery'),
             ]);
+
+            self::assertEquals(
+                $salary - systemVariable('delivery'),
+                InstallerSalary::sum('installers_salaries.sum')
+            );
         }
 
         /**
@@ -275,9 +291,12 @@
                 'price' => $price + $delivery * (1 + $visits),
                 'delivery' => $delivery,
                 'additional_visits' => $visits,
-            ])->assertDatabaseHas('installers_salaries', [
-                'sum' => $salary * (1 + $visits) + systemVariable('measuringWage')
             ]);
+
+            self::assertEquals(
+                $salary * (1 + $visits) + systemVariable('measuringWage'),
+                InstallerSalary::sum('installers_salaries.sum')
+            );
         }
 
         /**
@@ -325,9 +344,12 @@
                 'price' => $price - $delivery * (1 + $visits),
                 'delivery' => 0,
                 'additional_visits' => $visits,
-            ])->assertDatabaseHas('installers_salaries', [
-                'sum' => systemVariable('measuringWage')
-            ])->assertDatabaseCount('installers_salaries', 1);
+            ]);
+
+            self::assertEquals(
+                systemVariable('measuringWage'),
+                InstallerSalary::sum('installers_salaries.sum')
+            );
         }
 
         // todo тесты с километражом
