@@ -63,6 +63,7 @@
             return Order::create([
                 'delivery' => Calculator::getDeliveryPrice(),
                 'user_id' => auth()->user()->getAuthIdentifier(),
+                // todo убрать этот кошмар
                 'installer_id' => firstInstaller('id'),
                 'price' => Calculator::getPrice(),
                 'discount' => 0,

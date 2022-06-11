@@ -35,6 +35,7 @@
          * @return InstallerSalary
          */
         public function create(Order $order, float $sum) {
+
             $dto = new CreateSalaryDto();
             $dto->setCategory(request()->input('categories', 5));
             $dto->setComment('Пока не готово');

@@ -288,7 +288,7 @@
      * @param string|null $field
      * @return mixed
      */
-    function firstInstaller(?string $field): mixed {
+    function firstInstaller(string $field = null): mixed {
         if (is_null($field)) {
             return User::role('installer')->first();
         }

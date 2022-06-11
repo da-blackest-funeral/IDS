@@ -77,6 +77,7 @@
 
             $this->testHelper->createDefaultProduct();
             $this->testHelper->createDefaultOrder($price);
+            $this->testHelper->createDefaultSalary();
 
             $this->post(route('order', ['order' => 1]), $inputsWithInstallation);
 

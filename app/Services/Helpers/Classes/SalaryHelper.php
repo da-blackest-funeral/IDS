@@ -3,6 +3,7 @@
     namespace App\Services\Helpers\Classes;
 
     use App\Models\Order;
+    use App\Models\ProductInOrder;
     use App\Models\Salaries\InstallerSalary;
     use App\Models\SystemVariables;
     use App\Services\Helpers\Config\SalaryType;
@@ -20,8 +21,39 @@
          */
         private CreateSalaryService $createSalaryService;
 
-        public function __construct() {
+        /**
+         * @var Order
+         */
+        private Order $order;
+
+        /**
+         * @var ProductInOrder
+         */
+        private ProductInOrder $productInOrder;
+
+        /**
+         * @param Order $order
+         * @return void
+         */
+        public function setOrder(Order $order) {
+            $this->order = $order;
+        }
+
+        /**
+         * @param ProductInOrder $productInOrder
+         * @return void
+         */
+        public function setProductInOrder(ProductInOrder $productInOrder) {
+            $this->productInOrder = $productInOrder;
+        }
+
+        public function __construct(
+            Order $order = null,
+            ProductInOrder $productInOrder = null
+        ) {
             $this->createSalaryService = new CreateSalaryService();
+            $this->order = $order;
+            $this->productInOrder = $productInOrder;
         }
 
         /**
@@ -31,25 +63,13 @@
          */
         public function update(int|float $sum, InstallerSalary $salary = null) {
             if (is_null($salary)) {
-                $salary = $this->salary()
-                    ->first();
+                $salary = $this->salary();
                 $salary->type = SalaryType::determine(\ProductHelper::getProduct());
             }
 
             $salary->sum = $sum;
 
             $salary->update();
-        }
-
-        /**
-         * @param bool $condition
-         * @param int|float $sum
-         * @return void
-         */
-        public function updateIf(bool $condition, int|float $sum) {
-            if ($condition) {
-                $this->update($sum);
-            }
         }
 
         /**
@@ -67,7 +87,7 @@
          */
         public function create(float $sum = null, Order $order = null) {
             return $this->createSalaryService->create(
-                order: $order ?? \OrderHelper::getOrder(),
+                order: $order ?? $this->order,
                 sum: $sum ?? Calculator::getInstallersWage()
             );
         }
@@ -123,14 +143,17 @@
         public function salariesNoInstallation(Order $order = null): Collection {
             /** @var Order $order */
             $order = $order ?? \OrderHelper::getOrder();
-            return $order
-                ->salaries()
+            return $order->salaries()
                 ->where('type', SalaryTypesEnum::NO_INSTALLATION->value)
                 ->get();
         }
 
-        public function restoreNoInstallation() {
-            $order = \ProductHelper::getProduct()->order;
+        /**
+         * @param Order|null $order
+         * @return void
+         */
+        public function restoreNoInstallation(Order $order = null) {
+            $order = $order ?? \OrderHelper::getOrder();
 
             $order->salaries()
                 ->where('type', SalaryTypesEnum::NO_INSTALLATION->value)
@@ -140,6 +163,10 @@
                 });
         }
 
+        /**
+         * @param Order $order
+         * @return int|float
+         */
         protected function noInstallationSalarySum(Order $order): int|float {
             $result = 0;
             if ($order->measuring_price || $order->measuring) {
@@ -153,25 +180,25 @@
             return $result;
         }
 
-        public function salary() {
-            $productInOrder = \ProductHelper::getProduct();
-            $salary = $productInOrder->order
+        /**
+         * @param ProductInOrder|null $productInOrder
+         * @return object
+         */
+        public function salary(ProductInOrder $productInOrder = null) {
+            $productInOrder = $productInOrder ?? \ProductHelper::getProduct();
+            return $productInOrder->order
                 ->salaries()
-                ->where('category_id', $productInOrder->category_id);
-            if (!$salary->exists()) {
-                return $productInOrder->order
-                    ->salaries()
-                    ->first();
-            }
-
-            return $salary;
+                ->where('category_id', $productInOrder->category_id)
+                ->firstOrFail();
         }
 
         /**
+         * @param Order|null $order
          * @return bool
          */
-        public function hasSalaryNoInstallation(): bool {
-            return \OrderHelper::getOrder()
+        public function hasSalaryNoInstallation(Order $order = null): bool {
+            $order = $order ?? \OrderHelper::getOrder();
+            return $order
                 ->salaries
                 ->contains(function (InstallerSalary $salary) {
                     return $salary->type == SalaryTypesEnum::NO_INSTALLATION->value && $salary->sum > 0;
@@ -187,7 +214,9 @@
                     SystemVariables::value('measuring')
                     : 0;
                 // Прибавить к зп монтажника стоимости замера и доставки, если они заданы
-                $this->updateIf(!$this->hasSalaryNoInstallation(), Calculator::getInstallersWage());
+                if (!$this->hasSalaryNoInstallation()) {
+                    $this->update(Calculator::getInstallersWage());
+                }
             }
         }
     }
