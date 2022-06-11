@@ -23,9 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Category whereParentId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Category whereUpdatedAt($value)
  * @mixin \Eloquent
- * @method static \Database\Factories\CategoryFactory factory(...$parameters)
  * @property-read Type|null $type
- * @method static \Illuminate\Database\Eloquent\Builder|Category tissues($id)
  */
 class Category extends Model
 {
@@ -40,12 +38,5 @@ class Category extends Model
 
     public function type() {
         return $this->hasOne(Type::class, 'category_id');
-    }
-
-    // todo возможно отрефакторить чтобы не грузить лишние данные
-    public function scopeTissues($query, $id) {
-        $query->whereId($id)
-            ->has('type.products.tissue')
-            ->with('type.products.tissue');
     }
 }

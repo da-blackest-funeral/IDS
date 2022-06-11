@@ -3,11 +3,25 @@
     namespace App\Providers;
 
     use App\Http\Requests\SaveOrderRequest;
+    use App\Models\Order;
+    use App\Models\ProductInOrder;
     use App\Services\Calculator\Classes\GlazedWindowsCalculator;
     use App\Services\Calculator\Classes\ItalianMosquitoSystemCalculator;
     use App\Services\Calculator\Classes\MosquitoSystemsCalculator;
     use App\Services\Calculator\Interfaces\Calculator;
+    use App\Services\Helpers\Classes\MosquitoSystemsService;
+    use App\Services\Helpers\Classes\OrderService;
+    use App\Services\Helpers\Classes\SalaryService;
+    use App\Services\Helpers\Interfaces\OrderServiceInterface;
+    use App\Services\Helpers\Interfaces\ProductServiceInterface;
+    use App\Services\Helpers\Interfaces\SalaryServiceInterface;
     use App\Services\Notifications\Notifier;
+    use App\Services\Renderer\Classes\MosquitoSelectData;
+    use App\Services\Renderer\Interfaces\SelectDataInterface;
+    use App\Services\Repositories\Classes\ProductRepository;
+    use App\Services\Repositories\Interfaces\ProductRepositoryInterface;
+    use Illuminate\Foundation\Application;
+    use Illuminate\Pagination\Paginator;
     use Illuminate\Support\ServiceProvider;
 
     class AppServiceProvider extends ServiceProvider
@@ -24,7 +38,7 @@
                     return new GlazedWindowsCalculator($request);
                 }
 
-                if (in_array(\request()->input('categories'), [5, 6, 7, 8, 9, 10, 11, 12, 13, 14])) {
+                if (isMosquitoSystemProduct()) {
                     return new MosquitoSystemsCalculator($request);
                 }
 
@@ -36,6 +50,33 @@
             $this->app->bind(Notifier::class, function () {
                 return new Notifier();
             });
+
+            $this->app->singleton(ProductServiceInterface::class, function () {
+                if (isMosquitoSystemProduct()) {
+                    return new MosquitoSystemsService(
+                        request()->productInOrder ?? new ProductInOrder(),
+                        request()->order ?? new Order()
+                    );
+                }
+            });
+
+            $this->app->bind(OrderServiceInterface::class, function () {
+                return new OrderService(request()->order ?? new Order());
+            });
+
+            $this->app->bind(SalaryServiceInterface::class, function () {
+                return new SalaryService(request()->order, request()->productInOrder);
+            });
+
+            $this->app->bind(SelectDataInterface::class, function () {
+                if (isMosquitoSystemProduct()) {
+                    return new MosquitoSelectData(\request()->productInOrder);
+                }
+            });
+
+            $this->app->bind(ProductRepositoryInterface::class, function (Application $app, array $params) {
+                return new ProductRepository($params[0] ?? $params['products']);
+            });
         }
 
         /**
@@ -44,6 +85,8 @@
          * @return void
          */
         public function boot() {
+            Paginator::useBootstrap();
+
             if (request()->method() == 'POST') {
                 \Notifier::setData();
                 \Notifier::displayWarnings();

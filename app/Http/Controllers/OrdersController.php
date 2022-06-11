@@ -2,44 +2,115 @@
 
     namespace App\Http\Controllers;
 
-    use App\Models\Category;
     use App\Models\Order;
+    use App\Services\Calculator\Interfaces\Calculator;
+    use App\Services\Helpers\Classes\CreateSalaryDto;
+    use App\Services\Helpers\Config\SalaryTypesEnum;
+    use App\Services\Repositories\Classes\UpdateOrderCommandRepository;
+    use App\Services\Repositories\Classes\UpdateOrderDto;
+    use App\Services\Repositories\Interfaces\CommandRepository;
     use Illuminate\Http\Request;
 
     class OrdersController extends Controller
     {
         protected Request $request;
 
-        public function order(Order $order) {
-            $products = $order->products()->get();
-            $data = Category::all();
-            $superCategories = Category::whereIn(
-                'id', Category::select(['parent_id'])
-                ->whereNotNull('parent_id')
-                ->groupBy(['parent_id'])
-                ->get()
-                ->toArray()
-            )->get();
-            $orderNumber = $order->id;
+        public function index() {
+            return view('pages.orders.all')
+                ->with([
+                    'orders' => Order::orderByDesc('id')
+                        ->paginate(10, [
+                            'orders.created_at',
+                            'orders.id',
+                            'orders.user_id',
+                            'orders.prepayment',
+                            'orders.price',
+                            'orders.status',
+                        ]),
+                ]);
+        }
 
+        public function show(Order $order) {
             return view('welcome')->with(
-                compact('data', 'order', 'products', 'superCategories', 'orderNumber')
+                \Arr::add(dataForOrderPage(), 'products', $order->products)
             );
         }
 
-        public function addProduct(Order $order) {
+        /**
+         * @throws \Throwable
+         */
+        public function addProduct(Order $order, Calculator $calculator) {
+            $calculator->calculate();
+            $calculator->saveInfo();
 
-            $productInOrder = addProductToOrder(
-                order: $order
-            );
+            \OrderService::addProduct();
 
-            checkSalaryForMeasuringAndDelivery(
-                order: $order,
-                productInOrder: $productInOrder
-            );
+            if (\OrderService::orderOrProductHasInstallation()) {
+                \SalaryService::checkMeasuringAndDelivery();
+            }
 
             return redirect(route('order', ['order' => $order->id]));
         }
 
-        // todo функция которая обновляет общие данные о заказе
+        public function delete(Order $order) {
+            $order->products()->delete();
+            $order->salaries()->delete();
+            $order->delete();
+
+            return redirect(route('all-orders'));
+        }
+
+        public function update(Order $order) {
+            $salary = \SalaryService::salariesNoInstallation()
+                ->first();
+
+            \SalaryService::setOrder($order);
+
+            if (is_null($salary)) {
+                $createSalaryDto = new CreateSalaryDto();
+                $createSalaryDto->setInstallersWage(0);
+                $createSalaryDto->setInstallerId($order->installer_id);
+                $createSalaryDto->setOrder($order);
+                $createSalaryDto->setCategory(
+                    $order->products()
+                        ->first('category_id')
+                        ->category_id
+                );
+                $createSalaryDto->setComment('Пока не готово');
+                $createSalaryDto->setStatus(0);
+                $createSalaryDto->setChangedSum(0);
+                $createSalaryDto->setUserId(auth()->user()->getAuthIdentifier());
+                $createSalaryDto->setType(SalaryTypesEnum::NO_INSTALLATION->value);
+
+                $salary = \SalaryService::make($createSalaryDto);
+            }
+
+            $data = request()->only([
+                'delivery',
+                'measuring',
+                'count-additional-visits',
+                'kilometres',
+            ]);
+            $data['measuring-price'] = (int)systemVariable('measuring');
+
+            $dto = new UpdateOrderDto($data);
+
+            /** @var CommandRepository $composite */
+            $composite = new UpdateOrderCommandRepository(
+                commandData: $dto,
+                order: $order,
+                salary: $salary
+            );
+
+            $composite->commands()
+                ->execute();
+
+            if ($composite->result()) {
+                return redirect(route('order', ['order' => $order->id]));
+            }
+
+            return back()->withErrors([
+                'error' => 'Не удалось обновить заказ',
+            ]);
+        }
     }

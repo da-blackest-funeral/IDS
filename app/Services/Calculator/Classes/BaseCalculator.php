@@ -70,7 +70,7 @@
          */
         protected bool $needInstallation = false;
 
-        protected $installation;
+        protected mixed $installation;
 
         protected int $categoryId;
 
@@ -78,7 +78,7 @@
             $this->request = $request;
             $this->options = new Collection();
             $this->count = (int)$request->get('count');
-            $this->categoryId = (int) $request->get('categories');
+            $this->categoryId = (int)$request->get('categories');
         }
 
         /**
@@ -86,7 +86,7 @@
          *
          * @return void
          */
-        protected function calculate(): void {
+        public function calculate(): void {
             if ($this->hasSquare()) {
                 $this->setSquareCoefficient();
             }
@@ -107,7 +107,7 @@
         protected function setSize() {
             $this->options->put('size', [
                 'height' => $this->request->get('height') ?? 'Нет',
-                'width' => $this->request->get('width') ?? 'Нет'
+                'width' => $this->request->get('width') ?? 'Нет',
             ]);
         }
 
@@ -172,13 +172,6 @@
             $this->options->put(
                 'measuring', $this->measuringPrice ? : 'Бесплатно'
             );
-
-            if ($this->installersWage) {
-                $this->options->put(
-                    'salary',
-                    $this->installersWage,
-                );
-            }
         }
 
         /**
@@ -201,11 +194,10 @@
         protected function saveDelivery($additional, $salary) {
             $this->options->put(
                 'delivery', [
-                'deliveryPrice' => $this->deliveryPrice,
-//                'deliverySalary' => ,
-                'additional' => $additional,
-                'additionalSalary' => $salary > 0 ? $salary : 'Нет',
-            ],
+                    'deliveryPrice' => $this->deliveryPrice,
+                    'additional' => $additional,
+                    'additionalSalary' => $salary > 0 ? $salary : 'Нет',
+                ]
             );
         }
 
@@ -229,7 +221,10 @@
          * @return BaseCalculator
          */
         protected function addDelivery(): BaseCalculator {
-            $this->price += $this->deliveryPrice;
+            if (! requestHasOrder() || order()->need_delivery) {
+                $this->price += $this->deliveryPrice;
+            }
+
             return $this;
         }
 
@@ -261,7 +256,7 @@
          * @param int $count
          * @return void
          */
-        protected function saveSystemOptions($variable, int $count = 1): void {
+        protected function saveSystemOptions(SystemVariables $variable, int $count = 1): void {
             $this->options->put(
                 $variable->name,
                 $variable->description . ' ' . $variable->value * $count > 0 ? $variable->value * $count : 'Бесплатно',

@@ -4,6 +4,7 @@ namespace App\Models\Salaries;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * App\Models\Salaries\InstallerSalary
@@ -41,7 +42,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class InstallerSalary extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'installers_salaries';
 

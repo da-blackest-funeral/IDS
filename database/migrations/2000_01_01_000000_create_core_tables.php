@@ -21,6 +21,12 @@
                 $table->string('name');
                 $table->string('value');
                 $table->text('description');
+                $table->timestamps();
+            });
+
+            Schema::create('services', function (Blueprint $table) {
+                $table->id();
+                $table->timestamps();
             });
 
             Schema::create('users', function (Blueprint $table) {
@@ -53,13 +59,9 @@
                 $table->float('changed_sum')
                     ->comment('Спросить можно ли без этого');
                 $table->foreignId('created_user_id');
-                $table->string('type')
+                $table->enum('type', ['Монтаж', 'Без монтажа'])
                     ->comment('Тип выплаты - за монтаж, за бензин и т.д.');
-                $table->timestamps();
-            });
-
-            Schema::create('services', function (Blueprint $table) {
-                $table->id();
+                $table->softDeletes();
                 $table->timestamps();
             });
 
@@ -79,7 +81,6 @@
                     ->default(0);
                 $table->timestamps();
             });
-//            $this->comment('types_windows', 'Типы окон - Алюминиевые, окна из ПВХ и т.д.');
 
             Schema::create('category_has_method', function (Blueprint $table) {
                 $table->id();
@@ -94,13 +95,21 @@
                     ->constrained('users');
                 $table->integer('delivery')
                     ->default(0);
+                $table->integer('additional_visits')
+                    ->default(0)
+                    ->comment('Количество допольнительных выездов');
+                $table->integer('kilometres')
+                    ->comment('Дальность доставки')
+                    ->default(0);
+                $table->boolean('need_delivery')
+                    ->default(true);
                 $table->integer('installation')
                     ->default(0);
                 $table->float('price');
                 $table->foreignId('installer_id')
                     ->constrained('users');
-                $table->float('discounted_price')
-                    ->comment('Цена со скидкой');
+                $table->float('discount')
+                    ->comment('Процент скидки');
                 $table->boolean('status')
                     ->default(false)
                     ->comment('Выполнен заказ или нет');
@@ -150,6 +159,9 @@
                 $table->foreignId('category_id');
                 $table->string('name');
                 $table->integer('count');
+                $table->string('comment')
+                    ->default('Без комментария')
+                    ->comment('Примечание к позиции');
                 $table->boolean('installation_id')
                     ->default(0);
                 $table->json('data')
@@ -210,6 +222,7 @@
          * @return void
          */
         public function down() {
+            DB::statement('SET FOREIGN_KEY_CHECKS = 0');
             Schema::dropIfExists('users');
             Schema::dropIfExists('categories');
             Schema::dropIfExists('services');
@@ -219,5 +232,6 @@
             Schema::dropIfExists('deliveries');
             Schema::dropIfExists('managements');
             Schema::dropIfExists('wishes');
+            DB::statement('SET FOREIGN_KEY_CHECKS = 1');
         }
     };

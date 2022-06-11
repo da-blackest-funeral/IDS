@@ -14,18 +14,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run() {
         $this->call([
-            SystemVariablesSeeder::class,
-            CategorySeeder::class,
-            ServiceSeeder::class,
-            TypesWindowsSeeder::class,
-            MosquitoSystemsSeeder::class,
-            CategoryHasModelSeeder::class,
             OtherCategoriesSeeder::class,
             GlassSeeder::class,
             WindowsillSeeder::class,
-            GlazedWindowsSeeder::class,
-            RolesSeeder::class,
-            UserSeeder::class,
+            OrderSeeder::class,
         ]);
     }
 }

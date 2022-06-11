@@ -1,22 +1,42 @@
 <?php
 
-    // todo возможно вообще сделать фасады для всех своих хелперов
-    // чтобы определить четкий интерфейс для их использования
-    // тем более что они не реюзабельны, можно сделать фасад для москитных систем, для стеклопакетов и т.д.
+    use App\Models\Category;
     use App\Models\Order;
     use App\Models\ProductInOrder;
-    use App\Models\Salaries\InstallerSalary;
-    use App\Models\SystemVariables;
+    use App\Models\Slopes\Slope;
+    use App\Models\TypesWindows;
+    use App\Models\User;
+    use App\Models\Wraps\Wrap;
+    use Illuminate\Support\Facades\Route;
+    use JetBrains\PhpStorm\ArrayShape;
 
-    // this feature is called real-time facades
-    use Facades\App\Services\Calculator\Interfaces\Calculator;
-    require_once 'MosquitoSystems.php';
-
-    function isOrderPage() {
+    /**
+     * @return bool
+     */
+    function isOrderPage(): bool {
         return Route::is('new-order', 'order');
     }
 
-    function fromUpdatingProductPage() {
+    /**
+     * @return bool
+     */
+    function needPreload(): bool {
+        return Route::is('product-in-order');
+    }
+
+    /**
+     * @return bool
+     */
+    function updatingOrder(): bool {
+        return Str::contains(request()->getRequestUri(), 'orders/') &&
+            !Str::contains(request()->getRequestUri(), '/products') &&
+            strtolower(request()->input('_method')) == 'put';
+    }
+
+    /**
+     * @return bool
+     */
+    function fromUpdatingProductPage(): bool {
         return Route::getRoutes()
                 ->match(
                     app('request')
@@ -26,209 +46,129 @@
                 )->getName() == 'product-in-order';
     }
 
-    function notify($text) {
+    /**
+     * @return bool
+     */
+    function isMosquitoSystemProduct(): bool {
+        $categories = [5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+        return in_array(request()->input('categories'), $categories)
+            || in_array(request()->input('categoryId'), $categories)
+            || requestHasProduct() && in_array(request()->productInOrder->category_id, $categories);
+    }
+
+    /**
+     * @param string $text
+     * @return void
+     */
+    function notify(string $text) {
         session()->push('notifications', $text);
     }
 
-    function createOrder() {
-        return Order::create([
-            'delivery' => Calculator::getDeliveryPrice(),
-            'user_id' => auth()->user()->getAuthIdentifier(),
-            'installer_id' => request()->input('installer') ?? 2,
-            'price' => Calculator::getPrice(),
-            'discounted_price' => Calculator::getPrice(), // todo сделать расчет с учетом скидок
-            'measuring' => Calculator::getNeedMeasuring(),
-            'measuring_price' => Calculator::getMeasuringPrice(),
-            'discounted_measuring_price' => Calculator::getMeasuringPrice(), // todo скидки
-            'comment' => request()->input('comment') ?? 'Комментарий отсутствует',
-            'products_count' => Calculator::getCount(),
-            'installing_difficult' => request()->input('coefficient'),
-            'is_private_person' => request()->input('person') == 'physical',
-            'structure' => 'Пока не готово',
-        ]);
-    }
-
-    function newProduct(Order $order) {
-        return ProductInOrder::create([
-            'installation_id' => Calculator::getInstallation('additional_id'),
-            'order_id' => $order->id,
-            'name' => Calculator::getProduct()->name(),
-            'data' => Calculator::getOptions()->toJson(),
-            'user_id' => auth()->user()->getAuthIdentifier(),
-            'category_id' => request()->input('categories'),
-            'count' => request()->input('count'),
-        ]);
-    }
-
-    function productAlreadyExists($calculator, $product) {
-        return json_decode(
-                $calculator->getOptions()
-                    ->except(['main_price', 'salary', 'measuring', 'delivery'])
-                    ->toJson()
-            ) == json_decode(
-                collect(json_decode($product->data))
-                    ->except(['main_price', 'salary', 'measuring', 'delivery'])
-                    ->toJson()
-            );
-    }
-
-    function updateProductInOrder($product, $mainPrice) {
-        $product->count += (int)request()->input('count');
-        $data = json_decode($product->data);
-        $data->main_price += $mainPrice;
-        $product->data = json_encode($data);
-        $product->update();
-    }
-
-    function createSalary(Order $order) {
-        return InstallerSalary::create([
-            'installer_id' => $order->installer_id,
-            'category_id' => request()->input('categories'),
-            'order_id' => $order->id,
-            'sum' => Calculator::getInstallersWage(),
-            'comment' => 'Пока не готово',
-            'status' => false,
-            'changed_sum' => Calculator::getInstallersWage(),
-            'created_user_id' => auth()->user()->getAuthIdentifier(),
-            'type' => 'Заказ', // todo сделать Enum для этого
-        ]);
-    }
-
-    function salary(ProductInOrder $productInOrder) {
-        $salary = $productInOrder->order
-            ->salaries()
-            ->where('category_id', $productInOrder->category_id);
-        if (!$salary->exists()) {
-            return $productInOrder->order
-                ->salaries()
-                ->first();
-        }
-
-        return $salary;
-    }
-
-    function updateSalary(int|float $sum, ProductInOrder $productInOrder) {
-        $salary = salary($productInOrder)
-            ->first();
-
-        $salary->sum = $sum;
-        $salary->update();
-    }
-
+    /**
+     * @param string $text
+     * @return void
+     */
     function warning(string $text) {
         session()->push('warnings', $text);
     }
 
-    function checkSalaryForMeasuringAndDelivery(Order $order, ProductInOrder $productInOrder) {
-        if (orderHasInstallation($order) || Calculator::productNeedInstallation()) {
-            $order->measuring_price = 0;
-        } else {
-            $order->measuring_price = SystemVariables::value('measuring');
-            // Прибавить к зп монтажника стоимости замера и доставки, если они заданы
-            updateSalary(Calculator::getInstallersWage(), $productInOrder);
-        }
-    }
-
-    function addProductToOrder(Order $order) {
-        $newProductPrice = Calculator::getPrice();
-
-        if ($order->measuring_price) {
-            $newProductPrice -= Calculator::getMeasuringPrice();
-            if (Calculator::productNeedInstallation()) {
-                $order->price -= $order->measuring_price;
-                $order->measuring_price = 0;
-            }
-        }
-
-        if ($order->delivery) {
-            $newProductPrice -= min(
-                $order->delivery,
-                Calculator::getDeliveryPrice()
-            );
-
-            $order->delivery = max(
-                Calculator::getDeliveryPrice(),
-                $order->delivery
-            );
-        }
-
-        $order->price += $newProductPrice;
-        $order->products_count += Calculator::getCount();
-
-        $order->update();
-
-        $product = newProduct($order->refresh());
-
-        updateOrCreateSalary($product);
-
-        return $product;
-    }
-
-    function orderHasInstallation(Order $order): bool {
-        return $order->products->contains(function ($product) {
-            return productHasInstallation($product);
-        });
-    }
-
-    function orderSalaries(Order $order) {
-        return $order->salaries->sum('sum');
-    }
-
-    // when updating products, we save
-    // count of products that was before update
+    /**
+     * @return int|mixed
+     */
     function oldProductsCount() {
         try {
             return oldProduct()->count;
-        } catch (Exception $e) {
-            Debugbar::info($e->getMessage());
+        } catch (Exception) {
             return 0;
         }
     }
 
-    function oldProductData(string|array $field = null) {
+    /**
+     * @param string|null $field
+     * @return mixed
+     */
+    function oldProduct(string $field = null): mixed {
         if (is_null($field)) {
-            return json_decode(oldProduct('data'));
-        } elseif (is_string($field)) {
-            return json_decode(oldProduct('data'))->$field;
-        } elseif (is_array($field)) {
-            $result = json_decode(oldProduct('data'));
-            foreach ($field as $item) {
-                $result = $result->$item;
-            }
-
-            return $result;
+            return session('oldProduct', new stdClass());
+        }
+        try {
+            return session('oldProduct')->$field;
+        } catch (Exception) {
+            return 0;
         }
     }
 
-    function oldProduct(string $field = null) {
-        if (is_null($field)) {
-            return session('oldProduct');
+    /**
+     * @param Order $order
+     * @return string
+     */
+    function delivery(Order $order): string {
+        $deliveryPrice = formatPrice($order->delivery * (1 + $order->additional_visits));
+        if ($order->kilometres > 0) {
+            $additionalDeliveryPrice = additionalDeliveryPrice($order);
+            $deliveryPrice .= " + $additionalDeliveryPrice за километры.";
         }
 
-        return session('oldProduct')->$field;
+        return $deliveryPrice;
     }
 
-    function productHasInstallation(ProductInOrder $productInOrder) {
-        return
-            isset($productInOrder->installation_id) &&
-            $productInOrder->installation_id &&
-            $productInOrder->installation_id != 14;
+    /**
+     * @param Order $order
+     * @return string
+     */
+    function additionalDeliveryPrice(Order $order): string {
+        // todo нарушение DRY в классе DeliveryKilometresCommand
+        return formatPrice(
+            $order->kilometres *
+            (int) systemVariable('additionalPriceDeliveryPerKm')
+            * ($order->additional_visits + 1) * (1+ $order->measuring)
+        );
     }
 
-    function oldProductHasInstallation(): bool {
-        return productHasInstallation(oldProduct());
-    }
-
+    /**
+     * @param object $additional
+     * @return bool
+     */
     function isInstallation(object $additional): bool {
         return
             str_contains(strtolower($additional->text), 'монтаж') &&
             (int)$additional->price;
     }
 
-    function equals(float|int $first, float|int $second) {
-        return strval($first) === strval($second);
+    /**
+     * @param float|int $first
+     * @param float|int $second
+     * @return bool
+     */
+    function equals(float|int $first, float|int $second): bool {
+        return strval((float)$first) === strval((float)$second);
     }
 
+    /**
+     * @return array
+     */
+    #[ArrayShape(['data' => "\App\Models\Category[]|\Illuminate\Database\Eloquent\Collection", 'superCategories' => "\Illuminate\Support\Collection", 'installers' => "\App\Models\User[]|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection"])]
+    function dataForOrderPage(): array {
+        Cache::remember('create-order-data', 600, function () {
+            return [
+                'data' => Category::all(),
+                'superCategories' => Category::whereIn(
+                    'id', Category::select(['parent_id'])
+                    ->whereNotNull('parent_id')
+                    ->groupBy(['parent_id'])
+                    ->get()
+                    ->toArray()
+                )->get(),
+                'installers' => User::role('installer')->get(),
+            ];
+        });
+
+        return Cache::get('create-order-data');
+    }
+
+    /**
+     * @return array
+     */
     function selectedGroups() {
         $i = 1;
         $ids = [];
@@ -240,12 +180,148 @@
         return $ids;
     }
 
-    function jsonData(string $file) {
+    /**
+     * @todo сделать по нормальному подключение пути а не так
+     * @param string $file
+     * @return \Illuminate\Support\Collection
+     */
+    function jsonData(string $file, bool $associative = null) {
         return collect(
             json_decode(
-                file_get_contents(
-                    app_path("Services/Config/$file.json")
-                )
+                file_get_contents("$file.json"), associative: $associative ?? true
             )
         );
+    }
+
+    /**
+     * @param string $time
+     * @param string $format
+     * @return string
+     */
+    function carbon(string $time, string $format): string {
+        return \Carbon\Carbon::make($time)->format($format);
+    }
+
+    /**
+     * @param int $id
+     * @return User
+     */
+    function user(int $id): User {
+        Cache::rememberForever('user', fn() => User::findOrFail($id));
+        return Cache::get('user');
+    }
+
+    /**
+     * @param int $id
+     * @return string
+     */
+    function userName(int $id): string {
+        return \user($id)->name;
+    }
+
+    /**
+     * @return bool
+     */
+    function deletingProduct(): bool {
+        return strtolower(request()->input('_method', '')) == 'delete';
+    }
+
+    /**
+     * @return bool
+     */
+    function requestHasProduct(): bool {
+        return isset(request()->productInOrder);
+    }
+
+    /**
+     * @return bool
+     */
+    function requestHasOrder(): bool {
+        return isset(request()->order);
+    }
+
+    /**
+     * @return Order
+     */
+    function order(): Order {
+        return request()->order;
+    }
+
+    /**
+     * @param Order|null $order
+     * @return string
+     */
+    function orderPrice(Order $order = null): string {
+        $order = $order ?? order();
+        $minimalSum = systemVariable('minSumOrder');
+        if (\OrderService::hasInstallation() && $order->price < $minimalSum) {
+            return $minimalSum;
+        }
+
+        if (!orderHasSale()) {
+            return formatPrice($order->price);
+        }
+
+        return 'Со скидкой: ' . formatPrice($order->price * (1 - $order->discount / 100));
+    }
+
+    /**
+     * @return Closure
+     */
+    function mosquitoInstallationCondition() {
+        return function ($product) {
+            return mosquitoHasInstallation($product);
+        };
+    }
+
+    /**
+     * @param object $productInOrder
+     * @return bool
+     */
+    function mosquitoHasInstallation(object $productInOrder) {
+        return isset($productInOrder->installation_id) &&
+            $productInOrder->installation_id &&
+            $productInOrder->installation_id != 14;
+    }
+
+    /**
+     * @param string|null $field
+     * @return mixed
+     */
+    function firstInstaller(string $field = null): mixed {
+        if (is_null($field)) {
+            return User::role('installer')->first();
+        }
+
+        return User::role('installer')->first()->$field;
+    }
+
+    /**
+     * @param string $name
+     * @return mixed
+     */
+    function systemVariable(string $name): mixed {
+        return \App\Models\SystemVariables::value($name);
+    }
+
+    /**
+     * @return bool
+     */
+    function orderHasSale(): bool {
+        return (int)\order()->discount;
+    }
+
+    /**
+     * @return ProductInOrder
+     */
+    function requestProduct(): ProductInOrder {
+        return request()->productInOrder;
+    }
+
+    /**
+     * @param int|float $price
+     * @return int
+     */
+    function formatPrice(int|float $price): int {
+        return (int)ceil($price);
     }

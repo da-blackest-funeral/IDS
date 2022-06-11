@@ -34,8 +34,10 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        $this->reportable(function (Throwable $e) {
-            //
+        $this->renderable(function (SalaryCalculationException $exception) {
+            \Notifier::warning($exception->getMessage());
+            \request()->productInOrder->delete(); // todo потом сделать все остальные действия
+            return redirect(route('order', ['order' => \request()->order->id]));
         });
     }
 }

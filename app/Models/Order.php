@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Salaries\InstallerSalary;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * App\Models\Order
@@ -12,10 +13,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property int $user_id
  * @property float $price
- * @property float $discounted_price Цена со скидкой
+ * @property float $discount Цена со скидкой
  * @property string $date
  * @property int $status Выполнен заказ или нет
- * @property int $measuring Нужен ли замер
+ * @property bool $measuring Нужен ли замер
  * @property float $discounted_measuring_price
  * @property string $comment
  * @property float $service_price Цена услуги
@@ -60,10 +61,13 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereUserId($value)
  * @mixin \Eloquent
  * @property float $measuring_price
+ * @property bool $need_delivery
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ProductInOrder[] $products
  * @property InstallerSalary|null $salary
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereMeasuringPrice($value)
  * @property int $delivery
+ * @property int $kilometres
+ * @property int $additional_visits
  * @property int $installation
  * @property int $installer_id
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereDelivery($value)
@@ -74,10 +78,14 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Order extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $hidden = [];
     protected $guarded = [];
+
+    protected $casts = [
+      'measuring_price' => 'integer'
+    ];
 
     public function products() {
         return $this->hasMany(ProductInOrder::class);

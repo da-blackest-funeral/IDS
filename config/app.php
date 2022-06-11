@@ -233,7 +233,10 @@
             'View' => Illuminate\Support\Facades\View::class,
             'Debugbar' => Barryvdh\Debugbar\Facades\Debugbar::class,
             'Notifier' => \App\Services\Facades\Classes\NotifierFacade::class,
-
+            'ProductService' => \App\Services\Facades\Classes\ProductServiceFacade::class,
+            'OrderService' => \App\Services\Facades\Classes\OrderServiceFacade::class,
+            'SalaryService' => \App\Services\Facades\Classes\SalaryServiceFacade::class,
+            'SelectData' => \App\Services\Facades\Classes\SelectDataFacade::class,
         ],
 
     ];

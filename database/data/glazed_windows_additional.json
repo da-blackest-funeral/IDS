@@ -1,0 +1,38 @@
+[
+    {
+        "option_name": "Без закалки",
+        "group": "forging",
+        "price": 0,
+        "layer_id": 1
+    },
+    {
+        "option_name": "Нужна закалка",
+        "group": "forging",
+        "price": 1392,
+        "layer_id": 1
+    },
+    {
+        "option_name": "Без аргона",
+        "group": "argon",
+        "price": 0,
+        "layer_id": 2
+    },
+    {
+        "option_name": "Нужен аргон",
+        "group": "argon",
+        "price": 144,
+        "layer_id": 2
+    },
+    {
+        "option_name": "Алюм. рамка",
+        "group": "frame",
+        "price": 0,
+        "layer_id": 2
+    },
+    {
+        "option_name": "Пластик. рамка",
+        "group": "frame",
+        "price": 420,
+        "layer_id": 2
+    }
+]

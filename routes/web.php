@@ -29,15 +29,22 @@
         Route::post('/', [CalculationController::class, 'save']);
 
         Route::prefix('orders')->group(function () {
-            Route::get('/{order}', [OrdersController::class, 'order'])
+            Route::get('/', [OrdersController::class, 'index'])
+                ->name('all-orders');
+
+            Route::get('/{order}', [OrdersController::class, 'show'])
                 ->name('order');
 
             Route::post('/{order}', [OrdersController::class, 'addProduct']);
+
+            Route::put('/{order}', [OrdersController::class, 'update']);
 
             Route::get('/{order}/products/{productInOrder}', [ProductController::class, 'index'])
                 ->name('product-in-order');
 
             Route::post('/{order}/products/{productInOrder}', [ProductController::class, 'update']);
+
+            Route::delete('/{order}/products/{productInOrder}', [ProductController::class, 'delete']);
         });
 
         Route::get('/documents', [ProductController::class, 'test'])
@@ -127,11 +134,8 @@
         });
 
         Route::prefix('orders')->group(function () {
-            Route::view('/add', 'pages.orders.add')
-                ->name('add-order');
 
-            Route::view('/all', 'pages.orders.all')
-                ->name('all-orders');
+            Route::delete('/{order}', [OrdersController::class, 'delete']);
 
             Route::view('/windowsills', 'pages.orders.windowsills')
                 ->name('windowsills-orders');

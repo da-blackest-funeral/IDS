@@ -3,65 +3,80 @@
     namespace App\Http\Controllers;
 
     use App\Http\Requests\SaveOrderRequest;
-    use App\Models\Category;
     use App\Models\Order;
     use App\Models\ProductInOrder;
+    use App\Services\Calculator\Interfaces\Calculator;
+    use App\Services\Repositories\Classes\ProductRepository;
 
     class ProductController extends Controller
     {
-        protected SaveOrderRequest $request;
 
         public function __construct(SaveOrderRequest $request) {
-            $this->request = $request;
         }
 
         public function index(Order $order, ProductInOrder $productInOrder) {
-            return view('pages.add-product')->with([
-                // todo часть данных отсюда общая и ее можно вынести в отдельный метод
-                'data' => Category::all(),
-                'superCategories' => Category::whereIn(
-                    'id', Category::select(['parent_id'])
-                    ->whereNotNull('parent_id')
-                    ->groupBy(['parent_id'])
-                    ->get()
-                    ->toArray()
-                )->get(),
-                'orderNumber' => $order->id,
-                'product' => $productInOrder,
-                'productData' => json_decode($productInOrder->data),
-                'needPreload' => true,
-            ]);
+            return view('pages.add-product')
+                ->with(\Arr::add(dataForOrderPage(), 'product', $productInOrder));
         }
 
-        public function update(Order $order, ProductInOrder $productInOrder) {
+        public function update(Order $order, ProductInOrder $productInOrder, Calculator $calculator) {
+            $calculator->calculate();
+            $calculator->saveInfo();
 
-            $productData = json_decode($productInOrder->data);
-            $order->price -= $productData->main_price;
-            $order->products_count -= $productInOrder->count;
-            session()->put('oldProduct', $productInOrder);
+            \OrderService::remove($productInOrder);
 
-            foreach ($productData->additional as $additional) {
-                $order->price -= $additional->price;
+            if (\OrderService::orderOrProductHasInstallation()) {
+                \SalaryService::checkMeasuringAndDelivery();
             }
 
+            \OrderService::addProduct();
+            $productInOrder->delete();
             $order->update();
 
-            addProductToOrder(
-                order: $order->refresh()
-            );
+            return redirect(route('order', ['order' => $order->id]));
+        }
 
-            checkSalaryForMeasuringAndDelivery(
-                order: $order,
-                productInOrder: $productInOrder
-            );
+        public function delete(Order $order, ProductInOrder $productInOrder) {
+            /*
+             * При удалении товара
+             * 1) проверить доставку и монтаж
+             * 2) удалить\обновить зарплату за него
+             */
+
+            /*
+             * 1) если в заказе есть товары данного типа, то посчитать за них зарплату с помощью updateOrCreateSalary
+             * 2) если таких товаров нет, то просто удалить зарплату
+             * 3) если кроме удаленного товара в заказе нет товаров с монтажом, то замер сделать не бесплатным,
+             * зарплаты с типом NO_INSTALLATION вернуть
+             */
+
+            \OrderService::remove($productInOrder);
+            \OrderService::calculateMeasuringOptions();
+            \OrderService::calculateDeliveryOptions();
+
+            $sameCategoryProducts = ProductRepository::byCategoryWithout($productInOrder);
+
+            if ($sameCategoryProducts->isNotEmpty()) {
+                \ProductService::use(
+                    $sameCategoryProducts->first()
+                )->updateOrCreateSalary();
+            } else {
+                \SalaryService::salary()->delete();
+                \ProductService::use($productInOrder)
+                    ->checkRestoreNoInstallationSalaries();
+            }
 
             $productInOrder->delete();
             $order->update();
 
-            // при обновлении уже существующего товара нужно
-            // 1) отнять стоимость старого товара
-            // 2) если был монтаж, а стал без монтажа, то замер надо сделать снова не бесплатным
-            // 3) отнять количество товара от общего количества всех товаров в заказе
+            if (!\OrderService::use($order->refresh())->hasProducts()) {
+                $order->update([
+                    'price' => 0,
+                    'measuring_price' => 0,
+                    'delivery' => 0,
+                ]);
+            }
+
             return redirect(route('order', ['order' => $order->id]));
         }
     }

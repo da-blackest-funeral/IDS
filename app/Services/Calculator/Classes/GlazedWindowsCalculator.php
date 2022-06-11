@@ -6,7 +6,6 @@
     use App\Models\GlazedWindows\GlazedWindows;
     use App\Models\ProductInOrder;
     use App\Models\SystemVariables;
-    use App\Services\Classes\HasSquare;
     use Illuminate\Http\Request;
     use Illuminate\Support\Collection;
 

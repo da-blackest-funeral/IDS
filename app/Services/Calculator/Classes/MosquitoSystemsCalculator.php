@@ -16,7 +16,11 @@
 
         // todo: скидки
         // todo вынести все методы по сохранению в options в другой класс
-        // возможно в тот же класс куда я добавлю функции, т.е. фасад
+        // Создать класс ProductData со всеми полями
+
+        /*
+         * todo методы с доставкой, коэф. сложности вынести в трейты
+         */
 
         /**
          * Type of mosquito system in current request
@@ -69,7 +73,7 @@
             }
 
             try {
-                $this->type = Type::byCategory($request->get('categories'));
+                $this->type = Type::byCategory($this->categoryId);
             } catch (\Exception $exception) {
                 return view('welcome')->withErrors([
                     'not_found' => 'Тип не найден',
@@ -82,11 +86,11 @@
             }
 
             $this->additional = new Collection();
+        }
 
+        public function saveInfo() {
             $this->saveTissue();
             $this->saveProfile();
-
-            $this->calculate();
         }
 
         protected function saveTissue() {
@@ -97,7 +101,7 @@
             $this->options->put('profileId', $this->product->profile_id);
         }
 
-        protected function calculate(): void {
+        public function calculate(): void {
             // Making all preparations that are the same for all products
             parent::calculate();
 
@@ -111,7 +115,9 @@
              * Similarly with the price of measurement
              */
             $this->setProductPrice()
+                ->saveSelectedAdditional()
                 ->calculatePriceForAdditional()
+                ->saveAdditionalData()
                 ->setPriceForCount()
                 ->addDelivery()
                 ->addMeasuringPrice();
@@ -146,28 +152,26 @@
             return $this->request->has('coefficient') && $this->request->get('coefficient') != 1;
         }
 
-        public function salaryForDifficulty($salary = null, $price = null, $coefficient = null, $count = null) {
-            if (is_null($salary) || is_null($price) || is_null($coefficient) || is_null($count)) {
+        public function salaryForDifficulty($price = null, $coefficient = null, $count = null) {
+            if (is_null($price) || is_null($coefficient) || is_null($count)) {
                 $price = $this->installationPrice;
                 $coefficient = $this->coefficient;
                 $count = $this->count;
             }
 
-            $additionalSalary = (int) round(
+            $additionalSalary = (int)round(
                 $price *
                 (1 - 1 / $coefficient) *
                 (float)SystemVariables::value('coefficientSalaryForDifficult')
                 * $count
             );
 
-            if (!is_null($salary)) {
-                return $salary + $additionalSalary;
-            }
-
             $this->installersWage += $additionalSalary;
 
             $this->options->put('coefficient', $this->coefficient)
                 ->put('salaryForCoefficient', "Доп. зарплата за коэффициент сложности: $additionalSalary");
+
+            return $additionalSalary;
         }
 
         /**
@@ -201,9 +205,9 @@
         }
 
         /**
-         * @return \Illuminate\Database\Eloquent\Model
+         * @return Product
          */
-        public function getProduct(): \Illuminate\Database\Eloquent\Model {
+        public function getProduct(): Product {
             return $this->product;
         }
 
@@ -260,31 +264,89 @@
          * That price multiplies by square - but if square <= 1, squareCoefficient = 1, else
          * squareCoefficient = square (in square meters)
          *
-         * @return \Illuminate\Http\RedirectResponse|BaseCalculator
+         * @return self
          */
-        protected function setProductPrice() {
-            try {
-                // Decreasing price if customer need repairing instead new
-                if ($this->request->has('new') && !$this->request->get('new')) {
-                    $this->product->price *= SystemVariables::value('repairCoefficient');
-                }
-                // Increasing price if customer need product to be created faster
-                if ($this->request->has('fast') && $this->request->get('fast')) {
-                    $this->product->price *= SystemVariables::value('coefficientFastCreating');
-                }
+        protected function setProductPrice(): self {
+            // Decreasing price if customer need repairing instead of creating new
+            $this->checkRepair();
 
-                $this->price += $this->product->price * $this->squareCoefficient;
+            // Increasing price if customer need product to be created faster
+            $this->checkFastCreating();
 
-                $this->savePrice($this->product->price * $this->squareCoefficient);
-
-            } catch (\Exception $exception) {
-                \Debugbar::alert($exception->getMessage());
-                return back()->withErrors([
-                    'not_found' => 'Такого товара не найдено',
-                ]);
-            }
+            $this->price += $this->product->price * $this->squareCoefficient;
+            $this->savePrice($this->product->price * $this->squareCoefficient);
 
             return $this;
+        }
+
+        /**
+         * @return void
+         */
+        protected function checkRepair() {
+            if (!$this->request->input('new', false)) {
+                $this->product->price *= SystemVariables::value('repairCoefficient');
+                $this->options->put('new', false);
+            } else {
+                $this->options->put('new', true);
+            }
+        }
+
+        /**
+         * @return void
+         */
+        protected function checkFastCreating() {
+            if ($this->request->input('fast', false)) {
+                $this->product->price *= SystemVariables::value('coefficientFastCreating');
+                $this->options->put('fast', true);
+            } else {
+                $this->options->put('fast', false);
+            }
+        }
+
+        /**
+         * @return self
+         */
+        protected function saveSelectedAdditional(): self {
+            $ids = selectedGroups();
+
+            $this->additional = $this->getTypeAdditional($ids)
+                // Writing to options selected groups
+                ->each(function ($option) {
+                    $this->options->put("group-$option->group_id", $option->additional_id);
+                });
+
+            return $this;
+        }
+
+        /**
+         * @return bool
+         */
+        protected function needFast(): bool {
+            return $this->request->input('fast', false);
+        }
+
+        /**
+         * @param object $additional
+         * @return float|int
+         */
+        protected function calculateAdditional(object $additional): float|int {
+            if (!$this->additionalIsInstallation($additional)) {
+                $additional->price *= $this->squareCoefficient;
+            } else {
+                // If customer need fast creating, installation price increases
+                if ($this->needFast()) {
+                    $additional->price *= SystemVariables::value('coefficientFastCreating');
+                }
+
+                $this->installationPrice = $additional->price;
+
+                if ($this->hasCoefficient()) {
+                    $this->installationPrice *= $this->coefficient;
+                    $additional->price *= $this->coefficient;
+                }
+            }
+
+            return $additional->price;
         }
 
         /**
@@ -297,60 +359,73 @@
          * values of additional ids as option's values.
          */
         protected function calculatePriceForAdditional() {
-            $ids = selectedGroups();
+            foreach ($this->additional as $add) {
+                $additionalPrice = $this->calculateAdditional($add);
+                $this->price += $additionalPrice ?? 0;
+            }
 
-            $additional = $this->getTypeAdditional($ids)
-                // Writing to options selected groups
-                ->each(function ($option) {
-                    $this->options->put("group-$option->group_id", $option->additional_id);
-                });
+            return $this;
+        }
 
+        /**
+         * @return self
+         */
+        protected function saveAdditionalData(): self {
             // Items will be displayed to user
             $items = new Collection();
             $additionalCollection = new Collection();
 
-            foreach ($additional as $add) {
-                $additionalPrice = $add->price;
-
-                if (!$this->additionalIsInstallation($add)) {
-                    $additionalPrice *= $this->squareCoefficient;
-                } else {
-                    // If customer need fast creating, installation price increases
-                    if ($this->request->has('fast') && $this->request->get('fast')) {
-                        $additionalPrice *= SystemVariables::value('coefficientFastCreating');
-                    }
-
-                    $this->installationPrice = $additionalPrice;
-
-                    if ($this->hasCoefficient()) {
-                        $this->installationPrice *= $this->coefficient;
-                        $additionalPrice *= $this->coefficient;
-                    }
-                }
-
+            foreach ($this->additional as $add) {
                 $items->push([
-                    'text' => "Доп. за $add->name: " . $additionalPrice * $this->count,
-                    'price' => $additionalPrice * $this->count,
+                    'text' => "Доп. за $add->name: " . $add->price * $this->count,
+                    'price' => $add->price * $this->count,
                 ]);
+
                 $additionalCollection->push($add);
-
-                $this->price += $additionalPrice ?? 0;
             }
 
-            if ($this->hasCoefficient()) {
-                $items->push([
-                    'text' => 'Доп. цена за сложность монтажа: ' . ($this->installationPrice -
-                        $this->installationPrice / $this->coefficient) * $this->count,
-                    'price' => 0,
-                ]);
-            }
+            $this->saveCoefficient($items);
 
             $this->saveAdditional($items);
             $this->additional->push($additionalCollection)->collapse();
 
             return $this;
         }
+//            // Items will be displayed to user
+//            $items = new Collection();
+//            foreach ($this->additional as $add) {
+//                $items->push([
+//                    'text' => "Доп. за $add->name: " . $add->price * $this->count,
+//                    'price' => $add->price * $this->count,
+//                ]);
+//            }
+//
+//            $items = $this->saveCoefficient($items);
+//            $this->saveAdditional($items);
+//
+//            return $this;
+//        }
 
+        /**
+         * @param Collection $items
+         * @return Collection
+         */
+        protected function saveCoefficient(Collection $items): Collection {
+            if ($this->hasCoefficient()) {
+                $items->push([
+                    'text' => 'Доп. цена за сложность монтажа: ' . ($this->installationPrice -
+                            $this->installationPrice / $this->coefficient) * $this->count,
+                    'price' => 0,
+                ]);
+            }
+
+            return $items;
+        }
+
+        /**
+         * @param $ids
+         * @return Collection
+         */
         protected function getTypeAdditional($ids) {
             return \DB::table('mosquito_systems_type_additional')
                 ->where('type_id', $this->type->id)
@@ -377,8 +452,8 @@
          */
 
         public function calculateInstallationSalary(): float|null {
-            // todo нарушение DRY, в этом классе есть похожий метод,
-            // надо "склеить" их в один
+            // todo нарушение DRY, уже есть похожий метод
+            // находится в MosquitoSystemsHelper
 
             if (!$this->needInstallation) {
                 $this->installersWage += $this->measuringSalary;
@@ -408,26 +483,20 @@
         /**
          * @param int $count
          * @param ProductInOrder $productInOrder
-         * @param null $installation
-         * @return float|int|mixed|void
+         * @return float|int
          */
-        public function calculateSalaryForCount(
-            int            $count,
-            ProductInOrder $productInOrder,
-                           $installation = null
-        ) {
+        public function calculateSalaryForCount(int $count, ProductInOrder $productInOrder) {
             if (
-                $productInOrder->installation_id == 0 &&
+                !$productInOrder->installation_id &&
                 !$this->installation->additional_id &&
                 !$this->installation->id
             ) {
                 return $this->installersWage;
             }
 
-            $result = calculateInstallationSalary(
+            $result = \ProductService::calculateInstallationSalary(
                 productInOrder: $productInOrder,
-                count: $count,
-                installation: $installation
+                count: $count
             );
 
             if ($this->hasCoefficient()) {
@@ -437,7 +506,7 @@
             return $result;
         }
 
-        public function getInstallationSalary($installation, $count = null, int $typeId = null) {
+        public function getInstallationSalary(mixed $installation, int $count = null, int $typeId = null) {
             return \DB::table('mosquito_systems_type_salary')
                 ->where('type_id', $typeId ?? $this->type->id)
                 ->where('additional_id', $installation->additional_id ?? $installation)
@@ -472,13 +541,14 @@
          * @return bool
          */
         protected function additionalIsInstallation($additional): bool {
-            if ($additional->name != 'Без монтажа' && $additional->group_name == 'Монтаж') {
+            // todo правило определения того факта, что это монтаж вынести в отдельный метод, т.к. есть дублирование
+            if ($additional->additional_id != 14 && $additional->group_name == 'Монтаж') {
                 $this->needInstallation = true;
                 $this->installation = $additional;
                 return true;
             }
 
-            if ($additional->name == 'Без монтажа') {
+            if ($additional->additional_id == 14) {
                 $this->needInstallation = false;
                 $this->installation = $additional;
                 return false;

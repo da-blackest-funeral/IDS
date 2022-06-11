@@ -2,7 +2,6 @@
 
     namespace App\Services\Notifications;
 
-    // todo вывод warning'ов делать через этот класс и зарегестрировать его как фасад
     use Illuminate\Support\Collection;
     use JetBrains\PhpStorm\NoReturn;
 
@@ -22,7 +21,7 @@
          * @return void
          */
         public function setData() {
-            static::$messagesAndRules = jsonData('warnings');
+            static::$messagesAndRules = jsonData(app_path('Services/Config/warnings'), false);
         }
 
         /**
@@ -34,11 +33,13 @@
             $selected = collect(selectedGroups());
 
             static::$messagesAndRules->each(function ($object) use ($selected) {
+//                dd(request()->input('categories'));
                 if (
                     request()->has('categories') &&
                     $object->category == request()->input('categories')
                 ) {
                     $needWarning = false;
+                    // сделать здесь паттерн Visitor
                     if (isset($object->profile)) {
                         $needWarning = $object->profile == request()->input('profiles');
                     }
