@@ -106,9 +106,11 @@
 
             $resultOrder = $this->testHelper->defaultOrder();
 
-            $resultOrder['price'] = $this->testHelper->productPrice() +
+            $resultOrder['price'] = (int) (
+                $this->testHelper->productPrice() +
                 $this->testHelper->defaultDeliverySum() +
-                $this->testHelper->installationPrice() * $coefficient;
+                $this->testHelper->installationPrice() * $coefficient
+            );
 
             $resultOrder['installing_difficult'] = $coefficient;
             $resultOrder['measuring_price'] = 0;

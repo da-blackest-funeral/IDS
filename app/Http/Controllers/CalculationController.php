@@ -34,7 +34,14 @@
                 ->setInstallationId($calculator->getInstallation('additional_id'))
                 ->setName($calculator->getProduct()->name());
 
-            $order = \OrderService::make();
+            $requestData = (object) request()->only([
+               'comment', 'coefficient',
+            ]);
+            $requestData->installerId = User::role('installer')->first('id')->id;
+            $requestData->isPrivatePerson = false;
+            $requestData->userId = auth()->user()->getAuthIdentifier();
+
+            $order = \OrderService::create($calculator, $requestData);
             $dto->setOrderId($order->id);
 
             \OrderService::use($order);

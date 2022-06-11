@@ -58,25 +58,38 @@
         }
 
         /**
+         * @param CreateOrderDto $dto
          * @return Order
          */
-        public function make(): Order {
-            return Order::create([
-                'delivery' => Calculator::getDeliveryPrice(),
-                'user_id' => auth()->user()->getAuthIdentifier(),
-                // todo убрать этот кошмар
-                'installer_id' => firstInstaller('id'),
-                'price' => Calculator::getPrice(),
-                'discount' => 0,
-                'measuring' => Calculator::getNeedMeasuring(),
-                'measuring_price' => Calculator::getMeasuringPrice(),
-                'discounted_measuring_price' => Calculator::getMeasuringPrice(),
-                'comment' => request()->input('comment') ?? 'Комментарий отсутствует',
-                'products_count' => Calculator::getCount(),
-                'installing_difficult' => request()->input('coefficient'),
-                'is_private_person' => request()->input('person') == 'physical',
-                'structure' => 'Пока не готово',
-            ]);
+        public function make(CreateOrderDto $dto): Order {
+            $service = new CreateOrderService();
+            return $service->make($dto);
+        }
+
+        /**
+         * @param CalculatorInterface $calculator
+         * @param object $requestData
+         * @return Order
+         */
+        public function create(CalculatorInterface $calculator, object $requestData): Order {
+            // todo здесь и в остальных местах сделать dto классы для $requestData
+            $dto = new CreateOrderDto();
+
+            $dto->setDeliveryPrice($calculator->getDeliveryPrice())
+                ->setUserId($requestData->userId)
+                ->setInstallerId($requestData->installerId)
+                ->setPrice((int)$calculator->getPrice())
+                ->setDiscount(0)
+                ->setNeedMeasuring($calculator->getNeedMeasuring())
+                ->setMeasuringPrice($calculator->getMeasuringPrice())
+                ->setDiscountedMeasuringPrice($calculator->getMeasuringPrice())
+                ->setComment($requestData->comment)
+                ->setProductCount($calculator->getCount())
+                ->setInstallingDifficult($requestData->coefficient)
+                ->setIsPrivatePerson($requestData->isPrivatePerson)
+                ->setStructure('Пока не готово');
+
+            return $this->make($dto);
         }
 
         /**

@@ -5,6 +5,7 @@
     use App\Models\Order;
     use App\Models\ProductInOrder;
     use App\Services\Calculator\Interfaces\Calculator;
+    use App\Services\Helpers\Classes\CreateOrderDto;
     use Illuminate\Support\Collection;
 
     interface OrderServiceInterface
@@ -16,9 +17,15 @@
         public function use(Order $order): OrderServiceInterface;
 
         /**
+         * @param CreateOrderDto $dto
          * @return Order
          */
-        public function make(): Order;
+        public function make(CreateOrderDto $dto): Order;
+
+        /**
+         * @return mixed
+         */
+        public function create(Calculator $calculator, object $requestData): Order;
 
         /**
          * @return bool

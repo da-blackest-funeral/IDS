@@ -10,10 +10,6 @@
 
     class ProductController extends Controller
     {
-
-        public function __construct(SaveOrderRequest $request) {
-        }
-
         public function index(Order $order, ProductInOrder $productInOrder) {
             return view('pages.add-product')
                 ->with(\Arr::add(dataForOrderPage(), 'product', $productInOrder));
