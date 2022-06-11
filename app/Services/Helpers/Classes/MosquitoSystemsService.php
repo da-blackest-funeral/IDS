@@ -42,6 +42,14 @@
         }
 
         /**
+         * @param object $productInOrder
+         * @return bool
+         */
+        public static function hasInstallation(object $productInOrder): bool {
+            return mosquitoHasInstallation($productInOrder);
+        }
+
+        /**
          * @return bool
          */
         protected function checkEmptySalary(): bool {

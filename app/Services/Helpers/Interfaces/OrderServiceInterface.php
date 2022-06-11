@@ -4,6 +4,7 @@
 
     use App\Models\Order;
     use App\Models\ProductInOrder;
+    use App\Services\Calculator\Interfaces\Calculator;
     use Illuminate\Support\Collection;
 
     interface OrderServiceInterface
@@ -27,9 +28,11 @@
         /**
          * Creates new product and adds it to the order
          *
+         * @param Calculator $calculator
+         * @param object $requestData
          * @return ProductInOrder
          */
-        public function addProduct(): ProductInOrder;
+        public function addProduct(Calculator $calculator, object $requestData): ProductInOrder;
 
         /**
          * Calculates salary for all order

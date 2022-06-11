@@ -29,7 +29,15 @@
                 \SalaryService::checkMeasuringAndDelivery();
             }
 
-            \OrderService::addProduct();
+            $requestData = (object) request()->only([
+                'comment', 'categories', 'count'
+            ]);
+
+            $requestData->userId = auth()->user()->getAuthIdentifier();
+            $requestData->orderId = $order->id;
+
+            \OrderService::addProduct($calculator, $requestData);
+
             $productInOrder->delete();
             $order->update();
 

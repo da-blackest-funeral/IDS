@@ -6,6 +6,7 @@
     use App\Models\ProductInOrder;
     use App\Services\Helpers\Interfaces\ProductServiceInterface;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
+    use App\Services\Calculator\Interfaces\Calculator as CalculatorInterface;
     use Illuminate\Support\Collection;
 
     abstract class AbstractProductService implements ProductServiceInterface
@@ -45,28 +46,31 @@
         }
 
         /**
-         * @param object $productInOrder
-         * @return bool
+         * @param CreateProductDto $dto
+         * @return ProductInOrder
          */
-        public static function hasInstallation(object $productInOrder): bool {
-            return mosquitoHasInstallation($productInOrder);
+        public function make(CreateProductDto $dto): ProductInOrder {
+            $service = new CreateProductService();
+            return $service->make($dto);
         }
 
         /**
+         * @param CalculatorInterface $calculator
+         * @param object $requestData
          * @return ProductInOrder
          */
-        function make(): ProductInOrder {
-            $order = \OrderService::getOrder();
-            return ProductInOrder::create([
-                'installation_id' => Calculator::getInstallation('additional_id'),
-                'order_id' => $order->id,
-                'name' => Calculator::getProduct()->name(),
-                'data' => Calculator::getOptions(),
-                'user_id' => auth()->user()->getAuthIdentifier(),
-                'category_id' => request()->input('categories'),
-                'count' => request()->input('count', 1),
-                'comment' => request()->input('comment') ?? 'Нет комментария',
-            ]);
+        public function create(CalculatorInterface $calculator, object $requestData) {
+            $dto = new CreateProductDto();
+            $dto->setUserId($requestData->userId)
+                ->setComment($requestData->comment)
+                ->setCategoryId($requestData->categories)
+                ->setCount($requestData->count)
+                ->setData($calculator->getOptions())
+                ->setInstallationId($calculator->getInstallation('additional_id'))
+                ->setName($calculator->getProduct()->name())
+                ->setOrderId($requestData->orderId);
+
+            return $this->make($dto);
         }
 
         /**

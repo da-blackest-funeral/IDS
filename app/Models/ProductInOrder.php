@@ -7,13 +7,12 @@
     use Illuminate\Database\Eloquent\SoftDeletes;
 
     /**
-     * App\Models\ProductinOrder
-     *
      * @method static \Illuminate\Database\Eloquent\Builder|ProductInOrder newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder|ProductInOrder newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder|ProductInOrder query()
      * @mixin \Eloquent
      * @property int $id
+     * @property string $comment
      * @property int $order_id
      * @property int $user_id
      * @property int $category_id

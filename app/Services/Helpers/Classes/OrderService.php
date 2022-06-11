@@ -8,6 +8,7 @@
     use App\Services\Helpers\Interfaces\OrderServiceInterface;
     use App\Services\Repositories\Interfaces\ProductRepositoryInterface;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
+    use App\Services\Calculator\Interfaces\Calculator as CalculatorInterface;
 
     class OrderService implements OrderServiceInterface
     {
@@ -197,20 +198,22 @@
         /**
          * Creates new product and adds it to the order
          *
+         * @param CalculatorInterface $calculator
+         * @param object $requestData
          * @return ProductInOrder
          * @throws \Throwable
          */
-        public function addProduct(): ProductInOrder {
+        public function addProduct(CalculatorInterface $calculator, object $requestData): ProductInOrder {
 
-            $this->order->price += Calculator::getPrice();
+            $this->order->price += $calculator->getPrice();
 
             $this->calculateMeasuringOptions();
             $this->calculateDeliveryOptions();
 
-            $this->order->products_count += Calculator::getCount();
+            $this->order->products_count += $calculator->getCount();
 
             $this->order->update();
-            $product = \ProductService::make();
+            $product = \ProductService::create($calculator, $requestData);
 
             \DB::transaction(function () use ($product) {
                 \ProductService::use($product)

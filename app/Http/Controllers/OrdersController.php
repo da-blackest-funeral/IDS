@@ -13,8 +13,6 @@
 
     class OrdersController extends Controller
     {
-        protected Request $request;
-
         public function index() {
             return view('pages.orders.all')
                 ->with([
@@ -43,7 +41,13 @@
             $calculator->calculate();
             $calculator->saveInfo();
 
-            \OrderService::addProduct();
+            $requestData = (object)request()->only([
+                'count', 'categories', 'comment',
+            ]);
+            $requestData->orderId = $order->id;
+            $requestData->userId = auth()->user()->getAuthIdentifier();
+
+            \OrderService::addProduct($calculator, $requestData);
 
             if (\OrderService::orderOrProductHasInstallation()) {
                 \SalaryService::checkMeasuringAndDelivery();
