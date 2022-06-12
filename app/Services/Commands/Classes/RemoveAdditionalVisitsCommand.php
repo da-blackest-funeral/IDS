@@ -8,20 +8,22 @@
 
     class RemoveAdditionalVisitsCommand implements Command
     {
+        /**
+         * @param Order $order
+         * @param InstallerSalary $salary
+         */
         public function __construct(
-            protected Order $order
-        ) {}
+            private readonly Order $order,
+            private readonly InstallerSalary $salary
+        ) {
+        }
 
         public function execute() {
             if (!$this->order->additional_visits) {
                 return;
             }
 
-            /** @var InstallerSalary $salary */
-            $salary = \SalaryHelper::salariesNoInstallation($this->order)
-                ->first();
-            $salary->sum -= systemVariable('delivery') * $this->order->additional_visits;
-            $salary->update();
+            $this->salary->sum -= systemVariable('delivery') * $this->order->additional_visits;
 
             $this->order->price -= $this->order->delivery * $this->order->additional_visits;
             $this->order->additional_visits = 0;

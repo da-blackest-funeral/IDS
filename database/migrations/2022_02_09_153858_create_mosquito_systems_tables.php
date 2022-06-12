@@ -152,6 +152,7 @@
          * @return void
          */
         public function down() {
+            DB::statement('SET FOREIGN_KEY_CHECKS = 0');
             Schema::dropIfExists("{$this->prefix}_types");
             Schema::dropIfExists("{$this->prefix}_tissues");
             Schema::dropIfExists("{$this->prefix}_profiles");
@@ -161,5 +162,6 @@
             Schema::dropIfExists("{$this->prefix}_type_group");
             Schema::dropIfExists("{$this->prefix}_type_additional");
             Schema::dropIfExists("{$this->prefix}_product_has_additional");
+            DB::statement('SET FOREIGN_KEY_CHECKS = 1');
         }
     };

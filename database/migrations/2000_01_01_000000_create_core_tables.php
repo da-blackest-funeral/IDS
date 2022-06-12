@@ -24,6 +24,11 @@
                 $table->timestamps();
             });
 
+            Schema::create('services', function (Blueprint $table) {
+                $table->id();
+                $table->timestamps();
+            });
+
             Schema::create('users', function (Blueprint $table) {
                 $table->id();
                 $table->string('name');
@@ -60,11 +65,6 @@
                 $table->timestamps();
             });
 
-            Schema::create('services', function (Blueprint $table) {
-                $table->id();
-                $table->timestamps();
-            });
-
             Schema::create('categories', function (Blueprint $table) {
                 $table->id();
                 $table->string('name');
@@ -81,7 +81,6 @@
                     ->default(0);
                 $table->timestamps();
             });
-//            $this->comment('types_windows', 'Типы окон - Алюминиевые, окна из ПВХ и т.д.');
 
             Schema::create('category_has_method', function (Blueprint $table) {
                 $table->id();
@@ -223,6 +222,7 @@
          * @return void
          */
         public function down() {
+            DB::statement('SET FOREIGN_KEY_CHECKS = 0');
             Schema::dropIfExists('users');
             Schema::dropIfExists('categories');
             Schema::dropIfExists('services');
@@ -232,5 +232,6 @@
             Schema::dropIfExists('deliveries');
             Schema::dropIfExists('managements');
             Schema::dropIfExists('wishes');
+            DB::statement('SET FOREIGN_KEY_CHECKS = 1');
         }
     };

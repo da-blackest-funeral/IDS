@@ -19,7 +19,7 @@
          */
         public function __construct(Collection $products) {
             $this->products = $products;
-            $this->order = \OrderHelper::getOrder();
+            $this->order = \OrderService::getOrder();
         }
 
         /**

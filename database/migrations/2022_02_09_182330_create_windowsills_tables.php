@@ -79,10 +79,12 @@ return new class extends Migration {
      * @return void
      */
     public function down() {
+        DB::statement('SET FOREIGN_KEY_CHECKS = 0');
         Schema::dropIfExists("{$this->prefix}_materials");
         Schema::dropIfExists("{$this->prefix}_colors");
         Schema::dropIfExists("{$this->prefix}_material_color");
         Schema::dropIfExists("{$this->prefix}");
         Schema::dropIfExists("{$this->prefix}_prices");
+        DB::statement('SET FOREIGN_KEY_CHECKS = 1');
     }
 };

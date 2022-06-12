@@ -14,7 +14,7 @@
          * @return void
          */
         public function __construct() {
-            $this->order = \OrderHelper::getOrder();
+            $this->order = \OrderService::getOrder();
         }
 
         /**

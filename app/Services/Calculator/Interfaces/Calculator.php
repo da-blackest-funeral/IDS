@@ -35,6 +35,5 @@ interface Calculator
 
     public function calculateSalaryForCount(int $count, ProductInOrder $productInOrder);
 
-    // todo перенести это в класс productHelper
     public function productNeedInstallation(): bool;
 }

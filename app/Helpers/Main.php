@@ -3,7 +3,10 @@
     use App\Models\Category;
     use App\Models\Order;
     use App\Models\ProductInOrder;
+    use App\Models\Slopes\Slope;
+    use App\Models\TypesWindows;
     use App\Models\User;
+    use App\Models\Wraps\Wrap;
     use Illuminate\Support\Facades\Route;
     use JetBrains\PhpStorm\ArrayShape;
 
@@ -100,7 +103,26 @@
      * @return string
      */
     function delivery(Order $order): string {
-        return formatPrice($order->delivery * (1 + $order->additional_visits));
+        $deliveryPrice = formatPrice($order->delivery * (1 + $order->additional_visits));
+        if ($order->kilometres > 0) {
+            $additionalDeliveryPrice = additionalDeliveryPrice($order);
+            $deliveryPrice .= " + $additionalDeliveryPrice за километры.";
+        }
+
+        return $deliveryPrice;
+    }
+
+    /**
+     * @param Order $order
+     * @return string
+     */
+    function additionalDeliveryPrice(Order $order): string {
+        // todo нарушение DRY в классе DeliveryKilometresCommand
+        return formatPrice(
+            $order->kilometres *
+            (int) systemVariable('additionalPriceDeliveryPerKm')
+            * ($order->additional_visits + 1) * (1+ $order->measuring)
+        );
     }
 
     /**
@@ -127,17 +149,21 @@
      */
     #[ArrayShape(['data' => "\App\Models\Category[]|\Illuminate\Database\Eloquent\Collection", 'superCategories' => "\Illuminate\Support\Collection", 'installers' => "\App\Models\User[]|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection"])]
     function dataForOrderPage(): array {
-        return [
-            'data' => Category::all(),
-            'superCategories' => Category::whereIn(
-                'id', Category::select(['parent_id'])
-                ->whereNotNull('parent_id')
-                ->groupBy(['parent_id'])
-                ->get()
-                ->toArray()
-            )->get(),
-            'installers' => User::role('installer')->get(),
-        ];
+        Cache::remember('create-order-data', 600, function () {
+            return [
+                'data' => Category::all(),
+                'superCategories' => Category::whereIn(
+                    'id', Category::select(['parent_id'])
+                    ->whereNotNull('parent_id')
+                    ->groupBy(['parent_id'])
+                    ->get()
+                    ->toArray()
+                )->get(),
+                'installers' => User::role('installer')->get(),
+            ];
+        });
+
+        return Cache::get('create-order-data');
     }
 
     /**
@@ -155,13 +181,14 @@
     }
 
     /**
+     * @todo сделать по нормальному подключение пути а не так
      * @param string $file
      * @return \Illuminate\Support\Collection
      */
-    function jsonData(string $file) {
+    function jsonData(string $file, bool $associative = null) {
         return collect(
             json_decode(
-                file_get_contents(app_path("Services/Config/$file.json"))
+                file_get_contents("$file.json"), associative: $associative ?? true
             )
         );
     }
@@ -180,7 +207,8 @@
      * @return User
      */
     function user(int $id): User {
-        return User::findOrFail($id);
+        Cache::rememberForever('user', fn() => User::findOrFail($id));
+        return Cache::get('user');
     }
 
     /**
@@ -226,7 +254,7 @@
     function orderPrice(Order $order = null): string {
         $order = $order ?? order();
         $minimalSum = systemVariable('minSumOrder');
-        if (\OrderHelper::hasInstallation() && $order->price < $minimalSum) {
+        if (\OrderService::hasInstallation() && $order->price < $minimalSum) {
             return $minimalSum;
         }
 
@@ -260,7 +288,7 @@
      * @param string|null $field
      * @return mixed
      */
-    function firstInstaller(?string $field): mixed {
+    function firstInstaller(string $field = null): mixed {
         if (is_null($field)) {
             return User::role('installer')->first();
         }
@@ -280,7 +308,7 @@
      * @return bool
      */
     function orderHasSale(): bool {
-        return (int) \order()->discount;
+        return (int)\order()->discount;
     }
 
     /**

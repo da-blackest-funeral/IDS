@@ -10,10 +10,6 @@
 
     class ProductController extends Controller
     {
-
-        public function __construct(SaveOrderRequest $request) {
-        }
-
         public function index(Order $order, ProductInOrder $productInOrder) {
             return view('pages.add-product')
                 ->with(\Arr::add(dataForOrderPage(), 'product', $productInOrder));
@@ -23,13 +19,21 @@
             $calculator->calculate();
             $calculator->saveInfo();
 
-            \OrderHelper::remove($productInOrder);
+            \OrderService::remove($productInOrder);
 
-            if (\OrderHelper::orderOrProductHasInstallation()) {
-                \SalaryHelper::checkMeasuringAndDelivery();
+            if (\OrderService::orderOrProductHasInstallation()) {
+                \SalaryService::checkMeasuringAndDelivery();
             }
 
-            \OrderHelper::addProduct();
+            $requestData = (object) request()->only([
+                'comment', 'categories', 'count'
+            ]);
+
+            $requestData->userId = auth()->user()->getAuthIdentifier();
+            $requestData->orderId = $order->id;
+
+            \OrderService::addProduct($calculator, $requestData);
+
             $productInOrder->delete();
             $order->update();
 
@@ -50,26 +54,26 @@
              * зарплаты с типом NO_INSTALLATION вернуть
              */
 
-            \OrderHelper::remove($productInOrder);
-            \OrderHelper::calculateMeasuringOptions();
-            \OrderHelper::calculateDeliveryOptions();
+            \OrderService::remove($productInOrder);
+            \OrderService::calculateMeasuringOptions();
+            \OrderService::calculateDeliveryOptions();
 
             $sameCategoryProducts = ProductRepository::byCategoryWithout($productInOrder);
 
             if ($sameCategoryProducts->isNotEmpty()) {
-                \ProductHelper::use(
+                \ProductService::use(
                     $sameCategoryProducts->first()
                 )->updateOrCreateSalary();
             } else {
-                \SalaryHelper::salary()->delete();
-                \ProductHelper::use($productInOrder)
+                \SalaryService::salary()->delete();
+                \ProductService::use($productInOrder)
                     ->checkRestoreNoInstallationSalaries();
             }
 
             $productInOrder->delete();
             $order->update();
 
-            if (!\OrderHelper::use($order->refresh())->hasProducts()) {
+            if (!\OrderService::use($order->refresh())->hasProducts()) {
                 $order->update([
                     'price' => 0,
                     'measuring_price' => 0,

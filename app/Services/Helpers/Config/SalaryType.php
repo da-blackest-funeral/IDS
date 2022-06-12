@@ -20,7 +20,7 @@
             }
 
             if (
-                \ProductHelper::hasInstallation($productInOrder) ||
+                \ProductService::hasInstallation($productInOrder) ||
                 ProductRepository::byCategoryWithout($productInOrder)
                     ->without(oldProduct())
                     ->hasInstallation()

@@ -9,12 +9,12 @@
     use App\Services\Calculator\Classes\ItalianMosquitoSystemCalculator;
     use App\Services\Calculator\Classes\MosquitoSystemsCalculator;
     use App\Services\Calculator\Interfaces\Calculator;
-    use App\Services\Helpers\Classes\MosquitoSystemsHelper;
-    use App\Services\Helpers\Classes\OrderHelper;
-    use App\Services\Helpers\Classes\SalaryHelper;
-    use App\Services\Helpers\Interfaces\OrderHelperInterface;
-    use App\Services\Helpers\Interfaces\ProductHelperInterface;
-    use App\Services\Helpers\Interfaces\SalaryHelperInterface;
+    use App\Services\Helpers\Classes\MosquitoSystemsService;
+    use App\Services\Helpers\Classes\OrderService;
+    use App\Services\Helpers\Classes\SalaryService;
+    use App\Services\Helpers\Interfaces\OrderServiceInterface;
+    use App\Services\Helpers\Interfaces\ProductServiceInterface;
+    use App\Services\Helpers\Interfaces\SalaryServiceInterface;
     use App\Services\Notifications\Notifier;
     use App\Services\Renderer\Classes\MosquitoSelectData;
     use App\Services\Renderer\Interfaces\SelectDataInterface;
@@ -51,20 +51,22 @@
                 return new Notifier();
             });
 
-            $this->app->singleton(ProductHelperInterface::class, function () {
+            $this->app->singleton(ProductServiceInterface::class, function () {
                 if (isMosquitoSystemProduct()) {
-                    return new MosquitoSystemsHelper(
+                    return new MosquitoSystemsService(
                         request()->productInOrder ?? new ProductInOrder(),
                         request()->order ?? new Order()
                     );
                 }
             });
 
-            $this->app->bind(OrderHelperInterface::class, function () {
-                return new OrderHelper(\request()->order ?? new Order());
+            $this->app->bind(OrderServiceInterface::class, function () {
+                return new OrderService(request()->order ?? new Order());
             });
 
-            $this->app->bind(SalaryHelperInterface::class, SalaryHelper::class);
+            $this->app->bind(SalaryServiceInterface::class, function () {
+                return new SalaryService(request()->order, request()->productInOrder);
+            });
 
             $this->app->bind(SelectDataInterface::class, function () {
                 if (isMosquitoSystemProduct()) {

@@ -1,0 +1,302 @@
+[
+    {
+        "layer_id": 1,
+        "name": "4 мм",
+        "category_id": 15
+    },
+    {
+        "layer_id": 1,
+        "name": "5 мм",
+        "price": 775,
+        "category_id": 15
+    },
+    {
+        "layer_id": 1,
+        "name": "6 мм",
+        "price": 949,
+        "category_id": 15
+    },
+    {
+        "layer_id": 1,
+        "name": "4 И",
+        "price": 1248,
+        "category_id": 15
+    },
+    {
+        "layer_id": 1,
+        "name": "6 И",
+        "price": 2028,
+        "category_id": 15
+    },
+    {
+        "layer_id": 1,
+        "name": "6 мм (3.3.1)",
+        "price": 3060,
+        "category_id": 15
+    },
+    {
+        "layer_id": 1,
+        "name": "8 мм (4.4.1)",
+        "price": 3660,
+        "category_id": 15
+    },
+    {
+        "layer_id": 2,
+        "name": "6 мм",
+        "category_id": 15
+    },
+    {
+        "layer_id": 2,
+        "name": "7 мм",
+        "category_id": 15
+    },
+    {
+        "layer_id": 2,
+        "name": "8 мм",
+        "category_id": 15
+    },
+    {
+        "layer_id": 2,
+        "name": "9 мм",
+        "category_id": 15
+    },
+    {
+        "layer_id": 2,
+        "name": "10 мм",
+        "category_id": 15
+    },
+    {
+        "layer_id": 2,
+        "name": "11 мм",
+        "category_id": 15
+    },
+    {
+        "layer_id": 2,
+        "name": "12 мм",
+        "category_id": 15
+    },
+    {
+        "layer_id": 2,
+        "name": "14 мм",
+        "category_id": 15
+    },
+    {
+        "layer_id": 2,
+        "name": "15 мм",
+        "category_id": 15
+    },
+    {
+        "layer_id": 2,
+        "name": "16 мм",
+        "category_id": 15
+    },
+    {
+        "layer_id": 2,
+        "name": "17 мм",
+        "category_id": 15
+    },
+    {
+        "layer_id": 2,
+        "name": "18 мм",
+        "price": 60,
+        "category_id": 15
+    },
+    {
+        "layer_id": 2,
+        "name": "19 мм",
+        "price": 90,
+        "category_id": 15
+    },
+    {
+        "layer_id": 2,
+        "name": "20 мм",
+        "price": 120,
+        "category_id": 15
+    },
+    {
+        "layer_id": 2,
+        "name": "21 мм",
+        "price": 150,
+        "category_id": 15
+    },
+    {
+        "layer_id": 2,
+        "name": "22 мм",
+        "price": 180,
+        "category_id": 15
+    },
+    {
+        "layer_id": 2,
+        "name": "24 мм",
+        "price": 240,
+        "category_id": 15
+    },
+    {
+        "layer_id": 1,
+        "name": "10 мм (5.5.1)",
+        "price": 6530,
+        "category_id": 15
+    },
+    {
+        "layer_id": 1,
+        "name": "12 мм (6.6.1)",
+        "price": 6784,
+        "category_id": 15
+    },
+    {
+        "layer_id": 1,
+        "name": "8 мм (4.4.2)",
+        "price": 5730,
+        "category_id": 15
+    },
+    {
+        "layer_id": 1,
+        "name": "4 мм",
+        "category_id": 16
+    },
+    {
+        "layer_id": 1,
+        "name": "5 мм",
+        "price": 775,
+        "category_id": 16
+    },
+    {
+        "layer_id": 1,
+        "name": "6 мм",
+        "price": 949,
+        "category_id": 16
+    },
+    {
+        "layer_id": 1,
+        "name": "4 И",
+        "price": 1248,
+        "category_id": 16
+    },
+    {
+        "layer_id": 1,
+        "name": "6 И",
+        "price": 2028,
+        "category_id": 16
+    },
+    {
+        "layer_id": 1,
+        "name": "6 мм (3.3.1)",
+        "price": 3060,
+        "category_id": 16
+    },
+    {
+        "layer_id": 1,
+        "name": "8 мм (4.4.1)",
+        "price": 3660,
+        "category_id": 16
+    },
+    {
+        "layer_id": 2,
+        "name": "6 мм",
+        "category_id": 16
+    },
+    {
+        "layer_id": 2,
+        "name": "7 мм",
+        "category_id": 16
+    },
+    {
+        "layer_id": 2,
+        "name": "8 мм",
+        "category_id": 16
+    },
+    {
+        "layer_id": 2,
+        "name": "9 мм",
+        "category_id": 16
+    },
+    {
+        "layer_id": 2,
+        "name": "10 мм",
+        "category_id": 16
+    },
+    {
+        "layer_id": 2,
+        "name": "11 мм",
+        "category_id": 16
+    },
+    {
+        "layer_id": 2,
+        "name": "12 мм",
+        "category_id": 16
+    },
+    {
+        "layer_id": 2,
+        "name": "14 мм",
+        "category_id": 16
+    },
+    {
+        "layer_id": 2,
+        "name": "15 мм",
+        "category_id": 16
+    },
+    {
+        "layer_id": 2,
+        "name": "16 мм",
+        "category_id": 16
+    },
+    {
+        "layer_id": 2,
+        "name": "17 мм",
+        "category_id": 16
+    },
+    {
+        "layer_id": 2,
+        "name": "18 мм",
+        "price": 60,
+        "category_id": 16
+    },
+    {
+        "layer_id": 2,
+        "name": "19 мм",
+        "price": 90,
+        "category_id": 16
+    },
+    {
+        "layer_id": 2,
+        "name": "20 мм",
+        "price": 120,
+        "category_id": 16
+    },
+    {
+        "layer_id": 2,
+        "name": "21 мм",
+        "price": 150,
+        "category_id": 16
+    },
+    {
+        "layer_id": 2,
+        "name": "22 мм",
+        "price": 180,
+        "category_id": 16
+    },
+    {
+        "layer_id": 2,
+        "name": "24 мм",
+        "price": 240,
+        "category_id": 16
+    },
+    {
+        "layer_id": 1,
+        "name": "10 мм (5.5.1)",
+        "price": 6530,
+        "category_id": 16
+    },
+    {
+        "layer_id": 1,
+        "name": "12 мм (6.6.1)",
+        "price": 6784,
+        "category_id": 16
+    },
+    {
+        "layer_id": 1,
+        "name": "8 мм (4.4.2)",
+        "price": 5730,
+        "category_id": 16
+    }
+]

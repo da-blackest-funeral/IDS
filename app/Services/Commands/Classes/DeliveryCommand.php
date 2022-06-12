@@ -18,15 +18,12 @@
          */
         protected int $deliveryWage;
 
-        /**
-         * @var InstallerSalary
-         */
-        protected InstallerSalary $salary;
-
-        public function __construct(protected int $kilometres, protected Order $order) {
+        public function __construct(
+            protected int $kilometres,
+            protected Order $order,
+            protected InstallerSalary $salary
+        ) {
             $this->deliveryPrice = systemVariable('additionalPriceDeliveryPerKm');
             $this->deliveryWage = systemVariable('additionalWagePerKm');
-            $this->salary = \SalaryHelper::salariesNoInstallation()
-                ->first();
         }
     }
