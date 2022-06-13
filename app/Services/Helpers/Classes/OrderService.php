@@ -5,6 +5,7 @@
     use App\Models\Order;
     use App\Models\ProductInOrder;
     use App\Models\SystemVariables;
+    use App\Services\Helpers\Interfaces\DeliveryService;
     use App\Services\Helpers\Interfaces\OrderServiceInterface;
     use App\Services\Repositories\Classes\MosquitoSystemsProductRepository;
     use App\Services\Repositories\Interfaces\ProductRepository;
@@ -17,6 +18,11 @@
          * @var ProductRepository
          */
         protected ProductRepository $productRepository;
+
+        /**
+         * @var DeliveryService
+         */
+        private DeliveryService $deliveryService;
 
         /**
          * @param Order $order
@@ -94,6 +100,8 @@
 
         /**
          * @return bool
+         * @todo убрать || Calculator::productNeedInstallation()
+         *  и вызывать это в клиентском коде
          */
         public function orderOrProductHasInstallation(): bool {
             return !\OrderService::hasProducts() ||
@@ -147,42 +155,6 @@
         }
 
         /**
-         * @return void
-         */
-        protected function decreasePriceByDelivery() {
-            if (!deletingProduct()) {
-                $this->order->price -= min(
-                    $this->order->delivery,
-                    Calculator::getDeliveryPrice()
-                );
-            } else {
-                $this->deliveryWhenDeletingProduct();
-            }
-        }
-
-        /**
-         * @return void
-         */
-        protected function deliveryWhenDeletingProduct() {
-            $this->order->price -= max(
-                $this->order->delivery,
-                $this->productRepository->maxDelivery()
-            );
-
-            $this->order->price += $this->productRepository->maxDelivery();
-        }
-
-        /**
-         * @return void
-         */
-        protected function determineMaxDelivery() {
-            $this->order->delivery = $this->order->need_delivery ? max(
-                Calculator::getDeliveryPrice(),
-                $this->productRepository->maxDelivery()
-            ) : 0;
-        }
-
-        /**
          * @param ProductInOrder $productInOrder
          * @return void
          */
@@ -202,10 +174,15 @@
          * @return void
          */
         public function calculateDeliveryOptions() {
-            if ($this->order->need_delivery) {
-                $this->decreasePriceByDelivery();
-                $this->determineMaxDelivery();
-            }
+            /** @var DeliveryService $service */
+            $service = new DeliveryOrderService(
+                $this->order,
+                $this->productRepository->maxDelivery()
+            );
+
+            $service->calculateDeliveryOptions();
+
+            $this->order = $service->getResultOrder();
         }
 
         /**

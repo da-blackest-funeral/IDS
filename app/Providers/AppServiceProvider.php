@@ -18,6 +18,7 @@
     use App\Services\Notifications\Notifier;
     use App\Services\Renderers\Classes\MosquitoSelectData;
     use App\Services\Renderers\Interfaces;
+    use App\Services\Renderers\Interfaces\SelectDataInterface;
     use App\Services\Repositories\Classes\MosquitoSystemsProductRepository;
     use App\Services\Repositories\Interfaces\ProductRepository;
     use Illuminate\Foundation\Application;
@@ -75,7 +76,6 @@
             });
 
             $this->app->bind(ProductRepository::class, function (Application $app, array $params) {
-//                dump($params);
                 return new MosquitoSystemsProductRepository($params['products']);
             });
         }

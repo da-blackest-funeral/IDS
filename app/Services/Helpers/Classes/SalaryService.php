@@ -68,7 +68,6 @@
             }
 
             $salary->sum = $sum;
-
             $salary->update();
         }
 
