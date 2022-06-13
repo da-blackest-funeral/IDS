@@ -6,6 +6,7 @@
     use App\Models\ProductInOrder;
     use App\Models\SystemVariables;
     use App\Services\Helpers\Interfaces\DeliveryService;
+    use App\Services\Helpers\Interfaces\MeasuringService;
     use App\Services\Helpers\Interfaces\OrderServiceInterface;
     use App\Services\Repositories\Classes\MosquitoSystemsProductRepository;
     use App\Services\Repositories\Interfaces\ProductRepository;
@@ -128,30 +129,15 @@
          * @return void
          */
         public function calculateMeasuringOptions() {
-            $this->notNeedMeasuring() ? $this->removeMeasuring() : $this->restoreMeasuring();
-        }
+            /** @var MeasuringService $service */
+            $service = new MosquitoSystemsMeasuringService(
+                $this->order,
+                Calculator::productNeedInstallation()
+            );
 
-        /**
-         * @return void
-         */
-        protected function removeMeasuring() {
-            $this->order->price -= Calculator::getMeasuringPrice();
-            if (Calculator::productNeedInstallation()) {
-                $this->deductMeasuringPrice();
-            }
-        }
+            $service->calculateMeasuringOptions(Calculator::getMeasuringPrice());
 
-        /**
-         * @return void
-         */
-        protected function restoreMeasuring() {
-            if (!Calculator::productNeedInstallation() || deletingProduct()) {
-                $this->order->measuring_price = SystemVariables::value('measuring');
-            }
-
-            if (deletingProduct()) {
-                $this->order->price += $this->order->measuring_price;
-            }
+            $this->order = $service->getResultOrder();
         }
 
         /**
@@ -194,10 +180,6 @@
          * @throws \Throwable
          */
         public function addProduct(CalculatorInterface $calculator, object $requestData): ProductInOrder {
-            if ($this->productRepository->isEmpty()) {
-                $this->makeProductRepository();
-            }
-
             $this->order->price += $calculator->getPrice();
 
             $this->calculateMeasuringOptions();
