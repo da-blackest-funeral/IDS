@@ -4,17 +4,17 @@
 
     use App\Models\Order;
     use App\Services\Commands\Interfaces\Command;
-    use App\Services\Repositories\Interfaces\ProductRepositoryInterface;
+    use App\Services\Repositories\Interfaces\ProductRepository;
 
     class RestoreDeliveryCommand implements Command
     {
         /**
          * @param Order $order
-         * @param ProductRepositoryInterface $productRepository
+         * @param ProductRepository $productRepository
          */
         public function __construct(
             protected Order $order,
-            protected ProductRepositoryInterface $productRepository
+            protected ProductRepository $productRepository
         ) {
         }
 

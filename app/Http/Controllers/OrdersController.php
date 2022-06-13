@@ -41,9 +41,10 @@
             $calculator->calculate();
             $calculator->saveInfo();
 
-            $requestData = (object)request()->only([
-                'count', 'categories', 'comment',
-            ]);
+            $requestData = new \stdClass();
+            $requestData->count = request()->count;
+            $requestData->categoryId = request()->categories;
+            $requestData->comment = request()->comment ?? 'Отсутствует';
             $requestData->orderId = $order->id;
             $requestData->userId = auth()->user()->getAuthIdentifier();
 

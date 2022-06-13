@@ -6,16 +6,17 @@
     use App\Models\ProductInOrder;
     use App\Models\SystemVariables;
     use App\Services\Helpers\Interfaces\OrderServiceInterface;
-    use App\Services\Repositories\Interfaces\ProductRepositoryInterface;
+    use App\Services\Repositories\Classes\MosquitoSystemsProductRepository;
+    use App\Services\Repositories\Interfaces\ProductRepository;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
     use App\Services\Calculator\Interfaces\Calculator as CalculatorInterface;
 
     class OrderService implements OrderServiceInterface
     {
         /**
-         * @var ProductRepositoryInterface
+         * @var ProductRepository
          */
-        protected ProductRepositoryInterface $productRepository;
+        protected ProductRepository $productRepository;
 
         /**
          * @param Order $order
@@ -24,18 +25,17 @@
             $this->makeProductRepository();
         }
 
-        // todo тоже сделать фабричный метод
         protected function makeProductRepository() {
             $this->productRepository = app(
-                ProductRepositoryInterface::class,
+                ProductRepository::class,
                 ['products' => $this->order->products]
             );
         }
 
         /**
-         * @return ProductRepositoryInterface
+         * @return ProductRepository
          */
-        public function getProductRepository(): ProductRepositoryInterface {
+        public function getProductRepository(): ProductRepository {
             return $this->productRepository;
         }
 
@@ -217,6 +217,9 @@
          * @throws \Throwable
          */
         public function addProduct(CalculatorInterface $calculator, object $requestData): ProductInOrder {
+            if ($this->productRepository->isEmpty()) {
+                $this->makeProductRepository();
+            }
 
             $this->order->price += $calculator->getPrice();
 

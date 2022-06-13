@@ -6,7 +6,7 @@
     use App\Models\Order;
     use App\Models\ProductInOrder;
     use App\Services\Calculator\Interfaces\Calculator;
-    use App\Services\Repositories\Classes\ProductRepository;
+    use App\Services\Repositories\Classes\MosquitoSystemsProductRepository;
 
     class ProductController extends Controller
     {
@@ -25,10 +25,10 @@
                 \SalaryService::checkMeasuringAndDelivery();
             }
 
-            $requestData = (object) request()->only([
-                'comment', 'categories', 'count'
-            ]);
-
+            $requestData = new \stdClass();
+            $requestData->comment = request()->comment ?? 'Отсутствует';
+            $requestData->categoryId = request()->categories;
+            $requestData->count = request()->count;
             $requestData->userId = auth()->user()->getAuthIdentifier();
             $requestData->orderId = $order->id;
 
@@ -58,7 +58,7 @@
             \OrderService::calculateMeasuringOptions();
             \OrderService::calculateDeliveryOptions();
 
-            $sameCategoryProducts = ProductRepository::byCategoryWithout($productInOrder);
+            $sameCategoryProducts = MosquitoSystemsProductRepository::byCategoryWithout($productInOrder);
 
             if ($sameCategoryProducts->isNotEmpty()) {
                 \ProductService::use(

@@ -2,7 +2,7 @@
 
     namespace App\Services\Facades\Classes;
 
-    use App\Services\Renderer\Interfaces\SelectDataInterface;
+    use App\Services\Renderers\Interfaces\SelectDataInterface;
 
     class SelectDataFacade extends \Illuminate\Support\Facades\Facade
     {

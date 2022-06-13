@@ -34,9 +34,10 @@
                 ->setInstallationId($calculator->getInstallation('additional_id'))
                 ->setName($calculator->getProduct()->name());
 
-            $requestData = (object) request()->only([
-               'comment', 'coefficient',
-            ]);
+            // todo сделать класс для этого
+            $requestData = new \stdClass();
+            $requestData->comment = request()->comment ?? 'Отсутсвует';
+            $requestData->coefficient = request()->input('coefficient', 1.0);
             $requestData->installerId = User::role('installer')->first('id')->id;
             $requestData->isPrivatePerson = false;
             $requestData->userId = auth()->user()->getAuthIdentifier();

@@ -1,6 +1,6 @@
 <?php
 
-    namespace App\Services\Renderer\Interfaces;
+    namespace App\Services\Renderers\Interfaces;
 
     use App\Models\ProductInOrder;
     use Illuminate\Support\Collection;

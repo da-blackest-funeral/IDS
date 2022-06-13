@@ -28,8 +28,7 @@
                 $this->testHelper->measuringPrice();
 
             $this->testHelper->createDefaultOrder($this->testHelper->defaultDeliverySum() +
-                $this->testHelper->productPrice
-                () +
+                $this->testHelper->productPrice() +
                 $this->testHelper->measuringPrice()
             );
             $this->testHelper->createDefaultProduct();

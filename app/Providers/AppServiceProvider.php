@@ -16,10 +16,10 @@
     use App\Services\Helpers\Interfaces\ProductServiceInterface;
     use App\Services\Helpers\Interfaces\SalaryServiceInterface;
     use App\Services\Notifications\Notifier;
-    use App\Services\Renderer\Classes\MosquitoSelectData;
-    use App\Services\Renderer\Interfaces\SelectDataInterface;
-    use App\Services\Repositories\Classes\ProductRepository;
-    use App\Services\Repositories\Interfaces\ProductRepositoryInterface;
+    use App\Services\Renderers\Classes\MosquitoSelectData;
+    use App\Services\Renderers\Interfaces;
+    use App\Services\Repositories\Classes\MosquitoSystemsProductRepository;
+    use App\Services\Repositories\Interfaces\ProductRepository;
     use Illuminate\Foundation\Application;
     use Illuminate\Pagination\Paginator;
     use Illuminate\Support\ServiceProvider;
@@ -74,8 +74,9 @@
                 }
             });
 
-            $this->app->bind(ProductRepositoryInterface::class, function (Application $app, array $params) {
-                return new ProductRepository($params[0] ?? $params['products']);
+            $this->app->bind(ProductRepository::class, function (Application $app, array $params) {
+//                dump($params);
+                return new MosquitoSystemsProductRepository($params['products']);
             });
         }
 

@@ -1,6 +1,6 @@
 <?php
 
-    namespace App\Services\Renderer\Classes;
+    namespace App\Services\Renderers\Classes;
 
     use Illuminate\Support\Collection;
     use JetBrains\PhpStorm\ArrayShape;

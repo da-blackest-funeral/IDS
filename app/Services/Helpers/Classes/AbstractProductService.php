@@ -63,7 +63,7 @@
             $dto = new CreateProductDto();
             $dto->setUserId($requestData->userId)
                 ->setComment($requestData->comment)
-                ->setCategoryId($requestData->categories)
+                ->setCategoryId($requestData->categoryId)
                 ->setCount($requestData->count)
                 ->setData($calculator->getOptions())
                 ->setInstallationId($calculator->getInstallation('additional_id'))

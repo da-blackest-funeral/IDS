@@ -1,10 +1,9 @@
 <?php
 
-    namespace App\Services\Renderer\Classes;
+    namespace App\Services\Renderers\Classes;
 
     use App\Models\ProductInOrder;
-    use App\Services\Renderer\Interfaces\SelectDataInterface;
-    use Illuminate\Support\Collection;
+    use App\Services\Renderers\Interfaces\SelectDataInterface;
 
     abstract class SelectData implements SelectDataInterface
     {

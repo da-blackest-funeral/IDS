@@ -3,7 +3,7 @@
     namespace App\Services\Helpers\Config;
 
     use App\Models\ProductInOrder;
-    use App\Services\Repositories\Classes\ProductRepository;
+    use App\Services\Repositories\Classes\MosquitoSystemsProductRepository;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
 
     class SalaryType
@@ -21,8 +21,8 @@
 
             if (
                 \ProductService::hasInstallation($productInOrder) ||
-                ProductRepository::byCategoryWithout($productInOrder)
-                    ->without(oldProduct())
+                MosquitoSystemsProductRepository::byCategoryWithout($productInOrder)
+                    ->remove(oldProduct())
                     ->hasInstallation()
             ) {
                 return SalaryTypesEnum::INSTALLATION->value;

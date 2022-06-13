@@ -9,7 +9,7 @@
     use App\Models\MosquitoSystems\Profile;
     use App\Models\MosquitoSystems\Type;
     use App\Models\ProductInOrder;
-    use App\Services\Repositories\Classes\ProductRepository;
+    use App\Services\Repositories\Classes\MosquitoSystemsProductRepository;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
     use Illuminate\Support\Collection;
 
@@ -79,7 +79,7 @@
                 sum: $this->calculateInstallationSalary(
                     productInOrder: $this->productsWithMaxInstallation()
                         ->first(),
-                    count: ProductRepository::withInstallation($this->order, $this->productInOrder->category_id)
+                    count: MosquitoSystemsProductRepository::withInstallation($this->order, $this->productInOrder->category_id)
                         ->count(),
                 ),
             );
@@ -89,8 +89,9 @@
          * @return void
          */
         public function checkRestoreNoInstallationSalaries(): void {
-            $productsWithInstallation = ProductRepository::use($this->products)
-                ->without(oldProduct())
+
+            $productsWithInstallation = MosquitoSystemsProductRepository::use($this->products)
+                ->remove(oldProduct())
                 ->onlyWithInstallation();
             if ($productsWithInstallation->isEmpty()) {
                 \SalaryService::restoreNoInstallation();
@@ -115,10 +116,10 @@
          */
         protected function needUpdateSalary(): bool {
             // todo возможно, тут не учитывается факт что товары удалены, сделать whereNull('deleted_at')
-            $sameCategoryProducts = ProductRepository::byCategoryWithout($this->productInOrder);
+            $sameCategoryProducts = MosquitoSystemsProductRepository::byCategoryWithout($this->productInOrder);
 
-            $countOfAllProducts = ProductRepository::use($this->products)
-                ->without(oldProduct())
+            $countOfAllProducts = MosquitoSystemsProductRepository::use($this->products)
+                ->remove(oldProduct())
                 ->count();
 
             return $sameCategoryProducts->isNotEmpty() &&
@@ -214,7 +215,7 @@
                 throw new SalaryCalculationException('Зарплата за данный тип не найдена!');
             }
 
-            $missingCount = ProductRepository::withInstallation($productInOrder->order)
+            $missingCount = MosquitoSystemsProductRepository::withInstallation($productInOrder->order)
                     ->count() - $salary->count;
             if ($this->needDecreaseCount()) {
                 $missingCount -= oldProductsCount();
@@ -232,8 +233,8 @@
         protected function difficultySalary(ProductInOrder $productInOrder) {
             $salary = 0;
 
-            $products = ProductRepository::withInstallation($productInOrder->order)
-                ->without(oldProduct())
+            $products = MosquitoSystemsProductRepository::withInstallation($productInOrder->order)
+                ->remove(oldProduct())
                 ->get();
 
             foreach ($products as $product) {
@@ -271,7 +272,7 @@
                 ]);
 
             $productsWithInstallation =
-                ProductRepository::reject($productsWithInstallation, oldProduct());
+                MosquitoSystemsProductRepository::reject($productsWithInstallation, oldProduct());
 
             $maxInstallationPrice = $productsWithInstallation->max('installation_price');
 
