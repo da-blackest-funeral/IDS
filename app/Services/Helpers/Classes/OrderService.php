@@ -21,11 +21,6 @@
         protected ProductRepository $productRepository;
 
         /**
-         * @var DeliveryService
-         */
-        private DeliveryService $deliveryService;
-
-        /**
          * @param Order $order
          */
         public function __construct(protected Order $order) {
@@ -108,21 +103,6 @@
             return !\OrderService::hasProducts() ||
                 \OrderService::hasInstallation() ||
                 Calculator::productNeedInstallation();
-        }
-
-        /**
-         * @return bool
-         */
-        protected function notNeedMeasuring(): bool {
-            return $this->order->measuring_price || $this->hasInstallation();
-        }
-
-        /**
-         * @return void
-         */
-        protected function deductMeasuringPrice() {
-            $this->order->price -= $this->order->measuring_price;
-            $this->order->measuring_price = 0;
         }
 
         /**
