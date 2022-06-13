@@ -7,13 +7,9 @@
     use App\Models\Salaries\InstallerSalary;
     use App\Models\SystemVariables;
     use App\Services\Helpers\Config\SalaryType;
-    use App\Services\Helpers\Config\SalaryTypesEnum;
     use App\Services\Helpers\Interfaces\SalaryServiceInterface;
     use Facades\App\Services\Calculator\Interfaces\Calculator;
     use Illuminate\Support\Collection;
-
-    // todo сделать второй интерфейс - installation salary helper interface, туда добавить методы removeNoInstallation
-    // и т.д., а так же другой класс, я думаю с наследованием от этого
 
     class SalaryService implements SalaryServiceInterface
     {
@@ -23,9 +19,9 @@
         private CreateSalaryService $createSalaryService;
 
         /**
-         * @var InstallationSalaryService
+         * @var NoInstallationSalaryService
          */
-        private InstallationSalaryService $installationSalaryService;
+        private NoInstallationSalaryService $noInstallationService;
 
         /**
          * @param Order $order
@@ -36,7 +32,7 @@
             private ProductInOrder $productInOrder
         ) {
             $this->createSalaryService = new CreateSalaryService();
-            $this->installationSalaryService = new InstallationSalaryService($order);
+            $this->noInstallationService = new NoInstallationSalaryService($order);
         }
 
         /**
@@ -57,7 +53,8 @@
                 $salary->type = SalaryType::determine(\ProductService::getProduct());
             }
 
-            $this->installationSalaryService->update($sum, $salary);
+            // todo вернуть этот метод сюда
+            $this->noInstallationService->update($sum, $salary);
         }
 
         /**
@@ -85,7 +82,7 @@
          * @return void
          */
         public function removeNoInstallation(): void {
-            $this->installationSalaryService->removeNoInstallation();
+            $this->noInstallationService->removeAll();
         }
 
         /**
@@ -132,8 +129,8 @@
         public function salariesNoInstallation(Order $order = null): Collection {
             $order = $order ?? $this->order;
 
-            return $this->installationSalaryService
-                ->salariesNoInstallation($order);
+            return $this->noInstallationService
+                ->salaries($order);
         }
 
         /**
@@ -143,8 +140,8 @@
         public function restoreNoInstallation(Order $order = null) {
             $order = $order ?? \OrderService::getOrder();
 
-            $this->installationSalaryService
-                ->restoreNoInstallation($order);
+            $this->noInstallationService
+                ->restore($order);
         }
 
         /**
@@ -152,8 +149,8 @@
          * @return int|float
          */
         protected function noInstallationSalarySum(Order $order): int|float {
-            return $this->installationSalaryService
-                ->noInstallationSalarySum($order);
+            return $this->noInstallationService
+                ->sum($order);
         }
 
         /**
@@ -163,7 +160,7 @@
         public function salary(ProductInOrder $productInOrder = null) {
             $productInOrder = $productInOrder ?? \ProductService::getProduct();
 
-            return $this->installationSalaryService
+            return $this->noInstallationService
                 ->salary($productInOrder);
         }
 
@@ -174,8 +171,8 @@
         public function hasSalaryNoInstallation(Order $order = null): bool {
             $order = $order ?? \OrderService::getOrder();
 
-            return $this->installationSalaryService
-                ->hasSalaryNoInstallation($order);
+            return $this->noInstallationService
+                ->hasSalary($order);
         }
 
         /**
