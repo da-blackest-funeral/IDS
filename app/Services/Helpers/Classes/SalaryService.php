@@ -24,14 +24,19 @@
         private NoInstallationSalaryService $noInstallationService;
 
         /**
+         * @var DeliverySalaryService
+         */
+        private DeliverySalaryService $deliveryService;
+
+        /**
          * @param Order $order
-         * @param ProductInOrder $productInOrder
          */
         public function __construct(
             private Order $order
         ) {
             $this->createSalaryService = new CreateSalaryService();
             $this->noInstallationService = new NoInstallationSalaryService($order);
+            $this->deliveryService = new DeliverySalaryService($order);
         }
 
         /**
@@ -85,27 +90,21 @@
         }
 
         /**
-         * @return bool|void
+         * @return void
          */
         public function removeDelivery(InstallerSalary $salary = null) {
             $deliverySalary = SystemVariables::value('delivery') *
                 ($this->order->additional_visits + 1);
+
             if (!is_null($salary)) {
-                return $this->removeSingleDelivery($salary, $deliverySalary);
+                $this->deliveryService->remove($salary, $deliverySalary);
+                return;
             }
 
             $this->salariesNoInstallation()
-                ->each(fn($salary) => $this->removeSingleDelivery($salary, $deliverySalary));
-        }
-
-        /**
-         * @param InstallerSalary $salary
-         * @param int $deliverySalary
-         * @return bool
-         */
-        private function removeSingleDelivery(InstallerSalary $salary, int $deliverySalary) {
-            $salary->sum -= $deliverySalary;
-            return $salary->update();
+                ->each(function ($salary) use ($deliverySalary) {
+                    $this->deliveryService->remove($salary, $deliverySalary);
+                });
         }
 
         /**
@@ -115,10 +114,10 @@
             $salary = $this->salariesNoInstallation()
                 ->first();
 
-            $salary->update([
-                'sum' => $salary->sum + SystemVariables::value('delivery') *
-                    ($this->order->additional_visits + 1),
-            ]);
+            $this->deliveryService->restore(
+                salary: $salary,
+                visits: $this->order->additional_visits + 1
+            );
         }
 
         /**
@@ -180,12 +179,10 @@
          * @return void
          */
         public function checkMeasuringAndDelivery() {
-            // todo убрать колхоз
-            $order = \ProductService::getProduct()->order;
             if (\OrderService::hasInstallation() || Calculator::productNeedInstallation()) {
-                $order->measuring_price = 0;
+                $this->order->measuring_price = 0;
             } else {
-                $order->measuring_price = $order->measuring ?
+                $this->order->measuring_price = $this->order->measuring ?
                     SystemVariables::value('measuring')
                     : 0;
                 // Прибавить к зп монтажника стоимости замера и доставки, если они заданы
