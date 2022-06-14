@@ -3,7 +3,6 @@
     namespace App\Services\Helpers\Classes;
 
     use App\Models\Order;
-    use App\Models\ProductInOrder;
     use App\Models\Salaries\InstallerSalary;
     use App\Models\SystemVariables;
     use App\Services\Helpers\Config\SalaryTypesEnum;
@@ -33,18 +32,8 @@
         public function removeAll(): void {
             $this->salaries($this->order)
                 ->each(function (InstallerSalary $salary) {
-                    $this->update(0, $salary);
+                    \SalaryService::update(salary: $salary, sum: 0);
                 });
-        }
-
-        /**
-         * @param int|float $sum
-         * @param InstallerSalary $salary
-         * @todo может быть убрать этот метод отсюда и вернуть в старый класс
-         */
-        public function update(int|float $sum, InstallerSalary $salary) {
-            $salary->sum = $sum;
-            $salary->update();
         }
 
         /**
@@ -66,7 +55,10 @@
                 ->where('type', SalaryTypesEnum::NO_INSTALLATION->value)
                 ->get()
                 ->each(function (InstallerSalary $salary) use ($order) {
-                    $this->update($this->sum($order), $salary);
+                    \SalaryService::update(
+                        salary: $salary,
+                        sum: $this->sum($order)
+                    );
                 });
         }
 
@@ -96,18 +88,5 @@
                 ->where('type', SalaryTypesEnum::NO_INSTALLATION->value)
                 ->where('sum', '>', 0)
                 ->exists();
-        }
-
-        /**
-         * @param ProductInOrder $productInOrder
-         * @return \Illuminate\Database\Eloquent\Model
-         *
-         * @todo убрать этот метод отсюда
-         */
-        public function salary(ProductInOrder $productInOrder) {
-            return $productInOrder->order
-                ->salaries()
-                ->where('category_id', $productInOrder->category_id)
-                ->firstOrFail();
         }
     }

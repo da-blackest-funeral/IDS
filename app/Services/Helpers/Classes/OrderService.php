@@ -143,7 +143,9 @@
             /** @var DeliveryService $service */
             $service = new DeliveryOrderService(
                 $this->order,
-                $this->productRepository->maxDelivery()
+                $this->productRepository->maxDelivery(),
+                // todo избавиться от этого фасада, иметь в этом классе инстанс калькулятора
+                Calculator::getFacadeRoot()
             );
 
             $service->calculateDeliveryOptions();

@@ -28,8 +28,7 @@
          * @param ProductInOrder $productInOrder
          */
         public function __construct(
-            private Order $order,
-            private ProductInOrder $productInOrder
+            private Order $order
         ) {
             $this->createSalaryService = new CreateSalaryService();
             $this->noInstallationService = new NoInstallationSalaryService($order);
@@ -53,8 +52,8 @@
                 $salary->type = SalaryType::determine(\ProductService::getProduct());
             }
 
-            // todo вернуть этот метод сюда
-            $this->noInstallationService->update($sum, $salary);
+            $salary->sum = $sum;
+            $salary->update();
         }
 
         /**
@@ -160,8 +159,10 @@
         public function salary(ProductInOrder $productInOrder = null) {
             $productInOrder = $productInOrder ?? \ProductService::getProduct();
 
-            return $this->noInstallationService
-                ->salary($productInOrder);
+            return $productInOrder->order
+                ->salaries()
+                ->where('category_id', $productInOrder->category_id)
+                ->firstOrFail();
         }
 
         /**

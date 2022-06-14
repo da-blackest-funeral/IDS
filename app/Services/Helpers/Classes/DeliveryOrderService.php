@@ -4,17 +4,19 @@
 
     use App\Models\Order;
     use App\Services\Helpers\Interfaces\DeliveryService;
-    use Facades\App\Services\Calculator\Interfaces\Calculator;
+    use App\Services\Calculator\Interfaces\Calculator;
 
     class DeliveryOrderService implements DeliveryService
     {
         /**
          * @param Order $order
          * @param int $maxDeliveryPrice
+         * @param Calculator $calculator
          */
         public function __construct(
             private readonly Order $order,
-            private readonly int $maxDeliveryPrice
+            private readonly int $maxDeliveryPrice,
+            private readonly Calculator $calculator
         ) {}
 
         /**
@@ -36,13 +38,12 @@
 
         /**
          * @return void
-         * @todo передавать сюда deliveryPrice а не вызывать фасад Calculator
          */
         protected function decreasePriceByDelivery() {
             if (!deletingProduct()) {
                 $this->order->price -= min(
                     $this->order->delivery,
-                    Calculator::getDeliveryPrice()
+                    $this->calculator->getDeliveryPrice()
                 );
             } else {
                 $this->deliveryWhenDeletingProduct();
@@ -66,7 +67,7 @@
          */
         protected function determineMaxDelivery() {
             $this->order->delivery = $this->order->need_delivery ? max(
-                Calculator::getDeliveryPrice(),
+                $this->calculator->getDeliveryPrice(),
                 $this->maxDeliveryPrice
             ) : 0;
         }
